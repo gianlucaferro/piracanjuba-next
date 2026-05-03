@@ -1,6 +1,8 @@
 import { pageMetadata } from "@/lib/seo";
 import CamaraClient from "@/components/camara/CamaraClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = pageMetadata({
   title: "Câmara Municipal de Piracanjuba GO",
   description:
