@@ -1,9 +1,8 @@
 -- =============================================================================
 -- SYNC CRON ORCHESTRATION (Supabase novo: oinweocqcptwxqsztlcl)
 -- Migra os 49 cron jobs do projeto antigo (Lovable) para o novo.
--- A URL e anon key não ficam no SQL — são lidas via GUC setting:
---   ALTER DATABASE postgres SET app.supabase_url = 'https://oinweocqcptwxqsztlcl.supabase.co';
---   ALTER DATABASE postgres SET app.supabase_anon_key = '<NEXT_PUBLIC_SUPABASE_ANON_KEY>';
+-- URL e anon key vão hardcoded — anon key é pública por design (exposta no frontend).
+-- Para rotação no futuro: editar a constante PROJ_URL/ANON_KEY na função abaixo.
 -- =============================================================================
 
 -- 1. Helper: invoca uma Edge Function via pg_net.
@@ -14,14 +13,10 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  proj_url TEXT := current_setting('app.supabase_url', true);
-  anon_key TEXT := current_setting('app.supabase_anon_key', true);
+  proj_url TEXT := 'https://oinweocqcptwxqsztlcl.supabase.co';
+  anon_key TEXT := 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pbndlb2NxY3B0d3hxc3p0bGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MDA2NTUsImV4cCI6MjA5MzM3NjY1NX0.TFstJJgPZDauChUdhuBAcL8KX5FtGONaVNao7FU5lMQ';
   request_id BIGINT;
 BEGIN
-  IF proj_url IS NULL OR anon_key IS NULL THEN
-    RAISE EXCEPTION 'GUC settings app.supabase_url e app.supabase_anon_key precisam estar configurados (ver migration header)';
-  END IF;
-
   SELECT net.http_post(
     url := proj_url || '/functions/v1/' || function_name,
     headers := jsonb_build_object(

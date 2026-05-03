@@ -158,3 +158,62 @@ verify_jwt = false
 
 [functions.consulta-placa]
 verify_jwt = false
+
+# Webhooks / públicas / cron (sem JWT)
+[functions.auth-email-hook]
+verify_jwt = false
+
+[functions.create-donation]
+verify_jwt = false
+
+[functions.enrich-camara-contratos]
+verify_jwt = false
+
+[functions.enrich-contratos]
+verify_jwt = false
+
+[functions.notify-expiring-ads]
+verify_jwt = false
+
+[functions.sitemap-classificados]
+verify_jwt = false
+
+[functions.unsubscribe-push]
+verify_jwt = false
+
+[functions.sync-camara-atos]
+verify_jwt = false
+
+[functions.sync-camara-financeiro]
+verify_jwt = false
+
+[functions.sync-contas-publicas]
+verify_jwt = false
+
+[functions.sync-educacao]
+verify_jwt = false
+
+[functions.sync-fornecedores-cnpj]
+verify_jwt = false
+
+[functions.sync-frota-veiculos]
+verify_jwt = false
+
+[functions.sync-saude-estabelecimentos]
+verify_jwt = false
+
+[functions.sync-saude-indicadores]
+verify_jwt = false
+
+[functions.sync-saude-srag]
+verify_jwt = false
+
+[functions.sync-transferencias-federais]
+verify_jwt = false
+
+# Functions chamadas pelo frontend (JWT verify ON, default)
+# Mantidas como default para evitar abuso de IA paga ou admin sem auth:
+# admin-classificados, admin-login, admin-zap-read, admin-zap-update,
+# ai-search, optimize-description, suggest-category, transcribe-audio,
+# summarize-camara-contrato, summarize-licitacao, summarize-obra, summarize-secretario,
+# import-folha-xlsx, parse-folha-md
