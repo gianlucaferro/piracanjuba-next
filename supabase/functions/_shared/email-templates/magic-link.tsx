@@ -1,15 +1,7 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from "npm:react@18.3.1";
-import {
-  Html,
-  Head,
-  Body,
-  Container,
-  Section,
-  Text,
-  Button,
-  Hr,
-} from "npm:@react-email/components@0.0.22";
+import { Button, Text } from "npm:@react-email/components@0.0.22";
+import MasterEmail, { emailStyles } from "./_master.tsx";
 
 interface MagicLinkEmailProps {
   confirmationUrl: string;
@@ -17,36 +9,23 @@ interface MagicLinkEmailProps {
 
 export default function MagicLinkEmail({ confirmationUrl }: MagicLinkEmailProps) {
   return (
-    <Html>
-      <Head />
-      <Body style={main}>
-        <Container style={container}>
-          <Section style={section}>
-            <Text style={heading}>Link de acesso</Text>
-            <Text style={paragraph}>
-              Clique no botão abaixo para acessar sua conta no Piracanjuba.Ai:
-            </Text>
-            <Button style={button} href={confirmationUrl}>
-              Acessar Conta
-            </Button>
-            <Hr style={hr} />
-            <Text style={disclaimer}>
-              Se você não solicitou este link, pode ignorar este email.
-            </Text>
-            <Text style={footer}>— Piracanjuba.Ai</Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+    <MasterEmail preview="Seu link de acesso para o Piracanjuba.Ai">
+      <Text style={emailStyles.heading}>Entrar no Piracanjuba.Ai</Text>
+      <Text style={emailStyles.paragraph}>
+        Use o botão abaixo para acessar sua conta sem senha. O link é único e válido por
+        alguns minutos.
+      </Text>
+      <Button href={confirmationUrl} style={emailStyles.buttonGreen}>
+        Entrar agora
+      </Button>
+      <Text style={emailStyles.disclaimer}>
+        Se você não solicitou este acesso, pode ignorar este email com segurança.
+      </Text>
+      <Text style={emailStyles.fineprint}>
+        Caso o botão não funcione, copie e cole no navegador:
+        <br />
+        {confirmationUrl}
+      </Text>
+    </MasterEmail>
   );
 }
-
-const main: React.CSSProperties = { backgroundColor: "#ffffff", fontFamily: "Arial, sans-serif" };
-const container: React.CSSProperties = { margin: "0 auto", padding: "20px 0 48px", maxWidth: "560px" };
-const section: React.CSSProperties = { padding: "24px" };
-const heading: React.CSSProperties = { fontSize: "24px", fontWeight: "bold", color: "#1a1a2e", marginBottom: "16px" };
-const paragraph: React.CSSProperties = { fontSize: "15px", lineHeight: "1.6", color: "#333", marginBottom: "12px" };
-const button: React.CSSProperties = { backgroundColor: "#1a1a2e", color: "#ffffff", padding: "12px 24px", borderRadius: "8px", textDecoration: "none", display: "inline-block", fontWeight: "bold", fontSize: "15px", marginTop: "8px", marginBottom: "8px" };
-const hr: React.CSSProperties = { borderColor: "#e5e5e5", margin: "20px 0" };
-const disclaimer: React.CSSProperties = { fontSize: "13px", color: "#666" };
-const footer: React.CSSProperties = { fontSize: "12px", color: "#999", marginTop: "8px" };
