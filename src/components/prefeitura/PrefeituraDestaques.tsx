@@ -158,38 +158,38 @@ async function fetchTopFornecedores() {
 }
 
 async function fetchFolhaTotal() {
-  // Get latest competência
-  const { data: latestComp } = await supabase
+  // Pegar a ultima competencia QUE CONTEM dados da Prefeitura (nao
+  // necessariamente a global). Se a Camara ja publicou um mes a mais
+  // que a Prefeitura, esse mes nao serve aqui — mostraria 0 / 0
+  // servidores na coluna Prefeitura. Usar essa comp para ambos os
+  // orgaos garante apresentacao consistente do mesmo periodo.
+  const { data: latestPref } = await supabase
     .from("remuneracao_servidores")
-    .select("competencia")
+    .select("competencia, servidores!inner(orgao_tipo)")
+    .eq("servidores.orgao_tipo", "prefeitura")
     .order("competencia", { ascending: false })
     .limit(1)
-    .single();
-  if (!latestComp) return null;
+    .maybeSingle();
+  if (!latestPref) return null;
+  const competencia = latestPref.competencia as string;
 
-  // Get all servidores with fonte_url to distinguish prefeitura vs camara
-  const { data: servidores } = await supabase
-    .from("servidores")
-    .select("id, fonte_url");
-  if (!servidores?.length) return null;
-
-  const prefIds = new Set(servidores.filter((s) => !(s.fonte_url || "").toLowerCase().includes("camara")).map((s) => s.id));
-  const camIds = new Set(servidores.filter((s) => (s.fonte_url || "").toLowerCase().includes("camara")).map((s) => s.id));
-
-  // Get all remuneracoes for latest competência
+  // Soma agregada por orgao para a competencia escolhida, via inner
+  // join com servidores e filtro orgao_tipo (substitui o discriminador
+  // fragil baseado em fonte_url ILIKE '%camara%').
   const { data: rems } = await supabase
     .from("remuneracao_servidores")
-    .select("servidor_id, bruto")
-    .eq("competencia", latestComp.competencia);
+    .select("bruto, servidores!inner(orgao_tipo)")
+    .eq("competencia", competencia);
 
   let prefTotal = 0, prefCount = 0, camTotal = 0, camCount = 0;
-  for (const r of rems || []) {
-    if (prefIds.has(r.servidor_id)) { prefTotal += r.bruto || 0; prefCount++; }
-    else if (camIds.has(r.servidor_id)) { camTotal += r.bruto || 0; camCount++; }
+  for (const r of (rems || []) as Array<{ bruto: number | null; servidores: { orgao_tipo: string } }>) {
+    const valor = r.bruto || 0;
+    if (r.servidores.orgao_tipo === "prefeitura") { prefTotal += valor; prefCount++; }
+    else if (r.servidores.orgao_tipo === "camara") { camTotal += valor; camCount++; }
   }
 
   return {
-    competencia: latestComp.competencia,
+    competencia,
     prefeitura: { total: prefTotal, count: prefCount },
     camara: { total: camTotal, count: camCount },
     geral: { total: prefTotal + camTotal, count: prefCount + camCount },
