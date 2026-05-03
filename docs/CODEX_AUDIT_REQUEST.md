@@ -1,8 +1,33 @@
 # Pedido de Auditoria — Codex
 
 **Projeto:** Piracanjuba.ai — migração de Lovable (React + Vite + Supabase Lovable Cloud) para Next.js 16 (App Router) + Vercel + Supabase próprio.
-**Status:** Migração funcional, mas usuário reporta divergências de paridade entre o site pré-migração (produção Lovable) e a versão Next.
+**Status:** Migração funcional mas com divergências de paridade. Site Lovable ainda em produção em `piracanjuba.ai` (DNS NÃO trocado ainda — usuário esperando Codex revisar antes do switch).
 **Pedido:** Auditoria sistemática de paridade Lovable vs Next — encontrar e corrigir TODA divergência de comportamento, dados ou layout.
+
+## URLs de comparação
+
+- **Lovable (referência — produção atual):** `https://piracanjuba.ai`
+- **Next/Vercel (alvo da auditoria):** o último deploy production (rodar `vercel ls piracanjuba-next` na raiz pra pegar a URL atual)
+- **Branch:** `main` em `https://github.com/gianlucaferro/piracanjuba-next`
+
+## Bugs já corrigidos (commits recentes — re-validar)
+
+| Bug | Commit | Arquivo |
+|---|---|---|
+| Top 10 salários da Prefeitura mostrando servidores da Câmara | `67adc87` | `src/components/prefeitura/PrefeituraDestaques.tsx#fetchTopSalarios` |
+| Folha mensal mostrando R$ 0,00 + 0 servidores em Abril/2026 | `3db1838` | `src/components/prefeitura/PrefeituraDestaques.tsx#fetchFolhaTotal` |
+| Tabs flex direction quebrado (Tailwind 4) | `ff0fbfb` | `src/components/ui/tabs.tsx` |
+| Build SSR `useSearchParams` em /camara e /prefeitura | `302daab` | `src/app/{camara,prefeitura}/page.tsx` |
+
+## Bugs visuais reportados pelo usuário (PRIORIDADE MÁXIMA)
+
+1. **Home: ordem dos blocos diferente do Lovable** — usuário: "revise a página inicial de ponta a ponta, os cards estão aparecendo em posição diferente do que estavam no lovable"
+2. **Plantão Farmácias incompleto** — usuário: "todas as farmácias não estão aparecendo dentro da aba Plantão Farmácias"
+3. **Layouts diferentes nas abas Prefeitura/Câmara** — usuário: "estamos com vários layouts diferentes do que estava antes da migração"
+4. **Risco de contratos (bolinhas vermelhas) faltando** + **aditivos** — usuário pediu várias vezes
+5. **Header da Torre do Relógio sumiu** — pode estar em layout, não na home
+
+Detalhamento técnico de cada um nos itens 1.B.1 a 1.B.3 abaixo.
 
 ---
 
@@ -93,6 +118,147 @@ const { data: srvIds } = await supabase
 
 ---
 
+### 1.B Bugs visuais já confirmados (após primeira passada) — COMEÇAR POR AQUI
+
+#### 1.B.1 — Home (`/`): ordem dos blocos diferente do Lovable + blocos faltando
+
+**Como reproduzir a comparação:** abrir `https://piracanjuba.ai` (Lovable, produção pré-migração) lado a lado com a versão Vercel atual.
+
+**Ordem real do Lovable (de cima pra baixo):**
+1. Hero (logo + título + descrição + **input de busca "Buscar vereadores, leis, servidores..."** — IMPORTANTE: o hero do Lovable **não tem foto de fundo**, é só um gradient)
+2. Anúncio destaque (banner patrocinado — atual: Vitorino Perfumes)
+3. **Serviços rápidos** (Zap PBA / Coleta Lixo / Farmácias Plantão)
+4. **Compra e Venda PBA** (banner único)
+5. **Plantão de Farmácias** (LISTA COMPLETA da semana — 1 farmácia 24h em destaque + 3 demais, cada uma com foto, telefone WhatsApp, tag "24H" e **botão "Abrir no Waze"** com link de geolocalização. Header: "De DD de mês a DD de mês" + botão "Compartilhar" no WhatsApp)
+6. Alerta Dengue (com casos do mês + nível + CTA "Ver dados completos" + botão Compartilhar)
+7. **Contatos Úteis** (Polícia Militar, Bombeiros Piracanjuba, Troca de Lâmpada de Poste — com link "Ver todos →" pra `/contatos`)
+8. **Anuncie no Piracanjuba.ai** (CTA com botão verde — link via WhatsApp do Gianluca, não rota interna)
+9. **Piracanjuba em Dados** (Saúde, Educação, Social, Impostos, Agro, Segurança — 6 cards 2x3)
+10. **Indicadores do Município** (header com badge "Atualizado em: 04/2026") — **9 indicadores**, não 4:
+   - População
+   - PIB per capita
+   - IDEB Anos Iniciais
+   - Saneamento
+   - Salário médio formal (em salários mínimos)
+   - Empregos formais
+   - Pop. até ½ salário mín. (%)
+   - Frota de veículos (SENATRAN)
+   - IDHM
+11. **Emendas Parlamentares** (placeholder "Dados ainda não disponíveis. Serão preenchidos quando disponíveis nos portais de transparência.")
+12. **Contratos** (placeholder "Dados de contratos não disponíveis." — ATENÇÃO: tem dados na DB, então o placeholder deveria ser substituído por valores reais)
+13. **Atividade Recente da Câmara** (lazy-load com mensagem "Carregando atividade recente..." — provavelmente lista projetos/votações mais novos)
+14. CTA secundário "Anuncie no Piracanjuba.ai" (footer-style)
+15. Footer (Anuncie / Fontes oficiais / Sobre / Privacidade / Instagram + CNPJ Ferro Labs)
+
+**Ordem atual do Next (`src/app/page.tsx`):**
+1. Hero — usa **`/hero-piracanjuba.webp` como background com `opacity-60`** ⚠️ não está no Lovable (Lovable só usa gradient)
+2. AnuncioBannerDestaque
+3. DengueAlert ⚠️ posição errada (deveria estar abaixo de Plantão Farmácias)
+4. PlantaoFarmaciasHome ⚠️ **mostra apenas 1 farmácia 24h** (deveria mostrar TODAS as 4 da semana — 1 destaque + 3 demais)
+5. Atalhos (Zap, Coleta, Farmácia)
+6. Compra e Venda PBA
+7. **Câmara + Prefeitura grid 2-col** ⚠️ NÃO existe no Lovable — esse bloco é extra/inventado
+8. Piracanjuba em Dados
+9. Indicadores ⚠️ **apenas 4 indicadores** (faltam Salário médio formal, Empregos formais, Pop ½ salário, Frota de veículos, IDHM)
+10. Contratos Ativos ⚠️ pega dados reais (`fetchContratosResumo`) — Lovable mostra placeholder. **Verificar qual é o comportamento correto** (provavelmente Lovable está errado e Next está certo, mas confirmar)
+11. Emendas Parlamentares (idem — dados reais vs placeholder Lovable)
+12. Contatos Úteis (posição diferente — deveria estar no slot 7)
+13. AnuncioBannerPadrao ⚠️ NÃO existe no Lovable
+14. Anuncie CTA (posição diferente)
+15. **Falta:** "Atividade Recente da Câmara"
+16. **Falta:** input de busca no Hero
+
+**Ações (todas em `src/app/page.tsx`):**
+- [ ] Remover background `Image src="/hero-piracanjuba.webp"` do hero (ou mover para a página `/sobre`)
+- [ ] Adicionar input "Buscar vereadores, leis, servidores..." no hero (rota `/buscar?q=`)
+- [ ] Reordenar para ordem Lovable: Hero → Anúncio → Atalhos → Compra/Venda → Plantão (LISTA) → Dengue → Contatos → Anuncie → Em Dados → Indicadores → Emendas → Contratos → Atividade Recente → Anuncie CTA → Footer
+- [ ] **Reescrever `PlantaoFarmaciasHome.tsx`** para mostrar a semana completa (1 + 3) com Waze por farmácia + botão Compartilhar no WhatsApp
+- [ ] **Adicionar 5 indicadores faltantes** em `fetchIndicadores`/Home — Salário médio formal, Empregos formais, Pop até ½ salário mín, Frota de veículos, IDHM. Verificar se existem em `indicadores` table na DB; se não, popular ou marcar como "Em breve"
+- [ ] Header dos Indicadores: badge "Atualizado em: 04/2026" no canto direito (campo `atualizado_em` da query)
+- [ ] **Remover** bloco "Câmara + Prefeitura grid" da home (não existe no Lovable — usuário acessa via header nav)
+- [ ] **Remover** bloco AnuncioBannerPadrao (Lovable só tem 1 banner: o destaque no topo + CTA "Anuncie" no rodapé. Lovable NÃO tem segundo banner padrão no meio)
+- [ ] Adicionar componente `AtividadeRecenteCamara` (lista 5 itens mais novos: projetos, votações, atos — agregados por timestamp)
+
+#### 1.B.2 — Plantão de Farmácias (`/plantao-farmacias`): falta calendário completo
+
+**Lovable atual:** mostra **calendário completo** com TODAS as semanas (passadas, atual, futuras) agrupadas por mês.
+
+Estrutura visível:
+```
+← Voltar
+🔗 Plantão de Farmácias
+Calendário completo de plantão das farmácias em Piracanjuba. A semana atual está destacada.
+
+Março 2026
+  14 de março a 20 de março                            [Compartilhar]
+    [Foto] Drogaria São Sebastião  [24H]    [Waze]
+           (64) 99340-0727
+    [Foto] Drogamais                       [Waze]
+           (64) 99265-4341
+    [Foto] Drogaria Do Lar                  [Waze]
+    [Foto] Drogaria JM Popular              [Waze]
+
+  21 de março a 27 de março                            [Compartilhar]
+    [Foto] Drogaria do Povo  [24H]          [Waze]
+    ...
+
+Abril 2026
+  ... (mesma estrutura)
+
+Maio 2026
+  ... (mesma estrutura)
+```
+
+**Cada card de farmácia contém:**
+- Foto da fachada (do bucket Supabase storage `farmacia-fotos`)
+- Nome
+- Tag amarela "24H" (apenas na primeira da semana)
+- Telefone — clicável: WhatsApp se mobile/contém wa.me, ou tel: para telefones fixos com prefixo (64) 3405
+- Botão **"Waze"** com link `https://waze.com/ul?ll=<lat>,<lng>&navigate=yes&zoom=17` — coordenadas armazenadas em `farmacias` table (campos `latitude`, `longitude`)
+
+**Botão "Compartilhar"** por semana: gera link wa.me com mensagem formatada com data + 24h + demais farmácias.
+
+**Next atual (`src/app/plantao-farmacias/page.tsx`):** mostra **apenas a semana atual** (24h em destaque + 3 demais). Sem calendário completo, sem agrupamento por mês, sem Waze, sem compartilhar por semana.
+
+**Ações:**
+- [ ] Reescrever `src/app/plantao-farmacias/page.tsx` para iterar `PLANTAO_FARMACIAS` completo, agrupar por mês (parsing da data `inicio` para extrair `YYYY-MM`), e renderizar cada semana com header de range + botão Compartilhar
+- [ ] Destacar visualmente a semana atual (border laranja, bg laranja-leve)
+- [ ] Adicionar fonte de coordenadas (lat/long) para cada farmácia — opções: (a) hardcoded em `src/data/plantaoFarmacias.ts`, (b) joinar com tabela `farmacias` na DB pelo nome normalizado. Lovable usa coordenadas (visível em `https://waze.com/ul?ll=-17.30434,-49.02208`).
+- [ ] Atualizar `PlantaoFarmaciasHome.tsx` (componente da home) para mostrar a semana completa (1+3), não só 24h
+- [ ] Adicionar botão "Compartilhar" no WhatsApp para cada bloco de semana — formato:
+```
+💊 *Plantão de Farmácias em Piracanjuba*
+📅 DD de mês a DD de mês
+
+🕐 *Farmácia 24h:*
+Nome — telefone
+
+💊 *Demais farmácias de plantão:*
+• Nome — telefone
+...
+
+Veja o calendário completo:
+https://piracanjuba.ai/plantao-farmacias
+
+_Fonte: Piracanjuba.ai_
+```
+
+#### 1.B.3 — Listas de farmácia incompletas no source de dados
+
+`src/data/plantaoFarmacias.ts` tem hardcoded apenas o nome + telefone, sem coordenadas. Lovable carrega coordenadas de `farmacias` table.
+
+```sql
+-- Verificar schema da tabela farmacias
+SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'farmacias';
+
+-- Verificar dados existentes
+SELECT nome, telefone, latitude, longitude, foto_url FROM farmacias LIMIT 30;
+```
+
+Se a tabela existe e tem coordenadas, adaptar `PLANTAO_FARMACIAS` ou as queries pra puxar `latitude`/`longitude` por nome normalizado (já existe lógica em `normalize()`).
+
+---
+
 ### 2. Verificar paridade visual de TODAS as abas da Prefeitura e da Câmara
 
 Comparar com o site Lovable em produção (estado pré-migração) e relatar divergências.
@@ -157,6 +323,15 @@ Comparar com o site Lovable em produção (estado pré-migração) e relatar div
 devem funcionar e abrir corretamente. Usuário reclamou que estava aparecendo errado pós-migração.
 
 3.7. **Header com imagem da Torre do Relógio** — usuário reportou que sumiu. Verificar `src/components/Hero*.tsx` ou `src/app/layout.tsx`.
+
+ATUALIZAÇÃO 03/05: revisitando o Lovable real, na página Home (`/`) o hero **NÃO tem foto de fundo** — é apenas o gradient escuro com logo + título + busca. A "Torre do Relógio" pode estar em OUTRO lugar (talvez em `/sobre`, ou no header do `layout.tsx`). Confirmar antes de adicionar.
+
+3.8. **URL canônica e `og:image`** — Vercel deploy usa preview URL `piracanjuba-next-*.vercel.app`. Antes do DNS switch, garantir que:
+- `pageMetadata` em `src/lib/seo.ts` aponta para o domínio final `https://piracanjuba.ai` (não preview URL)
+- `next.config.ts` tem `poweredByHeader: false`
+- OG image existe em `public/og.png` ou similar
+
+3.9. **Botão "Compartilhar" em WhatsApp em todos os cards** — Lovable tem botão "Compartilhar" em quase todo card (Plantão Farmácias por semana, Alerta Dengue, Top 10 salários, Folha mensal, Maiores fornecedores, Comparativo cidades, etc). Padrão: link `https://wa.me/?text=<texto formatado>` com texto rico (emoji + dados resumidos + URL canônica). Validar que o Next preserva isso em todos os cards onde Lovable tem.
 
 ---
 
@@ -249,14 +424,28 @@ Atual: build OK em ~30s. Mas o `ignoreBuildErrors` esconde divergências de tipo
 
 ### 10. Smoke tests recomendados (rodar em sequência)
 
-1. Abrir `/` → Hero com Torre do Relógio + header completo
-2. Click em Prefeitura → tabs aparecem e clicáveis
-3. Click em "Visão Geral" → todos os cards renderizam
-4. **Top 10 maiores salários: nomes esperados (CILTON GONCALVES, IZALE RODRIGUES, ...)** ← validar fix anterior
-5. Click em "Contratos" → lista carrega + filtros + bolinhas de risco
-6. Click em um contrato → modal/detalhe abre com aditivos
-7. Idem para todas as abas (item 2 desta lista)
-8. Click em Câmara → mesma rotina
+**Comparação base:** abrir `https://piracanjuba.ai` (Lovable produção) e a URL Vercel atual lado a lado, percorrendo na mesma ordem.
+
+1. **Home (`/`)** — confirmar 15 blocos na ORDEM exata do Lovable (ver item 1.B.1 acima)
+2. **Hero** — sem foto de fundo (apenas gradient) + input de busca presente
+3. **Plantão Farmácias preview na home** — mostra a SEMANA INTEIRA (1+3 farmácias), não só 24h
+4. **Indicadores na home** — 9 cards (não 4)
+5. **Atividade Recente da Câmara** — bloco existe e popula
+6. `/plantao-farmacias` → calendário completo agrupado por mês (mar, abr, mai, jun...) com Waze por farmácia
+7. Click em Prefeitura → tabs aparecem e clicáveis
+8. Click em "Visão Geral" → todos os cards renderizam
+9. **Top 10 maiores salários: nomes esperados (CILTON GONCALVES, IZALE RODRIGUES, ...)** ✅ JÁ CORRIGIDO mas re-validar
+10. **Folha de pagamento mensal: Prefeitura R$ 5,40M / 1.011 servidores em Março/2026** ✅ JÁ CORRIGIDO mas re-validar
+11. Click em "Contratos" → lista carrega + filtros + **bolinhas de risco vermelhas/amarelas/verdes** + aditivos
+12. Click em um contrato → modal/detalhe abre com lista de aditivos
+13. Idem para todas as abas Prefeitura (visao-geral, saude, educacao, social, impostos, agro, seguranca, servidores, contratos, procuradoria, decretos, portarias, leis, lei-organica, diarias, licitacoes, obras, veiculos)
+14. Click em Câmara → mesma rotina (todas as abas)
+15. `/admin` (logado) → painel completo de gestão
+16. `/compra-e-venda` → listagem + filtro + detalhe de anúncio
+17. `/anuncie` → formulário/CTA correto
+18. `/zap-pba` → lista de WhatsApp de estabelecimentos
+19. `/coleta-lixo` → orientações + dias da semana
+20. `/contatos` → todos os contatos úteis (não só 3 da home)
 9. Página /classificados → lista + criar novo (logado)
 10. Página /admin (logado como admin) → todas operações
 
