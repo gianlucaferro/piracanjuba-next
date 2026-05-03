@@ -1,0 +1,48 @@
+# Piracanjuba.ai
+
+> Transparência municipal de Piracanjuba, GO com inteligência artificial. Dados públicos verificáveis.
+
+Piracanjuba.ai é uma plataforma independente que utiliza inteligência artificial para tornar acessíveis os dados públicos do município de Piracanjuba, Goiás, Brasil. O projeto não tem vínculo com a Câmara Municipal ou a Prefeitura.
+
+## Seções
+
+- [Início](https://piracanjuba.ai/): Painel com indicadores municipais, projetos recentes, emendas e ranking de vereadores.
+- [Compra e Venda PBA](https://piracanjuba.ai/compra-e-venda): Classificados gratuitos de Piracanjuba — anuncie e compre imóveis, veículos, eletrônicos, serviços e mais. Com fotos, localização por bairro, otimização de descrição por IA, busca por voz e contato direto via WhatsApp.
+- [Zap PBA](https://piracanjuba.ai/zap-pba): Diretório de WhatsApp dos estabelecimentos comerciais de Piracanjuba, organizados por categoria.
+- [Farmácias de Plantão](https://piracanjuba.ai/plantao-farmacias): Escala semanal das farmácias de plantão com telefone, WhatsApp e link para o Waze.
+- [Coleta de Lixo](https://piracanjuba.ai/coleta-lixo): Calendário de coleta de lixo por bairro, incluindo coleta seletiva.
+- [Câmara Municipal](https://piracanjuba.ai/camara): Vereadores, projetos de lei, votações, remunerações e atuação parlamentar.
+- [Vereadores](https://piracanjuba.ai/vereadores): Perfil individual de cada vereador com projetos, votações e remuneração.
+- [Atuação Parlamentar](https://piracanjuba.ai/atuacao-parlamentar): Indicações, requerimentos e moções dos vereadores.
+- [Prefeitura](https://piracanjuba.ai/prefeitura): Secretarias, servidores, contratos, licitações, obras, decretos, portarias e leis municipais.
+- [Saúde](https://piracanjuba.ai/saude): Estabelecimentos de saúde, equipes, indicadores epidemiológicos e repasses do SUS.
+- [Educação](https://piracanjuba.ai/educacao): Escolas, IDEB, matrículas, investimentos e programas educacionais.
+- [Benefícios Sociais](https://piracanjuba.ai/beneficios-sociais): Bolsa Família, BPC, Pé-de-Meia e outros programas sociais.
+- [Impostos](https://piracanjuba.ai/arrecadacao): Arrecadação municipal, IPTU, ISS, ITBI e comparativo com outros municípios de Goiás.
+- [Sobre](https://piracanjuba.ai/sobre): Metodologia, fontes oficiais e informações sobre o projeto.
+
+## Dados Disponíveis
+
+- Projetos de lei e votações da Câmara Municipal
+- Remuneração de vereadores e servidores públicos
+- Emendas parlamentares federais e estaduais destinadas ao município
+- Contratos, licitações e obras públicas
+- Decretos, portarias e leis municipais
+- Indicadores de saúde, educação e benefícios sociais
+- Arrecadação e receitas municipais
+- Indicadores demográficos e econômicos (IBGE)
+
+## Fontes Oficiais
+
+- Portal da Transparência da Câmara Municipal de Piracanjuba
+- Portal da Transparência da Prefeitura de Piracanjuba
+- IBGE Cidades
+- Portal da Transparência do Governo Federal
+- DATASUS / CNES
+- INEP / Censo Escolar
+- Portal de Emendas Parlamentares
+
+## Contato
+
+- Instagram: [@piracanjuba.ai](https://www.instagram.com/piracanjuba.ai)
+- Site: [piracanjuba.ai](https://piracanjuba.ai)
