@@ -46,60 +46,64 @@ function formatCompetencia(comp: string): string {
 }
 
 async function fetchTopSalarios() {
-  // Get latest competência
-  const { data: latestComp } = await supabase
+  // Última competência que tem dados de servidores da PREFEITURA
+  // (não da Câmara — orgao_tipo='camara' fica fora). Usamos inner join via
+  // foreign-key embed do PostgREST: servidores!inner(...) e filtro
+  // aplicado na tabela embed (servidores.orgao_tipo).
+  const { data: latestRow } = await supabase
     .from("remuneracao_servidores")
-    .select("competencia")
+    .select("competencia, servidores!inner(orgao_tipo)")
+    .eq("servidores.orgao_tipo", "prefeitura")
     .order("competencia", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (!latestComp) return { items: [], competencia: "", mediana: 0 };
+  if (!latestRow) return { items: [], competencia: "", mediana: 0 };
+  const competencia = latestRow.competencia as string;
 
-  // Get ALL salaries for that competência to calculate median
+  // Todos os salários da Prefeitura para essa competência (mediana)
   const { data: allRem } = await supabase
     .from("remuneracao_servidores")
-    .select("bruto")
-    .eq("competencia", latestComp.competencia)
+    .select("bruto, servidores!inner(orgao_tipo)")
+    .eq("competencia", competencia)
+    .eq("servidores.orgao_tipo", "prefeitura")
     .gt("bruto", 0)
     .order("bruto", { ascending: true });
 
-  const allBrutos = (allRem || []).map((r) => r.bruto).filter(Boolean) as number[];
-  const mediana = allBrutos.length > 0
-    ? allBrutos[Math.floor(allBrutos.length / 2)]
-    : 3000;
+  const allBrutos = (allRem || []).map((r) => Number(r.bruto)).filter(Boolean);
+  const mediana = allBrutos.length > 0 ? allBrutos[Math.floor(allBrutos.length / 2)] : 3000;
 
-  // Get top 10 salaries for that competência
+  // Top 10 salários da Prefeitura (com nome/cargo via embed)
   const { data: remuneracoes } = await supabase
     .from("remuneracao_servidores")
-    .select("bruto, liquido, servidor_id, tipo_folha")
-    .eq("competencia", latestComp.competencia)
+    .select("bruto, liquido, servidor_id, tipo_folha, servidores!inner(nome, cargo, orgao_tipo)")
+    .eq("competencia", competencia)
+    .eq("servidores.orgao_tipo", "prefeitura")
     .order("bruto", { ascending: false })
     .limit(10);
 
-  if (!remuneracoes?.length) return { items: [], competencia: latestComp.competencia, mediana };
-
-  // Get servidor names
-  const ids = remuneracoes.map((r) => r.servidor_id);
-  const { data: servidores } = await supabase
-    .from("servidores")
-    .select("id, nome, cargo")
-    .in("id", ids);
-
-  const servidorMap = new Map((servidores || []).map((s) => [s.id, s]));
+  if (!remuneracoes?.length) {
+    return { items: [], competencia, mediana };
+  }
 
   return {
-    competencia: latestComp.competencia,
+    competencia,
     mediana,
-    items: remuneracoes.map((r, i) => ({
-      posicao: i + 1,
-      nome: servidorMap.get(r.servidor_id)?.nome || "Não identificado",
-      cargo: servidorMap.get(r.servidor_id)?.cargo || null,
-      bruto: r.bruto,
-      liquido: r.liquido,
-      tipo_folha: (r as any).tipo_folha || null,
-      atipico: r.bruto > mediana * 5 || ((r as any).tipo_folha && (r as any).tipo_folha !== "NORMAL"),
-    })),
+    items: remuneracoes.map((r, i) => {
+      const srv = (r as { servidores?: { nome?: string; cargo?: string | null } }).servidores;
+      return {
+        posicao: i + 1,
+        nome: srv?.nome || "Não identificado",
+        cargo: srv?.cargo || null,
+        bruto: r.bruto,
+        liquido: r.liquido,
+        tipo_folha: (r as { tipo_folha?: string | null }).tipo_folha || null,
+        atipico:
+          Number(r.bruto) > mediana * 5 ||
+          (((r as { tipo_folha?: string | null }).tipo_folha || null) &&
+            ((r as { tipo_folha?: string | null }).tipo_folha as string) !== "NORMAL"),
+      };
+    }),
   };
 }
 
