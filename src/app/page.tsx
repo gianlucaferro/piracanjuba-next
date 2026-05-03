@@ -27,6 +27,9 @@ import {
   fetchEmendas,
   fetchContratosResumo,
 } from "@/lib/data/home";
+import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
+import DengueAlert from "@/components/DengueAlert";
+import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
 
 export const metadata = pageMetadata({
   title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
@@ -93,6 +96,15 @@ export default async function HomePage() {
             "linear-gradient(to bottom right, hsl(220,60%,15%), hsl(160,40%,18%))",
         }}
       >
+        <Image
+          src="/hero-piracanjuba.webp"
+          alt=""
+          aria-hidden
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
+        />
         <div className="container relative py-10 md:py-16">
           <div className="flex items-center gap-5 md:gap-8">
             <Image
@@ -119,6 +131,15 @@ export default async function HomePage() {
       </section>
 
       <div className="container py-8 space-y-10">
+        {/* Anúncio destaque */}
+        <AnuncioBannerDestaque />
+
+        {/* Alerta dengue */}
+        <DengueAlert />
+
+        {/* Plantão de farmácias preview */}
+        <PlantaoFarmaciasHome />
+
         {/* Atalhos */}
         <section
           aria-labelledby="heading-atalhos"
@@ -338,6 +359,9 @@ export default async function HomePage() {
             </a>
           </div>
         </section>
+
+        {/* Anúncio padrão */}
+        <AnuncioBannerPadrao />
 
         {/* Anuncie CTA */}
         <section aria-label="Anuncie no Piracanjuba.ai">
