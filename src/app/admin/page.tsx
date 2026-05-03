@@ -1,5 +1,5 @@
 import { pageMetadata } from "@/lib/seo";
-import PageInConstruction from "@/components/PageInConstruction";
+import AdminClient from "@/components/admin/AdminWrapper";
 
 export const metadata = pageMetadata({
   title: "Painel Administrativo",
@@ -8,13 +8,6 @@ export const metadata = pageMetadata({
   noIndex: true,
 });
 
-export const revalidate = 3600;
-
-export default function Page() {
-  return (
-    <PageInConstruction
-      title="Painel Administrativo"
-      description="Área administrativa do Piracanjuba.ai."
-    />
-  );
+export default function AdminPage() {
+  return <AdminClient />;
 }

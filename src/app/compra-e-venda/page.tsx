@@ -1,20 +1,13 @@
 import { pageMetadata } from "@/lib/seo";
-import PageInConstruction from "@/components/PageInConstruction";
+import ClassificadosClient from "@/components/classificados/ClassificadosWrapper";
 
 export const metadata = pageMetadata({
-  title: "Compra e Venda PBA — Classificados de Piracanjuba",
-  description: "Anuncie grátis em Piracanjuba: imóveis, veículos, eletrônicos, serviços, agro e mais.",
+  title: "Compra e Venda PBA — Classificados grátis Piracanjuba GO",
+  description:
+    "Anuncie e compre em Piracanjuba: imóveis, veículos, agro, eletrônicos, serviços. Anúncios gratuitos com WhatsApp e fotos.",
   path: "/compra-e-venda",
-  
 });
 
-export const revalidate = 3600;
-
-export default function Page() {
-  return (
-    <PageInConstruction
-      title="Compra e Venda PBA — Classificados de Piracanjuba"
-      description="Anuncie grátis em Piracanjuba: imóveis, veículos, eletrônicos, serviços, agro e mais."
-    />
-  );
+export default function ComprarEVendaPage() {
+  return <ClassificadosClient />;
 }
