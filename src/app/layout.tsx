@@ -154,7 +154,7 @@ export default function RootLayout({
         <link
           rel="preconnect"
           href="https://oinweocqcptwxqsztlcl.supabase.co"
-          crossOrigin=""
+          crossOrigin="anonymous"
         />
         <script
           type="application/ld+json"

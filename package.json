@@ -8,6 +8,15 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "browserslist": [
+    "Chrome >= 90",
+    "Firefox >= 90",
+    "Edge >= 90",
+    "Safari >= 14",
+    "iOS >= 14",
+    "ChromeAndroid >= 90",
+    "not dead"
+  ],
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@hookform/resolvers": "^5.2.2",

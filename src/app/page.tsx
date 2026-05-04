@@ -107,6 +107,8 @@ export default async function HomePage() {
           aria-hidden
           fill
           priority
+          fetchPriority="high"
+          loading="eager"
           sizes="100vw"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
         />

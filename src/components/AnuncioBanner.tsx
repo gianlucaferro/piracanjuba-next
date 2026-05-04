@@ -64,6 +64,10 @@ function AnuncioCard({ anuncio }: { anuncio: Anuncio }) {
           alt={`Anúncio: ${anuncio.nome_empresa}`}
           className="w-full h-auto rounded-xl"
           loading="lazy"
+          decoding="async"
+          width={isDestaque ? 1200 : 700}
+          height={isDestaque ? 300 : 180}
+          sizes={isDestaque ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 600px"}
         />
       ) : (
         <div className={`stat-card ${isDestaque ? "border-primary/20 bg-primary/5" : ""}`}>
