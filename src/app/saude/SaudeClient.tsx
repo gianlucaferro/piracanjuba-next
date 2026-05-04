@@ -23,6 +23,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, ReferenceLine,
 } from "recharts";
+import ChuvaDengueChart from "@/components/saude/ChuvaDengueChart";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -581,8 +582,17 @@ function MeningiteView() {
 // ===== Arboviroses (dengue, chik, zika) =====
 function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel }: any) {
   const totalCasos = indicadores?.reduce((sum: number, i: any) => sum + (i.valor || 0), 0) || 0;
+  const casosPorMes = (indicadores ?? []).map((i: any) => ({
+    mes: i.mes ?? 0,
+    valor: i.valor ?? 0,
+  }));
   return (
     <>
+      {/* Grafico Chuva x Dengue - so para dengue (correlacao mais forte) */}
+      {categoria === "dengue" && (
+        <ChuvaDengueChart casosPorMes={casosPorMes} ano={ano} />
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{totalCasos}</p>
