@@ -98,10 +98,10 @@ function ChefiaExecutivo() {
         return (
         <div key={a.id} className="stat-card space-y-4">
           <div className="flex items-start gap-4">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl bg-primary/10 flex-shrink-0 overflow-hidden">
+            <div className="w-32 sm:w-40 aspect-[4/5] rounded-2xl bg-primary/10 flex-shrink-0 overflow-hidden">
               {a.foto_url && (
                 <img src={a.foto_url} alt={`Foto de ${a.nome}`}
-                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover"
+                  className="w-full h-full rounded-2xl object-cover object-top"
                   onError={(e) => { e.currentTarget.style.display = "none"; }} />
               )}
             </div>
@@ -226,13 +226,13 @@ function SecretariasTab() {
         {data.map((s) => (
           <div key={s.id} className="stat-card space-y-3 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all" onClick={() => handleClick(s)}>
             <div className="flex items-start gap-3">
-              <div className="w-16 h-16 rounded-xl bg-primary/10 flex-shrink-0 overflow-hidden">
+              <div className="w-16 aspect-[4/5] rounded-xl bg-primary/10 flex-shrink-0 overflow-hidden">
                 {s.foto_url ? (
                   <img src={s.foto_url} alt={s.secretario_nome || s.nome}
-                    className="w-16 h-16 rounded-xl object-cover"
+                    className="w-full h-full rounded-xl object-cover object-top"
                     onError={(e) => { e.currentTarget.style.display = "none"; }} />
                 ) : (
-                  <div className="w-16 h-16 flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center">
                     <Users className="w-6 h-6 text-muted-foreground" />
                   </div>
                 )}

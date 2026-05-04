@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import PresencaTab from "@/components/camara/PresencaTab";
 import LicitacoesTab from "@/components/camara/LicitacoesTab";
 import ContratosTab from "@/components/camara/ContratosTab";
 import DespesasTab from "@/components/camara/DespesasTab";

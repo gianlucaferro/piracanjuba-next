@@ -486,10 +486,15 @@ export default function PrefeituraDestaques() {
               <span>Média: {formatCurrency(comparativo.media_go_per_capita)}</span>
             </div>
           </div>
-          <div className="mt-2 text-center">
-            <span className={`text-xs font-semibold ${acima ? "text-accent" : "text-warning"}`}>
-              Piracanjuba arrecada {pctDiff}% {acima ? "a mais" : "a menos"} que a média
-            </span>
+          <div className={`mt-4 text-center rounded-xl py-3 px-4 ${acima ? "bg-emerald-500/10 ring-1 ring-emerald-500/30" : "bg-amber-500/10 ring-1 ring-amber-500/30"}`}>
+            <p className={`text-xl md:text-2xl font-extrabold leading-tight ${acima ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
+              Piracanjuba arrecada{" "}
+              <span className="text-2xl md:text-3xl">{pctDiff}%</span>
+              {" "}{acima ? "a mais" : "a menos"}
+            </p>
+            <p className="text-xs md:text-sm text-muted-foreground mt-1">
+              que a média das {comparativo.municipios_amostra} cidades goianas comparáveis
+            </p>
           </div>
           {comparativo.municipios_nomes && (
             <p className="text-[10px] text-muted-foreground mt-2">

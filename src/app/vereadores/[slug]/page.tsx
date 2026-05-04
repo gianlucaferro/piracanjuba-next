@@ -167,15 +167,7 @@ export default async function VereadorPage({
             Soma de {remuneracoes.length} competências
           </p>
         </div>
-        <div className="stat-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Presença</p>
-          <p className="text-xl font-bold text-foreground mt-1">
-            {presencas.taxa != null ? `${presencas.taxa}%` : "—"}
-          </p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
-            {presencas.presentes}/{presencas.total} sessões
-          </p>
-        </div>
+        {/* Card Presença removido — dados estavam equivocados */}
         <div className="stat-card">
           <p className="text-xs uppercase tracking-wider text-muted-foreground">Atuação</p>
           <p className="text-xl font-bold text-foreground mt-1">{atuacoes.length}+</p>
@@ -266,29 +258,7 @@ export default async function VereadorPage({
         </section>
       )}
 
-      {/* Presença */}
-      {presencas.total > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
-            <CheckCircle2 className="w-5 h-5 text-primary" />
-            Presença em sessões ({presencas.taxa}%)
-          </h2>
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            <div className="stat-card text-center">
-              <p className="text-xs text-muted-foreground">Total</p>
-              <p className="text-2xl font-bold text-foreground">{presencas.total}</p>
-            </div>
-            <div className="stat-card text-center">
-              <p className="text-xs text-muted-foreground">Presenças</p>
-              <p className="text-2xl font-bold text-green-600">{presencas.presentes}</p>
-            </div>
-            <div className="stat-card text-center">
-              <p className="text-xs text-muted-foreground">Faltas</p>
-              <p className="text-2xl font-bold text-red-500">{presencas.faltas}</p>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Presença removida — dados estavam equivocados */}
 
       {/* Remuneração histórica */}
       {remuneracoes.length > 0 && (
