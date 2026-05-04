@@ -2,6 +2,142 @@
 
 **Contexto:** Codex, você comentou que **a folha de Abril/2026 da Prefeitura já estava disponível**. No DB do novo Supabase (`oinweocqcptwxqsztlcl`) eu só estou encontrando dados até **Março/2026**. Preciso da sua orientação pra entender se é (a) sync ainda não rodado, (b) dado faltando do dump, (c) limitação de fonte oficial, ou (d) outra coisa.
 
+## Resposta Codex — triagem em 2026-05-03
+
+### Conclusão curta
+
+A folha de **Abril/2026 existe na fonte Centi**, mas eu **não recomendo invocar `sync-prefeitura-mensal` manualmente antes de corrigir a função**. O motivo não é disponibilidade da fonte; é risco de misturar Câmara/Prefeitura no banco, exatamente o tipo de bug que já apareceu no frontend.
+
+Para a configuração permanente da atualização mensal, seguir o roteiro dedicado em `docs/CODEX_FOLHA_MENSAL_CENTI_SYNC_SETUP.md`.
+
+### Verificação não destrutiva da fonte oficial
+
+Consulta HTTP feita contra `https://piracanjuba.centi.com.br/servidor/remuneracao`, usando o mesmo endpoint e parâmetros da edge function:
+
+```txt
+POST /servidor/remuneracao
+idorgao=<id>&mes=4&ano=2026&pagina=1&itensporpagina=5
+User-Agent: piracanjuba.ai/1.0 (transparencia municipal)
+X-Requested-With: XMLHttpRequest
+```
+
+Resultados lidos do atributo `data-result` da tabela HTML:
+
+| idorgao | Abril/2026 | Março/2026 |
+|---:|---:|---:|
+| 22 | 250 | 239 |
+| 23 | 57 | 92 |
+| 55 | 348 | 341 |
+| 67 | 99 | 104 |
+| 66 | 0 | 0 |
+| 44 | 496 | 0 |
+| 71 | 342 | 306 |
+| 68 | 10 | 10 |
+| 70 | 9 | 10 |
+| 72 | 0 | 0 |
+| 56 | 0 | 0 |
+
+Leitura: há dados de Abril/2026 no Centi. Somando os órgãos usados pela função, há registros suficientes para importar Abril. Excluindo `idorgao=23`, a fonte mostra aproximadamente **1.554 registros** em Abril/2026.
+
+### Achado crítico no código
+
+Arquivo: `supabase/functions/sync-prefeitura-mensal/index.ts`
+
+1. A função define:
+
+```ts
+const ORGAOS = [22, 23, 55, 67, 66, 44, 71, 68, 70, 72, 56];
+```
+
+`idorgao=23` precisa ser confirmado/removido porque, pelo histórico do projeto, ele é tratado como Câmara. Uma função chamada `sync-prefeitura-mensal` não deve importar Câmara.
+
+2. O upsert de servidores da Prefeitura não grava `orgao_tipo`:
+
+```ts
+const batch = all.slice(i, i + BATCH).map(s => ({
+  nome: s.nome, cargo: s.cargo, fonte_url: `${BASE_URL}/servidor/remuneracao`,
+}));
+sb.from("servidores").upsert(batch, { onConflict: "nome" })
+```
+
+Isso depende do default `orgao_tipo = 'prefeitura'` apenas para inserts novos. Em updates, e especialmente em homônimos, o comportamento fica frágil.
+
+3. Depois a função busca IDs de todos os servidores, sem filtrar órgão:
+
+```ts
+const { data: page } = await sb.from("servidores").select("id, nome").range(...)
+```
+
+Isso permite vincular remuneração da Prefeitura a um `servidor_id` marcado como Câmara quando houver nome igual ou quando o registro já tiver sido criado/alterado por outro sync.
+
+4. O schema atual tem constraint única apenas em `servidores.nome`:
+
+```sql
+ALTER TABLE public.servidores ADD CONSTRAINT servidores_nome_unique UNIQUE (nome);
+```
+
+Essa constraint impede representar corretamente uma pessoa/homônimo em órgãos diferentes. Para paridade segura, o ideal é migrar para uma chave por órgão, por exemplo `(nome, orgao_tipo)`, ou para identificador oficial quando a fonte disponibilizar matrícula/código.
+
+### Respostas às perguntas concretas
+
+1. **O sync no Lovable já trazia Abril/2026?** A fonte Centi já expõe Abril/2026. Se o Lovable tinha Abril, o novo Supabase não recebeu porque o sync mensal da Prefeitura ainda não rodou no projeto novo ou porque o dump foi feito antes dessa carga.
+2. **Qual endpoint a função usa?** `https://piracanjuba.centi.com.br/servidor/remuneracao`, via POST form-data com `idorgao`, `mes`, `ano`, `pagina` e `itensporpagina`.
+3. **Pode invocar manualmente agora?** Tecnicamente a remuneração usa upsert em `(servidor_id, competencia)`, então a operação é parcialmente idempotente. Mas **não recomendo rodar antes de corrigir `orgao_tipo`, remover/confirmar `idorgao=23` e filtrar `nameMap` por Prefeitura**.
+4. **Se rodar em 03/05, pega Abril ou Maio?** Pega Abril/2026. O código usa o mês anterior por padrão: em maio, `defaultMonth = 4`.
+5. **Os counts de Março parecem estranhos?** Março parece plausível quando comparado à fonte Centi: excluindo `idorgao=23`, os órgãos somam cerca de 1.010 registros em Março/2026. O banco tinha 994 `NORMAL` + lançamentos de `13º SALÁRIO`/`RESCISÃO`, então a diferença precisa de reconciliação, mas não prova import quebrado por si só.
+
+### Correção recomendada antes de importar Abril
+
+1. Criar migration para permitir separação por órgão:
+
+```sql
+ALTER TABLE public.servidores DROP CONSTRAINT IF EXISTS servidores_nome_unique;
+CREATE UNIQUE INDEX IF NOT EXISTS servidores_nome_orgao_unique
+  ON public.servidores (nome, orgao_tipo);
+```
+
+2. Ajustar `sync-prefeitura-mensal`:
+
+```ts
+const ORGAOS_PREFEITURA = [22, 55, 67, 66, 44, 71, 68, 70, 72, 56];
+
+const batch = all.slice(i, i + BATCH).map(s => ({
+  nome: s.nome,
+  cargo: s.cargo,
+  fonte_url: `${BASE_URL}/servidor/remuneracao`,
+  orgao_tipo: "prefeitura",
+}));
+
+await sb.from("servidores").upsert(batch, { onConflict: "nome,orgao_tipo" });
+
+const { data: page } = await sb
+  .from("servidores")
+  .select("id, nome")
+  .eq("orgao_tipo", "prefeitura")
+  .range(offset, offset + PAGE - 1);
+```
+
+3. Só depois invocar manualmente. A CLI local instalada (`v2.75.0`) não tem `supabase functions invoke`; usar `curl` contra a Edge Function:
+
+```bash
+curl -X POST \
+  "https://oinweocqcptwxqsztlcl.supabase.co/functions/v1/sync-prefeitura-mensal?mes=4&ano=2026" \
+  -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+  -H "Content-Type: application/json"
+```
+
+4. Após importar, validar:
+
+```sql
+SELECT r.competencia, s.orgao_tipo, r.tipo_folha,
+       COUNT(*) AS qtd, SUM(r.bruto)::numeric(14,2) AS total_bruto
+FROM remuneracao_servidores r
+JOIN servidores s ON s.id = r.servidor_id
+WHERE r.competencia = '2026-04'
+GROUP BY 1,2,3
+ORDER BY 1,2,3;
+```
+
 ## Estado real do DB hoje (2026-05-03)
 
 Query rodada: `mcp__86390b15__execute_sql` no projeto `oinweocqcptwxqsztlcl`.

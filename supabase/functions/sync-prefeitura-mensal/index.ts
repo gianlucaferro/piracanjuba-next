@@ -9,6 +9,12 @@ const corsHeaders = {
 const BASE_URL = "https://piracanjuba.centi.com.br";
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
 
+// Câmara é idorgao=23 — fica fora da rotina de Prefeitura
+const ORGAOS_PREFEITURA = [22, 55, 67, 66, 44, 71, 68, 70, 72, 56];
+
+// Volume mínimo para considerar uma competência "publicada" pela Prefeitura
+const MIN_PREFEITURA_ROWS = 100;
+
 function parseBRL(str: string): number | null {
   if (!str || str.trim() === "") return null;
   const cleaned = str.replace(/\./g, "").replace(",", ".").trim();
@@ -28,6 +34,104 @@ interface ScrapedServidor {
   bruto: number | null;
   liquido: number | null;
   tipo_folha: string;
+}
+
+interface CompetenciaDetectada {
+  mes: number;
+  ano: number;
+  competencia: string;
+  totalFonte: number;
+  countsPorOrgao: Record<number, number>;
+  forced: boolean;
+}
+
+function competenciaKey(ano: number, mes: number) {
+  return `${ano}-${String(mes).padStart(2, "0")}`;
+}
+
+function parseDataResult(html: string): number {
+  const match = html.match(/data-result="(\d+)"/);
+  return match ? Number(match[1]) : 0;
+}
+
+function buildCandidateMonths(now = new Date()): Array<{ mes: number; ano: number }> {
+  const candidates: Array<{ mes: number; ano: number }> = [];
+  for (let offset = 0; offset < 6; offset++) {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 1));
+    candidates.push({ mes: d.getUTCMonth() + 1, ano: d.getUTCFullYear() });
+  }
+  return candidates;
+}
+
+async function fetchFolhaCount(idorgao: number, mes: number, ano: number): Promise<number> {
+  const body = new URLSearchParams({
+    idorgao: String(idorgao),
+    mes: String(mes),
+    ano: String(ano),
+    nome: "",
+    cargo: "",
+    decreto: "",
+    admissao: "",
+    pagina: "1",
+    itensporpagina: "5",
+  });
+  try {
+    const r = await fetch(`${BASE_URL}/servidor/remuneracao`, {
+      method: "POST",
+      headers: {
+        "User-Agent": UA,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: body.toString(),
+    });
+    if (!r.ok) return 0;
+    return parseDataResult(await r.text());
+  } catch (e) {
+    console.error(`Count orgao=${idorgao} ${mes}/${ano}: ${(e as Error).message}`);
+    return 0;
+  }
+}
+
+async function descobrirCompetenciaMaisRecente(
+  orgaos: number[],
+  forcedMes?: number,
+  forcedAno?: number,
+): Promise<CompetenciaDetectada> {
+  const candidates =
+    forcedMes && forcedAno
+      ? [{ mes: forcedMes, ano: forcedAno }]
+      : buildCandidateMonths();
+
+  for (const candidate of candidates) {
+    const counts = await Promise.all(
+      orgaos.map(async (orgao) => [orgao, await fetchFolhaCount(orgao, candidate.mes, candidate.ano)] as const),
+    );
+    const countsPorOrgao = Object.fromEntries(counts) as Record<number, number>;
+    const totalFonte = Object.values(countsPorOrgao).reduce((sum, count) => sum + count, 0);
+
+    if (forcedMes && forcedAno) {
+      return {
+        ...candidate,
+        competencia: competenciaKey(candidate.ano, candidate.mes),
+        totalFonte,
+        countsPorOrgao,
+        forced: true,
+      };
+    }
+
+    if (totalFonte >= MIN_PREFEITURA_ROWS) {
+      return {
+        ...candidate,
+        competencia: competenciaKey(candidate.ano, candidate.mes),
+        totalFonte,
+        countsPorOrgao,
+        forced: false,
+      };
+    }
+  }
+
+  throw new Error("Nenhuma competência recente da Prefeitura encontrada no Centi");
 }
 
 function parseServidoresHtml(html: string): ScrapedServidor[] {
@@ -52,7 +156,6 @@ function parseServidoresHtml(html: string): ScrapedServidor[] {
     const descontos = cells.length > COL.TOTAL_DESCONTOS ? parseBRL(cells[COL.TOTAL_DESCONTOS]) : null;
     const liquido = bruto !== null && descontos !== null ? Math.round((bruto - descontos) * 100) / 100 : null;
 
-    // Map tipo_pagto: RESCISÃO, 13º, FÉRIAS, etc.
     let tipo_folha = "NORMAL";
     if (tipoPagto.includes("RESCIS")) tipo_folha = "RESCISÃO";
     else if (tipoPagto.includes("13")) tipo_folha = "13º SALÁRIO";
@@ -80,37 +183,59 @@ async function fetchFolha(idorgao: number, mes: number, ano: number): Promise<Sc
     if (!r.ok) return [];
     return parseServidoresHtml(await r.text());
   } catch (e) {
-    console.error(`Fetch orgao=${idorgao}: ${e.message}`);
+    console.error(`Fetch orgao=${idorgao}: ${(e as Error).message}`);
     return [];
   }
 }
-
-const ORGAOS = [22, 23, 55, 67, 66, 44, 71, 68, 70, 72, 56];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const url = new URL(req.url);
   const orgaoFilter = url.searchParams.get("orgao");
-  
-  // Auto-detect: use previous month if no mes/ano provided
-  const now = new Date();
-  const defaultMonth = now.getMonth() === 0 ? 12 : now.getMonth(); // previous month
-  const defaultYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
-  const mes = parseInt(url.searchParams.get("mes") || String(defaultMonth));
-  const ano = parseInt(url.searchParams.get("ano") || String(defaultYear));
-  const competencia = `${ano}-${String(mes).padStart(2, "0")}`;
+  const forcedMes = url.searchParams.get("mes");
+  const forcedAno = url.searchParams.get("ano");
+  const dryRun = url.searchParams.get("dry_run") === "1";
+
+  const orgaos = orgaoFilter ? [parseInt(orgaoFilter)] : ORGAOS_PREFEITURA;
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
+  let detected: CompetenciaDetectada;
+  try {
+    detected = await descobrirCompetenciaMaisRecente(
+      orgaos,
+      forcedMes ? parseInt(forcedMes) : undefined,
+      forcedAno ? parseInt(forcedAno) : undefined,
+    );
+  } catch (error) {
+    const msg = (error as Error).message;
+    return new Response(
+      JSON.stringify({ success: false, error: msg }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
+  const { mes, ano, competencia, totalFonte, countsPorOrgao, forced } = detected;
+  console.log(`Competência detectada: ${competencia} (forced=${forced}, totalFonte=${totalFonte})`);
+
+  if (dryRun) {
+    return new Response(
+      JSON.stringify({ success: true, dry_run: true, detected, orgaos_consultados: orgaos }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   const { data: log } = await sb.from("sync_log")
-    .insert({ tipo: "prefeitura_mensal", status: "running", detalhes: { competencia } })
+    .insert({
+      tipo: "prefeitura_mensal",
+      status: "running",
+      detalhes: { competencia, totalFonte, countsPorOrgao, forced, orgaos },
+    })
     .select("id").single();
   const logId = log?.id;
 
   try {
-    const orgaos = orgaoFilter ? [parseInt(orgaoFilter)] : ORGAOS;
-    
     // Fetch all orgãos in parallel (3 at a time to avoid overwhelming the portal)
     const CONCURRENCY = 3;
     const allResults: ScrapedServidor[][] = new Array(orgaos.length);
@@ -124,7 +249,7 @@ Deno.serve(async (req) => {
     }
 
     // Deduplicate: prefer entries WITH salary data
-    const seen = new Map<string, number>(); // nome -> index in all
+    const seen = new Map<string, number>();
     const all: ScrapedServidor[] = [];
     for (const srvs of allResults) {
       for (const s of srvs) {
@@ -139,41 +264,52 @@ Deno.serve(async (req) => {
     }
     console.log(`Total unique: ${all.length}`);
 
-    // Batch upsert servidores — parallel batches
+    // Batch upsert servidores marcando orgao_tipo='prefeitura' explicitamente
+    // e usando chave composta (nome,orgao_tipo) para permitir homônimo na Câmara
     const BATCH = 200;
     const srvBatches: Promise<void>[] = [];
     for (let i = 0; i < all.length; i += BATCH) {
       const batch = all.slice(i, i + BATCH).map(s => ({
-        nome: s.nome, cargo: s.cargo, fonte_url: `${BASE_URL}/servidor/remuneracao`,
+        nome: s.nome,
+        cargo: s.cargo,
+        fonte_url: `${BASE_URL}/servidor/remuneracao`,
+        orgao_tipo: "prefeitura",
       }));
       srvBatches.push(
-        sb.from("servidores").upsert(batch, { onConflict: "nome" }).then(({ error }) => {
+        sb.from("servidores").upsert(batch, { onConflict: "nome,orgao_tipo" }).then(({ error }) => {
           if (error) console.error(`Srv batch ${i}: ${error.message}`);
         })
       );
     }
     await Promise.all(srvBatches);
 
-    // Fetch all servidor IDs (paginated to bypass 1000-row limit)
+    // Buscar IDs de servidores SOMENTE da Prefeitura (nameMap não pode pegar Câmara homônimo)
     const dbSrvs: { id: string; nome: string }[] = [];
     let offset = 0;
     const PAGE = 1000;
     while (true) {
-      const { data: page } = await sb.from("servidores").select("id, nome").range(offset, offset + PAGE - 1);
+      const { data: page } = await sb
+        .from("servidores")
+        .select("id, nome")
+        .eq("orgao_tipo", "prefeitura")
+        .range(offset, offset + PAGE - 1);
       if (!page || page.length === 0) break;
       dbSrvs.push(...page);
       if (page.length < PAGE) break;
       offset += PAGE;
     }
     const nameMap = new Map(dbSrvs.map(s => [s.nome, s.id]));
-    console.log(`nameMap: ${nameMap.size}`);
+    console.log(`nameMap (prefeitura): ${nameMap.size}`);
 
-    // Build remunerações and upsert in parallel batches
+    // Build remunerações e upsert em batches
     const rems = all
       .filter(s => s.bruto !== null && nameMap.has(s.nome))
       .map(s => ({
         servidor_id: nameMap.get(s.nome)!,
-        competencia, bruto: s.bruto, liquido: s.liquido, tipo_folha: s.tipo_folha || "NORMAL",
+        competencia,
+        bruto: s.bruto,
+        liquido: s.liquido,
+        tipo_folha: s.tipo_folha || "NORMAL",
         fonte_url: `${BASE_URL}/servidor/remuneracao`,
       }));
 
@@ -193,15 +329,26 @@ Deno.serve(async (req) => {
     const remResults = await Promise.all(remBatches);
     remCriadas = remResults.reduce((a, b) => a + b, 0);
 
-    const result = { competencia, servidores: all.length, remuneracoes: remCriadas, status: "success" };
+    const result = {
+      competencia,
+      forced,
+      totalFonte,
+      countsPorOrgao,
+      orgaos,
+      servidores: all.length,
+      remuneracoes: remCriadas,
+      status: "success",
+    };
 
     if (logId) {
       await sb.from("sync_log").update({
-        status: "success", detalhes: result, finished_at: new Date().toISOString(),
+        status: "success",
+        detalhes: result,
+        finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
 
-    // Send push notification for new payroll
+    // Push notification for new payroll
     if (remCriadas > 0) {
       const meses = ["", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
       const mesNome = meses[mes] || competencia;
@@ -221,7 +368,7 @@ Deno.serve(async (req) => {
           }),
         });
       } catch (e) {
-        console.error("Push notification error:", e.message);
+        console.error("Push notification error:", (e as Error).message);
       }
     }
 
@@ -232,10 +379,12 @@ Deno.serve(async (req) => {
     console.error("Erro:", error);
     if (logId) {
       await sb.from("sync_log").update({
-        status: "error", detalhes: { error: error.message }, finished_at: new Date().toISOString(),
+        status: "error",
+        detalhes: { error: (error as Error).message, competencia, countsPorOrgao },
+        finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    return new Response(JSON.stringify({ success: false, error: (error as Error).message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

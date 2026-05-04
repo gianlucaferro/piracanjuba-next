@@ -136,10 +136,12 @@ export async function fetchExecutivoRemuneracao(): Promise<ExecutivoRemuneracao[
   const results: ExecutivoRemuneracao[] = [];
   for (const e of exec) {
     const nameUpper = e.nome.toUpperCase();
-    // Find matching servidor
+    // Find matching servidor — SEMPRE filtrar orgao_tipo='prefeitura'
+    // para evitar casar homônimo da Câmara
     const { data: srvs } = await supabase
       .from("servidores")
       .select("id, nome")
+      .eq("orgao_tipo", "prefeitura")
       .ilike("nome", `%${nameUpper}%`)
       .limit(1);
     if (!srvs?.length) continue;
@@ -195,12 +197,14 @@ export async function fetchSecretariosRemuneracao(secretarias: Secretaria[]): Pr
 
   if (!searchEntries.length) return {};
 
-  // Fetch all servidores matching any of the first names
+  // Fetch all servidores matching any of the first names — APENAS Prefeitura
+  // (secretários nunca podem casar com servidor da Câmara)
   const firstNames = [...new Set(searchEntries.map(p => p.parts[0]))];
   const orFilter = firstNames.map(fn => `nome.ilike.${fn}%`).join(",");
   const { data: allServidoresRaw } = await supabase
     .from("servidores")
     .select("id, nome")
+    .eq("orgao_tipo", "prefeitura")
     .or(orFilter);
   const allServidores: { id: string; nome: string }[] = allServidoresRaw || [];
 

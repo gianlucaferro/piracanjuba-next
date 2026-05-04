@@ -4,6 +4,35 @@
 **Status:** Migração funcional mas com divergências de paridade. Site Lovable ainda em produção em `piracanjuba.ai` (DNS NÃO trocado ainda — usuário esperando Codex revisar antes do switch).
 **Pedido:** Auditoria sistemática de paridade Lovable vs Next — encontrar e corrigir TODA divergência de comportamento, dados ou layout.
 
+## Atualização Codex — triagem rápida em 2026-05-03
+
+Este documento continua sendo o checklist principal de paridade, mas alguns itens abaixo já mudaram no código atual. Antes de executar, o Claude deve tratar esta seção como a triagem mais recente.
+
+### Itens que parecem já implementados no código atual
+
+- `/plantao-farmacias` já usa `PlantaoFarmaciasClient` e renderiza o calendário completo agrupado por mês, com semana atual destacada e botão de compartilhar.
+- `PlantaoFarmaciasHome.tsx` já mostra a semana inteira (farmácia 24h + demais), não apenas a farmácia 24h.
+- `src/data/plantaoFarmacias.ts` já possui `COORDS` e `getWazeLink()`, então os botões Waze já estão modelados no frontend.
+- Home já tenta renderizar os 9 indicadores municipais (`populacao`, `pib_per_capita`, `ideb_anos_iniciais`, `saneamento_cobertura`, `salario_medio_formal`, `pessoal_ocupado_formal`, `populacao_ate_meio_sm`, `frota_veiculos`, `idhm`).
+- `HomeCivicInsights` já inclui "Atividade Recente da Câmara" e `RankingChart`, mas a posição na Home ainda precisa ser comparada com o Lovable.
+
+### Pendências ainda visíveis por auditoria estática
+
+1. **Home ainda tem imagem de fundo no hero.** `src/app/page.tsx` ainda renderiza `Image src="/hero-piracanjuba.webp"` com `opacity-60`. Se o Lovable referência for apenas gradient, remover esse `Image`.
+2. **Home ainda tem `AnuncioBannerPadrao`.** O arquivo segue importando e renderizando `AnuncioBannerPadrao`; o checklist abaixo diz que esse bloco não existe no Lovable.
+3. **Ranking de atuação provavelmente está no lugar errado.** `HomeCivicInsights` renderiza Atividade Recente primeiro e Ranking depois, tudo no final da página. Se o Lovable coloca o ranking em outro ponto, separar o componente em `HomeRankingAtuacao` e `HomeAtividadeRecente` para posicionar cada bloco corretamente.
+4. **Última competência da Prefeitura ainda é global no admin.** Em `src/components/prefeitura/PrefeituraClient.tsx`, `queryKey ["last-competencia"]` ainda consulta `remuneracao_servidores` sem filtrar `servidores.orgao_tipo = 'prefeitura'`. Isso pode exibir `2026-04` da Câmara como se fosse competência da Prefeitura.
+5. **Remuneração de Executivo/Secretários ainda pode casar homônimos da Câmara.** `fetchExecutivoRemuneracao()` e `fetchSecretariosRemuneracao()` em `src/data/prefeituraApi.ts` ainda buscam `servidores` sem filtro explícito `orgao_tipo = 'prefeitura'`.
+6. **A função `sync-prefeitura-mensal` precisa ser revisada antes de rodar manualmente.** Ver detalhes no arquivo `docs/CODEX_FOLHA_ABRIL_INVESTIGATION.md`: ela inclui `idorgao=23` e não grava `orgao_tipo: 'prefeitura'` no upsert de servidores.
+
+### Correção de prioridade máxima antes do DNS switch
+
+Separar definitivamente Prefeitura e Câmara nos dados de servidores/folha:
+
+- queries de leitura: sempre `servidores!inner(orgao_tipo)` ou pré-lista filtrada por `orgao_tipo`;
+- sync mensal Prefeitura: não incluir Câmara (`idorgao=23`) e gravar `orgao_tipo: 'prefeitura'`;
+- avaliar migration para trocar a unicidade de `servidores.nome` por chave que permita o mesmo nome em órgãos diferentes, idealmente `(nome, orgao_tipo)` ou identificador oficial quando existir.
+
 ## URLs de comparação
 
 - **Lovable (referência — produção atual):** `https://piracanjuba.ai`

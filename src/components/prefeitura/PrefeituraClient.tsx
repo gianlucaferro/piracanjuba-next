@@ -1314,13 +1314,15 @@ function AdminPanel() {
   const lastMensal = syncLogs?.find((l: any) => l.tipo === "prefeitura_mensal");
   const lastDiaria = syncLogs?.find((l: any) => l.tipo === "prefeitura_diaria");
 
-  // Última competência carregada
+  // Última competência carregada — SEMPRE filtrada por orgao_tipo='prefeitura'
+  // para evitar mostrar competência da Câmara como se fosse da Prefeitura
   const { data: lastCompetencia } = useQuery({
-    queryKey: ["last-competencia"],
+    queryKey: ["last-competencia-prefeitura"],
     queryFn: async () => {
       const { data } = await supabase
         .from("remuneracao_servidores")
-        .select("competencia")
+        .select("competencia, servidores!inner(orgao_tipo)")
+        .eq("servidores.orgao_tipo", "prefeitura")
         .order("competencia", { ascending: false })
         .limit(1)
         .maybeSingle();
