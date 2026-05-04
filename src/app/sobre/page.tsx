@@ -10,6 +10,10 @@ import {
   ShoppingBag,
   MessageCircle,
   Award,
+  Landmark,
+  Building2,
+  BarChart3,
+  ShieldCheck,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { pageMetadata } from "@/lib/seo";
@@ -238,41 +242,69 @@ export default function SobrePage() {
           O que você encontra no Piracanjuba.ai
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-          <div className="stat-card">
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Câmara Municipal
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Vereadores, projetos de lei, votações, atos administrativos, contratos,
-              licitações, despesas, receitas, diárias e remunerações.
-            </p>
+          <div className="stat-card border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                <Landmark className="w-5 h-5 text-blue-500" aria-hidden />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-foreground text-sm mb-1">
+                  Câmara Municipal
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Vereadores, projetos de lei, votações, atos administrativos, contratos,
+                  licitações, despesas, receitas, diárias e remunerações.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="stat-card">
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Prefeitura Municipal
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Prefeito, secretarias, contratos, servidores, despesas, obras, decretos,
-              portarias, leis municipais, frota e dados do TCM-GO.
-            </p>
+          <div className="stat-card border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                <Building2 className="w-5 h-5 text-emerald-500" aria-hidden />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-foreground text-sm mb-1">
+                  Prefeitura Municipal
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Prefeito, secretarias, contratos, servidores, despesas, obras, decretos,
+                  portarias, leis municipais, frota e dados do TCM-GO.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="stat-card">
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Indicadores municipais
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Saúde (dengue, CNES, profissionais), Educação (IDEB, escolas), Agro,
-              Segurança Pública, Benefícios Sociais, Arrecadação e Clima diário.
-            </p>
+          <div className="stat-card border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                <BarChart3 className="w-5 h-5 text-purple-500" aria-hidden />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-foreground text-sm mb-1">
+                  Indicadores municipais
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Saúde (dengue, CNES, profissionais), Educação (IDEB, escolas), Agro,
+                  Segurança Pública, Benefícios Sociais, Arrecadação e Clima diário.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="stat-card">
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Verificável na fonte
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Cada informação tem link direto para o portal oficial de origem
-              (Prefeitura, Câmara, TCM, Tesouro, IBGE etc).
-            </p>
+          <div className="stat-card border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-5 h-5 text-amber-600" aria-hidden />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-foreground text-sm mb-1">
+                  Verificável na fonte
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Cada informação tem link direto para o portal oficial de origem
+                  (Prefeitura, Câmara, TCM, Tesouro, IBGE etc).
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
