@@ -138,6 +138,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
+    /* Scroll behavior smooth quando navegacao por anchor */
+    scroll-behavior: smooth;
+    /* Safe area insets pra iPhone notch */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   body {
@@ -146,12 +151,53 @@
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     -webkit-overflow-scrolling: touch;
+    /* Otimiza render compositing em mobile */
+    overscroll-behavior-y: none;
+  }
+
+  /* Inputs nao podem ter font < 16px no iOS senao aplica zoom auto */
+  input, select, textarea {
+    font-size: max(16px, 1rem);
+  }
+
+  /* Touch target minimo 44x44px (Apple HIG + Material Design) em mobile */
+  @media (pointer: coarse) {
+    button, a[role="button"], [role="button"], a.btn, .tap-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Acessibilidade: respeitar prefer-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   html.font-sm { font-size: 14px; }
   html.font-md { font-size: 16px; }
   html.font-lg { font-size: 18px; }
   html.font-xl { font-size: 20px; }
+}
+
+@layer utilities {
+  /* Lazy rendering em sections fora do fold — melhora LCP em mobile.
+     Browsers ≥ 85%; degrada gracefully em browsers antigos. */
+  .lazy-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+
+  /* Wrapper para tabelas que precisam scrollar em mobile */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
 }
 
 @layer utilities {
