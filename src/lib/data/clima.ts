@@ -33,7 +33,7 @@ export const fetchClimaUltimoDia = unstable_cache(
     return data as ClimaDia;
   },
   ["clima-ultimo-dia"],
-  { revalidate: 1800, tags: ["clima"] }, // 30 min
+  { revalidate: 900, tags: ["clima"] },
 );
 
 export const fetchClimaSerieDias = unstable_cache(

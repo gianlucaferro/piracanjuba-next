@@ -9,7 +9,7 @@ export const metadata = pageMetadata({
   path: "/clima",
 });
 
-export const revalidate = 1800;
+export const revalidate = 900; // 15 min — alinhado com cron sync-inmet-clima-15min
 
 export default async function ClimaPage() {
   const [dias, resumo] = await Promise.all([
