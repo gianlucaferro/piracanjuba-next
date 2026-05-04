@@ -2864,25 +2864,114 @@ function TCMTab() {
   if (!apontamentos?.length) {
     return (
       <div className="space-y-4">
-        <div className="stat-card text-center py-12">
-          <Gavel className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-          <h3 className="text-lg font-semibold text-foreground mb-1">
-            Apontamentos do TCM-GO em sincronização
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Os primeiros dados do Tribunal de Contas dos Municípios serão importados na próxima
-            sincronização semanal. Enquanto isso, consulte direto na fonte oficial:
-          </p>
+        <div className="stat-card border-amber-500/30 bg-amber-500/5">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-base font-semibold text-foreground mb-1">
+                TCM-GO: dados públicos limitados
+              </h3>
+              <p className="text-sm text-foreground/85 leading-relaxed">
+                Diferente da Prefeitura e da Câmara, o Tribunal de Contas dos Municípios
+                de Goiás <strong>não publica decisões e apontamentos por município em
+                formato estruturado público</strong>. As decisões ficam no SICOM (acesso
+                institucional) e em relatórios SQL Server dinâmicos não indexáveis.
+                Estamos trabalhando em parsers do Diário Oficial Eletrônico do TCM-GO
+                para trazer os dados aqui.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-base font-semibold text-foreground pt-2">
+          Consulte diretamente nas fontes oficiais:
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <a
-            href="https://www.tcm.go.gov.br/portalcidadao/"
+            href="https://www.tcm.go.gov.br/cidadao/"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+            className="stat-card card-hover flex items-start gap-3 group"
           >
-            <ExternalLink className="w-4 h-4" />
-            Portal do Cidadão TCM-GO
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+              <Gavel className="w-5 h-5 text-blue-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-foreground text-sm mb-0.5">
+                Portal do Cidadão TCM-GO
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Página oficial com canais de transparência ativa do tribunal.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+          </a>
+
+          <a
+            href="https://www.tcm.go.gov.br/site/?p=mural-de-licitacoes"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="stat-card card-hover flex items-start gap-3 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+              <FileText className="w-5 h-5 text-orange-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-foreground text-sm mb-0.5">
+                Mural Eletrônico
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Editais e licitações fiscalizadas pelo TCM, incluindo Piracanjuba.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+          </a>
+
+          <a
+            href="https://www.tcm.go.gov.br/cidadao/transparencia-passiva/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="stat-card card-hover flex items-start gap-3 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+              <BookOpen className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-foreground text-sm mb-0.5">
+                Transparência Passiva (LAI)
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Solicite formalmente dados específicos sobre Piracanjuba via Lei de Acesso à Informação.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+          </a>
+
+          <a
+            href="https://www.tcm.go.gov.br/site/?cat=21"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="stat-card card-hover flex items-start gap-3 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+              <ScrollText className="w-5 h-5 text-purple-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-foreground text-sm mb-0.5">
+                Notícias e Decisões
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Notícias do TCM-GO sobre fiscalização e decisões plenárias.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
           </a>
         </div>
+
+        <p className="text-xs text-muted-foreground pt-2 italic">
+          🚧 Em desenvolvimento: parser do Diário Oficial Eletrônico do TCM-GO
+          para indexar automaticamente menções a Piracanjuba nos PDFs publicados.
+        </p>
       </div>
     );
   }
