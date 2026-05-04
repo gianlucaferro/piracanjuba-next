@@ -16,7 +16,7 @@ import {
   ExternalLink, Phone, Mail, MapPin, Clock, Building2,
   Users, DollarSign, FileText, Gavel, Briefcase, HardHat,
   Search, Info, BarChart3, RefreshCw, Settings, CheckCircle2,
-  AlertCircle, Loader2, Sparkles, Truck
+  AlertCircle, AlertTriangle, Loader2, Sparkles, Truck
 } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
@@ -2846,7 +2846,22 @@ function ProcuradoriaTab() {
 }
 
 // ===== TCM-GO TAB =====
+type TcmApontamento = {
+  id: string;
+  numero_processo: string;
+  ano: number | null;
+  orgao_alvo: string | null;
+  tipo: string | null;
+  status: string | null;
+  ementa: string | null;
+  ementa_resumo_ia: string | null;
+  data_publicacao: string | null;
+  valor_envolvido: number | null;
+  fonte_url: string | null;
+};
+
 function TCMTab() {
+  const [selectedApontamento, setSelectedApontamento] = useState<TcmApontamento | null>(null);
   const { data: apontamentos, isLoading } = useQuery({
     queryKey: ["tcm-go-apontamentos"],
     queryFn: async () => {
@@ -2855,7 +2870,7 @@ function TCMTab() {
         .select("id, numero_processo, ano, orgao_alvo, tipo, status, ementa, ementa_resumo_ia, data_publicacao, valor_envolvido, fonte_url")
         .order("data_publicacao", { ascending: false, nullsFirst: false })
         .limit(100);
-      return data ?? [];
+      return (data ?? []) as TcmApontamento[];
     },
   });
 
@@ -3023,8 +3038,13 @@ function TCMTab() {
 
       {/* Lista */}
       <div className="space-y-3">
-        {(apontamentos as any[]).map((a) => (
-          <div key={a.id} className="stat-card space-y-2">
+        {apontamentos.map((a) => (
+          <button
+            key={a.id}
+            type="button"
+            onClick={() => setSelectedApontamento(a)}
+            className="stat-card space-y-2 w-full text-left card-hover transition-all hover:border-primary/40 cursor-pointer"
+          >
             <div className="flex items-start justify-between gap-2 flex-wrap">
               <div className="flex-1 min-w-0">
                 <div className="inline-flex items-center gap-2 mb-1">
@@ -3036,10 +3056,8 @@ function TCMTab() {
                   {a.numero_processo}
                   {a.ano && <span className="text-muted-foreground font-normal"> · {a.ano}</span>}
                 </h3>
-                {a.ementa_resumo_ia ? (
-                  <p className="text-sm text-foreground mt-1.5 leading-relaxed">{a.ementa_resumo_ia}</p>
-                ) : a.ementa ? (
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-3">{a.ementa}</p>
+                {a.ementa ? (
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">{a.ementa}</p>
                 ) : null}
               </div>
               {a.valor_envolvido && (
@@ -3051,14 +3069,11 @@ function TCMTab() {
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
               <span>{a.data_publicacao ? new Date(a.data_publicacao).toLocaleDateString("pt-BR") : "Data não informada"}</span>
-              {a.fonte_url && (
-                <a href={a.fonte_url} target="_blank" rel="noopener noreferrer"
-                   className="text-primary hover:underline inline-flex items-center gap-1">
-                  <ExternalLink className="w-3 h-3" /> Documento original
-                </a>
-              )}
+              <span className="text-primary inline-flex items-center gap-1 font-medium">
+                <Sparkles className="w-3 h-3" /> Ver resumo
+              </span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -3070,6 +3085,85 @@ function TCMTab() {
         </a>
         {" "}· Cada apontamento abaixo aponta para o PDF original no domínio tcm.go.gov.br
       </p>
+
+      {/* Dialog de resumo */}
+      <Dialog open={!!selectedApontamento} onOpenChange={(o) => !o && setSelectedApontamento(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-start gap-2 flex-wrap">
+              <span>{selectedApontamento?.numero_processo}</span>
+              {selectedApontamento?.ano && (
+                <span className="text-muted-foreground font-normal">· {selectedApontamento.ano}</span>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Badges */}
+            {selectedApontamento && (
+              <div className="inline-flex items-center gap-2 flex-wrap">
+                {selectedApontamento.tipo && <Badge variant="secondary">{selectedApontamento.tipo}</Badge>}
+                {selectedApontamento.status && <Badge variant="outline">{selectedApontamento.status}</Badge>}
+                {selectedApontamento.orgao_alvo && <Badge variant="outline">{selectedApontamento.orgao_alvo}</Badge>}
+                {selectedApontamento.data_publicacao && (
+                  <Badge variant="outline">{new Date(selectedApontamento.data_publicacao).toLocaleDateString("pt-BR")}</Badge>
+                )}
+              </div>
+            )}
+
+            {/* Resumo IA (cached em DB — sem custo de IA por clique) */}
+            {selectedApontamento?.ementa_resumo_ia ? (
+              <div className="rounded-lg bg-muted/50 border p-4">
+                <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
+                </p>
+                <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">
+                  {selectedApontamento.ementa_resumo_ia}
+                </p>
+              </div>
+            ) : selectedApontamento?.ementa ? (
+              <div className="rounded-lg bg-muted/50 border p-4">
+                <p className="text-xs font-medium text-muted-foreground mb-2">Ementa original</p>
+                <p className="text-sm text-foreground leading-relaxed">{selectedApontamento.ementa}</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground italic">Sem resumo disponível.</p>
+            )}
+
+            {/* Ementa original (sempre que tiver, abaixo do resumo) */}
+            {selectedApontamento?.ementa_resumo_ia && selectedApontamento?.ementa && (
+              <details className="text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                  Ver dados originais coletados
+                </summary>
+                <p className="mt-2 text-muted-foreground leading-relaxed pl-3 border-l-2 border-border">
+                  {selectedApontamento.ementa}
+                </p>
+              </details>
+            )}
+
+            {/* Valor */}
+            {selectedApontamento?.valor_envolvido && (
+              <div className="flex items-center justify-between rounded-lg bg-orange-500/5 border border-orange-500/20 p-3">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Valor envolvido</span>
+                <span className="font-bold text-orange-500">{formatCurrency(Number(selectedApontamento.valor_envolvido))}</span>
+              </div>
+            )}
+
+            {/* Documento original */}
+            {selectedApontamento?.fonte_url && (
+              <a
+                href={selectedApontamento.fonte_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between rounded-lg bg-primary/5 border border-primary/20 p-3 hover:bg-primary/10 transition-colors group"
+              >
+                <span className="text-sm font-medium text-foreground">Ver documento original (PDF)</span>
+                <ExternalLink className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+              </a>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
