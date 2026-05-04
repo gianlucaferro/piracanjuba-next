@@ -1,145 +1,564 @@
-import { ExternalLink, Heart, CreditCard } from "lucide-react";
+import Link from "next/link";
+import {
+  ExternalLink,
+  Sparkles,
+  Scale,
+  Users,
+  Map,
+  Pill,
+  Trash2,
+  ShoppingBag,
+  MessageCircle,
+  Award,
+} from "lucide-react";
+import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { pageMetadata } from "@/lib/seo";
-import PixDonation from "./PixDonation";
 import SubscriptionForm from "./SubscriptionForm";
 
 export const metadata = pageMetadata({
-  title: "Sobre o Piracanjuba.ai — Transparência com IA",
+  title:
+    "Sobre o Piracanjuba.ai — 1º portal de transparência com IA do Brasil | Piracanjuba GO",
   description:
-    "Sobre o projeto Piracanjuba.ai: metodologia, fontes oficiais, política de dados e como apoiar a transparência municipal de Piracanjuba GO.",
+    "Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Independente, sem vínculo com órgão público, criado e mantido por Gianluca Ferro.",
   path: "/sobre",
 });
 
+const SITE_URL = "https://piracanjuba.ai";
+const WHATSAPP_NUM = "5564992375458";
+const WHATSAPP_MSG =
+  "Olá, Gianluca! Vim pelo Piracanjuba.Ai! Meu nome é: ";
+const whatsappLink = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(WHATSAPP_MSG)}`;
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "Sobre o Piracanjuba.ai",
+  url: `${SITE_URL}/sobre`,
+  description:
+    "Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Independente, sem vínculo público, criado e mantido por Gianluca Ferro.",
+  mainEntity: {
+    "@type": "WebSite",
+    name: "Piracanjuba.ai",
+    url: SITE_URL,
+    inLanguage: "pt-BR",
+    publisher: {
+      "@type": "Organization",
+      name: "Ferro Labs Tecnologia LTDA",
+      taxID: "66.034.538/0001-25",
+      url: SITE_URL,
+      founder: {
+        "@type": "Person",
+        name: "Gianluca Ferro",
+      },
+    },
+    about: {
+      "@type": "Place",
+      name: "Piracanjuba",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Piracanjuba",
+        addressRegion: "GO",
+        addressCountry: "BR",
+      },
+    },
+  },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "O que é o Piracanjuba.ai?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Centraliza dados oficiais da Prefeitura e Câmara de Piracanjuba (GO) — contratos, licitações, salários de servidores, despesas, projetos de lei, votações — em uma única interface clara e acessível, com links de volta às fontes originais para verificação.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quem mantém o Piracanjuba.ai?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O projeto é integralmente desenvolvido e mantido por Gianluca Ferro, cidadão comum, com recursos próprios. Não há vínculo, financiamento ou patrocínio do poder público (Prefeitura, Câmara, governo estadual ou federal).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Por que usar inteligência artificial em transparência pública?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A Lei de Acesso à Informação (Lei 12.527/2011) garante que dados públicos estejam disponíveis, mas na prática estão fragmentados em dezenas de portais distintos. A IA permite consolidar, classificar e resumir essas informações em linguagem clara, transformando transparência formal em transparência efetiva. É o caminho para que IA se torne padrão ouro da transparência pública municipal no Brasil.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "O Piracanjuba.ai é oficial?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Não. É uma iniciativa cidadã independente. Todos os dados exibidos vêm de fontes públicas oficiais (Prefeitura, Câmara, TCM-GO, IBGE, Tesouro Nacional, DataSUS, INEP, INMET, entre outras), com link direto para a origem em cada informação.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Que tipo de dados o Piracanjuba.ai mostra?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura (contratos, licitações, servidores, salários, despesas, obras, decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos), educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais, arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão, coleta de lixo, contatos úteis, marketplace local).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Como entro em contato?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `WhatsApp do criador Gianluca Ferro: +55 64 99237-5458. Link direto: ${whatsappLink}`,
+      },
+    },
+  ],
+};
+
 const fontes = [
   {
-    label: "Portal da Transparência — Piracanjuba",
-    url: "https://acessoainformacao.camaradepiracanjuba.go.gov.br/",
-  },
-  { label: "Site da Prefeitura de Piracanjuba", url: "https://www.piracanjuba.go.gov.br/" },
-  { label: "Lista de vereadores", url: "https://camaradepiracanjuba.go.gov.br/vereadores/" },
-  {
-    label: "Projetos de leis",
-    url: "https://acessoainformacao.camaradepiracanjuba.go.gov.br/projetos-de-leis/",
+    label: "Portal Centi — Câmara de Piracanjuba",
+    url: "https://camarapiracanjuba.centi.com.br/",
   },
   {
-    label: "Resultados de votações",
-    url: "https://acessoainformacao.camaradepiracanjuba.go.gov.br/acesso-aos-resultados-das-votacoes/",
+    label: "Portal Centi — Prefeitura de Piracanjuba",
+    url: "https://piracanjuba.centi.com.br/",
   },
   {
-    label: "Tabela remuneratória",
-    url: "https://acessoainformacao.camaradepiracanjuba.go.gov.br/tabela-de-cargos-e-funcoes/",
+    label: "Tribunal de Contas dos Municípios (TCM-GO)",
+    url: "https://www.tcm.go.gov.br/",
   },
   {
-    label: "Folha de pagamento",
-    url: "https://camarapiracanjuba.centi.com.br/servidor/remuneracao",
+    label: "Tesouro Nacional — SICONFI/DCA",
+    url: "https://siconfi.tesouro.gov.br/",
   },
+  {
+    label: "Portal da Transparência Federal",
+    url: "https://portaldatransparencia.gov.br/",
+  },
+  { label: "IBGE Cidades — Piracanjuba", url: "https://cidades.ibge.gov.br/brasil/go/piracanjuba" },
+  { label: "InfoDengue (Fiocruz)", url: "https://info.dengue.mat.br/" },
+  { label: "INEP — Censo Escolar", url: "https://www.gov.br/inep/" },
 ];
 
 export default function SobrePage() {
   return (
-    <div className="container py-8 max-w-2xl">
-      <h1 className="text-2xl font-bold text-foreground mb-6">Sobre o Piracanjuba.ai</h1>
+    <div className="container py-8 max-w-3xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
-      <div className="stat-card mb-6">
-        <p className="text-sm text-foreground leading-relaxed mb-3">
-          O <strong>Piracanjuba.ai</strong> é uma ferramenta independente de transparência
-          do município de Piracanjuba, GO, criada e mantida por Gianluca Ferro.
-        </p>
-        <p className="text-sm text-foreground leading-relaxed mb-3">
-          O projeto não possui vínculo com a Prefeitura, a Câmara Municipal ou qualquer
-          órgão público e usa inteligência artificial para facilitar o acesso às
-          informações públicas, sempre com base em dados oficiais.
-        </p>
-        <p className="text-sm text-foreground leading-relaxed">
-          Aqui, qualquer cidadão pode acompanhar projetos, contratos, votações e dados
-          de remuneração de forma simples, rápida e verificável, com links diretos para
-          os portais de origem.
-        </p>
-      </div>
+      <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight">
+        Sobre o Piracanjuba.ai
+      </h1>
+      <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl">
+        O <strong className="text-foreground">primeiro portal de transparência municipal
+        otimizado por inteligência artificial do Brasil</strong> — independente, criado
+        e mantido por um cidadão comum, com base 100% em dados oficiais.
+      </p>
 
-      <div
-        id="apoie"
-        className="stat-card mb-6 border-accent/30 bg-accent/5 scroll-mt-20"
+      {/* Lead — bloco de destaque visual */}
+      <section
+        aria-labelledby="lead"
+        className="stat-card mb-8 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent"
       >
-        <div className="flex items-center gap-2 mb-4">
-          <Heart className="w-5 h-5 text-accent" />
-          <h2 className="text-lg font-semibold text-foreground">
-            Piracanjuba.ai precisa da sua ajuda
-          </h2>
-        </div>
-
-        <p className="text-sm text-foreground leading-relaxed mb-3">
-          O projeto está sendo muito elogiado, mas{" "}
-          <strong className="text-foreground">
-            quase ninguém contribui financeiramente
-          </strong>
-          . Hoje, os custos estão sendo bancados sozinho por mim.
-        </p>
-
-        <p className="text-sm text-foreground/80 leading-relaxed mb-3">
-          Se cada pessoa que acredita no projeto ajudar com um pequeno valor, fica muito
-          mais viável manter a plataforma ativa e evoluindo.
-        </p>
-
-        <p className="text-sm text-foreground font-medium leading-relaxed mb-5">
-          Contribua com PIX e ajude a manter essa iniciativa independente para nossa cidade.
-        </p>
-
-        <PixDonation />
-
-        <div className="mt-5 pt-5 border-t-2 border-accent/30">
-          <div className="flex items-center gap-2.5 mb-4 bg-accent/10 rounded-lg px-4 py-3">
-            <CreditCard className="w-5 h-5 text-accent shrink-0" />
-            <p className="text-base font-semibold text-foreground">
-              Em breve: doação por cartão de crédito
+        <div className="flex items-start gap-3">
+          <Award className="w-6 h-6 text-primary shrink-0 mt-0.5" aria-hidden />
+          <div>
+            <h2 id="lead" className="text-lg font-semibold text-foreground mb-2">
+              O que é o Piracanjuba.ai
+            </h2>
+            <p className="text-sm md:text-base text-foreground leading-relaxed mb-3">
+              O Piracanjuba.ai é o <strong>primeiro portal de transparência otimizado por
+              inteligência artificial de um município brasileiro</strong>, integralmente
+              desenvolvido por <strong>Gianluca Ferro</strong> — cidadão comum — com recursos
+              próprios e <strong>sem qualquer vínculo, financiamento ou patrocínio do poder
+              público</strong>.
+            </p>
+            <p className="text-sm text-foreground/85 leading-relaxed">
+              A plataforma centraliza dados oficiais da Prefeitura e Câmara de Piracanjuba (GO),
+              do Tribunal de Contas dos Municípios, do Tesouro Nacional, do IBGE, da DataSUS, do
+              INEP e de outros órgãos públicos em uma única interface clara, com links diretos
+              para a fonte original de cada informação.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <blockquote className="my-6 border-l-4 border-accent pl-4 py-3">
-        <p className="text-lg md:text-xl font-semibold italic text-foreground">
-          &quot;Todo poder emana do povo.&quot;
+      {/* IA + Transparência: visão */}
+      <section aria-labelledby="ia-transparencia" className="mb-8">
+        <h2
+          id="ia-transparencia"
+          className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 mb-3"
+        >
+          <Sparkles className="w-5 h-5 text-primary" aria-hidden />
+          IA como aliada da transparência e do combate à corrupção
+        </h2>
+        <p className="text-sm md:text-base text-foreground leading-relaxed mb-3">
+          Acreditamos que a inteligência artificial aplicada à transparência pública vai se
+          tornar o <strong>padrão ouro</strong> da fiscalização cidadã no médio prazo.
+          É a forma mais eficiente e barata de disponibilizar informações de
+          múltiplos portais centralizadas, classificadas e resumidas em linguagem
+          acessível — dando sentido real ao princípio constitucional da publicidade.
         </p>
-        <cite className="text-sm text-muted-foreground not-italic mt-1 block">
-          — Constituição Federal do Brasil
+        <p className="text-sm md:text-base text-foreground leading-relaxed">
+          Embora exista uma quantidade massiva de dados sobre administração pública
+          disponíveis na internet — atendendo formalmente à{" "}
+          <a
+            href="https://www.planalto.gov.br/ccivil_03/_Ato2011-2014/2011/Lei/L12527.htm"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline inline-flex items-center gap-1"
+          >
+            Lei de Acesso à Informação (Lei 12.527/2011)
+            <ExternalLink className="w-3 h-3" aria-hidden />
+          </a>{" "}
+          — a eficácia prática é prejudicada quando o cidadão comum não sabe onde
+          buscar a informação que precisa. O Piracanjuba.ai resolve essa lacuna.
+        </p>
+      </section>
+
+      {/* O que você encontra */}
+      <section aria-labelledby="o-que-tem" className="mb-8">
+        <h2
+          id="o-que-tem"
+          className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 mb-4"
+        >
+          <Map className="w-5 h-5 text-primary" aria-hidden />
+          O que você encontra no Piracanjuba.ai
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          <div className="stat-card">
+            <h3 className="font-semibold text-foreground text-sm mb-2">
+              Câmara Municipal
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Vereadores, projetos de lei, votações, atos administrativos, contratos,
+              licitações, despesas, receitas, diárias e remunerações.
+            </p>
+          </div>
+          <div className="stat-card">
+            <h3 className="font-semibold text-foreground text-sm mb-2">
+              Prefeitura Municipal
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Prefeito, secretarias, contratos, servidores, despesas, obras, decretos,
+              portarias, leis municipais, frota e dados do TCM-GO.
+            </p>
+          </div>
+          <div className="stat-card">
+            <h3 className="font-semibold text-foreground text-sm mb-2">
+              Indicadores municipais
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Saúde (dengue, CNES, profissionais), Educação (IDEB, escolas), Agro,
+              Segurança Pública, Benefícios Sociais, Arrecadação e Clima diário.
+            </p>
+          </div>
+          <div className="stat-card">
+            <h3 className="font-semibold text-foreground text-sm mb-2">
+              Verificável na fonte
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Cada informação tem link direto para o portal oficial de origem
+              (Prefeitura, Câmara, TCM, Tesouro, IBGE etc).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Utilidade pública diária */}
+      <section aria-labelledby="utilidade" className="mb-8">
+        <h2
+          id="utilidade"
+          className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 mb-4"
+        >
+          <Users className="w-5 h-5 text-primary" aria-hidden />
+          Utilidade pública para o dia a dia
+        </h2>
+        <p className="text-sm md:text-base text-foreground leading-relaxed mb-4">
+          Além de transparência, o Piracanjuba.ai oferece <strong>serviços de utilidade
+          pública</strong> que facilitam a vida do morador:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="stat-card flex items-start gap-3">
+            <Trash2 className="w-5 h-5 text-primary mt-0.5 shrink-0" aria-hidden />
+            <div>
+              <h3 className="font-semibold text-foreground text-sm mb-1">
+                Coleta de Lixo
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Datas da coleta comum e seletiva por bairro, com opção de adicionar
+                lembrete no Google Agenda — o morador recebe notificação na véspera.
+              </p>
+            </div>
+          </div>
+          <div className="stat-card flex items-start gap-3">
+            <Pill className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" aria-hidden />
+            <div>
+              <h3 className="font-semibold text-foreground text-sm mb-1">
+                Plantão de Farmácias
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Calendário oficial das farmácias 24h da semana atual e das próximas,
+                com telefone, foto e link direto para o Waze.
+              </p>
+            </div>
+          </div>
+          <div className="stat-card flex items-start gap-3">
+            <MessageCircle className="w-5 h-5 text-[#25D366] mt-0.5 shrink-0" aria-hidden />
+            <div>
+              <h3 className="font-semibold text-foreground text-sm mb-1">
+                Zap PBA
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Diretório gratuito de WhatsApp profissional de comércios, prestadores
+                de serviços e profissionais autônomos de Piracanjuba.
+              </p>
+            </div>
+          </div>
+          <div className="stat-card flex items-start gap-3">
+            <ShoppingBag className="w-5 h-5 text-[#25D366] mt-0.5 shrink-0" aria-hidden />
+            <div>
+              <h3 className="font-semibold text-foreground text-sm mb-1">
+                Compra e Venda PBA
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Marketplace local 100% gratuito para anunciar e negociar imóveis,
+                veículos, eletrônicos, agro e serviços entre moradores.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Plataforma evolutiva */}
+      <section aria-labelledby="evolutivo" className="mb-8">
+        <h2
+          id="evolutivo"
+          className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 mb-3"
+        >
+          <Scale className="w-5 h-5 text-primary" aria-hidden />
+          Plataforma em evolução constante
+        </h2>
+        <p className="text-sm md:text-base text-foreground leading-relaxed">
+          O Piracanjuba.ai é desenvolvido em iterações contínuas, com novas integrações
+          mensais a portais de dados públicos federais e estaduais (CNJ DataJud, PNCP,
+          TSE, INMET, CONAB, DETRAN-GO, INEP entre outros). Sugestões de novas funcionalidades
+          são bem-vindas.
+        </p>
+      </section>
+
+      {/* FAQ — Perguntas Frequentes */}
+      <section aria-labelledby="faq" className="mb-8">
+        <h2
+          id="faq"
+          className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2"
+        >
+          <Sparkles className="w-5 h-5 text-primary" aria-hidden />
+          Perguntas Frequentes
+        </h2>
+        <div className="space-y-3">
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>O que é o Piracanjuba.ai?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              É o primeiro portal de transparência municipal otimizado por inteligência
+              artificial do Brasil. Centraliza dados oficiais da Prefeitura e Câmara de
+              Piracanjuba (GO) — contratos, licitações, salários de servidores, despesas,
+              projetos de lei, votações — em uma única interface clara e acessível, com
+              links de volta às fontes originais para verificação.
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>Quem mantém o projeto?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              O projeto é integralmente desenvolvido e mantido por <strong>Gianluca Ferro</strong>,
+              cidadão comum, com recursos próprios. <strong>Não há vínculo, financiamento ou
+              patrocínio do poder público</strong> (Prefeitura, Câmara, governo estadual ou
+              federal).
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>Por que usar inteligência artificial em transparência pública?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              A Lei de Acesso à Informação (Lei 12.527/2011) garante que dados públicos
+              estejam disponíveis, mas na prática estão fragmentados em dezenas de portais
+              distintos. A IA permite consolidar, classificar e resumir essas informações
+              em linguagem clara, transformando transparência formal em transparência
+              efetiva. É o caminho para que IA se torne <strong>padrão ouro</strong> da
+              transparência pública municipal no Brasil.
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>O Piracanjuba.ai é oficial?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              Não. É uma iniciativa cidadã independente. Todos os dados exibidos vêm de
+              fontes públicas oficiais (Prefeitura, Câmara, TCM-GO, IBGE, Tesouro Nacional,
+              DataSUS, INEP, INMET, entre outras), com link direto para a origem em cada
+              informação.
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>Que tipo de dados estão disponíveis?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura
+              (contratos, licitações, servidores, salários, despesas, obras, decretos,
+              portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos),
+              educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais,
+              arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão,
+              coleta de lixo, contatos úteis, marketplace local).
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>Como os dados são atualizados?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              Mais de 50 sincronizações automáticas (cron jobs) rodam em frequências
+              variadas: diárias (clima, licitações federais), semanais (atos da Câmara,
+              processos), quinzenais (folha de pagamento), mensais (despesas, obras) e
+              trimestrais (saúde, segurança, agro). Tudo registrado em log público
+              auditável.
+            </p>
+          </details>
+
+          <details className="stat-card group">
+            <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
+              <span>Como entrar em contato?</span>
+              <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-3">
+              WhatsApp do criador Gianluca Ferro:{" "}
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                 className="text-primary hover:underline font-semibold">
+                +55 64 99237-5458
+              </a>. Resposta em até 24h em dias úteis.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      {/* Citação Constituição */}
+      <blockquote className="my-8 border-l-4 border-primary pl-5 py-3">
+        <p className="text-lg md:text-xl font-semibold italic text-foreground">
+          &ldquo;Todo o poder emana do povo, que o exerce por meio de representantes eleitos
+          ou diretamente.&rdquo;
+        </p>
+        <cite className="text-sm text-muted-foreground not-italic mt-2 block">
+          — Constituição Federal do Brasil, Art. 1º, parágrafo único
         </cite>
       </blockquote>
 
-      <div id="alertas" className="stat-card mb-8 border-primary/20">
+      {/* Contato — botão WhatsApp destacado */}
+      <section
+        aria-labelledby="contato"
+        className="stat-card mb-8 border-[#25D366]/30 bg-[#25D366]/5"
+      >
+        <h2 id="contato" className="text-lg font-semibold text-foreground mb-2">
+          Tem interesse em saber mais sobre o projeto?
+        </h2>
+        <p className="text-sm text-foreground leading-relaxed mb-4">
+          Entre em contato direto com o criador, <strong>Gianluca Ferro</strong>,
+          pelo WhatsApp. Jornalistas, pesquisadores, gestores públicos e cidadãos
+          curiosos: estou disponível.
+        </p>
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold px-5 py-3 rounded-lg transition-colors"
+        >
+          <WhatsAppIcon className="w-5 h-5" />
+          Conversar pelo WhatsApp
+        </a>
+        <p className="text-xs text-muted-foreground mt-3">
+          (64) 99237-5458 · resposta em até 24h em dias úteis
+        </p>
+      </section>
+
+      {/* Newsletter */}
+      <section aria-labelledby="alertas" id="alertas" className="stat-card mb-8 border-primary/20">
         <SubscriptionForm />
-      </div>
+      </section>
 
-      <h2 className="text-lg font-semibold text-foreground mb-4">Fontes oficiais</h2>
-      <div className="space-y-2 mb-8">
-        {fontes.map((f) => (
-          <a
-            key={f.url}
-            href={f.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="stat-card card-hover flex items-center justify-between"
-          >
-            <span className="text-sm font-medium text-foreground">{f.label}</span>
-            <ExternalLink className="w-4 h-4 text-muted-foreground" />
-          </a>
-        ))}
-      </div>
+      {/* Fontes oficiais */}
+      <section aria-labelledby="fontes" className="mb-8">
+        <h2 id="fontes" className="text-xl md:text-2xl font-bold text-foreground mb-4">
+          Fontes oficiais
+        </h2>
+        <p className="text-sm text-muted-foreground mb-3">
+          Todos os dados exibidos no Piracanjuba.ai vêm das seguintes fontes públicas:
+        </p>
+        <div className="space-y-2">
+          {fontes.map((f) => (
+            <a
+              key={f.url}
+              href={f.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="stat-card card-hover flex items-center justify-between"
+            >
+              <span className="text-sm font-medium text-foreground">{f.label}</span>
+              <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
+            </a>
+          ))}
+        </div>
+      </section>
 
-      <h2 className="text-lg font-semibold text-foreground mb-4">Política de dados</h2>
-      <div className="stat-card">
-        <ul className="text-sm text-foreground space-y-2 list-disc list-inside">
-          <li>Utilizamos apenas dados públicos disponíveis nos portais oficiais</li>
-          <li>Não é necessário cadastro para navegar pelo app</li>
-          <li>
-            E-mails de assinatura são usados apenas para enviar atualizações semanais
-          </li>
-          <li>
-            Este app não tem vínculo com a Prefeitura, a Câmara Municipal ou qualquer
-            órgão público
-          </li>
-        </ul>
-      </div>
+      {/* Política de dados */}
+      <section aria-labelledby="politica" className="mb-8">
+        <h2 id="politica" className="text-xl md:text-2xl font-bold text-foreground mb-4">
+          Política de dados
+        </h2>
+        <div className="stat-card">
+          <ul className="text-sm text-foreground space-y-2 list-disc list-inside">
+            <li>Utilizamos apenas dados públicos disponíveis nos portais oficiais.</li>
+            <li>Não é necessário cadastro para navegar pelo app.</li>
+            <li>
+              E-mails de assinatura são usados exclusivamente para enviar atualizações
+              semanais — sem repasse a terceiros.
+            </li>
+            <li>
+              Este projeto não tem vínculo com a Prefeitura, a Câmara Municipal ou
+              qualquer órgão público.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <p className="text-xs text-muted-foreground text-center mt-8">
+        Piracanjuba.ai · Mantido por Ferro Labs Tecnologia LTDA · CNPJ 66.034.538/0001-25
+      </p>
     </div>
   );
 }

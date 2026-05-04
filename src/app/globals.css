@@ -138,11 +138,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
-    /* Scroll behavior smooth quando navegacao por anchor */
     scroll-behavior: smooth;
-    /* Safe area insets pra iPhone notch */
-    padding-top: env(safe-area-inset-top, 0);
-    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   body {
@@ -151,8 +147,9 @@
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     -webkit-overflow-scrolling: touch;
-    /* Otimiza render compositing em mobile */
-    overscroll-behavior-y: none;
+    /* Safe area insets aplicado no body, nao no html (preserva scroll) */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   /* Inputs nao podem ter font < 16px no iOS senao aplica zoom auto */
