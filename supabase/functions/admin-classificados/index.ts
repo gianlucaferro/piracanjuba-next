@@ -12,9 +12,24 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Validate admin session
-    const authHeader = req.headers.get("authorization") || "";
-    const token = authHeader.replace("Bearer ", "").trim();
+    const body = await req.json();
+    const { action, id, updates, admin_token } = body;
+
+    // Token vem PRIMEIRO do body (admin_token) — Supabase JS injeta o anon key
+    // automaticamente no header Authorization e sobrescreve qualquer Bearer
+    // custom passado em headers, entao o body e' a fonte confiavel.
+    // Fallback pra header pra retrocompat com chamadas direto via curl.
+    let token = (admin_token ?? "").trim();
+    if (!token) {
+      const authHeader = req.headers.get("authorization") || "";
+      const headerToken = authHeader.replace("Bearer ", "").trim();
+      // So usa header se NAO for o anon key (caso comum em chamadas via JS)
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
+      if (headerToken && headerToken !== anonKey) {
+        token = headerToken;
+      }
+    }
+
     if (!token) {
       return new Response(JSON.stringify({ error: "Token ausente" }), {
         status: 401,
@@ -45,8 +60,6 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const { action, id, updates } = await req.json();
 
     if (!id || typeof id !== "string") {
       return new Response(JSON.stringify({ error: "ID inválido" }), {

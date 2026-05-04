@@ -142,8 +142,7 @@ function AdminEditForm({
         fotos,
       };
       const { data, error } = await supabase.functions.invoke("admin-classificados", {
-        headers: { Authorization: `Bearer ${adminToken}` },
-        body: { action: "update", id: item.id, updates },
+        body: { action: "update", id: item.id, updates, admin_token: adminToken },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -311,9 +310,13 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
   };
 
   const adminInvoke = async (action: string, id: string, updates?: Record<string, any>) => {
+    // Token vai no BODY (admin_token), nao em Authorization header. O Supabase JS
+    // injeta automaticamente o anon key em Authorization e sobrescreve qualquer
+    // valor passado em headers — entao a edge function recebia anon key, calculava
+    // hash diferente do token admin e retornava 401. Mesmo padrao dos outros
+    // endpoints admin (admin-zap-update, admin-zap-read).
     const { data, error } = await supabase.functions.invoke("admin-classificados", {
-      headers: { Authorization: `Bearer ${adminToken}` },
-      body: { action, id, updates },
+      body: { action, id, updates, admin_token: adminToken },
     });
     if (error) throw error;
     if (data?.error) throw new Error(data.error);
