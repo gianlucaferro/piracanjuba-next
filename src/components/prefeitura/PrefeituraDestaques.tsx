@@ -174,18 +174,24 @@ async function fetchFolhaTotal() {
   const competencia = latestPref.competencia as string;
 
   // Soma agregada por orgao para a competencia escolhida, via inner
-  // join com servidores e filtro orgao_tipo (substitui o discriminador
-  // fragil baseado em fonte_url ILIKE '%camara%').
-  const { data: rems } = await supabase
-    .from("remuneracao_servidores")
-    .select("bruto, servidores!inner(orgao_tipo)")
-    .eq("competencia", competencia);
-
+  // join com servidores e filtro orgao_tipo. Paginar via .range() para
+  // contornar o limite default de 1000 rows do Supabase REST (a Prefeitura
+  // tem ~1.400 servidores em competencias completas).
   let prefTotal = 0, prefCount = 0, camTotal = 0, camCount = 0;
-  for (const r of (rems || []) as Array<{ bruto: number | null; servidores: { orgao_tipo: string } }>) {
-    const valor = r.bruto || 0;
-    if (r.servidores.orgao_tipo === "prefeitura") { prefTotal += valor; prefCount++; }
-    else if (r.servidores.orgao_tipo === "camara") { camTotal += valor; camCount++; }
+  const PAGE = 1000;
+  for (let offset = 0; ; offset += PAGE) {
+    const { data: rems } = await supabase
+      .from("remuneracao_servidores")
+      .select("bruto, servidores!inner(orgao_tipo)")
+      .eq("competencia", competencia)
+      .range(offset, offset + PAGE - 1);
+    if (!rems || rems.length === 0) break;
+    for (const r of rems as Array<{ bruto: number | null; servidores: { orgao_tipo: string } }>) {
+      const valor = r.bruto || 0;
+      if (r.servidores.orgao_tipo === "prefeitura") { prefTotal += valor; prefCount++; }
+      else if (r.servidores.orgao_tipo === "camara") { camTotal += valor; camCount++; }
+    }
+    if (rems.length < PAGE) break;
   }
 
   return {
