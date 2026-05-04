@@ -28,6 +28,7 @@ import {
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
+import ClimaHomeWidget from "@/components/clima/ClimaHomeWidget";
 import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
 
 export const metadata = pageMetadata({
@@ -197,6 +198,9 @@ export default async function HomePage() {
 
         {/* Plantão de Farmácias */}
         <PlantaoFarmaciasHome />
+
+        {/* Clima atual em Piracanjuba */}
+        <ClimaHomeWidget />
 
         {/* Alerta Dengue */}
         <DengueAlert />

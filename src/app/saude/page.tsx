@@ -2,6 +2,7 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 import { pageMetadata } from "@/lib/seo";
 import { fetchSaudeData } from "@/lib/data/setores";
 import SaudeClient from "./SaudeClient";
+import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
 
 export const metadata = pageMetadata({
   title: "Saúde Pública de Piracanjuba GO",
@@ -65,6 +66,9 @@ export default async function SaudePage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="container py-4 space-y-4">
+        <ClimaSaudeCard />
+      </div>
       <SaudeClient />
     </HydrationBoundary>
   );
