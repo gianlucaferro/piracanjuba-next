@@ -33,6 +33,15 @@ const WHATSAPP_MSG =
   "Olá, Gianluca! Vim pelo Piracanjuba.Ai! Meu nome é: ";
 const whatsappLink = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(WHATSAPP_MSG)}`;
 
+/** Marca visual: "Piracanjuba" + ".ai" verde (#25D366). Padrão do site. */
+function Brand() {
+  return (
+    <>
+      Piracanjuba<span className="text-[#25D366]">.ai</span>
+    </>
+  );
+}
+
 const articleJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
@@ -162,7 +171,7 @@ export default function SobrePage() {
       />
 
       <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight">
-        Sobre o Piracanjuba.ai
+        Sobre o <Brand />
       </h1>
       <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl">
         O <strong className="text-foreground">primeiro portal de transparência municipal
@@ -179,10 +188,10 @@ export default function SobrePage() {
           <Award className="w-6 h-6 text-primary shrink-0 mt-0.5" aria-hidden />
           <div>
             <h2 id="lead" className="text-lg font-semibold text-foreground mb-2">
-              O que é o Piracanjuba.ai
+              O que é o <Brand />
             </h2>
             <p className="text-sm md:text-base text-foreground leading-relaxed mb-3">
-              O Piracanjuba.ai é o <strong>primeiro portal de transparência otimizado por
+              O <Brand /> é o <strong>primeiro portal de transparência otimizado por
               inteligência artificial de um município brasileiro</strong>, integralmente
               desenvolvido por <strong>Gianluca Ferro</strong> — cidadão comum — com recursos
               próprios e <strong>sem qualquer vínculo, financiamento ou patrocínio do poder
@@ -210,7 +219,7 @@ export default function SobrePage() {
         <p className="text-sm md:text-base text-foreground leading-relaxed mb-3">
           Acreditamos que a inteligência artificial aplicada à transparência pública vai se
           tornar o <strong>padrão ouro</strong> da fiscalização cidadã no médio prazo
-          e iniciativas como o Piracanjuba.ai tendem a se espalhar por outras cidades.
+          e iniciativas como o <Brand /> tendem a se espalhar por outras cidades.
           É a forma mais eficiente e barata de disponibilizar informações de
           múltiplos portais centralizadas, classificadas e resumidas em linguagem
           acessível — dando sentido real ao princípio constitucional da publicidade.
@@ -228,7 +237,7 @@ export default function SobrePage() {
             <ExternalLink className="w-3 h-3" aria-hidden />
           </a>{" "}
           — a eficácia prática é prejudicada quando o cidadão comum não sabe onde
-          buscar a informação que precisa. O Piracanjuba.ai resolve essa lacuna.
+          buscar a informação que precisa. O <Brand /> resolve essa lacuna.
         </p>
       </section>
 
@@ -239,7 +248,7 @@ export default function SobrePage() {
           className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 mb-4"
         >
           <Map className="w-5 h-5 text-primary" aria-hidden />
-          O que você encontra no Piracanjuba.ai
+          O que você encontra no <Brand />
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div className="stat-card border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
@@ -248,10 +257,10 @@ export default function SobrePage() {
                 <Landmark className="w-5 h-5 text-blue-500" aria-hidden />
               </div>
               <div className="min-w-0">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
+                <h3 className="font-semibold text-foreground text-base mb-1.5">
                   Câmara Municipal
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-sm text-foreground/85 leading-relaxed">
                   Vereadores, projetos de lei, votações, atos administrativos, contratos,
                   licitações, despesas, receitas, diárias e remunerações.
                 </p>
@@ -264,10 +273,10 @@ export default function SobrePage() {
                 <Building2 className="w-5 h-5 text-emerald-500" aria-hidden />
               </div>
               <div className="min-w-0">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
+                <h3 className="font-semibold text-foreground text-base mb-1.5">
                   Prefeitura Municipal
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-sm text-foreground/85 leading-relaxed">
                   Prefeito, secretarias, contratos, servidores, despesas, obras, decretos,
                   portarias, leis municipais, frota e dados do TCM-GO.
                 </p>
@@ -280,10 +289,10 @@ export default function SobrePage() {
                 <BarChart3 className="w-5 h-5 text-purple-500" aria-hidden />
               </div>
               <div className="min-w-0">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
+                <h3 className="font-semibold text-foreground text-base mb-1.5">
                   Indicadores municipais
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-sm text-foreground/85 leading-relaxed">
                   Saúde (dengue, CNES, profissionais), Educação (IDEB, escolas), Agro,
                   Segurança Pública, Benefícios Sociais, Arrecadação e Clima diário.
                 </p>
@@ -296,10 +305,10 @@ export default function SobrePage() {
                 <ShieldCheck className="w-5 h-5 text-amber-600" aria-hidden />
               </div>
               <div className="min-w-0">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
+                <h3 className="font-semibold text-foreground text-base mb-1.5">
                   Verificável na fonte
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-sm text-foreground/85 leading-relaxed">
                   Cada informação tem link direto para o portal oficial de origem
                   (Prefeitura, Câmara, TCM, Tesouro, IBGE etc).
                 </p>
@@ -319,7 +328,7 @@ export default function SobrePage() {
           Utilidade pública para o dia a dia
         </h2>
         <p className="text-sm md:text-base text-foreground leading-relaxed mb-4">
-          Além de transparência, o Piracanjuba.ai oferece <strong>serviços de utilidade
+          Além de transparência, o <Brand /> oferece <strong>serviços de utilidade
           pública</strong> que facilitam a vida do morador:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -384,7 +393,7 @@ export default function SobrePage() {
           Plataforma em evolução constante
         </h2>
         <p className="text-sm md:text-base text-foreground leading-relaxed">
-          O Piracanjuba.ai é desenvolvido em iterações contínuas, com novas integrações
+          O <Brand /> é desenvolvido em iterações contínuas, com novas integrações
           mensais a portais de dados públicos federais e estaduais (CNJ DataJud, PNCP,
           TSE, INMET, CONAB, DETRAN-GO, INEP entre outros). Sugestões de novas funcionalidades
           são bem-vindas.
@@ -403,7 +412,7 @@ export default function SobrePage() {
         <div className="space-y-3">
           <details className="stat-card group">
             <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
-              <span>O que é o Piracanjuba.ai?</span>
+              <span>O que é o <Brand />?</span>
               <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
@@ -445,7 +454,7 @@ export default function SobrePage() {
 
           <details className="stat-card group">
             <summary className="cursor-pointer font-semibold text-foreground text-sm md:text-base flex items-center justify-between">
-              <span>O Piracanjuba.ai é oficial?</span>
+              <span>O <Brand /> é oficial?</span>
               <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
@@ -491,11 +500,12 @@ export default function SobrePage() {
               <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
-              WhatsApp do criador Gianluca Ferro:{" "}
+              Quer falar sobre o <Brand />? Entre em contato comigo, Gianluca Ferro,
+              pelo WhatsApp{" "}
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
                  className="text-primary hover:underline font-semibold">
                 +55 64 99237-5458
-              </a>. Resposta em até 24h em dias úteis.
+              </a>.
             </p>
           </details>
         </div>
@@ -521,9 +531,9 @@ export default function SobrePage() {
           Tem interesse em saber mais sobre o projeto?
         </h2>
         <p className="text-sm text-foreground leading-relaxed mb-4">
-          Entre em contato direto com o criador, <strong>Gianluca Ferro</strong>,
-          pelo WhatsApp. Jornalistas, pesquisadores, gestores públicos e cidadãos
-          curiosos: estou disponível.
+          Quer falar sobre o <Brand />? Entre em contato comigo, Gianluca Ferro,
+          pelo WhatsApp +55 64 99237-5458. Jornalistas, pesquisadores, gestores
+          públicos, estudantes e cidadãos curiosos são bem vindos.
         </p>
         <a
           href={whatsappLink}
@@ -550,7 +560,7 @@ export default function SobrePage() {
           Fontes oficiais
         </h2>
         <p className="text-sm text-muted-foreground mb-3">
-          Todos os dados exibidos no Piracanjuba.ai vêm das seguintes fontes públicas:
+          Todos os dados exibidos no <Brand /> vêm das seguintes fontes públicas:
         </p>
         <div className="space-y-2">
           {fontes.map((f) => (
@@ -590,7 +600,7 @@ export default function SobrePage() {
       </section>
 
       <p className="text-xs text-muted-foreground text-center mt-8">
-        Piracanjuba.ai · Mantido por Ferro Labs Tecnologia LTDA · CNPJ 66.034.538/0001-25
+        <Brand /> · Mantido por Ferro Labs Tecnologia LTDA · CNPJ 66.034.538/0001-25
       </p>
     </div>
   );
