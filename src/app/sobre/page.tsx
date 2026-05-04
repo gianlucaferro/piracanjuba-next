@@ -205,7 +205,8 @@ export default function SobrePage() {
         </h2>
         <p className="text-sm md:text-base text-foreground leading-relaxed mb-3">
           Acreditamos que a inteligência artificial aplicada à transparência pública vai se
-          tornar o <strong>padrão ouro</strong> da fiscalização cidadã no médio prazo.
+          tornar o <strong>padrão ouro</strong> da fiscalização cidadã no médio prazo
+          e iniciativas como o Piracanjuba.ai tendem a se espalhar por outras cidades.
           É a forma mais eficiente e barata de disponibilizar informações de
           múltiplos portais centralizadas, classificadas e resumidas em linguagem
           acessível — dando sentido real ao princípio constitucional da publicidade.
