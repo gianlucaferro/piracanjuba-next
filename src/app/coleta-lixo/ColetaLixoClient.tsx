@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, X, MapPin, Clock, Link2, CalendarPlus, Check } from "lucide-react";
+import { Search, X, MapPin, Clock, Link2, CalendarPlus, Check, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -48,30 +48,31 @@ function getDias(bairro: string, data: Record<string, string[]>) {
   return Object.entries(data).filter(([,l])=>l.some(x=>matchBairro(x,bairro)||matchBairro(bairro,x))).map(([d])=>d);
 }
 
-function getTodayIdx() {
-  const d = new Date().getDay();
-  return d === 0 ? 7 : d;
-}
-
 type Status = "hoje" | "amanha" | "futuro" | "passou" | "proxima";
 
+function getDaysUntil(diaName: string) {
+  const target = WEEK_IDX[diaName];
+  if (target === undefined) return 99;
+  return (target - new Date().getDay() + 7) % 7;
+}
+
 function getStatus(diaName: string): Status {
-  const today = getTodayIdx();
+  const today = new Date().getDay();
   const idx = WEEK_IDX[diaName];
   if (idx === undefined) return "futuro";
-  if (idx === today) return "hoje";
-  if (idx === today + 1) return "amanha";
-  if (idx > today) return "futuro";
+  const daysUntil = getDaysUntil(diaName);
+  if (daysUntil === 0) return "hoje";
+  if (daysUntil === 1) return "amanha";
+  if (today === 0 || idx > today) return "futuro";
   return "passou";
 }
 
 function getProximaDia(dias: string[]) {
   if (!dias.length) return null;
-  const com = dias.map(d=>({d, idx: WEEK_IDX[d]||9, status: getStatus(d)}));
-  const futuros = com.filter(x=>["hoje","amanha","futuro"].includes(x.status));
-  if (futuros.length) { futuros.sort((a,b)=>a.idx-b.idx); return futuros[0]; }
-  com.sort((a,b)=>a.idx-b.idx);
-  return {...com[0], status:"proxima" as Status};
+  const com = dias.map(d=>({d, daysUntil: getDaysUntil(d), status: getStatus(d)}));
+  com.sort((a,b)=>a.daysUntil-b.daysUntil);
+  const next = com[0];
+  return { d: next.d, status: next.status === "passou" ? "proxima" as Status : next.status };
 }
 
 const WEEK_RRULE_ANTERIOR: Record<string, string> = { "Segunda-feira":"SU","Terça-feira":"MO","Quarta-feira":"TU","Quinta-feira":"WE","Sexta-feira":"TH","Sábado":"FR" };
@@ -80,19 +81,42 @@ function proximaOcorrenciaAnterior(diaName: string) {
   const today = new Date();
   const todayDow = today.getDay();
   const targetDow = WEEK_IDX[diaName] ?? 1;
-  let diff = targetDow - todayDow - 1;
-  if (diff <= 0) diff += 7;
+  const reminderDow = (targetDow + 6) % 7;
+  const diff = (reminderDow - todayDow + 7) % 7;
   const d = new Date(today);
   d.setDate(today.getDate() + diff);
-  return d.toISOString().slice(0, 10).replace(/-/g, "");
+  d.setHours(18, 0, 0, 0);
+  if (d.getTime() <= today.getTime()) {
+    d.setDate(d.getDate() + 7);
+  }
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}${mm}${dd}`;
 }
 
 function horarioEvento(dataStr: string) {
   return `${dataStr}T180000/${dataStr}T183000`;
 }
 
+type CalendarReminderEvent = {
+  label: string;
+  url: string;
+  tipo: "comum" | "seletiva";
+};
+
+function calendarReminderButtonClass(tipo: CalendarReminderEvent["tipo"]) {
+  const base = "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors";
+
+  if (tipo === "seletiva") {
+    return `${base} bg-emerald-600 border border-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:border-emerald-400 dark:text-emerald-950 dark:hover:bg-emerald-400`;
+  }
+
+  return `${base} bg-card border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/50`;
+}
+
 function gerarEventosCalendario(bairro: string, diasComum: string[], diasSeletiva: string[]) {
-  const eventos: { label: string; url: string }[] = [];
+  const eventos: CalendarReminderEvent[] = [];
   diasComum.forEach(dia => {
     const rrule = WEEK_RRULE_ANTERIOR[dia];
     if (!rrule) return;
@@ -104,7 +128,7 @@ function gerarEventosCalendario(bairro: string, diasComum: string[], diasSeletiv
       dates: horarioEvento(inicio),
       recur: `RRULE:FREQ=WEEKLY;BYDAY=${rrule}`,
     });
-    eventos.push({ label: `Lixo comum — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}` });
+    eventos.push({ label: `Lixo comum — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "comum" });
   });
   diasSeletiva.forEach(dia => {
     const rrule = WEEK_RRULE_ANTERIOR[dia];
@@ -117,7 +141,7 @@ function gerarEventosCalendario(bairro: string, diasComum: string[], diasSeletiv
       dates: horarioEvento(inicio),
       recur: `RRULE:FREQ=WEEKLY;BYDAY=${rrule}`,
     });
-    eventos.push({ label: `Seletiva — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}` });
+    eventos.push({ label: `Seletiva — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "seletiva" });
   });
   return eventos;
 }
@@ -135,6 +159,46 @@ function StatusBadge({ status }: { status: Status }) {
 }
 
 interface Saco { cor: string; borda: string; label: string }
+
+function SacoPreto() {
+  return (
+    <div className="flex flex-col items-center gap-1 opacity-85">
+      <svg width="42" height="56" viewBox="0 0 42 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M16 5.5 Q21 3 26 5.5" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" fill="none" />
+        <path d="M14 8 C7 10 5 17 5 23 L6 47 C6 50 9 52 12 52 L30 52 C33 52 36 50 36 47 L37 23 C37 17 35 10 28 8 Z" fill="#1c1917" stroke="#44403c" strokeWidth="1.5" />
+        <path d="M13 21 Q21 17 29 21" stroke="#3f3f3f" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M13 28 Q21 24 29 28" stroke="#3f3f3f" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+        <path d="M15 35 Q21 32 27 35" stroke="#3f3f3f" strokeWidth="1" strokeLinecap="round" fill="none" />
+      </svg>
+      <span className="text-sm text-muted-foreground font-semibold">Saco preto</span>
+    </div>
+  );
+}
+
+function SacosColoridos() {
+  const cores = [
+    { fill: "#f5f5f4", stroke: "#a8a29e" },
+    { fill: "#3b82f6", stroke: "#2563eb" },
+    { fill: "#22c55e", stroke: "#16a34a" },
+  ];
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex gap-1 items-end">
+        {cores.map((c, i) => (
+          <svg key={i} width="24" height="32" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9 3 Q12 1.5 15 3" stroke={c.stroke} strokeWidth="1.5" strokeLinecap="round" fill="none" />
+            <path d="M8 5 C4 6 3 10 3 13 L3.5 27 C3.5 29 5 30 7 30 L17 30 C19 30 20.5 29 20.5 27 L21 13 C21 10 20 6 16 5 Z" fill={c.fill} stroke={c.stroke} strokeWidth="1.2" />
+            <path d="M7 12 Q12 10 17 12" stroke={c.stroke} strokeWidth="1" strokeLinecap="round" fill="none" opacity=".6" />
+          </svg>
+        ))}
+      </div>
+      <span className="text-sm text-muted-foreground font-semibold text-center leading-tight">
+        Branco, azul<br />ou verde
+      </span>
+    </div>
+  );
+}
 
 function ColetaCard({ titulo, subtitulo, dias, sacos, seletivaMsg, reciclaveis, naoRec }: {
   titulo: string; subtitulo: string; dias: string[]; sacos: Saco[]; seletivaMsg: string | null; reciclaveis: string[] | null; naoRec: string[] | null;
@@ -227,6 +291,9 @@ function ProximaBanner({ proxima, tipo }: { proxima: { d: string; status: Status
         <div className="text-2xl font-extrabold text-foreground flex items-center flex-wrap gap-2">{diaText} {badge}</div>
         <div className="text-sm text-muted-foreground">{sub}</div>
       </div>
+      <div className="shrink-0 flex items-center justify-center pl-2">
+        {isComum ? <SacoPreto /> : <SacosColoridos />}
+      </div>
     </div>
   );
 }
@@ -253,17 +320,27 @@ export default function ColetaLixoClient() {
   const [selected, setSelected] = useState<string | null>(null);
   const [showDD, setShowDD] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shareError, setShareError] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
   const [showCal, setShowCal] = useState(false);
 
   // Read URL on mount
   useEffect(() => {
-    try {
-      const slug = new URLSearchParams(window.location.search).get("bairro");
-      if (slug) {
-        const found = allBairros.find(b => slugify(b) === slug);
-        if (found) setSelected(found);
-      }
-    } catch {}
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      try {
+        const slug = new URLSearchParams(window.location.search).get("bairro");
+        if (slug) {
+          const found = allBairros.find(b => slugify(b) === slug);
+          if (!cancelled && found) setSelected(found);
+        }
+      } catch {}
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -272,13 +349,56 @@ export default function ColetaLixoClient() {
   }, [query]);
 
   function pick(b: string) { setSelected(b); setQuery(b); setShowDD(false); setShowCal(false); }
-  function reset() { setSelected(null); setQuery(""); setShowDD(false); setShowCal(false); setCopied(false); }
+  function reset() { setSelected(null); setQuery(""); setShowDD(false); setShowCal(false); setCopied(false); setShareError(false); setShareUrl(""); }
+  function fallbackCopy(text: string) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    if (!ok) throw new Error("copy_failed");
+  }
+  function writeClipboard(text: string) {
+    try {
+      fallbackCopy(text);
+      return Promise.resolve();
+    } catch {
+      // Continue to the async Clipboard API when the legacy click-time copy is blocked.
+    }
+
+    if (navigator.clipboard?.writeText) {
+      return Promise.race([
+        navigator.clipboard.writeText(text),
+        new Promise<void>((_, reject) => setTimeout(() => reject(new Error("clipboard_timeout")), 800)),
+      ]);
+    }
+
+    return Promise.reject(new Error("copy_unavailable"));
+  }
   function copiarLink(bairro: string) {
     const url = new URL(window.location.href);
     url.searchParams.set("bairro", slugify(bairro));
-    navigator.clipboard.writeText(url.toString()).then(() => {
+    const text = url.toString();
+    setShareUrl(text);
+
+    writeClipboard(text).then(() => {
       setCopied(true);
+      setShareError(false);
       setTimeout(() => setCopied(false), 2500);
+    }).catch(() => {
+      try {
+        fallbackCopy(text);
+        setCopied(true);
+        setShareError(false);
+        setTimeout(() => setCopied(false), 2500);
+      } catch {
+          setShareError(true);
+          setTimeout(() => setShareError(false), 2500);
+      }
     });
   }
 
@@ -346,13 +466,35 @@ export default function ColetaLixoClient() {
             <div className="flex flex-wrap gap-1.5 items-center">
               <Button variant="outline" size="sm" onClick={reset} className="rounded-full text-xs">Trocar bairro</Button>
               <Button variant="outline" size="sm" onClick={() => copiarLink(selected)} className={`rounded-full text-xs ${copied ? "bg-green-100 dark:bg-green-900/40 border-green-300 dark:border-green-700 text-green-800 dark:text-green-300" : ""}`}>
-                {copied ? <><Check className="w-3.5 h-3.5 mr-1" /> Link copiado!</> : <><Link2 className="w-3.5 h-3.5 mr-1" /> Compartilhar</>}
+                {copied ? <><Check className="w-3.5 h-3.5 mr-1" /> Link copiado!</> : shareError ? <><X className="w-3.5 h-3.5 mr-1" /> Não copiou</> : <><Link2 className="w-3.5 h-3.5 mr-1" /> Compartilhar</>}
               </Button>
               <Button variant="outline" size="sm" onClick={() => setShowCal(v => !v)} className={`rounded-full text-xs ${showCal ? "bg-blue-100 dark:bg-blue-900/40 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300" : ""}`}>
                 <CalendarPlus className="w-3.5 h-3.5 mr-1" /> Lembrar
               </Button>
             </div>
           </div>
+
+          {shareError && shareUrl && (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3 space-y-2">
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                Não consegui copiar automaticamente neste navegador. Use o link abaixo:
+              </p>
+              <Input
+                readOnly
+                value={shareUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="h-9 text-xs bg-background"
+              />
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`Coleta de lixo no ${selected}: ${shareUrl}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-900 dark:text-amber-100 hover:underline"
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Enviar pelo WhatsApp
+              </a>
+            </div>
+          )}
 
           {showCal && (
             <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 space-y-3">
@@ -362,7 +504,7 @@ export default function ColetaLixoClient() {
               </p>
               <div className="flex flex-wrap gap-2">
                 {eventos.map(ev => (
-                  <a key={ev.label} href={ev.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 bg-card border border-blue-200 dark:border-blue-700 rounded-full px-4 py-2 text-sm font-semibold text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">{ev.label}</a>
+                  <a key={ev.label} href={ev.url} target="_blank" rel="noopener noreferrer" className={calendarReminderButtonClass(ev.tipo)}>{ev.label}</a>
                 ))}
               </div>
             </div>

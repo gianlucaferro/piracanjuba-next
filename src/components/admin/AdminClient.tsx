@@ -17,10 +17,11 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package } from "lucide-react";
+import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity } from "lucide-react";
 import FarmaciaFotosAdmin from "@/components/admin/FarmaciaFotosAdmin";
 import AnunciosAdmin from "@/components/admin/AnunciosAdmin";
 import ClassificadosAdmin from "@/components/admin/ClassificadosAdmin";
+import SyncStatusAdmin from "@/components/admin/SyncStatusAdmin";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -132,7 +133,7 @@ function EditableEstablishmentRow({
         </div>
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">Categoria</Label>
-          <Select value={editCategory} onValueChange={setEditCategory}>
+          <Select value={editCategory} onValueChange={(value) => setEditCategory(value || "")}>
             <SelectTrigger>
               <SelectValue placeholder="Sem categoria" />
             </SelectTrigger>
@@ -204,7 +205,7 @@ function EditableEstablishmentRow({
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
-  const [validating, setValidating] = useState(true);
+  const [validating, setValidating] = useState(() => Boolean(localStorage.getItem(SESSION_KEY)));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -215,11 +216,10 @@ export default function Admin() {
   // Validate token on mount
   useEffect(() => {
     const token = localStorage.getItem(SESSION_KEY);
-    if (!token) {
-      setValidating(false);
-      return;
-    }
+    if (!token) return;
+    let mounted = true;
     validateToken(token).then((valid) => {
+      if (!mounted) return;
       if (valid) {
         setAuthed(true);
       } else {
@@ -227,6 +227,9 @@ export default function Admin() {
       }
       setValidating(false);
     });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const adminToken = localStorage.getItem(SESSION_KEY) || "";
@@ -246,10 +249,10 @@ export default function Admin() {
     },
   });
 
-  const pending = adminData?.pending || [];
-  const approved = adminData?.approved || [];
-  const rejected = adminData?.rejected || [];
-  const suggestions = adminData?.suggestions || [];
+  const pending = useMemo(() => adminData?.pending || [], [adminData?.pending]);
+  const approved = useMemo(() => adminData?.approved || [], [adminData?.approved]);
+  const rejected = useMemo(() => adminData?.rejected || [], [adminData?.rejected]);
+  const suggestions = useMemo(() => adminData?.suggestions || [], [adminData?.suggestions]);
 
   const filteredBySearch = useMemo(() => {
     function filterItems(items: Establishment[]) {
@@ -464,6 +467,9 @@ export default function Admin() {
               <TabsTrigger value="classificados" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
                 <Package className="w-3 h-3" /> C&V
               </TabsTrigger>
+              <TabsTrigger value="syncs" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
+                <Activity className="w-3 h-3" /> Syncs
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="pending" className="space-y-3 mt-4">
@@ -532,6 +538,10 @@ export default function Admin() {
 
             <TabsContent value="classificados" className="mt-4">
               <ClassificadosAdmin adminToken={adminToken} />
+            </TabsContent>
+
+            <TabsContent value="syncs" className="mt-4">
+              <SyncStatusAdmin />
             </TabsContent>
           </Tabs>
         )}

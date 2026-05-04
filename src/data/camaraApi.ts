@@ -129,25 +129,26 @@ export async function fetchPresencaSessoes(ano?: number): Promise<PresencaSessao
 
 // Fetch total monthly payroll cost of the Câmara (latest competência)
 export async function fetchCamaraCustoTotal(): Promise<{ folhaMensal: number; totalServidores: number } | null> {
-  // Get latest competência
-  const { data: latest } = await supabase
-    .from("remuneracao_servidores")
-    .select("competencia")
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .single();
-
-  if (!latest) return null;
-
   // Get all camara servidores IDs
   const { data: servidores } = await supabase
     .from("servidores")
     .select("id")
-    .ilike("fonte_url", "%camara%");
+    .eq("orgao_tipo", "camara");
 
   if (!servidores?.length) return null;
 
   const ids = servidores.map((s) => s.id);
+
+  // Get latest competência only among Câmara servidores.
+  const { data: latest } = await supabase
+    .from("remuneracao_servidores")
+    .select("competencia")
+    .in("servidor_id", ids)
+    .order("competencia", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!latest) return null;
 
   // Sum bruto for all camara servidores in latest competência
   const { data: remuneracoes } = await supabase

@@ -350,7 +350,11 @@ function Lightbox({
         <img
           src={fotos[idx]}
           alt=""
-          className="max-w-full max-h-[85vh] sm:max-w-[95vw] sm:max-h-[90vh] object-contain select-none rounded"
+          className="block w-auto h-auto object-contain select-none rounded"
+          style={{
+            maxWidth: "min(95vw, 900px)",
+            maxHeight: "85dvh",
+          }}
           draggable={false}
         />
 
@@ -414,26 +418,16 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-function AppleIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-    </svg>
-  );
-}
-
 // ===== LOGIN PROMPT =====
 
 function LoginPrompt({
   onGoogle,
-  onApple,
   onEmailLogin,
   onEmailSignUp,
   onResetPassword,
   onSkipLogin,
 }: {
   onGoogle: () => void;
-  onApple: () => void;
   onEmailLogin: (email: string, password: string) => Promise<{ error: any }>;
   onEmailSignUp: (email: string, password: string) => Promise<{ error: any }>;
   onResetPassword: (email: string) => Promise<{ error: any }>;
@@ -479,13 +473,10 @@ function LoginPrompt({
         </p>
       </div>
 
-      {/* Google / Apple */}
-      <div className="flex flex-col sm:flex-row gap-2 justify-center">
+      {/* Social login */}
+      <div className="flex justify-center">
         <Button onClick={onGoogle} variant="outline" className="gap-2">
           <GoogleIcon className="w-4 h-4" /> Entrar com Google
-        </Button>
-        <Button onClick={onApple} variant="outline" className="gap-2">
-          <AppleIcon className="w-4 h-4" /> Entrar com Apple
         </Button>
       </div>
 
@@ -2162,7 +2153,7 @@ export default function CompraEVendaPBA() {
   const queryClient = useQueryClient();
   const {
     user, loading: authLoading,
-    signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail, resetPassword, signOut,
+    signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword, signOut,
   } = useAuth();
   const favoritos = useFavoritos();
   const [creating, setCreating] = useState(false);
@@ -2485,9 +2476,6 @@ export default function CompraEVendaPBA() {
                   <Button size="sm" variant="outline" className="gap-1.5 h-9" onClick={signInWithGoogle}>
                     <GoogleIcon className="w-4 h-4" /> Google
                   </Button>
-                  <Button size="sm" variant="outline" className="gap-1.5 h-9" onClick={signInWithApple}>
-                    <AppleIcon className="w-4 h-4" /> Apple
-                  </Button>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -2689,12 +2677,11 @@ export default function CompraEVendaPBA() {
               }
               userId={user?.id || ""}
               isAnon={!user}
-              userProfilePhohref={userProfilePhoto}
+              userProfilePhoto={userProfilePhoto}
             />
           ) : (
             <LoginPrompt
               onGoogle={signInWithGoogle}
-              onApple={signInWithApple}
               onEmailLogin={signInWithEmail}
               onEmailSignUp={signUpWithEmail}
               onResetPassword={resetPassword}

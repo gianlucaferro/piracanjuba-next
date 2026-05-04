@@ -18,7 +18,6 @@ import {
   type AtuacaoParlamentar,
   type AtuacaoFilters,
   type Projeto,
-  type Vereador,
 } from "@/data/api";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -115,16 +114,18 @@ function AtuacaoParlamentarPage() {
   const isTodosFilter = tipoFilter === "Todos";
 
   // Debounce search with proper cleanup
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
-    clearTimeout(searchTimerRef.current);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
     searchTimerRef.current = setTimeout(() => {
       setDebouncedSearch(value);
       setPage(0);
     }, 400);
   }, []);
-  useEffect(() => () => clearTimeout(searchTimerRef.current), []);
+  useEffect(() => () => {
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+  }, []);
 
   // Atuação query (skip when only projetos)
   const atuacaoFilters: AtuacaoFilters = useMemo(() => ({
@@ -300,7 +301,7 @@ function AtuacaoParlamentarPage() {
             <Input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Buscar por descrição ou autor..." className="pl-10" aria-label="Buscar atuação parlamentar" />
           </div>
           <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-1">
-            <Select value={tipoFilter} onValueChange={changeFilter(setTipoFilter)}>
+            <Select value={tipoFilter} onValueChange={(value) => changeFilter(setTipoFilter)(value || "Todos")}>
               <SelectTrigger className="w-40 flex-shrink-0" aria-label="Filtrar por tipo">
                 <Filter className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
                 <SelectValue />
@@ -309,7 +310,7 @@ function AtuacaoParlamentarPage() {
                 {TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={vereadorFilter} onValueChange={changeFilter(setVereadorFilter)}>
+            <Select value={vereadorFilter} onValueChange={(value) => changeFilter(setVereadorFilter)(value || "Todos")}>
               <SelectTrigger className="w-52 flex-shrink-0" aria-label="Filtrar por vereador">
                 <SelectValue placeholder="Vereador" />
               </SelectTrigger>
@@ -318,7 +319,7 @@ function AtuacaoParlamentarPage() {
                 {vereadores.map((v) => <SelectItem key={v.id} value={v.id}>{v.nome}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={anoFilter} onValueChange={changeFilter(setAnoFilter)}>
+            <Select value={anoFilter} onValueChange={(value) => changeFilter(setAnoFilter)(value || "Todos")}>
               <SelectTrigger className="w-28 flex-shrink-0" aria-label="Filtrar por ano">
                 <SelectValue placeholder="Ano" />
               </SelectTrigger>

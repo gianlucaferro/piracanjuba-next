@@ -15,8 +15,6 @@ import {
   Wheat,
   ShieldAlert,
   BarChart3,
-  Building2,
-  Landmark,
   FileText,
   TrendingUp,
 } from "lucide-react";
@@ -30,6 +28,7 @@ import {
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
+import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
 
 export const metadata = pageMetadata({
   title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
@@ -83,6 +82,11 @@ export default async function HomePage() {
   const pib = indicadorMap.get("pib_per_capita");
   const ideb = indicadorMap.get("ideb_anos_iniciais");
   const saneamento = indicadorMap.get("saneamento_cobertura");
+  const salarioMedio = indicadorMap.get("salario_medio_formal");
+  const pessoalOcupado = indicadorMap.get("pessoal_ocupado_formal");
+  const popMeioSm = indicadorMap.get("populacao_ate_meio_sm");
+  const frota = indicadorMap.get("frota_veiculos");
+  const idhm = indicadorMap.get("idhm");
 
   const totalEmendas = emendas.reduce((s, e) => s + (e.valor_pago || 0), 0);
 
@@ -125,6 +129,7 @@ export default async function HomePage() {
                 Dados públicos de Piracanjuba organizados em um único ambiente, com base
                 oficial e inteligência artificial.
               </p>
+              <HomeCivicSearch variant="hero" />
             </div>
           </div>
         </div>
@@ -133,12 +138,6 @@ export default async function HomePage() {
       <div className="container py-8 space-y-10">
         {/* Anúncio destaque */}
         <AnuncioBannerDestaque />
-
-        {/* Alerta dengue */}
-        <DengueAlert />
-
-        {/* Plantão de farmácias preview */}
-        <PlantaoFarmaciasHome />
 
         {/* Atalhos */}
         <section
@@ -196,119 +195,11 @@ export default async function HomePage() {
           <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0 group-hover:text-[#25D366] transition-colors" />
         </Link>
 
-        {/* Câmara e Prefeitura */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Link href="/camara" className="stat-card card-hover flex items-center gap-4 group border-primary/20">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Landmark className="w-6 h-6 text-primary" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-base font-semibold text-foreground">Câmara Municipal</p>
-              <p className="text-xs text-muted-foreground">Vereadores, projetos, votações, presença</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
-          </Link>
-          <Link href="/prefeitura" className="stat-card card-hover flex items-center gap-4 group border-primary/20">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Building2 className="w-6 h-6 text-primary" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-base font-semibold text-foreground">Prefeitura</p>
-              <p className="text-xs text-muted-foreground">Servidores, contratos, despesas, obras</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
-          </Link>
-        </section>
+        {/* Plantão de Farmácias */}
+        <PlantaoFarmaciasHome />
 
-        {/* Piracanjuba em Dados */}
-        <section aria-labelledby="heading-dados">
-          <h2 id="heading-dados" className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-primary" />
-            Piracanjuba em Dados
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <Link href="/saude" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <Heart className="w-7 h-7 text-red-500 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Saúde</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Dengue, profissionais, estabelecimentos</span>
-            </Link>
-            <Link href="/educacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <GraduationCap className="w-7 h-7 text-blue-500 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Educação</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">IDEB, escolas, matrículas, investimento</span>
-            </Link>
-            <Link href="/beneficios-sociais" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <HandHeart className="w-7 h-7 text-purple-500 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Social</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Bolsa Família, CadÚnico, assistência</span>
-            </Link>
-            <Link href="/arrecadacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <DollarSign className="w-7 h-7 text-green-600 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Impostos</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Arrecadação, IPTU, ISS, receitas</span>
-            </Link>
-            <Link href="/agro" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <Wheat className="w-7 h-7 text-amber-600 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Agro</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">PIB agro, produtividade, ranking</span>
-            </Link>
-            <Link href="/seguranca" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
-              <ShieldAlert className="w-7 h-7 text-orange-500 group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium text-foreground">Segurança</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Ocorrências, PM, Bombeiros</span>
-            </Link>
-          </div>
-        </section>
-
-        {/* Indicadores */}
-        <section aria-labelledby="heading-indicadores">
-          <h2 id="heading-indicadores" className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Indicadores do Município
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {pop ? <MiniCard label="População" value={pop.valor_texto || "—"} sub={`IBGE est. ${pop.ano_referencia}`} /> : <UnavailableCard label="População" />}
-            {pib ? <MiniCard label="PIB per capita" value={pib.valor_texto || "—"} sub={`IBGE ${pib.ano_referencia}`} /> : <UnavailableCard label="PIB per capita" />}
-            {ideb ? <MiniCard label="IDEB Anos Iniciais" value={ideb.valor_texto || "—"} sub={`INEP ${ideb.ano_referencia}`} /> : <UnavailableCard label="IDEB Anos Iniciais" />}
-            {saneamento ? <MiniCard label="Saneamento" value={saneamento.valor_texto || "—"} sub={`Cobertura ${saneamento.ano_referencia}`} /> : <UnavailableCard label="Saneamento" />}
-          </div>
-        </section>
-
-        {/* Contratos resumo */}
-        {contratos && contratos.ativos > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
-              <FileText className="w-5 h-5 text-primary" />
-              Contratos Ativos
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <MiniCard label="Contratos ativos" value={contratos.ativos.toString()} />
-              <MiniCard label="Valor total" value={contratos.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
-              {contratos.maiorFornecedor.nome && (
-                <MiniCard label="Maior fornecedor" value={contratos.maiorFornecedor.nome.slice(0, 20)} sub={contratos.maiorFornecedor.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* Emendas */}
-        {emendas.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
-              <DollarSign className="w-5 h-5 text-primary" />
-              Emendas Parlamentares ({new Date().getFullYear()})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <MiniCard label="Total recebido" value={totalEmendas.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
-              <Link href="/emendas" className="stat-card card-hover flex items-center gap-3 group">
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">{emendas.length} emendas registradas</p>
-                  <p className="text-sm font-semibold text-foreground">Ver detalhes →</p>
-                </div>
-              </Link>
-            </div>
-          </section>
-        )}
+        {/* Alerta Dengue */}
+        <DengueAlert />
 
         {/* Contatos Úteis (resumo) */}
         <section aria-labelledby="heading-contatos">
@@ -360,9 +251,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Anúncio padrão */}
-        <AnuncioBannerPadrao />
-
         {/* Anuncie CTA */}
         <section aria-label="Anuncie no Piracanjuba.ai">
           <div className="stat-card border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
@@ -386,6 +274,108 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Piracanjuba em Dados */}
+        <section aria-labelledby="heading-dados">
+          <h2 id="heading-dados" className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
+            <BarChart3 className="w-5 h-5 text-primary" />
+            Piracanjuba em Dados
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <Link href="/saude" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <Heart className="w-7 h-7 text-red-500 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Saúde</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Dengue, profissionais, estabelecimentos</span>
+            </Link>
+            <Link href="/educacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <GraduationCap className="w-7 h-7 text-blue-500 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Educação</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">IDEB, escolas, matrículas, investimento</span>
+            </Link>
+            <Link href="/beneficios-sociais" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <HandHeart className="w-7 h-7 text-purple-500 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Social</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Bolsa Família, CadÚnico, assistência</span>
+            </Link>
+            <Link href="/arrecadacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <DollarSign className="w-7 h-7 text-green-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Impostos</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Arrecadação, IPTU, ISS, receitas</span>
+            </Link>
+            <Link href="/agro" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <Wheat className="w-7 h-7 text-amber-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Agro</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">PIB agro, produtividade, ranking</span>
+            </Link>
+            <Link href="/seguranca" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <ShieldAlert className="w-7 h-7 text-orange-500 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Segurança</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Ocorrências, PM, Bombeiros</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* Anúncio padrão */}
+        <AnuncioBannerPadrao />
+
+        {/* Indicadores */}
+        <section aria-labelledby="heading-indicadores">
+          <h2 id="heading-indicadores" className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            Indicadores do Município
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {pop ? <MiniCard label="População" value={pop.valor_texto || "—"} sub={`IBGE est. ${pop.ano_referencia}`} /> : <UnavailableCard label="População" />}
+            {pib ? <MiniCard label="PIB per capita" value={pib.valor_texto || "—"} sub={`IBGE ${pib.ano_referencia}`} /> : <UnavailableCard label="PIB per capita" />}
+            {ideb ? <MiniCard label="IDEB Anos Iniciais" value={ideb.valor_texto || "—"} sub={`INEP ${ideb.ano_referencia}`} /> : <UnavailableCard label="IDEB Anos Iniciais" />}
+            {saneamento ? <MiniCard label="Saneamento" value={saneamento.valor_texto || "—"} sub={`Cobertura ${saneamento.ano_referencia}`} /> : <UnavailableCard label="Saneamento" />}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-3">
+            {salarioMedio ? <MiniCard label="Salário médio formal" value={salarioMedio.valor_texto || "—"} sub={`IBGE ${salarioMedio.ano_referencia}`} /> : <UnavailableCard label="Salário médio formal" />}
+            {pessoalOcupado ? <MiniCard label="Empregos formais" value={pessoalOcupado.valor_texto || "—"} sub={`IBGE ${pessoalOcupado.ano_referencia}`} /> : <UnavailableCard label="Empregos formais" />}
+            {popMeioSm ? <MiniCard label="Pop. até ½ salário mín." value={popMeioSm.valor_texto || "—"} sub={`Censo ${popMeioSm.ano_referencia}`} /> : <UnavailableCard label="Pop. até ½ salário mín." />}
+            {frota ? <MiniCard label="Frota de veículos" value={frota.valor_texto || frota.valor?.toLocaleString("pt-BR") || "—"} sub={`SENATRAN ${frota.ano_referencia}`} /> : <UnavailableCard label="Frota de veículos" />}
+            {idhm ? <MiniCard label="IDHM" value={`${idhm.valor_texto || "—"} (Alto)`} sub={`PNUD ${idhm.ano_referencia}`} /> : <UnavailableCard label="IDHM" />}
+          </div>
+        </section>
+
+        {/* Emendas */}
+        {emendas.length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
+              <DollarSign className="w-5 h-5 text-primary" />
+              Emendas Parlamentares ({new Date().getFullYear()})
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <MiniCard label="Total recebido" value={totalEmendas.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
+              <Link href="/emendas" className="stat-card card-hover flex items-center gap-3 group">
+                <div className="flex-1">
+                  <p className="text-xs text-muted-foreground">{emendas.length} emendas registradas</p>
+                  <p className="text-sm font-semibold text-foreground">Ver detalhes →</p>
+                </div>
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Contratos resumo */}
+        {contratos && contratos.ativos > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
+              <FileText className="w-5 h-5 text-primary" />
+              Contratos Ativos
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <MiniCard label="Contratos ativos" value={contratos.ativos.toString()} />
+              <MiniCard label="Valor total" value={contratos.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
+              {contratos.maiorFornecedor.nome && (
+                <MiniCard label="Maior fornecedor" value={contratos.maiorFornecedor.nome.slice(0, 20)} sub={contratos.maiorFornecedor.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
+              )}
+            </div>
+          </section>
+        )}
+
+        <HomeCivicInsights />
       </div>
     </>
   );

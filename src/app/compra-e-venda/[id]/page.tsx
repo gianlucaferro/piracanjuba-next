@@ -41,5 +41,5 @@ export default async function AnuncioPage({
   const { id } = await params;
   const anuncio = await fetchClassificadoById(id);
   if (!anuncio) notFound();
-  return <AnuncioDetalheClient />;
+  return <AnuncioDetalheClient initialAnuncio={anuncio} />;
 }

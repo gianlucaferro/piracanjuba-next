@@ -77,9 +77,9 @@ export const fetchZapEstabelecimentos = unstable_cache(
     const supabase = createPublicSupabaseClient();
     const { data, error } = await supabase
       .from("zap_establishments")
-      .select("id, name, whatsapp, category, click_count")
+      .select("id, name, whatsapp, category, click_count, created_at")
       .eq("status", "approved")
-      .order("category")
+      .order("created_at", { ascending: false })
       .order("name");
     if (error) {
       console.error("fetchZapEstabelecimentos error:", error);

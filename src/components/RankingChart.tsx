@@ -18,6 +18,8 @@ interface RankingChartProps {
   vereadores: Vereador[];
   show: boolean;
   onToggle: (v: boolean) => void;
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 export function useRankingData(atuacoes: AtuacaoParlamentar[], vereadores: Vereador[]): RankingEntry[] {
@@ -41,7 +43,14 @@ export function useRankingData(atuacoes: AtuacaoParlamentar[], vereadores: Verea
   }, [atuacoes, vereadores]);
 }
 
-export default function RankingChart({ atuacoes, vereadores, show, onToggle }: RankingChartProps) {
+export default function RankingChart({
+  atuacoes,
+  vereadores,
+  show,
+  onToggle,
+  isLoading = false,
+  isError = false,
+}: RankingChartProps) {
   const chartData = useRankingData(atuacoes, vereadores);
 
   if (!show) {
@@ -54,8 +63,6 @@ export default function RankingChart({ atuacoes, vereadores, show, onToggle }: R
       </button>
     );
   }
-
-  if (chartData.length === 0) return null;
 
   const maxTotal = chartData[0]?.total || 1;
 
@@ -72,66 +79,96 @@ export default function RankingChart({ atuacoes, vereadores, show, onToggle }: R
           Ocultar
         </button>
       </div>
-      <div className="space-y-3">
-        {chartData.map((v, i) => {
-          const content = (
-            <div className="flex items-center gap-3">
-              <span
-                className={`text-sm font-bold w-6 text-right flex-shrink-0 ${
-                  i === 0 ? "text-yellow-500" : i === 1 ? "text-gray-400" : i === 2 ? "text-amber-600" : "text-muted-foreground"
-                }`}
-                aria-label={`${i + 1}º lugar`}
-              >
-                {i + 1}º
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline justify-between mb-1">
-                  <p className="text-sm font-medium text-foreground truncate">{v.name}</p>
-                  <span className="text-sm font-bold text-primary ml-2 flex-shrink-0">{v.total}</span>
-                </div>
-                <div className="h-5 rounded-full bg-muted overflow-hidden flex" role="img" aria-label={`${v.indicacoes} indicações, ${v.requerimentos} requerimentos`}>
-                  {v.indicacoes > 0 && (
-                    <div
-                      className="h-full bg-primary transition-all duration-500"
-                      style={{ width: `${(v.indicacoes / maxTotal) * 100}%` }}
-                    />
-                  )}
-                  {v.requerimentos > 0 && (
-                    <div
-                      className="h-full bg-accent transition-all duration-500"
-                      style={{ width: `${(v.requerimentos / maxTotal) * 100}%` }}
-                    />
-                  )}
-                </div>
-                <div className="flex gap-3 mt-1 text-[10px] text-muted-foreground">
-                  {v.indicacoes > 0 && (
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-primary inline-block" aria-hidden="true" />
-                      {v.indicacoes} ind.
-                    </span>
-                  )}
-                  {v.requerimentos > 0 && (
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-accent inline-block" aria-hidden="true" />
-                      {v.requerimentos} req.
-                    </span>
-                  )}
+
+      {isLoading && chartData.length === 0 && (
+        <div className="space-y-4" aria-label="Carregando ranking de atuação">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="h-4 w-6 rounded bg-muted animate-pulse" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-44 max-w-full rounded bg-muted animate-pulse" />
+                <div className="h-5 rounded-full bg-muted animate-pulse" />
+              </div>
+              <div className="h-4 w-8 rounded bg-muted animate-pulse" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isError && chartData.length === 0 && !isLoading && (
+        <p className="text-sm text-muted-foreground">
+          Não foi possível carregar o ranking de atuação agora.
+        </p>
+      )}
+
+      {!isError && chartData.length === 0 && !isLoading && (
+        <p className="text-sm text-muted-foreground">
+          Dados de atuação parlamentar ainda não disponíveis.
+        </p>
+      )}
+
+      {chartData.length > 0 && (
+        <div className="space-y-3">
+          {chartData.map((v, i) => {
+            const content = (
+              <div className="flex items-center gap-3">
+                <span
+                  className={`text-sm font-bold w-6 text-right flex-shrink-0 ${
+                    i === 0 ? "text-yellow-500" : i === 1 ? "text-gray-400" : i === 2 ? "text-amber-600" : "text-muted-foreground"
+                  }`}
+                  aria-label={`${i + 1}º lugar`}
+                >
+                  {i + 1}º
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between mb-1">
+                    <p className="text-sm font-medium text-foreground truncate">{v.name}</p>
+                    <span className="text-sm font-bold text-primary ml-2 flex-shrink-0">{v.total}</span>
+                  </div>
+                  <div className="h-5 rounded-full bg-muted overflow-hidden flex" role="img" aria-label={`${v.indicacoes} indicações, ${v.requerimentos} requerimentos`}>
+                    {v.indicacoes > 0 && (
+                      <div
+                        className="h-full bg-primary transition-all duration-500"
+                        style={{ width: `${(v.indicacoes / maxTotal) * 100}%` }}
+                      />
+                    )}
+                    {v.requerimentos > 0 && (
+                      <div
+                        className="h-full bg-accent transition-all duration-500"
+                        style={{ width: `${(v.requerimentos / maxTotal) * 100}%` }}
+                      />
+                    )}
+                  </div>
+                  <div className="flex gap-3 mt-1 text-[10px] text-muted-foreground">
+                    {v.indicacoes > 0 && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-primary inline-block" aria-hidden="true" />
+                        {v.indicacoes} ind.
+                      </span>
+                    )}
+                    {v.requerimentos > 0 && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-accent inline-block" aria-hidden="true" />
+                        {v.requerimentos} req.
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
+            );
 
-          return v.slug ? (
-            <Link key={v.name} href={`/vereadores/${v.slug}`} className="block hover:bg-muted/50 rounded-lg p-1 -m-1 transition-colors">
-              {content}
-            </Link>
-          ) : (
-            <div key={v.name} className="p-1 -m-1">
-              {content}
-            </div>
-          );
-        })}
-      </div>
+            return v.slug ? (
+              <Link key={v.name} href={`/vereadores/${v.slug}`} className="block hover:bg-muted/50 rounded-lg p-1 -m-1 transition-colors">
+                {content}
+              </Link>
+            ) : (
+              <div key={v.name} className="p-1 -m-1">
+                {content}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

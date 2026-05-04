@@ -2850,6 +2850,7 @@ const tabs = [
   { value: "chefia", label: "Prefeita e Vice", icon: Building2 },
   { value: "secretarias", label: "Secretarias", icon: Building2 },
   { value: "contratos", label: "Contratos", icon: FileText },
+  { value: "despesas", label: "Despesas", icon: DollarSign },
   { value: "procuradoria", label: "Procuradoria", icon: Gavel },
   { value: "servidores", label: "Servidores", icon: Users },
   { value: "decretos", label: "Decretos", icon: ScrollText },
@@ -2923,6 +2924,7 @@ export default function Prefeitura() {
           <TabsContent value="visao-geral"><PrefeituraDestaques /></TabsContent>
           <TabsContent value="chefia"><ChefiaExecutivo /></TabsContent>
           <TabsContent value="secretarias"><SecretariasTab /></TabsContent>
+          <TabsContent value="despesas"><GastosTab /></TabsContent>
           <TabsContent value="procuradoria"><ProcuradoriaTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="decretos"><DecretosTab /></TabsContent>

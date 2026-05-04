@@ -16,36 +16,51 @@ import {
   Flag, Share2, X, ZoomIn, Heart, Loader2, Package,
   Home as HomeIcon, Car, Wheat, Smartphone, Wrench, Instagram, User,
   ChevronRight as ChevronRightBreadcrumb,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
+import type { Database } from "@/lib/supabase/types";
 
 // ===== TYPES =====
 
-type Classificado = {
-  id: string;
-  nome: string;
-  whatsapp: string;
-  categoria: string;
-  titulo: string;
-  descricao: string | null;
-  preco: number | null;
-  preco_tipo: string;
-  fotos: string[];
-  status: string;
-  denuncias: number;
-  visualizacoes: number;
-  expira_em: string;
+type ClassificadoRecord = Database["public"]["Tables"]["classificados"]["Row"];
+type Classificado = Omit<
+  ClassificadoRecord,
+  "created_at" | "denuncias" | "expira_em" | "fotos" | "preco_tipo" | "updated_at" | "visualizacoes" | "whatsapp_clicks"
+> & {
   created_at: string;
-  updated_at: string;
-  user_id: string | null;
-  bairro: string | null;
-  foto_perfil: string | null;
+  denuncias: number;
+  expira_em: string | null;
+  fotos: string[];
+  preco_tipo: string;
+  updated_at: string | null;
+  visualizacoes: number;
+  whatsapp_clicks: number;
 };
+
+export type AnuncioDetalheClientProps = {
+  initialAnuncio?: ClassificadoRecord | null;
+};
+
+function normalizeClassificado(item: ClassificadoRecord | null | undefined): Classificado | null {
+  if (!item) return null;
+  return {
+    ...item,
+    created_at: item.created_at || new Date(0).toISOString(),
+    denuncias: item.denuncias || 0,
+    expira_em: item.expira_em,
+    fotos: Array.isArray(item.fotos) ? item.fotos : [],
+    preco_tipo: item.preco_tipo || "fixo",
+    updated_at: item.updated_at,
+    visualizacoes: item.visualizacoes || 0,
+    whatsapp_clicks: item.whatsapp_clicks || 0,
+  };
+}
 
 // ===== HELPERS =====
 
-const CATEGORIAS: Record<string, { label: string; icon: any }> = {
+const CATEGORIAS: Record<string, { label: string; icon: LucideIcon }> = {
   imoveis: { label: "Imóveis", icon: HomeIcon },
   veiculos: { label: "Veículos", icon: Car },
   agro: { label: "Agro", icon: Wheat },
@@ -59,6 +74,15 @@ function formatPreco(preco: number | null, tipo: string) {
   if (!preco) return "Consulte";
   const formatted = preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   return tipo === "negociavel" ? `${formatted} (negociável)` : formatted;
+}
+
+function isAbortError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    (error as { name?: unknown }).name === "AbortError"
+  );
 }
 
 // ===== LIGHTBOX =====
@@ -116,7 +140,11 @@ function Lightbox({
         <img
           src={fotos[idx]}
           alt=""
-          className="max-w-full max-h-[85vh] sm:max-w-[95vw] sm:max-h-[90vh] object-contain select-none rounded"
+          className="block w-auto h-auto object-contain select-none rounded"
+          style={{
+            maxWidth: "min(95vw, 900px)",
+            maxHeight: "85dvh",
+          }}
           draggable={false}
         />
         {fotos.length > 1 && (
@@ -173,9 +201,6 @@ async function generateStoryImage(item: Classificado): Promise<void> {
     try {
       const img = await loadImage(item.fotos[0]);
       const imgH = 900;
-      const imgRatio = img.width / img.height;
-      const drawW = Math.min(W, imgH * imgRatio);
-      const drawH = drawW / imgRatio;
       ctx.save();
       ctx.beginPath();
       roundRect(ctx, 40, 120, W - 80, imgH, 24);
@@ -243,8 +268,8 @@ async function generateStoryImage(item: Classificado): Promise<void> {
           await navigator.share(shareData);
           toast.success("Imagem compartilhada!");
           return;
-        } catch (e: any) {
-          if (e.name === "AbortError") return; // user cancelled
+        } catch (e: unknown) {
+          if (isAbortError(e)) return; // user cancelled
         }
       }
     }
@@ -326,7 +351,6 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
       <h2 className="text-base font-bold text-foreground">Veja também</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {data.map((ad) => {
-          const catInfo = CATEGORIAS[ad.categoria] || CATEGORIAS.outros;
           return (
             <Link
               key={ad.id}
@@ -368,7 +392,7 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
 
 // ===== PAGE =====
 
-export default function AnuncioDetalhe() {
+export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientProps) {
   const { id } = useParams<{ id: string }>();
   const [imgIdx, setImgIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -390,7 +414,7 @@ export default function AnuncioDetalhe() {
     } catch {}
   };
 
-  const { data: item, isLoading } = useQuery({
+  const { data: rawItem, isLoading } = useQuery<ClassificadoRecord>({
     queryKey: ["anuncio", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -399,17 +423,19 @@ export default function AnuncioDetalhe() {
         .eq("id", id!)
         .single();
       if (error) throw error;
-      return data as Classificado;
+      return data as ClassificadoRecord;
     },
     enabled: !!id,
+    initialData: initialAnuncio || undefined,
   });
+  const item = normalizeClassificado(rawItem);
 
   // Track view
   const viewed = useRef(false);
   useEffect(() => {
     if (item && !viewed.current) {
       viewed.current = true;
-      supabase.rpc("increment_classificado_view" as any, { classificado_id: item.id }).then(() => {});
+      supabase.rpc("increment_classificado_view", { classificado_id: item.id }).then(() => {});
     }
   }, [item]);
 
@@ -418,7 +444,7 @@ export default function AnuncioDetalhe() {
     if (!item) return;
     supabase
       .from("classificados")
-      .update({ whatsapp_clicks: (item as any).whatsapp_clicks ? (item as any).whatsapp_clicks + 1 : 1 } as any)
+      .update({ whatsapp_clicks: (item.whatsapp_clicks || 0) + 1 })
       .eq("id", item.id)
       .then(() => {});
   };
@@ -426,7 +452,7 @@ export default function AnuncioDetalhe() {
   const handleDenunciar = async () => {
     if (!item) return;
     if (!confirm("Deseja denunciar este anúncio como inapropriado?")) return;
-    await supabase.rpc("denunciar_classificado" as any, { classificado_id: item.id });
+    await supabase.rpc("denunciar_classificado", { classificado_id: item.id });
     toast.success("Denúncia registrada.");
   };
 
@@ -503,7 +529,7 @@ export default function AnuncioDetalhe() {
         }}
       />
 
-      <div className="container py-6 max-w-2xl space-y-5">
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 space-y-5">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1 text-xs text-muted-foreground overflow-x-auto" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-foreground transition-colors shrink-0">Início</Link>

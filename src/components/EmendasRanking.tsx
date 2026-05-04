@@ -1,9 +1,19 @@
 "use client";
 
 import { useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Trophy } from "lucide-react";
-import type { EmendaParlamentar } from "@/data/homeApi";
+
+type EmendaRankingItem = {
+  id: string;
+  parlamentar_nome: string;
+  parlamentar_esfera: string | null;
+  valor_empenhado: number | null;
+  valor_pago: number | null;
+  objeto?: string | null;
+  ano: number;
+  fonte_url?: string | null;
+  atualizado_em?: string;
+};
 
 function formatCurrencyShort(v: number) {
   if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace(".", ",")} mi`;
@@ -11,11 +21,8 @@ function formatCurrencyShort(v: number) {
   return `R$ ${v.toFixed(0)}`;
 }
 
-const COLORS_ESTADUAL = "hsl(var(--primary))";
-const COLORS_FEDERAL = "hsl(var(--accent))";
-
 interface Props {
-  emendas: EmendaParlamentar[];
+  emendas: EmendaRankingItem[];
 }
 
 export default function EmendasRanking({ emendas }: Props) {
@@ -74,53 +81,33 @@ export default function EmendasRanking({ emendas }: Props) {
         </div>
       </div>
 
-      {/* Chart */}
-      <div className="w-full" style={{ height: ranking.length * 48 + 20 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={ranking}
-            layout="vertical"
-            margin={{ top: 0, right: 8, bottom: 0, left: 0 }}
-            barCategoryGap="20%"
-          >
-            <XAxis
-              type="number"
-              hide
-              domain={[0, maxValue * 1.15]}
-            />
-            <YAxis
-              type="category"
-              dataKey="nome"
-              width={130}
-              tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
-              tickLine={false}
-              axisLine={false}
-            />
-            <Tooltip
-              cursor={{ fill: "hsl(var(--muted) / 0.5)" }}
-              contentStyle={{
-                background: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-              formatter={(value: number) => [
-                value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-                "Empenhado",
-              ]}
-              labelFormatter={(label) => label}
-            />
-            <Bar dataKey="total" radius={[0, 6, 6, 0]} barSize={24}>
-              {ranking.map((entry, i) => (
-                <Cell
-                  key={i}
-                  fill={entry.esfera === "estadual" ? COLORS_ESTADUAL : COLORS_FEDERAL}
-                  fillOpacity={0.85}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="space-y-3">
+        {ranking.map((r, i) => {
+          const percent = Math.max(4, Math.round((r.total / maxValue) * 100));
+          return (
+            <div key={r.nome} className="grid grid-cols-[minmax(96px,150px)_1fr] items-center gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-xs font-medium text-foreground">
+                  {i + 1}. {r.nome}
+                </p>
+                <p className="text-[10px] text-muted-foreground capitalize">{r.esfera || "federal"}</p>
+              </div>
+              <div className="min-w-0">
+                <div className="h-6 rounded-md bg-muted overflow-hidden">
+                  <div
+                    className={`h-full rounded-r-md ${r.esfera === "estadual" ? "bg-primary" : "bg-accent"}`}
+                    style={{ width: `${percent}%` }}
+                    aria-label={`${r.nome}: ${formatCurrencyShort(r.total)} empenhados`}
+                  />
+                </div>
+                <div className="mt-1 flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
+                  <span>{formatCurrencyShort(r.total)} empenhados</span>
+                  <span>{formatCurrencyShort(r.pago)} pagos</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Summary list below chart */}
