@@ -2989,7 +2989,8 @@ function TCMTab() {
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
         Apontamentos, acórdãos e sanções do Tribunal de Contas dos Municípios de Goiás
-        envolvendo a Prefeitura de Piracanjuba. Atualizado semanalmente.
+        envolvendo a Prefeitura de Piracanjuba. Coletado por busca dirigida nos PDFs
+        públicos do TCM-GO indexados pelo Google.
       </p>
 
       {/* Stats */}
@@ -3067,7 +3068,7 @@ function TCMTab() {
            className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Tribunal de Contas dos Municípios de Goiás
         </a>
-        {" "}· Sincronizado semanalmente via FireCrawl
+        {" "}· Cada apontamento abaixo aponta para o PDF original no domínio tcm.go.gov.br
       </p>
     </div>
   );
