@@ -28,7 +28,7 @@ import {
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
-import ClimaHomeWidget from "@/components/clima/ClimaHomeWidget";
+import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
 import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
 
 export const metadata = pageMetadata({
@@ -112,6 +112,7 @@ export default async function HomePage() {
           sizes="100vw"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
         />
+        <ClimaHeroBadge />
         <div className="container relative py-10 md:py-16">
           <div className="flex items-center gap-5 md:gap-8">
             <Image
@@ -200,9 +201,6 @@ export default async function HomePage() {
 
         {/* Plantão de Farmácias */}
         <PlantaoFarmaciasHome />
-
-        {/* Clima atual em Piracanjuba */}
-        <ClimaHomeWidget />
 
         {/* Alerta Dengue */}
         <DengueAlert />
