@@ -2845,6 +2845,145 @@ function ProcuradoriaTab() {
   );
 }
 
+// ===== TCM-GO TAB =====
+function TCMTab() {
+  const { data: apontamentos, isLoading } = useQuery({
+    queryKey: ["tcm-go-apontamentos"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("tcm_go_apontamentos")
+        .select("id, numero_processo, ano, orgao_alvo, tipo, status, ementa, ementa_resumo_ia, data_publicacao, valor_envolvido, fonte_url")
+        .order("data_publicacao", { ascending: false, nullsFirst: false })
+        .limit(100);
+      return data ?? [];
+    },
+  });
+
+  if (isLoading) return <div className="stat-card animate-pulse h-40" />;
+
+  if (!apontamentos?.length) {
+    return (
+      <div className="space-y-4">
+        <div className="stat-card text-center py-12">
+          <Gavel className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            Apontamentos do TCM-GO em sincronização
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Os primeiros dados do Tribunal de Contas dos Municípios serão importados na próxima
+            sincronização semanal. Enquanto isso, consulte direto na fonte oficial:
+          </p>
+          <a
+            href="https://www.tcm.go.gov.br/portalcidadao/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Portal do Cidadão TCM-GO
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Stats agregados
+  const total = apontamentos.length;
+  const valorTotal = apontamentos.reduce((s, a: any) => s + Number(a.valor_envolvido ?? 0), 0);
+  const porTipo: Record<string, number> = {};
+  for (const a of apontamentos as any[]) {
+    const t = a.tipo || "Outros";
+    porTipo[t] = (porTipo[t] ?? 0) + 1;
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Apontamentos, acórdãos e sanções do Tribunal de Contas dos Municípios de Goiás
+        envolvendo a Prefeitura de Piracanjuba. Atualizado semanalmente.
+      </p>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="stat-card text-center">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Total</p>
+          <p className="text-2xl font-extrabold text-foreground mt-1">{total}</p>
+          <p className="text-[10px] text-muted-foreground">apontamentos</p>
+        </div>
+        {valorTotal > 0 && (
+          <div className="stat-card text-center">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Valor envolvido</p>
+            <p className="text-2xl font-extrabold text-orange-500 mt-1">
+              {formatCurrency(valorTotal)}
+            </p>
+            <p className="text-[10px] text-muted-foreground">soma dos casos</p>
+          </div>
+        )}
+        <div className="stat-card text-center">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Tipos</p>
+          <p className="text-sm font-medium text-foreground mt-1 leading-tight">
+            {Object.entries(porTipo)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 3)
+              .map(([t, n]) => `${t} (${n})`)
+              .join(" · ")}
+          </p>
+        </div>
+      </div>
+
+      {/* Lista */}
+      <div className="space-y-3">
+        {(apontamentos as any[]).map((a) => (
+          <div key={a.id} className="stat-card space-y-2">
+            <div className="flex items-start justify-between gap-2 flex-wrap">
+              <div className="flex-1 min-w-0">
+                <div className="inline-flex items-center gap-2 mb-1">
+                  {a.tipo && <Badge variant="secondary">{a.tipo}</Badge>}
+                  {a.status && <Badge variant="outline">{a.status}</Badge>}
+                  {a.orgao_alvo && <Badge variant="outline">{a.orgao_alvo}</Badge>}
+                </div>
+                <h3 className="font-semibold text-foreground text-sm">
+                  {a.numero_processo}
+                  {a.ano && <span className="text-muted-foreground font-normal"> · {a.ano}</span>}
+                </h3>
+                {a.ementa_resumo_ia ? (
+                  <p className="text-sm text-foreground mt-1.5 leading-relaxed">{a.ementa_resumo_ia}</p>
+                ) : a.ementa ? (
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-3">{a.ementa}</p>
+                ) : null}
+              </div>
+              {a.valor_envolvido && (
+                <div className="text-right shrink-0">
+                  <p className="text-[10px] text-muted-foreground uppercase">Valor</p>
+                  <p className="font-bold text-orange-500">{formatCurrency(Number(a.valor_envolvido))}</p>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+              <span>{a.data_publicacao ? new Date(a.data_publicacao).toLocaleDateString("pt-BR") : "Data não informada"}</span>
+              {a.fonte_url && (
+                <a href={a.fonte_url} target="_blank" rel="noopener noreferrer"
+                   className="text-primary hover:underline inline-flex items-center gap-1">
+                  <ExternalLink className="w-3 h-3" /> Documento original
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs text-muted-foreground pt-2">
+        Fonte:{" "}
+        <a href="https://www.tcm.go.gov.br/" target="_blank" rel="noopener noreferrer"
+           className="text-primary hover:underline inline-flex items-center gap-1">
+          <ExternalLink className="w-3 h-3" /> Tribunal de Contas dos Municípios de Goiás
+        </a>
+        {" "}· Sincronizado semanalmente via FireCrawl
+      </p>
+    </div>
+  );
+}
+
 // ===== MAIN PAGE =====
 
 const tabs = [
@@ -2854,7 +2993,7 @@ const tabs = [
   { value: "contratos", label: "Contratos", icon: FileText },
   { value: "servidores", label: "Servidores", icon: Users },
   { value: "despesas", label: "Despesas", icon: DollarSign },
-  { value: "procuradoria", label: "Procuradoria", icon: Gavel },
+  { value: "tcm-go", label: "TCM-GO", icon: Gavel },
   { value: "decretos", label: "Decretos", icon: ScrollText },
   { value: "portarias", label: "Portarias", icon: FileText },
   { value: "leis", label: "Leis Municipais", icon: Gavel },
@@ -2927,7 +3066,7 @@ export default function Prefeitura() {
           <TabsContent value="chefia"><ChefiaExecutivo /></TabsContent>
           <TabsContent value="secretarias"><SecretariasTab /></TabsContent>
           <TabsContent value="despesas"><GastosTab /></TabsContent>
-          <TabsContent value="procuradoria"><ProcuradoriaTab /></TabsContent>
+          <TabsContent value="tcm-go"><TCMTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="decretos"><DecretosTab /></TabsContent>
           <TabsContent value="portarias"><PortariasTab /></TabsContent>
