@@ -11,6 +11,7 @@ import {
   Building,
   Trees,
   TrendingUp as IndicadoresIcon,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
@@ -111,6 +112,14 @@ const cards: Card[] = [
     icon: IndicadoresIcon,
     iconBg: "bg-primary/10",
     iconColor: "text-primary",
+  },
+  {
+    href: "/comparador",
+    titulo: "Comparador Municipal",
+    descricao: "Piracanjuba vs vizinhos: Pontalina, Hidrolândia, Bela Vista, Cristianópolis, Cromínia.",
+    icon: Trophy,
+    iconBg: "bg-amber-500/10",
+    iconColor: "text-amber-500",
   },
 ];
 

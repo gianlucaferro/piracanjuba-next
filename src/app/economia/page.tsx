@@ -48,8 +48,11 @@ export default async function EconomiaPage() {
     m("pib_per_capita", "PIB per capita"),
     m("pessoal_ocupado_formal", "Empregos formais"),
     m("salario_medio_formal", "Salário médio (SM)"),
+    m("saldo_caged_2025", "Saldo de empregos 2025"),
+    m("admissoes_caged_2025", "Admissões 2025"),
+    m("desligamentos_caged_2025", "Desligamentos 2025"),
+    m("ocupacao_principal", "Ocupação predominante"),
     m("populacao_ate_meio_sm", "Pop. até ½ salário mín."),
-    m("populacao", "População"),
   ].filter((x): x is NonNullable<typeof x> => x !== null);
 
   return (
