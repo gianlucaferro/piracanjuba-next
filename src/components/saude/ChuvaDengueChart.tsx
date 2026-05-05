@@ -20,12 +20,33 @@ const LNG = -49.022;
 type CasoMes = { mes: number; valor: number };
 
 async function fetchChuvaMensal(ano: number): Promise<Record<number, number>> {
-  // Open-Meteo Archive — gratuita, sem auth, dados historicos confiaveis
+  // Open-Meteo Archive — gratuita, sem auth, dados historicos confiaveis.
+  //
+  // CRITICO: end_date NAO pode ser maior que hoje. Pra ano corrente, a API
+  // retorna HTTP 400 ("Parameter 'end_date' is out of allowed range") com
+  // end_date=AAAA-12-31. Resultado eram meses sem chuva no grafico. Fix:
+  // clamp em min(${ano}-12-31, today).
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
   const start = `${ano}-01-01`;
-  const end = `${ano}-12-31`;
+  const yearEnd = `${ano}-12-31`;
+  const end = yearEnd <= todayStr ? yearEnd : todayStr;
+
+  // Se o ano e' futuro (start > today), retorna vazio sem chamar API
+  if (start > todayStr) return {};
+
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${LAT}&longitude=${LNG}&start_date=${start}&end_date=${end}&daily=precipitation_sum&timezone=America%2FSao_Paulo`;
-  const r = await fetch(url, { cache: "force-cache" });
-  if (!r.ok) return {};
+
+  // Cache: ano completo passado = cache forte (dados imutaveis).
+  //        ano corrente = revalida diariamente.
+  const isPastYear = yearEnd < todayStr;
+  const r = await fetch(url, isPastYear ? { cache: "force-cache" } : { next: { revalidate: 86400 } });
+  if (!r.ok) {
+    if (typeof console !== "undefined") {
+      console.warn(`[ChuvaDengueChart] Open-Meteo Archive HTTP ${r.status} for ${ano}: ${await r.text().catch(() => "?")}`);
+    }
+    return {};
+  }
   const json = await r.json() as { daily?: { time: string[]; precipitation_sum: (number|null)[] } };
   const d = json.daily;
   if (!d) return {};
