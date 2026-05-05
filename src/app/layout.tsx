@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import SiteLayout from "@/components/layout/SiteLayout";
+import { siteIdentityGraph } from "@/lib/seo";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -102,45 +103,14 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      name: "Piracanjuba.ai",
-      alternateName: "Transparência Municipal de Piracanjuba",
-      url: SITE_URL,
-      description:
-        "Portal de transparência municipal de Piracanjuba, Goiás com inteligência artificial.",
-      inLanguage: "pt-BR",
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${SITE_URL}/?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Ferro Labs Tecnologia LTDA",
-        url: SITE_URL,
-      },
-    },
-    {
-      "@type": "GovernmentOrganization",
-      name: "Município de Piracanjuba",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Piracanjuba",
-        addressRegion: "GO",
-        addressCountry: "BR",
-      },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: -17.3028,
-        longitude: -49.0167,
-      },
-    },
-  ],
-};
+// Schema canonico do site — moved to lib/seo.ts pra ser referenciavel via @id
+// em outras paginas (Datasets, Articles etc).
+//
+// IMPORTANTE: nao declaramos Piracanjuba.ai como GovernmentOrganization. O site
+// e' NewsMediaOrganization independente. Prefeitura, Camara e TCM-GO aparecem
+// como entidades SEPARADAS (com @id distinto + url oficial), referenciadas
+// quando dados deles sao agregados — sem impersonacao.
+const websiteJsonLd = siteIdentityGraph();
 
 export default function RootLayout({
   children,

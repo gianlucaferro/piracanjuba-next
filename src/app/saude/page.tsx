@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import { fetchSaudeData } from "@/lib/data/setores";
 import SaudeClient from "./SaudeClient";
 import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
@@ -12,6 +12,66 @@ export const metadata = pageMetadata({
 });
 
 export const revalidate = 3600;
+
+const SITE_URL = "https://piracanjuba.ai";
+const today = new Date().toISOString().slice(0, 10);
+
+// Datasets de saude — sources externas oficiais (Fiocruz, MS, INMET).
+const saudeDatasets = [
+  datasetJsonLd({
+    name: "Casos de dengue, chikungunya e zika em Piracanjuba",
+    description:
+      "Casos confirmados de arboviroses (dengue, chikungunya, zika) em Piracanjuba-GO, agregados mensalmente via InfoDengue (Fiocruz) e dados do Ministério da Saúde. Inclui correlação com precipitação acumulada via Open-Meteo.",
+    url: `${SITE_URL}/saude`,
+    creator: {
+      type: "Organization",
+      name: "InfoDengue (Fiocruz) + Ministério da Saúde + Open-Meteo",
+      url: "https://info.dengue.mat.br/",
+    },
+    dateModified: today,
+    keywords: [
+      "dengue",
+      "Piracanjuba",
+      "saúde pública",
+      "arbovirose",
+      "InfoDengue",
+      "Fiocruz",
+      "epidemiologia",
+    ],
+    variableMeasured: [
+      "casos confirmados",
+      "casos suspeitos",
+      "óbitos",
+      "incidência por 100k habitantes",
+      "precipitação acumulada (mm)",
+    ],
+  }),
+  datasetJsonLd({
+    name: "Profissionais e estabelecimentos de saúde em Piracanjuba",
+    description:
+      "Médicos, enfermeiros, dentistas, agentes comunitários, farmacêuticos e demais profissionais de saúde lotados na rede municipal de Piracanjuba, agregados via folha de pagamento e CNES (Cadastro Nacional de Estabelecimentos de Saúde).",
+    url: `${SITE_URL}/saude`,
+    creator: {
+      type: "Organization",
+      name: "DataSUS / CNES + Prefeitura de Piracanjuba",
+      url: "https://cnes.datasus.gov.br/",
+    },
+    dateModified: today,
+    keywords: [
+      "saúde",
+      "Piracanjuba",
+      "CNES",
+      "profissionais de saúde",
+      "DataSUS",
+      "UBS",
+    ],
+    variableMeasured: [
+      "número de profissionais por categoria",
+      "estabelecimentos de saúde",
+      "leitos",
+    ],
+  }),
+];
 
 const HEALTH_CATEGORIES = [
   "dengue",
@@ -66,6 +126,13 @@ export default async function SaudePage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      {saudeDatasets.map((d, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }}
+        />
+      ))}
       <div className="container py-4 space-y-4">
         <ClimaSaudeCard />
       </div>
