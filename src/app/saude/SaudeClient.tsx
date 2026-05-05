@@ -24,6 +24,7 @@ import {
   Tooltip, ResponsiveContainer, Legend, ReferenceLine,
 } from "recharts";
 import ChuvaDengueChart from "@/components/saude/ChuvaDengueChart";
+import DataSUSTab from "@/components/saude/DataSUSTab";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -1348,6 +1349,7 @@ const tabs = [
   { value: "estabelecimentos", label: "Estabelecimentos", icon: Building2 },
   { value: "servidores", label: "Servidores", icon: Stethoscope },
   { value: "despesas", label: "Despesas", icon: DollarSign },
+  { value: "datasus", label: "DataSUS", icon: Activity },
 ];
 
 export default function Saude() {
@@ -1387,6 +1389,7 @@ export default function Saude() {
           <TabsContent value="estabelecimentos"><EstabelecimentosTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresSaudeTab /></TabsContent>
           <TabsContent value="despesas"><DespesasSaudeTab /></TabsContent>
+          <TabsContent value="datasus"><DataSUSTab /></TabsContent>
         </Tabs>
       </div>
     </Layout>
