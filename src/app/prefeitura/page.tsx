@@ -1,4 +1,5 @@
-import { pageMetadata, datasetJsonLd, SCHEMA_IDS } from "@/lib/seo";
+import { pageMetadata, datasetJsonLd, articleJsonLd, SCHEMA_IDS } from "@/lib/seo";
+import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import PrefeituraClient from "@/components/prefeitura/PrefeituraClient";
 
 export const dynamic = "force-dynamic";
@@ -14,9 +15,6 @@ const SITE_URL = "https://piracanjuba.ai";
 const today = new Date().toISOString().slice(0, 10);
 
 // Schemas Dataset — um por aba estruturada da pagina /prefeitura.
-// Cada dataset deixa CLARO via creator quem produziu os dados originalmente
-// (Prefeitura ou TCM-GO) e via publisher que o Piracanjuba.ai eh o agregador.
-// Isso ranqueia muito bem em GEO (ChatGPT, Perplexity, Google Dataset Search).
 const datasets = [
   datasetJsonLd({
     name: "Apontamentos do TCM-GO sobre Piracanjuba",
@@ -102,14 +100,141 @@ const datasets = [
   }),
 ];
 
-export default function PrefeituraPage() {
+// ===== Article schemas pra cada apontamento TCM-GO =====
+//
+// Fetched server-side pra rendering inicial. Cada apontamento vira um Article
+// que cita TCM-GO via sourceOrganization e link pro PDF via isBasedOn —
+// rastreabilidade que LLMs adoram pra GEO.
+type Apontamento = {
+  id: string;
+  numero_processo: string;
+  ano: number | null;
+  orgao_alvo: string | null;
+  tipo: string | null;
+  status: string | null;
+  ementa: string | null;
+  ementa_resumo_ia: string | null;
+  data_publicacao: string | null;
+  fonte_url: string | null;
+};
+
+/**
+ * Mapeia orgao_alvo (texto livre) pra @id da entidade governamental.
+ * Se nao for prefeitura/camara, retorna undefined (nao adiciona @id ref).
+ */
+function orgaoAlvoMention(orgao: string | null): string | undefined {
+  if (!orgao) return undefined;
+  const lower = orgao.toLowerCase();
+  if (lower.includes("prefeitura") || lower.includes("fundo") || lower.includes("secretaria"))
+    return SCHEMA_IDS.prefeitura;
+  if (lower.includes("câmara") || lower.includes("camara")) return SCHEMA_IDS.camara;
+  return undefined;
+}
+
+/** Extrai nomes de pessoas mencionadas na ementa via heuristica simples. */
+function extractPersonNames(text: string | null): Array<{ name: string; jobTitle?: string }> {
+  if (!text) return [];
+  const persons: Array<{ name: string; jobTitle?: string }> = [];
+  const seen = new Set<string>();
+
+  // "Sr. NOME" ou "Sra. NOME" — captura ate 4 palavras maiusculas
+  const titleRegex = /\bSrs?\.\s+([A-Z][a-záéíóúâêôãç]+(?:\s+(?:de|da|dos|das|do)\s+|\s+)){1,4}/g;
+  for (const m of text.matchAll(titleRegex)) {
+    const name = m[0].replace(/^Srs?\.\s+/, "").trim();
+    if (!seen.has(name) && name.length >= 5 && name.length <= 60) {
+      persons.push({ name });
+      seen.add(name);
+    }
+  }
+
+  // "Prefeito NOME" ou "Presidente da Câmara NOME"
+  const roleRegex =
+    /\b(Prefeito|Vice-Prefeito|Presidente da Câmara|Vereador|Gestor|Secretário)(?:\s+do\s+\w+)?[,:]?\s+([A-Z][a-záéíóúâêôãç]+(?:\s+(?:de|da|dos|das|do)\s+|\s+)){1,4}/g;
+  for (const m of text.matchAll(roleRegex)) {
+    const role = m[1];
+    const name = m[0].replace(roleRegex, "$2").trim();
+    if (!seen.has(name) && name.length >= 5 && name.length <= 60) {
+      persons.push({ name, jobTitle: role });
+      seen.add(name);
+    }
+  }
+
+  return persons.slice(0, 5); // limita a 5 pra nao poluir
+}
+
+async function fetchApontamentos(): Promise<Apontamento[]> {
+  try {
+    const supabase = createPublicSupabaseClient();
+    const { data } = await supabase
+      .from("tcm_go_apontamentos")
+      .select(
+        "id, numero_processo, ano, orgao_alvo, tipo, status, ementa, ementa_resumo_ia, data_publicacao, fonte_url"
+      )
+      .order("data_publicacao", { ascending: false, nullsFirst: false })
+      .limit(50);
+    return (data ?? []) as Apontamento[];
+  } catch {
+    return [];
+  }
+}
+
+function buildArticleSchema(a: Apontamento) {
+  const tipoLabel = a.tipo ? a.tipo.charAt(0).toUpperCase() + a.tipo.slice(1) : "Apontamento";
+  const headline =
+    `${tipoLabel} TCM-GO ${a.numero_processo}${a.ano ? `/${a.ano}` : ""}` +
+    (a.status ? ` — ${a.status}` : "");
+
+  const mentions: Array<string | { type: string; name: string; url?: string; jobTitle?: string }> = [
+    SCHEMA_IDS.tcmGo, // sempre menciona TCM-GO
+  ];
+  const orgaoId = orgaoAlvoMention(a.orgao_alvo);
+  if (orgaoId) mentions.push(orgaoId);
+
+  // Pessoas extraidas da ementa
+  const persons = extractPersonNames(a.ementa);
+  for (const p of persons) {
+    mentions.push({ type: "Person", name: p.name, jobTitle: p.jobTitle });
+  }
+
+  const articleBody = a.ementa_resumo_ia || a.ementa || "";
+
+  return articleJsonLd({
+    headline,
+    url: `${SITE_URL}/prefeitura?tab=tcm-go&id=${a.id}`,
+    articleBody,
+    description: a.ementa?.slice(0, 200) || undefined,
+    articleSection: "Transparência Pública / TCM-GO",
+    datePublished: a.data_publicacao || undefined,
+    dateModified: today,
+    isBasedOn: a.fonte_url || undefined,
+    sourceOrganizationId: SCHEMA_IDS.tcmGo,
+    mentions,
+    type: "Article",
+  });
+}
+
+export default async function PrefeituraPage() {
+  const apontamentos = await fetchApontamentos();
+  const articles = apontamentos
+    .filter((a) => a.ementa_resumo_ia || a.ementa) // so emite article se tiver corpo
+    .map(buildArticleSchema);
+
   return (
     <>
+      {/* Datasets — uma vez cada */}
       {datasets.map((d, i) => (
         <script
-          key={i}
+          key={`ds-${i}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }}
+        />
+      ))}
+      {/* Articles — um por apontamento TCM, server-rendered pra crawlers */}
+      {articles.map((art, i) => (
+        <script
+          key={`art-${i}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(art) }}
         />
       ))}
       <PrefeituraClient />

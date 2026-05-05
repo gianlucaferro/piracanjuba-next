@@ -250,6 +250,78 @@ export function datasetJsonLd(opts: {
   };
 }
 
+/**
+ * Schema Article — pra cada apontamento/decisão/contrato com resumo proprio.
+ *
+ * Use quando o item tem narrativa propria (resumo IA, ementa). Combina muito
+ * bem com Datasets: o Dataset descreve a coleção, o Article descreve cada item.
+ *
+ * Campos chave:
+ * - mentions: entidades mencionadas (pessoas, orgaos, locais). LLMs adoram.
+ * - isBasedOn: URL do documento original que serviu de fonte
+ * - sourceOrganization: quem produziu o documento original (governo)
+ * - publisher/author: Piracanjuba.ai (somos quem agregou e analisou)
+ */
+export function articleJsonLd(opts: {
+  /** Headline do article (ex: "Acórdão AC 07590/2016 julga contas IRREGULARES") */
+  headline: string;
+  /** URL canonica desse article (deep-link no site) */
+  url: string;
+  /** Resumo ou body principal — o AI summary serve perfeitamente */
+  articleBody: string;
+  /** Ementa/descricao curta */
+  description?: string;
+  datePublished?: string;
+  dateModified?: string;
+  /** Secao tematica (Transparencia, Saude, Economia etc) */
+  articleSection?: string;
+  /** URL do documento original (PDF, pagina) que serviu de base */
+  isBasedOn?: string;
+  /** @id do governo que produziu o documento original (ID.tcmGo, ID.prefeitura, ID.camara) */
+  sourceOrganizationId?: string;
+  /** Entidades mencionadas — array de @id refs ou objetos inline */
+  mentions?: Array<
+    | string // @id reference
+    | { type: string; name: string; url?: string; jobTitle?: string }
+  >;
+  /** Tipo (default: Article). Use "NewsArticle" pra noticias, "Report" pra relatorios */
+  type?: "Article" | "NewsArticle" | "Report";
+}) {
+  const mentions = (opts.mentions ?? []).map((m) =>
+    typeof m === "string"
+      ? { "@id": m }
+      : {
+          "@type": m.type,
+          name: m.name,
+          ...(m.url ? { url: m.url } : {}),
+          ...(m.jobTitle ? { jobTitle: m.jobTitle } : {}),
+        }
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": opts.type || "Article",
+    headline: opts.headline,
+    url: opts.url,
+    inLanguage: "pt-BR",
+    articleBody: opts.articleBody,
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.articleSection ? { articleSection: opts.articleSection } : {}),
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
+    author: { "@id": ID.org },
+    publisher: { "@id": ID.org },
+    about: { "@id": ID.municipio },
+    spatialCoverage: { "@id": ID.municipio },
+    ...(opts.isBasedOn ? { isBasedOn: opts.isBasedOn } : {}),
+    ...(opts.sourceOrganizationId
+      ? { sourceOrganization: { "@id": opts.sourceOrganizationId } }
+      : {}),
+    ...(mentions.length ? { mentions } : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
+  };
+}
+
 /** Helper pra emitir schema como <script type="application/ld+json"> */
 export function jsonLdScript(data: unknown) {
   return {
