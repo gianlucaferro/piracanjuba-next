@@ -1,7 +1,7 @@
 import { Trees } from "lucide-react";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
-import EmColetaSection from "@/components/EmColetaSection";
 import MapBiomasPanel from "@/components/meio-ambiente/MapBiomasPanel";
+import IndicadoresAmbientaisPanel from "@/components/meio-ambiente/IndicadoresAmbientaisPanel";
 import { fetchMapbiomasSerie } from "@/lib/data/meio-ambiente";
 
 export const metadata = pageMetadata({
@@ -75,64 +75,11 @@ export default async function MeioAmbientePage() {
       {/* Painel principal: MapBiomas 1985-2024 com gráfico + cards + insights */}
       {rows.length > 0 ? <MapBiomasPanel rows={rows} /> : null}
 
-      {/* Outras fontes — em coleta */}
+      {/* Painel "Indicadores Ambientais" com 5 fontes oficiais filtraveis. */}
+      {/* Substitui o "Em coleta" generico — cada card aponta direto pra dashboard */}
+      {/* oficial filtravel por Piracanjuba (BDQueimadas, DETER, SICAR, IBAMA, ANA). */}
       <div className="mt-10">
-        <EmColetaSection
-          titulo="Outros indicadores ambientais — Em coleta"
-          descricao="Estamos integrando alertas de desmatamento DETER/INPE, focos de queimadas, áreas protegidas (CAR/SICAR), embargos do IBAMA e qualidade da água do Rio Piracanjuba. Por enquanto, consulte as fontes oficiais abaixo."
-          iconBg="bg-emerald-700/10"
-          exemplosCruzamentos={[
-            "Alertas de desmatamento em tempo real (DETER/INPE)",
-            "Cadastro Ambiental Rural (CAR): % de imóveis com APP/RL regularizados",
-            "Embargos ambientais ativos (IBAMA)",
-            "Cruzamento desmatamento × expansão da soja × emissão CO2 estimada",
-            "Cruzamento chuva × seca × incêndios florestais (queimadas)",
-            "Áreas de Preservação Permanente: rios, encostas, nascentes",
-            "Reservas Particulares do Patrimônio Natural (RPPN) no município",
-          ]}
-          fontes={[
-            {
-              nome: "MapBiomas — Plataforma de Mapeamento",
-              url: "https://plataforma.brasil.mapbiomas.org/",
-              descricao: "Uso e cobertura do solo de 1985 a presente, atualização anual. (Já integrado acima.)",
-            },
-            {
-              nome: "DETER/INPE — Alertas de Desmatamento",
-              url: "http://terrabrasilis.dpi.inpe.br/",
-              descricao: "Alertas mensais de desmatamento e degradação florestal.",
-            },
-            {
-              nome: "PRODES/INPE — Mapeamento Anual",
-              url: "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-              descricao: "Taxa anual de desmatamento bruto.",
-            },
-            {
-              nome: "SICAR — Sistema Nacional do CAR",
-              url: "https://www.car.gov.br/",
-              descricao: "Cadastro Ambiental Rural — imóveis cadastrados, áreas RL/APP.",
-            },
-            {
-              nome: "IBAMA — Embargos e Autuações",
-              url: "https://www.gov.br/ibama/pt-br",
-              descricao: "Embargos ambientais e autuações por infração.",
-            },
-            {
-              nome: "BDQueimadas/INPE",
-              url: "https://queimadas.dgi.inpe.br/queimadas/bdqueimadas",
-              descricao: "Focos de queimadas detectados via satélite.",
-            },
-            {
-              nome: "SEMARH-GO",
-              url: "https://www.meioambiente.go.gov.br/",
-              descricao: "Secretaria estadual: licenciamentos, recursos hídricos, fauna.",
-            },
-            {
-              nome: "ANA — Recursos Hídricos",
-              url: "https://www.gov.br/ana/pt-br",
-              descricao: "Vazão de rios, qualidade da água, outorgas.",
-            },
-          ]}
-        />
+        <IndicadoresAmbientaisPanel />
       </div>
     </div>
   );
