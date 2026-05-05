@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
+  BarChart3,
   Building2,
   HeartHandshake,
   Home,
@@ -30,7 +31,10 @@ const mainNav: NavItem[] = [
   { to: "/prefeitura", label: "Prefeitura", icon: Building2 },
 ];
 
+// Dados PBA leva ao hub /dados-pba que agrega 10 categorias de dados.
+// Primeiro item de "Mais" pra dar destaque visual.
 const moreNav: NavItem[] = [
+  { to: "/dados-pba", label: "Dados PBA", icon: BarChart3 },
   { to: "/contatos", label: "Contatos Úteis", icon: Phone },
   { to: "/coleta-lixo", label: "Coleta de Lixo", icon: Trash2 },
   { to: "/plantao-farmacias", label: "Plantão Farmácias", icon: Pill },

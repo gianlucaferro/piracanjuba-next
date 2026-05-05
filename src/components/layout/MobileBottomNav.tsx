@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
+  BarChart3,
   Home,
   Landmark,
   Building2,
@@ -24,7 +25,9 @@ const mobileMainNav = [
   { to: "/prefeitura", label: "Prefeitura", icon: Building2 },
 ];
 
+// Dados PBA leva ao hub /dados-pba — primeiro item pra dar destaque.
 const mobileMoreNav = [
+  { to: "/dados-pba", label: "Dados PBA", icon: BarChart3 },
   { to: "/coleta-lixo", label: "Coleta de Lixo", icon: Trash2 },
   { to: "/plantao-farmacias", label: "Plantão Farmácias", icon: Pill },
   { to: "/contatos", label: "Contatos Úteis", icon: Phone },

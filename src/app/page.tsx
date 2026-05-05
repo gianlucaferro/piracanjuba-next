@@ -17,6 +17,8 @@ import {
   BarChart3,
   FileText,
   TrendingUp,
+  Building,
+  Trees,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { pageMetadata } from "@/lib/seo";
@@ -315,6 +317,31 @@ export default async function HomePage() {
               <ShieldAlert className="w-7 h-7 text-orange-500 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Segurança</span>
               <span className="text-[10px] text-muted-foreground leading-tight">Ocorrências, PM, Bombeiros</span>
+            </Link>
+            <Link href="/economia" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <TrendingUp className="w-7 h-7 text-emerald-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Economia Local</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Empregos, salários, empresas, PIB</span>
+            </Link>
+            <Link href="/infraestrutura" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <Building className="w-7 h-7 text-slate-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Infraestrutura</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Saneamento, energia, conectividade</span>
+            </Link>
+            <Link href="/meio-ambiente" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
+              <Trees className="w-7 h-7 text-emerald-700 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-foreground">Meio Ambiente</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">MapBiomas, desmatamento, queimadas</span>
+            </Link>
+          </div>
+          {/* CTA pro hub completo de dados */}
+          <div className="mt-3 text-center">
+            <Link
+              href="/dados-pba"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            >
+              Ver Dados PBA completo
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </section>
