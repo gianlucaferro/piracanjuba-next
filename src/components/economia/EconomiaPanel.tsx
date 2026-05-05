@@ -49,6 +49,31 @@ type EmpresasMEIs = {
   meis: { valor: number | null; texto: string | null; observacao: string | null; ano: number | null } | null;
 };
 
+type TopEmpregador = {
+  nome: string;
+  funcionarios: number | null;
+  texto: string | null;
+  cnae: string | null;
+  fonte: string | null;
+  fonte_url: string | null;
+};
+
+type TopOcupacao = {
+  ocupacao: string;
+  setor: string | null;
+  empregos: number | null;
+  texto: string | null;
+  observacao: string | null;
+};
+
+type CagedSetor = {
+  setor: string;
+  admissoes: number;
+  desligamentos: number;
+  saldo: number;
+  observacao: string | null | undefined;
+};
+
 type Props = {
   pibComparativo: PibCidade[];
   composicaoSetorial: CompCidade[];
@@ -58,6 +83,9 @@ type Props = {
   /** Cruzamento safra × empregos: chuva mensal ano corrente vs saldo CAGED setor agro */
   chuvaMensal: Record<number, number>;
   pibMediaGoias: number;
+  topEmpregadores: TopEmpregador[];
+  topOcupacoes: TopOcupacao[];
+  cagedPorSetor: CagedSetor[];
 };
 
 const SETOR_ICON: Record<string, typeof Wheat> = {
@@ -97,6 +125,9 @@ export default function EconomiaPanel({
   empresasMEIs,
   chuvaMensal,
   pibMediaGoias,
+  topEmpregadores,
+  topOcupacoes,
+  cagedPorSetor,
 }: Props) {
   const piracanjuba = pibComparativo.find((c) => c.destaque);
 
@@ -544,10 +575,236 @@ export default function EconomiaPanel({
         </section>
       )}
 
+      {/* PAINEL 7: TOP EMPREGADORES */}
+      {topEmpregadores.length > 0 && (
+        <section className="stat-card border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+              <Trophy className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-foreground">
+                Top Empregadores de Piracanjuba
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                Maiores empresas do município por receita e empregos diretos.
+                <strong> O Grupo Piracanjuba (laticínios) é o maior empregador</strong>,
+                com cerca de 3.200 funcionários — quase 80% do total de empregos
+                formais do município (4.047 RAIS 2023).
+              </p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {topEmpregadores.map((e, i) => (
+              <div
+                key={e.nome}
+                className={`stat-card flex items-start gap-3 ${
+                  i === 0 ? "border-blue-500/40 bg-blue-500/5" : ""
+                }`}
+              >
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0 text-sm font-bold text-foreground">
+                  #{i + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <p className="text-sm font-semibold text-foreground">{e.nome}</p>
+                    {e.texto && (
+                      <span
+                        className={`text-xs font-bold ${
+                          e.funcionarios ? "text-blue-600" : "text-muted-foreground"
+                        }`}
+                      >
+                        {e.texto}
+                      </span>
+                    )}
+                  </div>
+                  {e.cnae && (
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                      {e.cnae}
+                    </p>
+                  )}
+                </div>
+                {e.fonte_url && (
+                  <a
+                    href={e.fonte_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline shrink-0 inline-flex items-center gap-1"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground italic mt-3">
+            Fontes: Grupo Piracanjuba (institucional) · Econodata (top 5 por receita).
+            Funcionários só estão indicados quando há dado público confirmado.
+          </p>
+        </section>
+      )}
+
+      {/* PAINEL 8: TOP OCUPAÇÕES CBO */}
+      {topOcupacoes.length > 0 && (
+        <section className="stat-card border-pink-500/20 bg-gradient-to-br from-pink-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-pink-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-foreground">
+                Top Ocupações Profissionais (CBO)
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                As 3 maiores categorias de empregos formais em Piracanjuba pela
+                Classificação Brasileira de Ocupações (CBO). Reflete o perfil
+                produtivo: agro + serviços de logística (motoristas).
+              </p>
+            </div>
+          </div>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={topOcupacoes}
+                layout="vertical"
+                margin={{ top: 8, right: 60, bottom: 0, left: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 10 }} />
+                <YAxis
+                  type="category"
+                  dataKey="ocupacao"
+                  tick={{ fontSize: 11 }}
+                  width={180}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                  formatter={(v: number) => [`${v} empregos`, "Total"]}
+                />
+                <Bar dataKey="empregos" radius={[0, 4, 4, 0]}>
+                  {topOcupacoes.map((o) => (
+                    <Cell
+                      key={o.ocupacao}
+                      fill={SETOR_CORES[o.setor || "servicos"] || "#94a3b8"}
+                    />
+                  ))}
+                  <LabelList
+                    dataKey="texto"
+                    position="right"
+                    style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                  />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-[10px] text-muted-foreground italic mt-2">
+            Fonte: PDET/MTE RAIS 2023 via Caravela.info. As 3 maiores categorias
+            confirmadas; demais (top 10 completo) disponível no portal PDET com
+            login.
+          </p>
+        </section>
+      )}
+
+      {/* PAINEL 9: CAGED por setor */}
+      {cagedPorSetor.length > 0 && cagedPorSetor.some((s) => s.admissoes > 0) && (
+        <section className="stat-card border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+              <Briefcase className="w-5 h-5 text-cyan-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-foreground">
+                CAGED 2025 por Setor
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                Distribuição estimada das admissões/desligamentos 2025 YTD por setor,
+                aplicada do total real (1.100/996) usando proporção do PIB setorial
+                (Piracanjuba 2021: 53,5% agro, 38,5% serviços, 8% indústria).
+              </p>
+            </div>
+          </div>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={cagedPorSetor}
+                margin={{ top: 8, right: 10, bottom: 0, left: -10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                <XAxis
+                  dataKey="setor"
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(s: string) => SETOR_LABEL[s] || s}
+                />
+                <YAxis tick={{ fontSize: 10 }} width={36} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                  formatter={(v: number, name: string) => [`${v} empregos`, name]}
+                  labelFormatter={(l: string) => SETOR_LABEL[l] || l}
+                />
+                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} />
+                <Bar
+                  dataKey="admissoes"
+                  name="Admissões"
+                  fill="hsl(142, 76%, 36%)"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="desligamentos"
+                  name="Desligamentos"
+                  fill="hsl(0, 84%, 50%)"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            {cagedPorSetor.map((s) => (
+              <div
+                key={s.setor}
+                className={`stat-card ${
+                  s.saldo > 0
+                    ? "border-green-500/30 bg-green-500/5"
+                    : "border-red-500/30 bg-red-500/5"
+                }`}
+              >
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Saldo {SETOR_LABEL[s.setor]}
+                </p>
+                <p
+                  className={`text-xl font-extrabold mt-0.5 ${
+                    s.saldo > 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {s.saldo > 0 ? "+" : ""}
+                  {s.saldo}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground italic mt-3">
+            ⚠️ <strong>Estimativa</strong>: distribuição derivada do total real CAGED
+            via proporção do PIB. Pra valores exatos por setor, acessar Power BI
+            CAGED/MTE filtrando município. Quando MTE expor REST público, sync
+            automático passa a popular números reais.
+          </p>
+        </section>
+      )}
+
       <p className="text-[10px] text-muted-foreground italic mt-6 text-center">
         Atualização mensal automática via cron <code>sync-economia-mensal</code> · primeira
         segunda do mês 06:00 UTC. Snapshots iniciais baseados em IMB-GO Boletim 012/2023
-        (PIB 2021), Caravela.info (CAGED 2024-2025), PDET/MTE RAIS 2023.
+        (PIB 2021), Caravela.info (CAGED 2024-2025 + top ocupações), PDET/MTE RAIS 2023,
+        Econodata (top empresas), Grupo Piracanjuba (institucional).
       </p>
     </div>
   );

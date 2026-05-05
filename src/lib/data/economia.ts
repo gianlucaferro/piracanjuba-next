@@ -141,3 +141,57 @@ export function getEmpresasMEIs(rows: EconomiaIndicador[]) {
       : null,
   };
 }
+
+export function getTopEmpregadores(rows: EconomiaIndicador[]) {
+  return rows
+    .filter((r) => r.categoria === "top_empregadores")
+    .map((r) => ({
+      nome: r.indicador,
+      funcionarios: r.valor,
+      texto: r.valor_texto,
+      cnae: r.observacao,
+      fonte: r.fonte,
+      fonte_url: r.fonte_url,
+    }))
+    .sort((a, b) => (b.funcionarios ?? 0) - (a.funcionarios ?? 0));
+}
+
+export function getTopOcupacoesCBO(rows: EconomiaIndicador[]) {
+  return rows
+    .filter((r) => r.categoria === "rais_cbo")
+    .map((r) => ({
+      ocupacao: r.indicador,
+      setor: r.setor,
+      empregos: r.valor,
+      texto: r.valor_texto,
+      observacao: r.observacao,
+    }))
+    .sort((a, b) => (b.empregos ?? 0) - (a.empregos ?? 0));
+}
+
+export function getCagedPorSetor(rows: EconomiaIndicador[]) {
+  const setores = ["agropecuaria", "servicos", "industria"] as const;
+  return setores.map((s) => {
+    const adm = rows.find(
+      (r) =>
+        r.categoria === "caged_setor" &&
+        r.indicador === "admissoes_2025" &&
+        r.setor === s,
+    );
+    const des = rows.find(
+      (r) =>
+        r.categoria === "caged_setor" &&
+        r.indicador === "desligamentos_2025" &&
+        r.setor === s,
+    );
+    const admN = adm?.valor ?? 0;
+    const desN = des?.valor ?? 0;
+    return {
+      setor: s,
+      admissoes: admN,
+      desligamentos: desN,
+      saldo: admN - desN,
+      observacao: adm?.observacao,
+    };
+  });
+}

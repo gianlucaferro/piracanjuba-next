@@ -10,6 +10,9 @@ import {
   getCagedSerie,
   getSalariosPorSetor,
   getEmpresasMEIs,
+  getTopEmpregadores,
+  getTopOcupacoesCBO,
+  getCagedPorSetor,
 } from "@/lib/data/economia";
 import { fetchChuvaHistoricaMensal } from "@/lib/data/clima";
 
@@ -61,6 +64,9 @@ export default async function EconomiaPage() {
   const cagedSerie = getCagedSerie(econRows);
   const salariosPorSetor = getSalariosPorSetor(econRows);
   const empresasMEIs = getEmpresasMEIs(econRows);
+  const topEmpregadores = getTopEmpregadores(econRows);
+  const topOcupacoes = getTopOcupacoesCBO(econRows);
+  const cagedPorSetor = getCagedPorSetor(econRows);
   const pibMediaGoiasRow = econRows.find(
     (r) => r.indicador === "pib_per_capita_estado",
   );
@@ -115,6 +121,9 @@ export default async function EconomiaPage() {
           empresasMEIs={empresasMEIs}
           chuvaMensal={chuvaAnoCorrente}
           pibMediaGoias={pibMediaGoias}
+          topEmpregadores={topEmpregadores}
+          topOcupacoes={topOcupacoes}
+          cagedPorSetor={cagedPorSetor}
         />
       </section>
 
