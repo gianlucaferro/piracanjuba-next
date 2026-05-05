@@ -1,6 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import { fetchSaudeData } from "@/lib/data/setores";
+import { fetchChuvaHistoricaMensal } from "@/lib/data/clima";
 import SaudeClient from "./SaudeClient";
 import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
 
@@ -123,6 +124,16 @@ export default async function SaudePage() {
       );
     }
   }
+
+  // Prefetch chuva mensal historica pros 3 anos disponiveis no filtro.
+  // Lido da tabela clima_historico_mensal (cron weekly atualiza ano corrente).
+  // Hidratado via React Query — ChuvaDengueChart consome via useQuery.
+  await Promise.all(
+    years.map(async (year) => {
+      const chuvaPorMes = await fetchChuvaHistoricaMensal(year);
+      queryClient.setQueryData(["chuva-historica-mensal", year], chuvaPorMes);
+    }),
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

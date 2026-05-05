@@ -20,6 +20,86 @@ export type ResumoMes = {
   temperatura_min_absoluta: number;
 };
 
+export type ChuvaMensal = Record<number, number>; // {1: 252.5, 2: 190.7, ...}
+
+/**
+ * Chuva mensal acumulada de UM ano especifico, lida da tabela
+ * clima_historico_mensal (populada por sync-clima-historico semanal).
+ * Dados imediatos pra qualquer ano de 2018-presente sem chamar API externa.
+ */
+export const fetchChuvaHistoricaMensal = unstable_cache(
+  async (ano: number): Promise<ChuvaMensal> => {
+    const supabase = createPublicSupabaseClient();
+    const { data } = await supabase
+      .from("clima_historico_mensal")
+      .select("mes, precipitacao_acumulada_mm")
+      .eq("ano", ano);
+    const out: ChuvaMensal = {};
+    for (const row of data ?? []) {
+      out[Number(row.mes)] = Number(row.precipitacao_acumulada_mm) || 0;
+    }
+    return out;
+  },
+  ["clima-historico-mensal"],
+  { revalidate: 86400, tags: ["clima"] },
+);
+
+/**
+ * Media historica de chuva por mes calculada sobre uma janela de anos
+ * (ex: 2018-2025). Util pra benchmark "ano corrente vs media historica".
+ */
+export const fetchChuvaMediaHistorica = unstable_cache(
+  async (anoInicio: number, anoFim: number): Promise<ChuvaMensal> => {
+    const supabase = createPublicSupabaseClient();
+    const { data } = await supabase
+      .from("clima_historico_mensal")
+      .select("ano, mes, precipitacao_acumulada_mm")
+      .gte("ano", anoInicio)
+      .lte("ano", anoFim);
+
+    const valoresPorMes: Record<number, number[]> = {};
+    for (const row of data ?? []) {
+      const m = Number(row.mes);
+      valoresPorMes[m] = valoresPorMes[m] ?? [];
+      valoresPorMes[m].push(Number(row.precipitacao_acumulada_mm) || 0);
+    }
+    const out: ChuvaMensal = {};
+    for (let m = 1; m <= 12; m++) {
+      const vals = valoresPorMes[m] ?? [];
+      out[m] = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0;
+    }
+    return out;
+  },
+  ["clima-media-historica"],
+  { revalidate: 86400, tags: ["clima"] },
+);
+
+/**
+ * Soma de precipitacao nos ultimos N dias calculada do INMET diario
+ * (sync 15min). Granularidade alta, atual.
+ */
+export const fetchChuvaUltimosDias = unstable_cache(
+  async (dias: number): Promise<{ total: number; dias_com_chuva: number }> => {
+    const supabase = createPublicSupabaseClient();
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - dias);
+    const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+    const { data } = await supabase
+      .from("inmet_clima_diario")
+      .select("precipitacao_mm")
+      .gte("data", cutoffStr);
+
+    const valores = (data ?? []).map((r) => Number(r.precipitacao_mm ?? 0));
+    return {
+      total: Math.round(valores.reduce((s, v) => s + v, 0) * 10) / 10,
+      dias_com_chuva: valores.filter((v) => v > 0.1).length,
+    };
+  },
+  ["clima-ultimos-dias"],
+  { revalidate: 1800, tags: ["clima"] },
+);
+
 export const fetchClimaUltimoDia = unstable_cache(
   async (): Promise<ClimaDia | null> => {
     const supabase = createPublicSupabaseClient();

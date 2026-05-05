@@ -18,6 +18,7 @@ import {
   ResponsiveContainer, Cell, LineChart, Line, Area, AreaChart,
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
+import ChuvaSafraPanel from "@/components/agro/ChuvaSafraPanel";
 
 /* ── helpers ── */
 function formatNum(v: number | null): string {
@@ -65,7 +66,25 @@ const BAR_COLORS = [
   "hsl(199, 89%, 48%)",
 ];
 
-export default function Agro() {
+type AgroProps = {
+  chuvaAnoCorrente: Record<number, number>;
+  mediaHistMensal: Record<number, number>;
+  ultimos30: number;
+  ultimos60: number;
+  ultimos90: number;
+  ano: number;
+  mesAtual: number;
+};
+
+export default function Agro({
+  chuvaAnoCorrente,
+  mediaHistMensal,
+  ultimos30,
+  ultimos60,
+  ultimos90,
+  ano: anoProp,
+  mesAtual,
+}: AgroProps) {
   const { data: indicadores = [], isLoading } = useQuery({
     queryKey: ["agro-indicadores-page"],
     queryFn: fetchAgroIndicadores,
@@ -169,6 +188,18 @@ export default function Agro() {
             </Badge>
           </div>
         </div>
+
+        {/* Painel Chuva e safra — dados de chuva mensal vs media historica + */}
+        {/* status hidrico + calendario de plantio Cerrado. SSR via /agro/page.tsx. */}
+        <ChuvaSafraPanel
+          chuvaAnoCorrente={chuvaAnoCorrente}
+          mediaHistMensal={mediaHistMensal}
+          ultimos30={ultimos30}
+          ultimos60={ultimos60}
+          ultimos90={ultimos90}
+          ano={anoProp}
+          mesAtual={mesAtual}
+        />
 
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

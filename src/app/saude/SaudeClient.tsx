@@ -586,11 +586,18 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
     mes: i.mes ?? 0,
     valor: i.valor ?? 0,
   }));
+  // Chuva historica mensal pre-hidratada por /saude/page.tsx via React Query.
+  // Sem chamada externa em runtime — leve e instantaneo.
+  const { data: chuvaPorMes = {} } = useQuery({
+    queryKey: ["chuva-historica-mensal", ano],
+    queryFn: () => Promise.resolve({} as Record<number, number>),
+    staleTime: Infinity,
+  });
   return (
     <>
       {/* Grafico Chuva x Dengue - so para dengue (correlacao mais forte) */}
       {categoria === "dengue" && (
-        <ChuvaDengueChart casosPorMes={casosPorMes} ano={ano} />
+        <ChuvaDengueChart casosPorMes={casosPorMes} chuvaPorMes={chuvaPorMes} ano={ano} />
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
