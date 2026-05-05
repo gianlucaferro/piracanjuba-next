@@ -195,3 +195,98 @@ export function getCagedPorSetor(rows: EconomiaIndicador[]) {
     };
   });
 }
+
+/**
+ * CNPJs por bairro (Receita Federal CSV mensal — atualmente apenas Centro
+ * com breakdown público; demais bairros agregados como "outros").
+ */
+export function getCnpjsPorBairro(rows: EconomiaIndicador[]) {
+  const filtered = rows.filter((r) => r.categoria === "cnpjs_bairro");
+  const total = filtered.find((r) => r.indicador === "Total Município");
+  const centro = filtered.find((r) => r.indicador === "Centro");
+  const demais = filtered.find((r) => r.indicador === "Demais Bairros");
+  return {
+    total: total
+      ? {
+          valor: total.valor ?? 0,
+          texto: total.valor_texto ?? "—",
+          observacao: total.observacao,
+          fonte_url: total.fonte_url,
+        }
+      : null,
+    centro: centro
+      ? {
+          valor: centro.valor ?? 0,
+          texto: centro.valor_texto ?? "—",
+          observacao: centro.observacao,
+        }
+      : null,
+    demais: demais
+      ? {
+          valor: demais.valor ?? 0,
+          texto: demais.valor_texto ?? "—",
+          observacao: demais.observacao,
+        }
+      : null,
+  };
+}
+
+/**
+ * Top atividades econômicas (CNAE 4 dígitos) entre os CNPJs ativos.
+ */
+export function getCnaesTop(rows: EconomiaIndicador[]) {
+  return rows
+    .filter((r) => r.categoria === "cnae_top")
+    .map((r) => ({
+      atividade: r.indicador,
+      setor: r.setor,
+      cnae_codigo: r.valor_texto,
+      empresas: r.valor,
+      observacao: r.observacao,
+    }))
+    .sort((a, b) => (b.empresas ?? 0) - (a.empresas ?? 0));
+}
+
+/**
+ * Cruzamento RAIS × CAGED — estoque 2023 + saldo 2025 por setor agregado.
+ * Util pra ver quais setores estão crescendo proporcionalmente ao tamanho.
+ */
+export function getCruzamentoRaisCaged(rows: EconomiaIndicador[]) {
+  const setores = ["agropecuaria", "servicos", "industria"] as const;
+  return setores.map((s) => {
+    const estoque = rows.find(
+      (r) =>
+        r.categoria === "rais_caged_cruzamento" &&
+        r.setor === s &&
+        r.indicador.endsWith("_estoque_2023"),
+    );
+    const saldo = rows.find(
+      (r) =>
+        r.categoria === "rais_caged_cruzamento" &&
+        r.setor === s &&
+        r.indicador.endsWith("_saldo_2025"),
+    );
+    const estoqueN = estoque?.valor ?? 0;
+    const saldoN = saldo?.valor ?? 0;
+    const variacaoPct = estoqueN > 0 ? (saldoN / estoqueN) * 100 : 0;
+    return {
+      setor: s,
+      estoque_2023: estoqueN,
+      estoque_texto: estoque?.valor_texto ?? "—",
+      saldo_2025: saldoN,
+      saldo_texto: saldo?.valor_texto ?? "—",
+      variacao_pct: variacaoPct,
+    };
+  });
+}
+
+/**
+ * Status de coleta CAGED por CNAE detalhado (Power BI MTE — pendente parser).
+ */
+export function getCagedCnaeDetalhadoStatus(rows: EconomiaIndicador[]) {
+  return rows.find(
+    (r) =>
+      r.categoria === "caged_cnae_detalhado" &&
+      r.indicador === "pendente_parser_powerbi",
+  );
+}

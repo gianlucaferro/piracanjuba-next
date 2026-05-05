@@ -113,6 +113,8 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
   // TELECOM
   const cob4G = findVal(rows, "telecom", "cobertura_4g_urbana");
   const cob5G = findVal(rows, "telecom", "cobertura_5g");
+  const cob5GSA = findVal(rows, "telecom", "cobertura_5g_standalone");
+  const op5GNSA = findVal(rows, "telecom", "operadoras_5g_nsa");
   const op4G = findVal(rows, "telecom", "operadoras_4g");
   const fibra = findVal(rows, "telecom", "fibra_otica");
   const cobRural = findVal(rows, "telecom", "cobertura_rural_4g");
@@ -449,14 +451,29 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <p className="text-[10px] text-muted-foreground">{op4G?.valor_texto}</p>
             </div>
             {cob5G && (
+              <div className="stat-card border-amber-500/30 bg-amber-500/5">
+                <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> 5G NSA
+                </p>
+                <p className="text-base font-bold text-amber-700 mt-0.5 leading-tight">
+                  {op5GNSA?.valor_texto || cob5G.valor_texto}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  {op5GNSA?.observacao || cob5G.observacao}
+                </p>
+              </div>
+            )}
+            {cob5GSA && (
               <div className="stat-card border-red-500/30 bg-red-500/5">
                 <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
-                  <XCircle className="w-3 h-3" /> 5G
+                  <XCircle className="w-3 h-3" /> 5G+ Standalone
                 </p>
                 <p className="text-2xl font-extrabold text-red-600 mt-0.5">
-                  {cob5G.valor_texto}
+                  {cob5GSA.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground">{cob5G.observacao}</p>
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  {cob5GSA.observacao}
+                </p>
               </div>
             )}
             {fibra && (

@@ -29,6 +29,10 @@ import {
   ExternalLink,
   Trophy,
   CloudRain,
+  MapPin,
+  Tags,
+  Activity,
+  Database,
 } from "lucide-react";
 
 type PibCidade = {
@@ -74,6 +78,34 @@ type CagedSetor = {
   observacao: string | null | undefined;
 };
 
+type CnpjsBairroBreakdown = {
+  total: { valor: number; texto: string; observacao: string | null; fonte_url: string | null } | null;
+  centro: { valor: number; texto: string; observacao: string | null } | null;
+  demais: { valor: number; texto: string; observacao: string | null } | null;
+};
+
+type CnaeTop = {
+  atividade: string;
+  setor: string | null;
+  cnae_codigo: string | null;
+  empresas: number | null;
+  observacao: string | null;
+};
+
+type CruzamentoRaisCaged = {
+  setor: string;
+  estoque_2023: number;
+  estoque_texto: string;
+  saldo_2025: number;
+  saldo_texto: string;
+  variacao_pct: number;
+};
+
+type CagedCnaeStatus = {
+  observacao: string | null;
+  fonte_url: string | null;
+} | null;
+
 type Props = {
   pibComparativo: PibCidade[];
   composicaoSetorial: CompCidade[];
@@ -86,6 +118,10 @@ type Props = {
   topEmpregadores: TopEmpregador[];
   topOcupacoes: TopOcupacao[];
   cagedPorSetor: CagedSetor[];
+  cnpjsBairro: CnpjsBairroBreakdown;
+  cnaesTop: CnaeTop[];
+  cruzamentoRaisCaged: CruzamentoRaisCaged[];
+  cagedCnaeStatus: CagedCnaeStatus;
 };
 
 const SETOR_ICON: Record<string, typeof Wheat> = {
@@ -128,6 +164,10 @@ export default function EconomiaPanel({
   topEmpregadores,
   topOcupacoes,
   cagedPorSetor,
+  cnpjsBairro,
+  cnaesTop,
+  cruzamentoRaisCaged,
+  cagedCnaeStatus,
 }: Props) {
   const piracanjuba = pibComparativo.find((c) => c.destaque);
 
@@ -800,11 +840,307 @@ export default function EconomiaPanel({
         </section>
       )}
 
+      {/* PAINEL 7 — CNPJs por bairro (Receita Federal) */}
+      {cnpjsBairro.total && (
+        <section className="stat-card border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+              <MapPin className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-foreground">
+                CNPJs ativos por bairro
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                Distribuição geográfica das {cnpjsBairro.total.texto} empresas
+                ativas em Piracanjuba.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <div className="stat-card border-blue-500/30 bg-blue-500/5">
+              <p className="text-[10px] uppercase text-muted-foreground">
+                Total município
+              </p>
+              <p className="text-2xl font-extrabold text-blue-700 mt-0.5">
+                {cnpjsBairro.total.texto}
+              </p>
+              <p className="text-[10px] text-muted-foreground leading-snug">
+                CNPJs ativos
+              </p>
+            </div>
+            {cnpjsBairro.centro && (
+              <div className="stat-card border-amber-500/30 bg-amber-500/5">
+                <p className="text-[10px] uppercase text-muted-foreground">
+                  Centro
+                </p>
+                <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
+                  {cnpjsBairro.centro.texto}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  ~{((cnpjsBairro.centro.valor / cnpjsBairro.total.valor) * 100).toFixed(0)}% dos CNPJs concentrados no Centro
+                </p>
+              </div>
+            )}
+            {cnpjsBairro.demais && (
+              <div className="stat-card">
+                <p className="text-[10px] uppercase text-muted-foreground">
+                  Demais bairros
+                </p>
+                <p className="text-2xl font-extrabold text-foreground mt-0.5">
+                  {cnpjsBairro.demais.texto}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  Vila São José, Setor Aeroporto, Jd. Europa, Setor Sul, etc.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Visual breakdown */}
+          {cnpjsBairro.centro && cnpjsBairro.demais && (
+            <ResponsiveContainer width="100%" height={50}>
+              <BarChart
+                data={[
+                  {
+                    cat: "CNPJs",
+                    Centro: cnpjsBairro.centro.valor,
+                    "Demais Bairros": cnpjsBairro.demais.valor,
+                  },
+                ]}
+                layout="vertical"
+                stackOffset="expand"
+              >
+                <XAxis type="number" hide />
+                <YAxis type="category" dataKey="cat" hide />
+                <Tooltip
+                  formatter={(v: number, n: string) => [`${v} CNPJs`, n]}
+                />
+                <Bar dataKey="Centro" stackId="a" fill="#f59e0b" />
+                <Bar dataKey="Demais Bairros" stackId="a" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+
+          <p className="text-[10px] text-muted-foreground italic mt-3">
+            ⚠️ Apenas Centro tem breakdown público. Distribuição completa por
+            bairro requer parser do CSV mensal da Receita Federal (~6 GB).{" "}
+            {cnpjsBairro.total.fonte_url && (
+              <a
+                href={cnpjsBairro.total.fonte_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 underline hover:text-blue-600"
+              >
+                CNPJ Receita Federal <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </p>
+        </section>
+      )}
+
+      {/* PAINEL 8 — Top CNAEs (atividades econômicas) */}
+      {cnaesTop.length > 0 && (
+        <section className="stat-card border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+              <Tags className="w-5 h-5 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-foreground">
+                Top CNAEs — Atividades econômicas
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                Atividades econômicas mais comuns entre os CNPJs ativos do
+                município (CNAE 4 dígitos).
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {cnaesTop.map((c) => {
+              const Icon = c.setor ? SETOR_ICON[c.setor] ?? Briefcase : Briefcase;
+              const cor = c.setor ? SETOR_CORES[c.setor] ?? "#6b7280" : "#6b7280";
+              return (
+                <div
+                  key={c.atividade}
+                  className="flex items-start gap-3 p-3 rounded-lg border border-border bg-background/40"
+                >
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${cor}1a` }}
+                  >
+                    <Icon className="w-4 h-4" style={{ color: cor }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground leading-tight">
+                      {c.atividade}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      {c.cnae_codigo}
+                      {c.empresas !== null && ` · ${c.empresas} empresas top`}
+                    </p>
+                    {c.observacao && (
+                      <p className="text-[10px] text-muted-foreground/80 leading-snug mt-1">
+                        {c.observacao}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* PAINEL 9 — Cruzamento RAIS × CAGED (estoque vs variação) */}
+      {cruzamentoRaisCaged.length > 0 && (
+        <section className="stat-card border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+              <Activity className="w-5 h-5 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-foreground">
+                Cruzamento RAIS × CAGED — Quem mais contrata?
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                Estoque RAIS 2023 (empregos formais por setor) cruzado com saldo
+                CAGED 2025 — mostra crescimento proporcional de cada setor.
+              </p>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={260}>
+            <ComposedChart
+              data={cruzamentoRaisCaged.map((c) => ({
+                ...c,
+                setor_label: SETOR_LABEL[c.setor] ?? c.setor,
+              }))}
+              margin={{ top: 20, right: 16, left: 0, bottom: 8 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="setor_label" tick={{ fontSize: 11 }} />
+              <YAxis
+                yAxisId="left"
+                label={{
+                  value: "Estoque RAIS 2023",
+                  angle: -90,
+                  position: "insideLeft",
+                  fontSize: 10,
+                }}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                label={{
+                  value: "Saldo CAGED 2025",
+                  angle: 90,
+                  position: "insideRight",
+                  fontSize: 10,
+                }}
+                tick={{ fontSize: 10 }}
+              />
+              <Tooltip />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar
+                yAxisId="left"
+                dataKey="estoque_2023"
+                name="Estoque 2023"
+                fill="#a78bfa"
+                radius={[6, 6, 0, 0]}
+              >
+                <LabelList dataKey="estoque_2023" position="top" style={{ fontSize: 10 }} />
+              </Bar>
+              <Line
+                yAxisId="right"
+                dataKey="saldo_2025"
+                name="Saldo 2025"
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={{ fill: "#10b981", r: 5 }}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            {cruzamentoRaisCaged.map((c) => (
+              <div
+                key={c.setor}
+                className="stat-card border-purple-500/20"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {SETOR_LABEL[c.setor]}
+                </p>
+                <p className="text-base font-bold text-foreground mt-0.5">
+                  {c.estoque_texto}
+                </p>
+                <p
+                  className={`text-xs font-semibold mt-1 ${
+                    c.saldo_2025 > 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {c.saldo_2025 > 0 ? "+" : ""}
+                  {c.variacao_pct.toFixed(2)}% (saldo {c.saldo_2025 > 0 ? "+" : ""}
+                  {c.saldo_2025})
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[10px] text-muted-foreground italic mt-3">
+            Setor com maior <strong>variação relativa</strong>:{" "}
+            <strong>
+              {SETOR_LABEL[
+                cruzamentoRaisCaged.reduce((a, b) =>
+                  a.variacao_pct > b.variacao_pct ? a : b,
+                ).setor
+              ]}
+            </strong>{" "}
+            — empregos crescem proporcionalmente mais rápido que o estoque
+            existente.
+          </p>
+        </section>
+      )}
+
+      {/* PAINEL 10 — Status: CAGED por CNAE detalhado (parser Power BI futuro) */}
+      {cagedCnaeStatus && (
+        <section className="stat-card border-slate-500/30 bg-slate-500/5">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-500/10 flex items-center justify-center shrink-0">
+              <Database className="w-5 h-5 text-slate-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">
+                CAGED mensal detalhado por CNAE — em coleta
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                {cagedCnaeStatus.observacao ||
+                  "Detalhamento por CNAE 4 dígitos (ex: CNAE 4781-4 vestuário, CNAE 4399-1/03 alvenaria) requer parser direto do Power BI MTE — agendado pra implementação futura via cron mensal."}
+              </p>
+              {cagedCnaeStatus.fonte_url && (
+                <a
+                  href={cagedCnaeStatus.fonte_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-slate-700 underline hover:text-slate-900 mt-2"
+                >
+                  Acessar Power BI MTE Novo CAGED <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       <p className="text-[10px] text-muted-foreground italic mt-6 text-center">
         Atualização mensal automática via cron <code>sync-economia-mensal</code> · primeira
         segunda do mês 06:00 UTC. Snapshots iniciais baseados em IMB-GO Boletim 012/2023
         (PIB 2021), Caravela.info (CAGED 2024-2025 + top ocupações), PDET/MTE RAIS 2023,
-        Econodata (top empresas), Grupo Piracanjuba (institucional).
+        Econodata + EmpresasGoiás (CNPJs por bairro), Receita Federal (CNAE),
+        Grupo Piracanjuba (institucional).
       </p>
     </div>
   );

@@ -13,6 +13,10 @@ import {
   getTopEmpregadores,
   getTopOcupacoesCBO,
   getCagedPorSetor,
+  getCnpjsPorBairro,
+  getCnaesTop,
+  getCruzamentoRaisCaged,
+  getCagedCnaeDetalhadoStatus,
 } from "@/lib/data/economia";
 import { fetchChuvaHistoricaMensal } from "@/lib/data/clima";
 
@@ -67,6 +71,16 @@ export default async function EconomiaPage() {
   const topEmpregadores = getTopEmpregadores(econRows);
   const topOcupacoes = getTopOcupacoesCBO(econRows);
   const cagedPorSetor = getCagedPorSetor(econRows);
+  const cnpjsBairro = getCnpjsPorBairro(econRows);
+  const cnaesTop = getCnaesTop(econRows);
+  const cruzamentoRaisCaged = getCruzamentoRaisCaged(econRows);
+  const cagedCnaeRaw = getCagedCnaeDetalhadoStatus(econRows);
+  const cagedCnaeStatus = cagedCnaeRaw
+    ? {
+        observacao: cagedCnaeRaw.observacao,
+        fonte_url: cagedCnaeRaw.fonte_url,
+      }
+    : null;
   const pibMediaGoiasRow = econRows.find(
     (r) => r.indicador === "pib_per_capita_estado",
   );
@@ -124,6 +138,10 @@ export default async function EconomiaPage() {
           topEmpregadores={topEmpregadores}
           topOcupacoes={topOcupacoes}
           cagedPorSetor={cagedPorSetor}
+          cnpjsBairro={cnpjsBairro}
+          cnaesTop={cnaesTop}
+          cruzamentoRaisCaged={cruzamentoRaisCaged}
+          cagedCnaeStatus={cagedCnaeStatus}
         />
       </section>
 
