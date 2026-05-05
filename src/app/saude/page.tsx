@@ -175,6 +175,10 @@ export default async function SaudePage() {
     fetchDDAInternacoes(),
     fetchArbovirosesMensal("dengue"),
   ]);
+  const [chikMensal, zikaMensal] = await Promise.all([
+    fetchArbovirosesMensal("chikungunya"),
+    fetchArbovirosesMensal("zika"),
+  ]);
   queryClient.setQueryData(["saude-mortalidade-infantil"], mortInfantil);
   queryClient.setQueryData(["saude-mortalidade-geral"], mortGeral);
   queryClient.setQueryData(["saude-covid-mensal"], covidMes);
@@ -186,6 +190,8 @@ export default async function SaudePage() {
   queryClient.setQueryData(["saude-tuberculose-obitos"], tbObitos);
   queryClient.setQueryData(["saude-dda-internacoes"], ddaInternacoes);
   queryClient.setQueryData(["saude-dengue-mensal-multianos"], dengueMensal);
+  queryClient.setQueryData(["saude-chik-mensal"], chikMensal);
+  queryClient.setQueryData(["saude-zika-mensal"], zikaMensal);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

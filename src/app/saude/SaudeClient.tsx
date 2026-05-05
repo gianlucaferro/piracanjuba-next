@@ -27,6 +27,7 @@ import ChuvaDengueChart from "@/components/saude/ChuvaDengueChart";
 import DataSUSTab from "@/components/saude/DataSUSTab";
 import MortalidadeTab from "@/components/saude/MortalidadeTab";
 import DengueSazonalidadeChart from "@/components/saude/DengueSazonalidadeChart";
+import ArbovirosesComparativoChart from "@/components/saude/ArbovirosesComparativoChart";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -602,6 +603,17 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
     queryFn: () => Promise.resolve([]),
     staleTime: Infinity,
   });
+  // Dados de chikungunya/zika pra comparativo arboviroses
+  const { data: chikMensal = [] } = useQuery<Array<{ ano: number; mes: number; valor: number }>>({
+    queryKey: ["saude-chik-mensal"],
+    queryFn: () => Promise.resolve([]),
+    staleTime: Infinity,
+  });
+  const { data: zikaMensal = [] } = useQuery<Array<{ ano: number; mes: number; valor: number }>>({
+    queryKey: ["saude-zika-mensal"],
+    queryFn: () => Promise.resolve([]),
+    staleTime: Infinity,
+  });
   return (
     <>
       {/* Grafico Chuva x Dengue - so para dengue (correlacao mais forte) */}
@@ -612,6 +624,16 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
       {categoria === "dengue" && dengueMensalMultianos.length > 0 && (
         <div className="my-4">
           <DengueSazonalidadeChart rows={dengueMensalMultianos} categoria={categoria} />
+        </div>
+      )}
+      {/* Comparativo arboviroses (dengue+chik+zika) — so na aba dengue */}
+      {categoria === "dengue" && (dengueMensalMultianos.length > 0 || chikMensal.length > 0 || zikaMensal.length > 0) && (
+        <div className="my-4">
+          <ArbovirosesComparativoChart
+            dengue={dengueMensalMultianos}
+            chikungunya={chikMensal}
+            zika={zikaMensal}
+          />
         </div>
       )}
 
