@@ -2,6 +2,11 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import { fetchSaudeData } from "@/lib/data/setores";
 import { fetchChuvaHistoricaMensal } from "@/lib/data/clima";
+import {
+  fetchObitosAnuais,
+  fetchCovidSerieMensal,
+  fetchMortesPorCausaCid,
+} from "@/lib/data/saude";
 import SaudeClient from "./SaudeClient";
 import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
 
@@ -134,6 +139,19 @@ export default async function SaudePage() {
       queryClient.setQueryData(["chuva-historica-mensal", year], chuvaPorMes);
     }),
   );
+
+  // Prefetch dados de Mortalidade & COVID — alimentam a aba Mortalidade
+  // (componente MortalidadeTab consome via useQuery com queryKey igual).
+  const [mortInfantil, mortGeral, covidMes, mortesCausa] = await Promise.all([
+    fetchObitosAnuais("mortalidade_infantil"),
+    fetchObitosAnuais("mortalidade_geral"),
+    fetchCovidSerieMensal(),
+    fetchMortesPorCausaCid(),
+  ]);
+  queryClient.setQueryData(["saude-mortalidade-infantil"], mortInfantil);
+  queryClient.setQueryData(["saude-mortalidade-geral"], mortGeral);
+  queryClient.setQueryData(["saude-covid-mensal"], covidMes);
+  queryClient.setQueryData(["saude-mortes-causa"], mortesCausa);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

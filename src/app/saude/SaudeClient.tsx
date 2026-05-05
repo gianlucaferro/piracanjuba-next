@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import ChuvaDengueChart from "@/components/saude/ChuvaDengueChart";
 import DataSUSTab from "@/components/saude/DataSUSTab";
+import MortalidadeTab from "@/components/saude/MortalidadeTab";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -1346,6 +1347,7 @@ function DespesasSaudeTab() {
 // ========== MAIN PAGE ==========
 const tabs = [
   { value: "epidemiologia", label: "Epidemiologia", icon: Bug },
+  { value: "mortalidade", label: "Mortalidade", icon: Heart },
   { value: "estabelecimentos", label: "Estabelecimentos", icon: Building2 },
   { value: "servidores", label: "Servidores", icon: Stethoscope },
   { value: "despesas", label: "Despesas", icon: DollarSign },
@@ -1386,6 +1388,7 @@ export default function Saude() {
           </div>
 
           <TabsContent value="epidemiologia"><EpidemiologiaTab /></TabsContent>
+          <TabsContent value="mortalidade"><MortalidadeTab /></TabsContent>
           <TabsContent value="estabelecimentos"><EstabelecimentosTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresSaudeTab /></TabsContent>
           <TabsContent value="despesas"><DespesasSaudeTab /></TabsContent>
