@@ -1,12 +1,15 @@
 import { Building } from "lucide-react";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import EmColetaSection from "@/components/EmColetaSection";
+import InfraestruturaPanel from "@/components/infraestrutura/InfraestruturaPanel";
 import { fetchIndicadores } from "@/lib/data/home";
+import { fetchInfraestruturaIndicadores } from "@/lib/data/infraestrutura";
+import { fetchArbovirosesMensal } from "@/lib/data/saude";
 
 export const metadata = pageMetadata({
-  title: "Infraestrutura Urbana de Piracanjuba GO",
+  title: "Infraestrutura Urbana de Piracanjuba GO — SNIS, ANEEL, ANATEL",
   description:
-    "Saneamento básico, energia elétrica, conectividade, iluminação pública, pavimentação e demais indicadores de infraestrutura urbana de Piracanjuba.",
+    "Saneamento básico (água 73%, esgoto 69%, lixo 55%), tarifa Equatorial Goiás, cobertura 4G/5G, pavimentação e cruzamento saneamento × dengue em Piracanjuba.",
   path: "/infraestrutura",
 });
 
@@ -15,28 +18,63 @@ export const revalidate = 3600;
 const SITE_URL = "https://piracanjuba.ai";
 
 const infraDataset = datasetJsonLd({
-  name: "Infraestrutura Urbana de Piracanjuba",
+  name: "Infraestrutura Urbana de Piracanjuba (SNIS + ANEEL + ANATEL)",
   description:
-    "Indicadores de saneamento básico, energia elétrica, conectividade móvel e infraestrutura urbana de Piracanjuba. Fontes IBGE, SNIS, ANEEL.",
+    "Indicadores consolidados de saneamento básico SNIS 2023, tarifa de energia elétrica Equatorial Goiás 2025, cobertura móvel ANATEL 4G/5G, pavimentação, drenagem urbana e política municipal de saneamento de Piracanjuba.",
   url: `${SITE_URL}/infraestrutura`,
   creator: {
     type: "GovernmentOrganization",
-    name: "IBGE + SNIS + ANEEL",
+    name: "SNIS + ANEEL + ANATEL + IBGE + Prefeitura Municipal de Piracanjuba",
   },
   dateModified: new Date().toISOString().slice(0, 10),
-  keywords: ["infraestrutura", "Piracanjuba", "saneamento", "água", "esgoto", "energia"],
+  keywords: [
+    "infraestrutura",
+    "Piracanjuba",
+    "saneamento",
+    "água",
+    "esgoto",
+    "energia",
+    "Equatorial Goiás",
+    "4G",
+    "5G",
+    "SNIS",
+    "ANEEL",
+    "ANATEL",
+  ],
 });
 
 export default async function InfraestruturaPage() {
-  const todos = await fetchIndicadores();
-  const findVal = (chave: string) => todos.find((i) => i.chave === chave);
+  const [infraRows, todosInd, dengueMensal] = await Promise.all([
+    fetchInfraestruturaIndicadores(),
+    fetchIndicadores(),
+    fetchArbovirosesMensal("dengue"),
+  ]);
 
-  const indicadores: Array<{ rotulo: string; valor?: string; fonte?: string; fonteUrl?: string }> = [];
+  // Agrega dengue por ano (2024-2026 pra cruzamento com saneamento)
+  const dengueAgg = new Map<number, number>();
+  for (const r of dengueMensal) {
+    if (r.ano < 2024) continue;
+    dengueAgg.set(r.ano, (dengueAgg.get(r.ano) ?? 0) + Number(r.valor || 0));
+  }
+  const dengue2024_2026 = Array.from(dengueAgg.entries())
+    .map(([ano, total]) => ({ ano, total }))
+    .sort((a, b) => a.ano - b.ano);
+
+  // Indicadores residuais da home pra bloco de fontes
+  const findVal = (chave: string) =>
+    todosInd.find((i) => i.chave === chave);
+
+  const indicadoresExtras: Array<{
+    rotulo: string;
+    valor?: string;
+    fonte?: string;
+    fonteUrl?: string;
+  }> = [];
 
   const sane = findVal("saneamento_cobertura");
   if (sane) {
-    indicadores.push({
-      rotulo: "Saneamento (cobertura)",
+    indicadoresExtras.push({
+      rotulo: "Saneamento (cobertura agregada IBGE)",
       valor: sane.valor_texto || "—",
       fonte: `IBGE ${sane.ano_referencia}`,
       fonteUrl: sane.fonte_url || undefined,
@@ -45,11 +83,13 @@ export default async function InfraestruturaPage() {
 
   const frota = findVal("frota_veiculos");
   if (frota) {
-    indicadores.push({
+    indicadoresExtras.push({
       rotulo: "Frota de veículos",
       valor: frota.valor_texto || "—",
       fonte: `SENATRAN ${frota.ano_referencia}`,
-      fonteUrl: frota.fonte_url || "https://www.gov.br/senatran/pt-br/assuntos/estatisticas/frota-de-veiculos-1",
+      fonteUrl:
+        frota.fonte_url ||
+        "https://www.gov.br/senatran/pt-br/assuntos/estatisticas/frota-de-veiculos-1",
     });
   }
 
@@ -65,22 +105,34 @@ export default async function InfraestruturaPage() {
           Infraestrutura Urbana
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Saneamento, energia, conectividade e demais indicadores de infraestrutura urbana de Piracanjuba.
+          Saneamento, energia, conectividade, drenagem e pavimentação — base
+          consolidada SNIS 2023 + ANEEL 2025 + ANATEL 2025 com dados oficiais de
+          Piracanjuba.
         </p>
       </header>
 
+      {/* Painel principal — 9 painéis com dados reais */}
+      <section className="mb-10">
+        <InfraestruturaPanel
+          rows={infraRows}
+          dengue2024_2026={dengue2024_2026}
+        />
+      </section>
+
+      {/* Bloco antigo (em coleta + fontes oficiais) — pra usuário consultar
+          fontes primárias e validar */}
       <EmColetaSection
-        titulo="Infraestrutura Urbana de Piracanjuba"
-        descricao="Indicadores de saneamento básico (água, esgoto, lixo), energia elétrica, conectividade móvel, pavimentação e iluminação pública — base pra acompanhar qualidade de vida urbana."
+        titulo="Outros indicadores e fontes oficiais"
+        descricao="Pra explorar dados além do que mostramos aqui (interrupções por bairro, qualidade de sinal por operadora, ranking de reclamações Procon-GO), consulte as fontes oficiais:"
         iconBg="bg-slate-500/10"
-        indicadores={indicadores}
+        indicadores={indicadoresExtras}
         exemplosCruzamentos={[
-          "Cobertura de água tratada e esgoto sanitário (SNIS — Sistema Nacional Saneamento)",
+          "Cobertura de água tratada e esgoto sanitário (SNIS — atualização anual)",
           "Coleta de lixo: dias por semana, % atendimento (SNIS + Prefeitura)",
-          "Tarifa de energia elétrica + interrupções (ANEEL)",
+          "Tarifa de energia elétrica + interrupções por bairro (ANEEL)",
           "Cobertura 4G/5G por bairro + reclamações (ANATEL)",
-          "Iluminação pública: pontos LED instalados, manutenção pendente",
-          "Pavimentação: km asfaltados por bairro, ano de implantação",
+          "Iluminação pública: pontos LED instalados, manutenção pendente (LAI à Prefeitura)",
+          "Pavimentação: km asfaltados por bairro, ano de implantação (LAI)",
           "Internet pública (Wi-Fi gratuito) em pontos da cidade",
           "Cruzamento saneamento × dengue × bairros mais afetados",
         ]}
@@ -88,32 +140,44 @@ export default async function InfraestruturaPage() {
           {
             nome: "SNIS — Sistema Nacional de Informações sobre Saneamento",
             url: "http://www.snis.gov.br/painel-informacoes-saneamento-brasil/web/painel-municipal",
-            descricao: "Cobertura água, esgoto, lixo, perdas, tarifas. Atualização anual. Painel municipal disponível.",
+            descricao:
+              "Cobertura água, esgoto, lixo, perdas, tarifas. Atualização anual. Painel municipal disponível.",
           },
           {
-            nome: "ANEEL — Agência Nacional de Energia Elétrica",
-            url: "https://www.gov.br/aneel/pt-br",
-            descricao: "Tarifas, interrupções, qualidade do serviço de energia.",
+            nome: "Instituto Água e Saneamento — Painel Município",
+            url: "https://www.aguaesaneamento.org.br/municipios/go/piracanjuba",
+            descricao:
+              "Agregador SNIS amigável: ficha completa de Piracanjuba com indicadores, alertas e comparativos.",
           },
           {
-            nome: "ANATEL — Cobertura móvel",
-            url: "https://www.gov.br/anatel/pt-br/dados/cobertura/cobertura-de-rede-movel",
-            descricao: "Cobertura 4G/5G por município, qualidade do sinal.",
+            nome: "ANEEL — Tarifas Equatorial Goiás",
+            url: "https://www.gov.br/aneel/pt-br/assuntos/consumidor/tarifas",
+            descricao:
+              "Tarifas vigentes residenciais B1, baixa renda, reajustes anuais. Ano-base 2025.",
           },
           {
-            nome: "DNIT/Goinfra — rodovias",
-            url: "https://www.gov.br/dnit/pt-br",
-            descricao: "Estado das rodovias federais e estaduais que atendem Piracanjuba.",
+            nome: "Equatorial Goiás (concessionária)",
+            url: "https://go.equatorialenergia.com.br/",
+            descricao:
+              "Tarifas vigentes, atendimento, faturas. Concessionária responsável por Piracanjuba.",
           },
           {
-            nome: "Saneago",
-            url: "https://www.saneago.com.br/",
-            descricao: "Concessionária estadual de água e esgoto em Piracanjuba.",
+            nome: "ANATEL — Painel de Cobertura",
+            url: "https://informacoes.anatel.gov.br/paineis/acessos/cobertura-municipal",
+            descricao:
+              "Cobertura 4G/5G por município, qualidade do sinal, operadoras ativas.",
           },
           {
             nome: "Painel Ouvidoria — Procon-GO",
             url: "https://www.procon.go.gov.br/",
-            descricao: "Reclamações ranking por categoria (energia, telefonia, internet).",
+            descricao:
+              "Reclamações ranking por categoria (energia, telefonia, internet) em Goiás.",
+          },
+          {
+            nome: "Plano Municipal de Saneamento Básico — Piracanjuba",
+            url: "https://www.piracanjuba.go.gov.br/",
+            descricao:
+              "Plano vigente (Lei 1.628/2014). Política, conselho e fundo municipal — verificar atualização.",
           },
         ]}
       />
