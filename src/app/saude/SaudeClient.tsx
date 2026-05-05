@@ -26,6 +26,7 @@ import {
 import ChuvaDengueChart from "@/components/saude/ChuvaDengueChart";
 import DataSUSTab from "@/components/saude/DataSUSTab";
 import MortalidadeTab from "@/components/saude/MortalidadeTab";
+import DengueSazonalidadeChart from "@/components/saude/DengueSazonalidadeChart";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -595,11 +596,23 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
     queryFn: () => Promise.resolve({} as Record<number, number>),
     staleTime: Infinity,
   });
+  // Dados multi-anos pra grafico de sazonalidade (so dengue)
+  const { data: dengueMensalMultianos = [] } = useQuery<Array<{ ano: number; mes: number; valor: number }>>({
+    queryKey: ["saude-dengue-mensal-multianos"],
+    queryFn: () => Promise.resolve([]),
+    staleTime: Infinity,
+  });
   return (
     <>
       {/* Grafico Chuva x Dengue - so para dengue (correlacao mais forte) */}
       {categoria === "dengue" && (
         <ChuvaDengueChart casosPorMes={casosPorMes} chuvaPorMes={chuvaPorMes} ano={ano} />
+      )}
+      {/* Sazonalidade — sobrepoe casos mensais dos ultimos anos */}
+      {categoria === "dengue" && dengueMensalMultianos.length > 0 && (
+        <div className="my-4">
+          <DengueSazonalidadeChart rows={dengueMensalMultianos} categoria={categoria} />
+        </div>
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

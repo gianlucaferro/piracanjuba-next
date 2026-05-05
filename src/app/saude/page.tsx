@@ -6,6 +6,13 @@ import {
   fetchObitosAnuais,
   fetchCovidSerieMensal,
   fetchMortesPorCausaCid,
+  fetchHIVDiagnosticosAnuais,
+  fetchHIVPorSexo,
+  fetchHIVPorFaixa,
+  fetchTuberculoseObitos,
+  fetchDDAInternacoes,
+  fetchMortInfantilCausas,
+  fetchArbovirosesMensal,
 } from "@/lib/data/saude";
 import SaudeClient from "./SaudeClient";
 import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
@@ -140,18 +147,45 @@ export default async function SaudePage() {
     }),
   );
 
-  // Prefetch dados de Mortalidade & COVID — alimentam a aba Mortalidade
-  // (componente MortalidadeTab consome via useQuery com queryKey igual).
-  const [mortInfantil, mortGeral, covidMes, mortesCausa] = await Promise.all([
+  // Prefetch dados de Mortalidade & Doencas — alimentam aba Mortalidade
+  // (componente MortalidadeTab consome via useQuery com mesmo queryKey).
+  // Tudo em paralelo pra otimizar latencia.
+  const [
+    mortInfantil,
+    mortGeral,
+    covidMes,
+    mortesCausa,
+    mortInfCausas,
+    hivAnuais,
+    hivSexo,
+    hivFaixa,
+    tbObitos,
+    ddaInternacoes,
+    dengueMensal,
+  ] = await Promise.all([
     fetchObitosAnuais("mortalidade_infantil"),
     fetchObitosAnuais("mortalidade_geral"),
     fetchCovidSerieMensal(),
     fetchMortesPorCausaCid(),
+    fetchMortInfantilCausas(),
+    fetchHIVDiagnosticosAnuais(),
+    fetchHIVPorSexo(),
+    fetchHIVPorFaixa(),
+    fetchTuberculoseObitos(),
+    fetchDDAInternacoes(),
+    fetchArbovirosesMensal("dengue"),
   ]);
   queryClient.setQueryData(["saude-mortalidade-infantil"], mortInfantil);
   queryClient.setQueryData(["saude-mortalidade-geral"], mortGeral);
   queryClient.setQueryData(["saude-covid-mensal"], covidMes);
   queryClient.setQueryData(["saude-mortes-causa"], mortesCausa);
+  queryClient.setQueryData(["saude-mort-infantil-causas"], mortInfCausas);
+  queryClient.setQueryData(["saude-hiv-anuais"], hivAnuais);
+  queryClient.setQueryData(["saude-hiv-sexo"], hivSexo);
+  queryClient.setQueryData(["saude-hiv-faixa"], hivFaixa);
+  queryClient.setQueryData(["saude-tuberculose-obitos"], tbObitos);
+  queryClient.setQueryData(["saude-dda-internacoes"], ddaInternacoes);
+  queryClient.setQueryData(["saude-dengue-mensal-multianos"], dengueMensal);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
