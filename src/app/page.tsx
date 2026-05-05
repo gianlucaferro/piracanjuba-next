@@ -338,10 +338,10 @@ export default async function HomePage() {
           <div className="mt-3 text-center">
             <Link
               href="/dados-pba"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:opacity-80 transition-opacity"
             >
-              Ver Dados PBA completo
-              <ArrowRight className="w-4 h-4" />
+              Ver Dados <span className="text-[#25D366] font-bold">PBA</span> completo
+              <ArrowRight className="w-4 h-4 text-primary" />
             </Link>
           </div>
         </section>

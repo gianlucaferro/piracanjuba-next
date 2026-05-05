@@ -201,6 +201,25 @@ export default function Agro({
           mesAtual={mesAtual}
         />
 
+        {/* Cross link pra /meio-ambiente — onde mostramos a transicao 1985-2024 */}
+        <a
+          href="/meio-ambiente"
+          className="stat-card card-hover flex items-center justify-between gap-4 group"
+        >
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground inline-flex items-center gap-1.5">
+              🌱 Como o solo de Piracanjuba mudou em 40 anos?
+            </p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Pastagem caiu 52%, agricultura subiu 4.049% (1985→2024). Veja a transição
+              completa via MapBiomas — floresta, cerrado, soja, cana, área urbana.
+            </p>
+          </div>
+          <span className="text-sm text-primary font-medium whitespace-nowrap group-hover:translate-x-1 transition-transform">
+            Ver no Meio Ambiente →
+          </span>
+        </a>
+
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: 8 }).map((_, i) => (

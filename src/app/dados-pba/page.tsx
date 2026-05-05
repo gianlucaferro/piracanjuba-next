@@ -120,7 +120,7 @@ export default function DadosPBAPage() {
       <header className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
           <BarChart3 className="w-7 h-7 text-primary" />
-          Dados PBA
+          Dados <span className="text-[#25D366]">PBA</span>
         </h1>
         <p className="text-sm md:text-base text-muted-foreground mt-2 leading-relaxed max-w-3xl">
           Painel completo de transparência de Piracanjuba. Todos os dados públicos consolidados
