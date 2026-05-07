@@ -11,8 +11,8 @@ import EmailChangeEmail from "../_shared/email-templates/email-change.tsx";
 import ReauthenticationEmail from "../_shared/email-templates/reauthentication.tsx";
 
 // `from` precisa ser endereço de domínio verificado no Resend.
-// Configurar `EMAIL_FROM` no secret quando o domínio piracanjuba.ai estiver verificado.
-const DEFAULT_FROM = "Piracanjuba.Ai <onboarding@resend.dev>";
+// Domínio piracanjuba.ai verificado em mai/2026. Override via secret EMAIL_FROM.
+const DEFAULT_FROM = "Piracanjuba.AI <contato@piracanjuba.ai>";
 
 interface EmailData {
   token: string;

@@ -13,6 +13,7 @@ serve(async (req) => {
   }
 
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+  const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Piracanjuba.AI <contato@piracanjuba.ai>";
   if (!RESEND_API_KEY) {
     return new Response(JSON.stringify({ error: "RESEND_API_KEY not configured" }), {
       status: 500,
@@ -208,7 +209,7 @@ serve(async (req) => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "Piracanjuba.ai <onboarding@resend.dev>",
+            from: EMAIL_FROM,
             to: [sub.email],
             subject: `📋 Resumo Semanal — ${totalNovidades} novidade${totalNovidades > 1 ? "s" : ""} em Piracanjuba`,
             html,
