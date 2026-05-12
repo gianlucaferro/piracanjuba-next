@@ -9,8 +9,9 @@ const corsHeaders = {
 
 // API publica DataJud — TJ-GO endpoint
 const DATAJUD_URL = "https://api-publica.datajud.cnj.jus.br/api_publica_tjgo/_search";
-// Token publico documentado pelo CNJ
-const DATAJUD_TOKEN = "ApiKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==";
+// Token publico documentado pelo CNJ — pode ser sobrescrito via secret DATAJUD_TOKEN
+const DATAJUD_TOKEN_DEFAULT = "ApiKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==";
+const DATAJUD_TOKEN = Deno.env.get("DATAJUD_TOKEN") ?? DATAJUD_TOKEN_DEFAULT;
 
 const PARTES_BUSCA = [
   "MUNICIPIO DE PIRACANJUBA",

@@ -481,7 +481,7 @@ api.ts (genérico)
 | **Site Prefeitura** | scraping | `sync-prefeitura-diaria`, `sync-prefeitura-mensal` | diário |
 | **Câmara Municipal site** | scraping | `sync-vereadores`, `sync-projetos`, `sync-atuacao` | semanal |
 | **AGM-GO Diário Oficial** | scraping (em coleta) | `sync-leis-municipais` | semanal |
-| **CNJ DataJud** | API REST | `sync-cnj-datajud` | semanal |
+| **CNJ DataJud** | API REST (chave pública compartilhada — ver `op://Dev/CNJ Datajud`, secret `DATAJUD_TOKEN`) | `sync-cnj-datajud` | semanal |
 | **TJ-GO + MP-GO** | scraping | `sync-tjgo-processos`, `sync-mpgo-atuacao` | semanal |
 | **DataSUS TabNet** | scraping URL params | `sync-saude-*` (8 functions) | semanal/trimestral |
 | **INEP Censo Escolar** | CSV manual | `sync-inep-escolas` | anual |
@@ -598,6 +598,31 @@ Chave reutilizável: `46a581837ee2463ea50d40b6895646bc`
 ### 10.6 LLMs.txt
 
 `/public/llms.txt` + `/public/llms-full.txt` — sitemap legível por modelos de linguagem (boas práticas emergentes)
+
+### 10.7 Chaves e credenciais reutilizáveis entre Piracanjuba.AI e Morrinhos.AI
+
+Algumas integrações usam chaves **públicas ou compartilháveis** entre projetos — não duplicar conta nem gerar nova chave:
+
+| Integração | Chave | 1Password | Secret Supabase |
+|---|---|---|---|
+| **CNJ DataJud** | `ApiKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==` (pública, documentada CNJ wiki) | `op://Dev/CNJ Datajud` | `DATAJUD_TOKEN` |
+| **IndexNow** | `46a581837ee2463ea50d40b6895646bc` | `op://Dev/IndexNow Key` | - |
+| **Frase.io** | conta única Ferro Labs | `op://Dev/Frase` | - |
+| **Apify** | conta única Ferro Labs | `op://Dev/Apify` | - |
+| **Open-Meteo + INMET** | sem chave (open data) | - | - |
+
+Pra Morrinhos.AI:
+1. **DataJud**: trocar apenas `PARTES_BUSCA` na edge function (`MUNICIPIO DE MORRINHOS`, `PREFEITURA MUNICIPAL DE MORRINHOS`, `CAMARA MUNICIPAL DE MORRINHOS`) — endpoint `tjgo` continua igual (também é TJ-GO)
+2. **IndexNow**: hospedar mesmo arquivo `.txt` em `/public/` no novo domínio
+3. **Frase/Apify**: usar mesma key, projetos separados dentro da conta
+
+Chaves que **devem ser novas** (não compartilhar):
+- Supabase project ID (cria projeto novo: `morrinhos-ai`)
+- Resend (conta exclusiva, mesma estratégia do Piracanjuba.AI — domain `morrinhos.ai` em sa-east-1)
+- PostHog (project novo)
+- Sentry (project novo dentro da org `ferro-labs-tecnologia-ltda`)
+- Mercado Pago (se houver pagamento)
+- BigData Corp (se usar)
 
 ---
 
