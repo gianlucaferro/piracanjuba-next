@@ -23,10 +23,12 @@ import {
 import { fetchCamaraDeclaracaoByTipo } from "@/lib/data/camara-declaracoes";
 import { fetchDiariasPorVereador } from "@/lib/data/diarias-camara";
 import { fetchIndicacoesPorVereador } from "@/lib/data/indicacoes-camara";
+import { fetchAtividadesPorAutor } from "@/lib/data/atividades-legislativas";
 import ProcessosPanel from "@/components/processos/ProcessosPanel";
 import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
 import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
+import AtividadesLegislativasPanel from "@/components/camara/AtividadesLegislativasPanel";
 
 export const revalidate = 3600;
 
@@ -81,12 +83,15 @@ export default async function VereadorPage({
   const result = await fetchVereadorBySlug(slug);
   const vereadorId = result?.vereador?.id;
 
-  const [processos, pessoasResumo, cotasDeclaracao, diarias, indicacoes] = await Promise.all([
+  const [processos, pessoasResumo, cotasDeclaracao, diarias, indicacoes, atividades] = await Promise.all([
     fetchProcessosPorVereadorSlug(slug),
     fetchPessoasPublicasResumo(),
     fetchCamaraDeclaracaoByTipo("inexistencia_cotas"),
     vereadorId ? fetchDiariasPorVereador(vereadorId) : Promise.resolve([]),
     vereadorId ? fetchIndicacoesPorVereador(vereadorId) : Promise.resolve([]),
+    result?.vereador?.nome
+      ? fetchAtividadesPorAutor(result.vereador.nome.split(" ").slice(0, 2).join(" "))
+      : Promise.resolve([]),
   ]);
   if (!result) notFound();
 
@@ -285,6 +290,15 @@ export default async function VereadorPage({
       {/* Cotas Parlamentares (inexistentes — declaração oficial Câmara) */}
       {cotasDeclaracao && (
         <CotasParlamentaresCard declaracao={cotasDeclaracao} variant="compact" />
+      )}
+
+      {/* Atividades legislativas (PL/Decretos/Resolucoes que o vereador é autor) */}
+      {atividades.length > 0 && (
+        <AtividadesLegislativasPanel
+          atividades={atividades.slice(0, 10)}
+          totalGeral={atividades.length}
+          variant="compact"
+        />
       )}
 
       {/* Diárias e Passagens (via portal LAI Centi — atualização mensal) */}
