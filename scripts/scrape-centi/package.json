@@ -5,7 +5,8 @@
   "description": "Coleta por browser renderizado de dados públicos do portal LAI Centi/NucleoGov da Camara Municipal de Piracanjuba.",
   "type": "module",
   "scripts": {
-    "poc:gastos": "tsx poc-gastos-parlamentares.ts"
+    "poc:gastos": "tsx poc-gastos-parlamentares.ts",
+    "poc:map": "tsx poc-map-endpoints.ts"
   },
   "dependencies": {
     "playwright": "^1.49.0"

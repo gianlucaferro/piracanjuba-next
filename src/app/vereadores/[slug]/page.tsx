@@ -20,7 +20,9 @@ import {
   fetchProcessosPorVereadorSlug,
   fetchPessoasPublicasResumo,
 } from "@/lib/data/processos-publicos";
+import { fetchCamaraDeclaracaoByTipo } from "@/lib/data/camara-declaracoes";
 import ProcessosPanel from "@/components/processos/ProcessosPanel";
+import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 
 export const revalidate = 3600;
 
@@ -72,10 +74,11 @@ export default async function VereadorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [result, processos, pessoasResumo] = await Promise.all([
+  const [result, processos, pessoasResumo, cotasDeclaracao] = await Promise.all([
     fetchVereadorBySlug(slug),
     fetchProcessosPorVereadorSlug(slug),
     fetchPessoasPublicasResumo(),
+    fetchCamaraDeclaracaoByTipo("inexistencia_cotas"),
   ]);
   if (!result) notFound();
 
@@ -270,6 +273,11 @@ export default async function VereadorPage({
       )}
 
       {/* Presença removida — dados estavam equivocados */}
+
+      {/* Cotas Parlamentares (inexistentes — declaração oficial Câmara) */}
+      {cotasDeclaracao && (
+        <CotasParlamentaresCard declaracao={cotasDeclaracao} variant="compact" />
+      )}
 
       {/* Processos judiciais (BigData Corp — atualização bimestral) */}
       {pessoaPublica && (

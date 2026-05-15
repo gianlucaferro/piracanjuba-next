@@ -7,6 +7,115 @@
 
 ---
 
+## Resposta Codex — revisão técnica em 2026-05-15
+
+### Decisão
+
+**Aprovo o Caminho D como melhor solução zero-custo para POC/MVP**, com ajustes importantes:
+
+1. Tratar GitHub Actions + Playwright como **coleta por browser renderizado**, não como "bypass de WAF".
+2. Não começar com `stealth plugin`. Começar com Playwright puro, Chromium real, locale/timezone/viewport consistentes e baixa frequência.
+3. Não colocar `SUPABASE_SERVICE_ROLE_KEY` diretamente no workflow se der para evitar. Melhor: workflow envia JSON para uma Edge Function `ingest-centi-scrape` com um segredo HMAC/dedicado (`CENTI_INGEST_SECRET`); a Edge Function usa `SUPABASE_SERVICE_ROLE_KEY` internamente.
+4. Preferir capturar dados da camada de rede/XHR quando o browser carregar a página. Só fazer DOM scraping se não houver JSON/XHR acessível.
+5. Manter deep-link oficial como fallback público sempre que a coleta falhar ou ficar stale.
+
+GitHub Actions é tecnicamente adequado porque Playwright tem suporte oficial a GitHub Actions/CI, e GitHub confirma uso gratuito de runners padrão em repositórios públicos e quota gratuita para privados. Mas cron do GitHub **não é SLA**: schedules podem atrasar ou até serem descartados em horários de alta carga; por isso o workflow deve ter `workflow_dispatch`, agendamento fora do minuto `0`, retries e alerta quando falhar.
+
+### Correções na arquitetura proposta
+
+Trocar este trecho:
+
+```txt
+GitHub Actions → POST com Authorization Bearer SERVICE_ROLE → ingest-centi-scrape
+```
+
+por:
+
+```txt
+GitHub Actions → POST com X-Piracanjuba-Ingest-Signature → ingest-centi-scrape
+ingest-centi-scrape → valida assinatura → usa SERVICE_ROLE internamente → upsert
+```
+
+Motivo: se o `SERVICE_ROLE_KEY` vazar no GitHub Actions, o blast radius é o banco inteiro. Um segredo de ingestão dedicado pode ser rotacionado e só permite chamar aquela função.
+
+### Frequência recomendada
+
+Para gastos parlamentares, não usar apenas `0 7 5 * *`.
+
+Usar janela mensal com poucos retries:
+
+```yaml
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 7 5,10,15,20 * *"
+```
+
+Motivos:
+
+- dia 5 pode ser cedo demais se a competência anterior ainda não fechou;
+- minuto `37` evita o pico do início da hora no GitHub Actions;
+- quatro tentativas por mês ainda custam muito pouco;
+- quando os dados do mês já existem, o ingest deve ser idempotente e só atualizar/upsertar.
+
+### POC obrigatório antes de schema definitivo
+
+Antes de criar tabelas finais, fazer uma POC manual (`workflow_dispatch`) que:
+
+- abre `https://acessoainformacao.piracanjuba.go.leg.br/cidadao/transparencia/gastosparlamentares`;
+- salva screenshot;
+- salva HTML final;
+- salva `network.har` ou lista simplificada de XHR/fetch;
+- exporta `document.body.innerText`;
+- faz upload desses arquivos como artifacts com retenção curta.
+
+Critério de sucesso: screenshot ou XHR mostra dados reais de gastos. Se só aparecer shell da SPA, a estratégia ainda não está validada.
+
+### Respostas às 8 perguntas da seção 5
+
+1. **GitHub Actions + Playwright é viável?**  
+   Sim, é a melhor opção zero-custo para testar. Não é garantia contra o WAF, mas é o menor investimento reversível. O repo não tem `.github/` nem `scripts/` hoje, então comece por POC isolado.
+
+2. **Stealth recomendado?**  
+   Não como padrão. Comece com Playwright puro. Use browser real/headless, `locale: "pt-BR"`, timezone `America/Sao_Paulo`, viewport estável, `waitForLoadState("networkidle")`, retries e rate limit. Se o portal bloquear mesmo a navegação normal e não houver API/credencial, a decisão correta é avaliar acesso oficial com a Câmara ou manter deep-link, não entrar em corrida de evasão.
+
+3. **Persistir cookies/sessão?**  
+   Não no começo. Sessão limpa por run é mais previsível e reduz risco de artifact sensível. Persistir `storageState` só dentro da mesma execução para navegar entre páginas. Se futuramente for indispensável persistir entre runs, armazenar como secret/artefato criptografado e com retenção curta, nunca em commit.
+
+4. **Frequência de scrape?**  
+   Para gastos: mensal com janela de retries nos dias 5, 10, 15 e 20. Não precisa economizar quota aqui; precisa capturar quando a fonte publicar. Para atos/atas, semanal pode fazer sentido. Para endpoints pesados, use `workflow_dispatch` até estabilizar.
+
+5. **Fallback se Playwright falhar?**  
+   Sim. Mostrar o último dado bem-sucedido com badge "Atualizado em..." e link direto para a fonte oficial. Se ficar stale por mais de X dias, exibir aviso no painel admin e manter o deep-link.
+
+6. **LGPD/jurídico?**  
+   Em tese, dados de gastos parlamentares no exercício da função pública são dados de transparência pública. Mesmo assim, não publicar CPF, endereço residencial, telefone pessoal, dados bancários ou documentos que o portal eventualmente exponha por falha. Manter fonte oficial, data de coleta e canal de contestação. Isto não substitui revisão jurídica.
+
+7. **Seletores robustos ou CSS específico?**  
+   Primeiro: interceptar XHR/JSON carregado pela SPA. Segundo: seletores por texto/semântica. Terceiro: CSS específico com fallback. Todo scraper deve salvar artifacts quando falhar para facilitar manutenção.
+
+8. **Alternativa gratuita melhor?**  
+   Não encontrei melhor dentro dos critérios. Vercel Hobby/Supabase Edge não são bons para browser completo; Cloudflare Browser Rendering/Workers tende a exigir plano pago para produção; Render/Fly podem funcionar, mas viram infraestrutura a manter. API oficial do Centi com credencial da Câmara seria a melhor alternativa técnica, mas depende de acesso institucional.
+
+### Notas de operação
+
+- Nunca rodar o workflow em `pull_request_target`.
+- Restringir ingestão a branch `main` e `workflow_dispatch/schedule`.
+- Definir `permissions: contents: read` no workflow.
+- Usar `concurrency` para impedir duas coletas simultâneas.
+- Definir `timeout-minutes: 15`.
+- Guardar screenshots/HTML/HAR como artifacts por 7 dias, não commitar dados brutos no repo.
+- Registrar tudo em `sync_log`: fonte, competência, período, quantidade, hash do payload, started_at/finished_at, status e erro resumido.
+
+### Fontes verificadas
+
+- GitHub Actions billing/uso: https://docs.github.com/en/actions/concepts/billing-and-usage
+- GitHub scheduled workflows: https://docs.github.com/actions/how-tos/troubleshoot-workflows
+- GitHub auto-disable em repo público inativo: https://docs.github.com/en/enterprise-server@3.19/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows
+- Playwright em GitHub Actions/CI: https://playwright.dev/docs/ci-intro
+
+---
+
 ## 1. Contexto
 
 ### 1.1 O que mudou
