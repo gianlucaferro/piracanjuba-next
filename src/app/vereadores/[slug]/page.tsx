@@ -16,6 +16,11 @@ import {
 } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchVereadorBySlug, listVereadorSlugs } from "@/lib/data/vereadores";
+import {
+  fetchProcessosPorVereadorSlug,
+  fetchPessoasPublicasResumo,
+} from "@/lib/data/processos-publicos";
+import ProcessosPanel from "@/components/processos/ProcessosPanel";
 
 export const revalidate = 3600;
 
@@ -67,11 +72,17 @@ export default async function VereadorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const result = await fetchVereadorBySlug(slug);
+  const [result, processos, pessoasResumo] = await Promise.all([
+    fetchVereadorBySlug(slug),
+    fetchProcessosPorVereadorSlug(slug),
+    fetchPessoasPublicasResumo(),
+  ]);
   if (!result) notFound();
 
   const { vereador, remuneracoes, atuacoes, projetos, presencas, custoTotal } = result;
   const ultimaRemuneracao = remuneracoes[0];
+  const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
+  const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
 
   return (
     <div className="container py-6 md:py-10 space-y-8">
@@ -259,6 +270,15 @@ export default async function VereadorPage({
       )}
 
       {/* Presença removida — dados estavam equivocados */}
+
+      {/* Processos judiciais (BigData Corp — atualização bimestral) */}
+      {pessoaPublica && (
+        <ProcessosPanel
+          processos={processos}
+          nomePessoa={pessoaPublica.nome_publico || vereador.nome}
+          ultimaAtualizacao={ultimaAtualizacaoProcessos}
+        />
+      )}
 
       {/* Remuneração histórica */}
       {remuneracoes.length > 0 && (
