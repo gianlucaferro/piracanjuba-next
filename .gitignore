@@ -42,3 +42,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 supabase/migrations/*_lovable_data_dump.sql
+scripts/scrape-centi/out/
+scripts/scrape-centi/node_modules/

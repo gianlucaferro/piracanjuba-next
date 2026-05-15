@@ -1,0 +1,18 @@
+{
+  "name": "scrape-centi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Coleta por browser renderizado de dados públicos do portal LAI Centi/NucleoGov da Camara Municipal de Piracanjuba.",
+  "type": "module",
+  "scripts": {
+    "poc:gastos": "tsx poc-gastos-parlamentares.ts"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

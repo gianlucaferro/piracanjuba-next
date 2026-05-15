@@ -1,0 +1,67 @@
+name: scrape-centi-poc
+
+# POC: coleta por browser renderizado da pagina de Gastos Parlamentares
+# do portal LAI Centi. Apenas manual (workflow_dispatch) ate validar.
+#
+# Conforme Codex 2026-05-15:
+#   - workflow_dispatch only (sem schedule ainda)
+#   - permissions: contents: read
+#   - concurrency pra impedir execucoes paralelas
+#   - timeout-minutes: 15
+#   - artifacts com retencao 7 dias
+#   - sem stealth plugin
+#   - sem SUPABASE_SERVICE_ROLE_KEY direto (POC nao escreve no banco)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "URL alvo (deixe em branco pra usar default)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scrape-centi-poc
+  cancel-in-progress: false
+
+jobs:
+  poc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: scripts/scrape-centi
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: npm install --no-audit --no-fund --silent
+
+      - name: Install Playwright Chromium + deps
+        run: npx playwright install --with-deps chromium
+
+      - name: Run POC scraper
+        env:
+          OUT_DIR: out
+          TARGET_URL: ${{ inputs.target }}
+        run: npm run poc:gastos
+
+      - name: Upload artifacts (screenshot, HTML, HAR, summary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-centi-poc-${{ github.run_id }}
+          path: scripts/scrape-centi/out/
+          retention-days: 7
+          if-no-files-found: error
