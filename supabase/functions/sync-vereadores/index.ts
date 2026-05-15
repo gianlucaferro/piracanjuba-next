@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
 
       // Update existing vereador
       const { data: existing } = await sb.from("vereadores")
-        .select("id")
+        .select("id, foto_url")
         .eq("slug", dbSlug)
         .maybeSingle();
 
@@ -113,7 +113,13 @@ Deno.serve(async (req) => {
           nome,
           fonte_url: wpV.link,
         };
-        if (fotoUrl) updateData.foto_url = fotoUrl;
+        // PRESERVA fotos já salvas no Supabase Storage (domínio próprio).
+        // Site original da Câmara teve domain hijack em mai/2026 — fotos antigas
+        // foram rebaixadas via Wayback e hospedadas no nosso Storage.
+        const fotoAtualNoStorage = existing.foto_url?.includes(
+          "supabase.co/storage/v1/object/public/vereadores-fotos/",
+        );
+        if (fotoUrl && !fotoAtualNoStorage) updateData.foto_url = fotoUrl;
         if (cargoMesa) updateData.cargo_mesa = cargoMesa;
 
         const { error } = await sb.from("vereadores")
