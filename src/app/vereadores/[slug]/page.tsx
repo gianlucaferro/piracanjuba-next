@@ -21,8 +21,12 @@ import {
   fetchPessoasPublicasResumo,
 } from "@/lib/data/processos-publicos";
 import { fetchCamaraDeclaracaoByTipo } from "@/lib/data/camara-declaracoes";
+import { fetchDiariasPorVereador } from "@/lib/data/diarias-camara";
+import { fetchIndicacoesPorVereador } from "@/lib/data/indicacoes-camara";
 import ProcessosPanel from "@/components/processos/ProcessosPanel";
 import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
+import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
+import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
 
 export const revalidate = 3600;
 
@@ -74,11 +78,15 @@ export default async function VereadorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [result, processos, pessoasResumo, cotasDeclaracao] = await Promise.all([
-    fetchVereadorBySlug(slug),
+  const result = await fetchVereadorBySlug(slug);
+  const vereadorId = result?.vereador?.id;
+
+  const [processos, pessoasResumo, cotasDeclaracao, diarias, indicacoes] = await Promise.all([
     fetchProcessosPorVereadorSlug(slug),
     fetchPessoasPublicasResumo(),
     fetchCamaraDeclaracaoByTipo("inexistencia_cotas"),
+    vereadorId ? fetchDiariasPorVereador(vereadorId) : Promise.resolve([]),
+    vereadorId ? fetchIndicacoesPorVereador(vereadorId) : Promise.resolve([]),
   ]);
   if (!result) notFound();
 
@@ -277,6 +285,21 @@ export default async function VereadorPage({
       {/* Cotas Parlamentares (inexistentes — declaração oficial Câmara) */}
       {cotasDeclaracao && (
         <CotasParlamentaresCard declaracao={cotasDeclaracao} variant="compact" />
+      )}
+
+      {/* Diárias e Passagens (via portal LAI Centi — atualização mensal) */}
+      <DiariasCamaraPanel
+        diarias={diarias}
+        nomePessoa={vereador.nome.split(" ").slice(0, 2).join(" ")}
+      />
+
+      {/* Indicações deste vereador (via portal LAI Centi — atualização semanal) */}
+      {indicacoes.length > 0 && (
+        <IndicacoesPanel
+          indicacoes={indicacoes.slice(0, 10)}
+          totalGeral={indicacoes.length}
+          variant="compact"
+        />
       )}
 
       {/* Processos judiciais (BigData Corp — atualização bimestral) */}
