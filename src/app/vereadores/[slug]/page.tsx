@@ -24,6 +24,7 @@ import { fetchCamaraDeclaracaoByTipo } from "@/lib/data/camara-declaracoes";
 import { fetchDiariasPorVereador } from "@/lib/data/diarias-camara";
 import { fetchIndicacoesPorVereador } from "@/lib/data/indicacoes-camara";
 import { fetchAtividadesPorAutor } from "@/lib/data/atividades-legislativas";
+import { fetchAtosPorVereador } from "@/lib/data/atos-camara";
 import ProcessosPanel from "@/components/processos/ProcessosPanel";
 import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
@@ -83,7 +84,7 @@ export default async function VereadorPage({
   const result = await fetchVereadorBySlug(slug);
   const vereadorId = result?.vereador?.id;
 
-  const [processos, pessoasResumo, cotasDeclaracao, diarias, indicacoes, atividades] = await Promise.all([
+  const [processos, pessoasResumo, cotasDeclaracao, diarias, indicacoes, atividades, atos] = await Promise.all([
     fetchProcessosPorVereadorSlug(slug),
     fetchPessoasPublicasResumo(),
     fetchCamaraDeclaracaoByTipo("inexistencia_cotas"),
@@ -92,7 +93,11 @@ export default async function VereadorPage({
     result?.vereador?.nome
       ? fetchAtividadesPorAutor(result.vereador.nome.split(" ").slice(0, 2).join(" "))
       : Promise.resolve([]),
+    vereadorId ? fetchAtosPorVereador(vereadorId) : Promise.resolve([]),
   ]);
+
+  const mocoes = atos.filter((a) => a.tipo === "MOCAO");
+  const requerimentos = atos.filter((a) => a.tipo === "REQUERIMENTO");
   if (!result) notFound();
 
   const { vereador, remuneracoes, atuacoes, projetos, presencas, custoTotal } = result;
@@ -314,6 +319,37 @@ export default async function VereadorPage({
           totalGeral={indicacoes.length}
           variant="compact"
         />
+      )}
+
+      {/* Moções + Requerimentos do vereador */}
+      {(mocoes.length > 0 || requerimentos.length > 0) && (
+        <section className="stat-card border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent space-y-3">
+          <h3 className="text-base font-semibold inline-flex items-center gap-2">
+            Moções e Requerimentos
+            <span className="text-xs font-normal text-muted-foreground">
+              ({mocoes.length} moç{mocoes.length === 1 ? "ão" : "ões"} · {requerimentos.length} requerimento{requerimentos.length === 1 ? "" : "s"})
+            </span>
+          </h3>
+          <div className="space-y-1.5">
+            {[...mocoes.slice(0, 5), ...requerimentos.slice(0, 5)].map((a) => (
+              <div key={a.id} className="p-2 rounded-lg border border-border bg-background/40">
+                <div className="flex items-center justify-between gap-2 mb-0.5">
+                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                    a.tipo === "MOCAO" ? "bg-amber-500/15 text-amber-700" : "bg-blue-500/15 text-blue-700"
+                  }`}>
+                    {a.tipo === "MOCAO" ? "Moção" : "Requerimento"}
+                  </span>
+                  <span className="text-xs text-foreground font-mono">{a.numero}</span>
+                </div>
+                {a.ementa && (
+                  <p className="text-xs text-foreground/85 leading-relaxed mt-1">
+                    {a.ementa.length > 200 ? a.ementa.slice(0, 200) + "..." : a.ementa}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Processos judiciais (BigData Corp — atualização bimestral) */}
