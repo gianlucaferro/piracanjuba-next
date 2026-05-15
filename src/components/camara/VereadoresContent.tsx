@@ -62,7 +62,7 @@ export function VereadoresContent() {
         <div className="mb-6 p-4 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground">
           <p>
             Dados extraídos do{" "}
-            <a href="https://acessoainformacao.camaradepiracanjuba.go.gov.br/projetos-de-leis/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            <a href="https://acessoainformacao.piracanjuba.go.leg.br/cidadao/atos_adm/mp/id=2" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               portal oficial da Câmara de Piracanjuba
             </a>
             {" "}e do{" "}

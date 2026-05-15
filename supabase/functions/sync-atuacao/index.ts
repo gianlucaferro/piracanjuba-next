@@ -51,8 +51,10 @@ function parseTitle(title: string): { tipo: string; numero: number; ano: number 
 async function scrapeDescriptionsFromListing(): Promise<Map<string, string>> {
   const descs = new Map<string, string>();
   try {
+    // 2026-05: Camara migrou pra piracanjuba.go.leg.br. Atividades
+    // legislativas agora ficam no portal LAI Centi.
     const resp = await fetch(
-      "https://acessoainformacao.camaradepiracanjuba.go.gov.br/atuacao-parlamentar/",
+      "https://acessoainformacao.piracanjuba.go.leg.br/cidadao/legislacao/atividades_legislativas/",
       { headers: { "User-Agent": "seuvereador.ai/1.0 (transparencia legislativa)" } }
     );
     if (!resp.ok) return descs;
@@ -108,7 +110,7 @@ Deno.serve(async (req) => {
     // Scrape listing page for descriptions (recent items)
     const descriptions = await scrapeDescriptionsFromListing();
 
-    const WP_API = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/wp-json/wp/v2";
+    const WP_API = "https://piracanjuba.go.leg.br/wp-json/wp/v2";
 
     // Batch upsert approach: collect all items, then batch insert
     for (const [tipoId, tipoLabel] of Object.entries(TIPO_IDS)) {

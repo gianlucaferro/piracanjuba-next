@@ -7,7 +7,8 @@ const corsHeaders = {
 };
 
 const UA = "piracanjuba.ai/1.0 (transparencia legislativa)";
-const VOTACOES_URL = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/acesso-aos-resultados-das-votacoes/";
+// 2026-05: Camara migrou pra piracanjuba.go.leg.br + portal LAI Centi
+const VOTACOES_URL = "https://acessoainformacao.piracanjuba.go.leg.br/cidadao/atos_adm/mp/id=10";
 
 interface ScrapedVotacao {
   titulo: string;
@@ -62,7 +63,7 @@ function parseVotacoesHtml(html: string): ScrapedVotacao[] {
         titulo: titleMatch[1].trim(),
         data,
         resultado,
-        fonte_url: fonteUrl.startsWith("http") ? fonteUrl : `https://acessoainformacao.camaradepiracanjuba.go.gov.br${fonteUrl}`,
+        fonte_url: fonteUrl.startsWith("http") ? fonteUrl : `https://acessoainformacao.piracanjuba.go.leg.br${fonteUrl}`,
       });
     }
   }

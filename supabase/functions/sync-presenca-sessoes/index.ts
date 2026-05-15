@@ -7,7 +7,9 @@ const corsHeaders = {
 };
 
 const UA = "piracanjuba.ai/1.0 (transparencia legislativa)";
-const WP_API = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/wp-json/wp/v2";
+// 2026-05: Camara migrou de acessoainformacao.camaradepiracanjuba.go.gov.br
+// pra piracanjuba.go.leg.br (Interlegis/Leg.br).
+const WP_API = "https://piracanjuba.go.leg.br/wp-json/wp/v2";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -131,7 +133,7 @@ Deno.serve(async (req) => {
             ano,
             vereador_id: v.id,
             presente: true,
-            fonte_url: post.link || `https://acessoainformacao.camaradepiracanjuba.go.gov.br/lista-de-presenca/${post.slug}/`,
+            fonte_url: post.link || `https://piracanjuba.go.leg.br/lista-de-presenca/${post.slug}/`,
           }, { onConflict: "wp_post_id,vereador_nome" });
           
           if (error) errors.push(`Presença ${v.nome}: ${error.message}`);
@@ -150,7 +152,7 @@ Deno.serve(async (req) => {
           tipo_sessao: tipoSessao,
           ano,
           presente: true,
-          fonte_url: post.link || `https://acessoainformacao.camaradepiracanjuba.go.gov.br/lista-de-presenca/`,
+          fonte_url: post.link || `https://piracanjuba.go.leg.br/lista-de-presenca/`,
         }, { onConflict: "wp_post_id,vereador_nome" });
         if (error) errors.push(`Sessão: ${error.message}`);
         else newCount++;

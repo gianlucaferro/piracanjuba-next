@@ -237,7 +237,7 @@ function TransmissaoTab() {
         <p className="text-sm text-muted-foreground mt-2">
           A transmissão ao vivo visa oferecer maior transparência e comodidade aos cidadãos que não podem comparecer presencialmente ao plenário.
         </p>
-        <a href="https://camaradepiracanjuba.go.gov.br/transmissao-das-sessoes/" target="_blank" rel="noopener noreferrer"
+        <a href="https://piracanjuba.go.leg.br/sessoes/" target="_blank" rel="noopener noreferrer"
           className="text-xs text-primary hover:underline mt-3 inline-block">
           Ver página oficial →
         </a>

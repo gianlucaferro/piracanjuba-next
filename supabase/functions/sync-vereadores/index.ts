@@ -7,22 +7,24 @@ const corsHeaders = {
 };
 
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
-const WP_API = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/wp-json/wp/v2";
-const VEREADORES_PAGE = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/vereadores/";
+// 2026-05: Camara migrou de acessoainformacao.camaradepiracanjuba.go.gov.br
+// pra piracanjuba.go.leg.br (padrao Interlegis/Leg.br).
+const WP_API = "https://piracanjuba.go.leg.br/wp-json/wp/v2";
+const VEREADORES_PAGE = "https://piracanjuba.go.leg.br/mesa-diretora/";
 
-// Map WP slugs to our DB slugs
+// Map WP slugs (do novo site) to our DB slugs
 const SLUG_MAP: Record<string, string> = {
-  "adriana-dias-pinheiro": "adriana-pinheiro",
-  "aparecida-divani-rocha-cordeiro": "aparecida-divani",
-  "douglas-miranda-silva": "douglas-miranda",
-  "edimar-lopes-machado": "edimar-lopes",
-  "fernando-abraao-magalhaes-silva": "fernando-abraao",
-  "marco-antonio-antunes-da-cruz": "marco-antonio",
-  "reginaldo-moreira-da-silva": "reginaldo-moreira",
-  "sirley-de-fatima-menezes-wehbe": "sirley-wehbe",
-  "welton-eterno-da-silva": "welton-eterno",
-  "wennder-trindade-e-silva": "wennder-trindade",
-  "yuri-santiago-alves": "yuri-santiago",
+  "adriana-dias": "adriana-pinheiro",
+  "aparecida-cordeiro": "aparecida-divani",
+  "douglas-miranda": "douglas-miranda",
+  "edimar-lopes": "edimar-lopes",
+  "fernando-silva": "fernando-abraao",
+  "marco-antonio": "marco-antonio",
+  "reginaldo-silva": "reginaldo-moreira",
+  "sirley-de-fatima": "sirley-wehbe",
+  "welton-da-silva": "welton-eterno",
+  "wennder-silva": "wennder-trindade",
+  "yuri-santiago": "yuri-santiago",
 };
 
 // Known cargo_mesa from the vereadores page

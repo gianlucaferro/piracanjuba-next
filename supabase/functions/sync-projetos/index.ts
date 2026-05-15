@@ -182,8 +182,10 @@ Deno.serve(async (req) => {
       (vereadores || []).map((v: any) => [v.slug, v.id])
     );
 
-    // Fetch the main projects page (HTML) 
-    const url = "https://acessoainformacao.camaradepiracanjuba.go.gov.br/projetos-de-leis/";
+    // Fetch the main projects page (HTML)
+    // 2026-05: Camara migrou pra piracanjuba.go.leg.br. Atos legislativos
+    // (projetos de lei) agora moram no portal LAI Centi:
+    const url = "https://acessoainformacao.piracanjuba.go.leg.br/cidadao/atos_adm/mp/id=2";
     console.log("Fetching:", url);
 
     let response;
