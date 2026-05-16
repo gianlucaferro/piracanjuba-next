@@ -207,6 +207,26 @@ export default async function VereadorPage({
             Indicações, requerimentos
           </p>
         </div>
+        <a
+          href="#processos-judiciais"
+          className="stat-card hover:border-amber-500/40 transition-colors"
+        >
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Processos</p>
+          <p className="text-xl font-bold text-foreground mt-1">
+            {processos.length}
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            {(() => {
+              if (processos.length === 0) return "Nenhum registro público";
+              const crim = processos.filter((p) => p.tipo_categoria === "criminal").length;
+              const ativos = processos.filter((p) => p.status === "ativo").length;
+              const parts: string[] = [];
+              if (crim > 0) parts.push(`${crim} criminal${crim > 1 ? "is" : ""}`);
+              if (ativos > 0) parts.push(`${ativos} ativo${ativos > 1 ? "s" : ""}`);
+              return parts.length > 0 ? parts.join(" · ") : "Judiciais públicos";
+            })()}
+          </p>
+        </a>
       </section>
 
       {/* Mandato */}
@@ -352,13 +372,15 @@ export default async function VereadorPage({
         </section>
       )}
 
-      {/* Processos judiciais (BigData Corp — atualização bimestral) */}
+      {/* Processos judiciais (Escavador — atualização trimestral) */}
       {pessoaPublica && (
-        <ProcessosPanel
-          processos={processos}
-          nomePessoa={pessoaPublica.nome_publico || vereador.nome}
-          ultimaAtualizacao={ultimaAtualizacaoProcessos}
-        />
+        <div id="processos-judiciais" className="scroll-mt-20">
+          <ProcessosPanel
+            processos={processos}
+            nomePessoa={pessoaPublica.nome_publico || vereador.nome}
+            ultimaAtualizacao={ultimaAtualizacaoProcessos}
+          />
+        </div>
       )}
 
       {/* Remuneração histórica */}
