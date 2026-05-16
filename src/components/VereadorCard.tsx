@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { DollarSign, Vote, Wallet, Info } from "lucide-react";
+import { DollarSign, Vote, Wallet, Info, ArrowRight } from "lucide-react";
 import type { Vereador } from "@/data/api";
 import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador } from "@/data/api";
 import { fetchCamaraDiarias, fetchCamaraCustoTotal } from "@/data/camaraApi";
@@ -65,8 +65,8 @@ export default function VereadorCard({ v }: { v: Vereador }) {
   return (
     <Link
       href={`/vereadores/${v.slug}`}
-      className="block stat-card card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-      aria-label={`Ver perfil de ${v.nome}`}
+      className="group block stat-card card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      aria-label={`Saiba mais sobre ${v.nome}`}
     >
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -177,7 +177,13 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           </div>
         </div>
       )}
-      <div className="mt-3 flex justify-end">
+      <div className="mt-3 flex items-center justify-between gap-2 pt-3 border-t border-border">
+        <span
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:translate-x-0.5 transition-transform"
+        >
+          Saiba mais sobre {v.nome.split(" ")[0]}
+          <ArrowRight className="w-4 h-4" />
+        </span>
         <ShareButton
           title={v.nome}
           text={`Veja o perfil de ${v.nome}, vereador(a) de Piracanjuba`}
