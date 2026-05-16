@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Scale, AlertTriangle, Users, ExternalLink } from "lucide-react";
+import { Scale, AlertTriangle, Users, ExternalLink, ShieldCheck } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchPessoasPublicasResumo } from "@/lib/data/processos-publicos";
 
@@ -95,18 +95,64 @@ export default async function ProcessosPublicosIndex() {
           legítimo na fiscalização da gestão pública).
         </p>
         <p className="mt-2">
-          Filtros automáticos aplicados:{" "}
-          <strong>processos em segredo de justiça</strong>,{" "}
-          <strong>ações de família</strong>, processos em que a pessoa figura
-          como <strong>vítima/testemunha</strong>, ou em que atua{" "}
-          <strong>apenas como advogado de terceiros</strong> (não como parte),
-          NÃO são exibidos.
+          Filtros automáticos aplicados — <strong>NÃO são exibidos</strong>:
+          processos em <strong>segredo de justiça</strong>,{" "}
+          <strong>ações de família</strong>, casos em que a pessoa figura como{" "}
+          <strong>vítima/testemunha</strong>,{" "}
+          <strong>interessado/terceiro</strong> em jurisdição voluntária, ou em
+          que atua <strong>apenas como advogado de terceiros</strong> (não como
+          parte). Somente processos onde o agente público figura como{" "}
+          <strong>autor ou réu</strong> aparecem aqui.
         </p>
         <p className="mt-2">
           Cada processo traz um <strong>resumo gerado por IA</strong> (Gemini
           2.5) com base nas movimentações públicas, explicando a natureza, as
           partes e a situação atual em linguagem acessível.
         </p>
+      </div>
+
+      {/* Termo de Uso */}
+      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 text-xs text-muted-foreground leading-relaxed">
+        <p className="font-semibold text-foreground inline-flex items-center gap-1 mb-2">
+          <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+          Termo de Uso e Aviso Legal
+        </p>
+        <ul className="list-disc pl-4 space-y-1.5">
+          <li>
+            Os dados aqui exibidos são{" "}
+            <strong>meramente informativos</strong> e foram extraídos
+            automaticamente de <strong>bases públicas oficiais</strong>{" "}
+            (Datajud/CNJ e tribunais brasileiros) via API do Escavador. Podem{" "}
+            <strong>conter imprecisões, atrasos ou erros de classificação</strong>{" "}
+            inerentes a sistemas automatizados.
+          </li>
+          <li>
+            A <strong>presunção de inocência é inviolável</strong>{" "}
+            (Constituição Federal,{" "}
+            <strong>art. 5º, inciso LVII</strong>: &ldquo;ninguém será
+            considerado culpado até o trânsito em julgado de sentença penal
+            condenatória&rdquo;). A existência de processo judicial — em
+            especial criminal — <strong>não significa culpa</strong>, condenação
+            nem prática de qualquer ilícito.
+          </li>
+          <li>
+            Os <strong>resumos gerados por inteligência artificial</strong> são
+            descritivos das movimentações públicas e podem conter imprecisões.
+            Não constituem aconselhamento jurídico, opinião editorial nem
+            juízo de valor sobre as partes.
+          </li>
+          <li>
+            Encontrou imprecisão, dado incorreto ou processo que não deveria
+            estar listado?{" "}
+            <Link
+              href="/contato?assunto=processos-publicos"
+              className="underline hover:text-foreground inline-flex items-center gap-0.5"
+            >
+              Solicite revisão <ExternalLink className="w-3 h-3" />
+            </Link>{" "}
+            — respondemos em até <strong>72 horas úteis</strong>.
+          </li>
+        </ul>
       </div>
 
       {/* Grupos por cargo */}
