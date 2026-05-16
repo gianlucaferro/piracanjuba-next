@@ -7,7 +7,7 @@ import { fetchPessoasPublicasResumo } from "@/lib/data/processos-publicos";
 export const metadata = pageMetadata({
   title: "Processos Judiciais de Agentes Públicos de Piracanjuba",
   description:
-    "Consulta pública dos processos judiciais de vereadores, prefeito, vice-prefeito e secretários de Piracanjuba-GO. Atualização bimestral via BigData Corp. Filtros: sem segredo de justiça, sem vítimas, sem ações de família.",
+    "Consulta pública dos processos judiciais de vereadores, prefeito, vice-prefeito e secretários de Piracanjuba-GO. Atualização trimestral via Escavador (integrado ao Datajud/CNJ). Filtros: sem segredo de justiça, sem vítimas, sem ações de família, sem atuação apenas como advogado.",
   path: "/transparencia/processos-publicos",
 });
 
@@ -65,8 +65,8 @@ export default async function ProcessosPublicosIndex() {
         <p className="text-sm text-muted-foreground leading-relaxed">
           Consulta pública dos processos judiciais que envolvem vereadores,
           prefeito, vice-prefeito e secretários municipais de Piracanjuba-GO.
-          Atualização automática bimestral via BigData Corp em bases públicas de
-          tribunais brasileiros.
+          Atualização automática trimestral via API do Escavador (integrada ao
+          Datajud/CNJ e demais bases públicas de tribunais brasileiros).
         </p>
         <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-2">
           <span className="inline-flex items-center gap-1">
@@ -137,15 +137,16 @@ export default async function ProcessosPublicosIndex() {
         <p>
           Fonte:{" "}
           <a
-            href="https://bigdatacorp.com.br"
+            href="https://www.escavador.com"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-foreground inline-flex items-center gap-0.5"
           >
-            BigData Corp <ExternalLink className="w-3 h-3" />
+            Escavador <ExternalLink className="w-3 h-3" />
           </a>{" "}
-          (consultas em bases públicas de tribunais brasileiros). Atualizações
-          automáticas no dia 1 dos meses ímpares.
+          (API oficial integrada ao Datajud/CNJ e bases públicas de tribunais
+          brasileiros). Atualizações automáticas no dia 1 dos meses de janeiro,
+          abril, julho e outubro.
         </p>
       </footer>
     </div>
