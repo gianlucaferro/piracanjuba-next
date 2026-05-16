@@ -115,7 +115,8 @@ export default async function HomePage() {
           className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
         />
         <ClimaHeroBadge />
-        <div className="container relative py-10 md:py-16">
+        {/* Mobile: pt-14 dá espaço pro ClimaHeroBadge ficar no canto superior esquerdo sem cobrir o logo */}
+        <div className="container relative pt-14 pb-10 md:py-16">
           <div className="flex items-center gap-5 md:gap-8">
             <Image
               src="/icon-192.png"
