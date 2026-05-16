@@ -80,19 +80,99 @@ function mapTipoCategoria(proc: EscavadorProcesso): string {
   return "outro";
 }
 
-function mapPolo(proc: EscavadorProcesso, cpfTarget: string): string {
-  // Procura o envolvido que bate com o CPF do vereador
-  const matched = proc.envolvidos?.find((e) => {
-    const cpfLimpo = (e.cpf ?? "").replace(/\D/g, "");
-    return cpfLimpo === cpfTarget;
+type EscavadorEnvolvido = {
+  cpf?: string;
+  nome?: string;
+  polo?: string;
+  tipo?: string;
+  tipo_normalizado?: string;
+  advogados?: EscavadorEnvolvido[];
+  oabs?: Array<{ uf: string; tipo: string; numero: number }>;
+};
+
+/**
+ * Detecta o papel da pessoa-alvo no processo:
+ * - Retorna { polo, papel_advogado: true, oab? } se ela aparece SOMENTE como advogado
+ * - Retorna { polo: 'autor|reu|...', papel_advogado: false } se ela aparece como parte
+ *
+ * Logica: pra cada fonte[].envolvidos[], procura o envolvido com CPF alvo.
+ * Se em alguma fonte ele aparece como Parte (Autor/Réu/Interessado/Terceiro),
+ * usa esse polo. Se aparece SO como Advogado em todas as fontes, marca
+ * papel_advogado=TRUE.
+ *
+ * Tambem checa proc.tipos_envolvido_pesquisado[] (Escavador retorna pra cada
+ * processo quais tipos a busca correspondeu, ex: [{polo:"ADVOGADO"}]).
+ */
+function analisarPapel(proc: EscavadorProcesso, cpfTarget: string): {
+  polo: string;
+  papel_advogado: boolean;
+  oab_numero: string | null;
+} {
+  let foundAsParty = false;
+  let poloParty = "interessado";
+  let foundAsAdvogado = false;
+  let oabNumero: string | null = null;
+
+  // Percorrer fontes[]: cada fonte tem tipos_envolvido_pesquisado + envolvidos[]
+  const fontes = (proc as unknown as {
+    fontes?: Array<{
+      envolvidos?: EscavadorEnvolvido[];
+      tipos_envolvido_pesquisado?: Array<{ polo?: string; tipo_normalizado?: string }>;
+    }>;
+  }).fontes ?? [];
+
+  // (1) Caminho rapido: ler tipos_envolvido_pesquisado de cada fonte. Se TODAS
+  // marcam ADVOGADO, eh advogado puro.
+  const todasAsFontesAdvogado = fontes.length > 0 && fontes.every((f) => {
+    const tipos = f.tipos_envolvido_pesquisado ?? [];
+    return tipos.length > 0 && tipos.every((t) =>
+      t.polo === "ADVOGADO" || t.tipo_normalizado === "Advogado"
+    );
   });
-  const polo = (matched?.polo ?? "").toLowerCase();
-  if (polo.includes("ativo") || polo.includes("autor") || polo.includes("requerente")) return "autor";
-  if (polo.includes("passivo") || polo.includes("réu") || polo.includes("reu") || polo.includes("requerido")) return "reu";
-  if (polo.includes("vítima") || polo.includes("vitima")) return "vitima";
-  if (polo.includes("testemunha")) return "testemunha";
-  if (polo.includes("terceiro")) return "terceiro";
-  return "interessado";
+  if (todasAsFontesAdvogado) foundAsAdvogado = true;
+
+  // (2) Percorrer envolvidos[] + advogados[] em busca de match por CPF
+  for (const f of fontes) {
+    for (const e of f.envolvidos ?? []) {
+      const eCpfLimpo = (e.cpf ?? "").replace(/\D/g, "");
+      // Match direto (envolvido em si)
+      if (eCpfLimpo === cpfTarget) {
+        const tipo = (e.tipo_normalizado ?? e.tipo ?? "").toLowerCase();
+        if (tipo === "advogado") {
+          foundAsAdvogado = true;
+          const oab = e.oabs?.[0];
+          if (oab) oabNumero = `${oab.uf} ${oab.numero}`;
+        } else {
+          foundAsParty = true;
+          const polo = (e.polo ?? "").toLowerCase();
+          if (polo.includes("ativo") || polo.includes("autor") || polo.includes("requerente") || tipo.includes("autor")) poloParty = "autor";
+          else if (polo.includes("passivo") || polo.includes("réu") || polo.includes("reu") || polo.includes("requerido") || tipo.includes("réu") || tipo.includes("reu")) poloParty = "reu";
+          else if (polo.includes("vítima") || polo.includes("vitima") || tipo.includes("vítima") || tipo.includes("vitima")) poloParty = "vitima";
+          else if (polo.includes("testemunha") || tipo.includes("testemunha")) poloParty = "testemunha";
+          else if (polo.includes("terceiro") || tipo.includes("terceiro")) poloParty = "terceiro";
+          else poloParty = "interessado";
+        }
+      }
+      // Match aninhado: envolvido.advogados[]
+      for (const adv of e.advogados ?? []) {
+        const aCpfLimpo = (adv.cpf ?? "").replace(/\D/g, "");
+        if (aCpfLimpo === cpfTarget) {
+          foundAsAdvogado = true;
+          const oab = adv.oabs?.[0];
+          if (oab) oabNumero = `${oab.uf} ${oab.numero}`;
+        }
+      }
+    }
+  }
+
+  if (foundAsParty) {
+    return { polo: poloParty, papel_advogado: false, oab_numero: oabNumero };
+  }
+  if (foundAsAdvogado) {
+    return { polo: "advogado", papel_advogado: true, oab_numero: oabNumero };
+  }
+  // Fallback: nao bateu nada, marca como interessado (raro)
+  return { polo: "interessado", papel_advogado: false, oab_numero: null };
 }
 
 async function fetchProcessosEscavador(token: string, cpf: string, maxPages = 10): Promise<EscavadorProcesso[]> {
@@ -185,9 +265,14 @@ Deno.serve(async (req) => {
 
       for (const proc of processos) {
         const tipoCategoria = mapTipoCategoria(proc);
-        const polo = mapPolo(proc, cpfDigits);
+        const { polo, papel_advogado, oab_numero } = analisarPapel(proc, cpfDigits);
         const segredo = Boolean(proc.segredo_justica);
-        const visivelEsperado = !segredo && polo !== "vitima" && polo !== "testemunha" && tipoCategoria !== "familia";
+        const visivelEsperado =
+          !segredo &&
+          polo !== "vitima" &&
+          polo !== "testemunha" &&
+          tipoCategoria !== "familia" &&
+          !papel_advogado;
         if (!visivelEsperado) filtrados++;
 
         const dataDist = proc.data_inicio ?? null;
@@ -207,6 +292,8 @@ Deno.serve(async (req) => {
           assunto: capa?.assunto ?? null,
           tipo_categoria: tipoCategoria,
           polo,
+          papel_advogado,
+          oab_numero,
           data_distribuicao: dataDist,
           data_ultima_movimentacao: dataMov,
           status: "ativo",
