@@ -101,8 +101,8 @@ export default function ProcessosPanel({
               Processos Judiciais
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-              Nenhum processo público encontrado para {nomePessoa} via BigData
-              Corp.
+              Nenhum processo público encontrado para {nomePessoa} via
+              Escavador.
               {ultimaAtualizacao && (
                 <span className="block mt-1">
                   Última consulta: {fmtDateTime(ultimaAtualizacao)}
@@ -258,15 +258,17 @@ function Disclaimer({ ultimaAtualizacao }: { ultimaAtualizacao?: string | null }
         Sobre estes dados
       </p>
       <p>
-        Lista consultada via <strong>BigData Corp</strong> em bases públicas de
-        tribunais brasileiros. Filtros aplicados automaticamente: processos em
-        segredo de justiça, ações de família e quando a pessoa figura como
-        vítima ou testemunha <strong>NÃO</strong> são exibidos.
+        Lista consultada via <strong>Escavador</strong> (API oficial sobre dados
+        de tribunais brasileiros, integrada ao Datajud/CNJ). Filtros aplicados
+        automaticamente: processos em segredo de justiça, ações de família,
+        quando a pessoa figura como vítima/testemunha e quando atua{" "}
+        <strong>apenas como advogado</strong> de terceiros (não como parte){" "}
+        <strong>NÃO</strong> são exibidos.
       </p>
       {ultimaAtualizacao && (
         <p className="mt-1">
           Última atualização: <strong>{fmtDateTime(ultimaAtualizacao)}</strong>.
-          Atualizações bimestrais automáticas.
+          Atualizações trimestrais automáticas (janeiro / abril / julho / outubro).
         </p>
       )}
       <p className="mt-1">
