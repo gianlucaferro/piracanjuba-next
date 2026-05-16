@@ -122,14 +122,35 @@ function analisarPapel(proc: EscavadorProcesso, cpfTarget: string): {
   }).fontes ?? [];
 
   // (1) Caminho rapido: ler tipos_envolvido_pesquisado de cada fonte. Se TODAS
-  // marcam ADVOGADO, eh advogado puro.
+  // marcam ADVOGADO, eh advogado puro — esse e o sinal OFICIAL do Escavador.
+  // Quando isso acontece, NAO procuramos mais em envolvidos[] (caminho 2),
+  // pra evitar que tipo vazio em algum item sobrescreva esse sinal correto.
   const todasAsFontesAdvogado = fontes.length > 0 && fontes.every((f) => {
     const tipos = f.tipos_envolvido_pesquisado ?? [];
     return tipos.length > 0 && tipos.every((t) =>
       t.polo === "ADVOGADO" || t.tipo_normalizado === "Advogado"
     );
   });
-  if (todasAsFontesAdvogado) foundAsAdvogado = true;
+  if (todasAsFontesAdvogado) {
+    // Ainda assim percorremos rapidamente envolvidos[] pra extrair OAB,
+    // mas SEM mexer em foundAsParty/poloParty.
+    let oab: { uf?: string; numero?: string } | undefined;
+    for (const f of fontes) {
+      for (const e of f.envolvidos ?? []) {
+        const eCpfLimpo = (e.cpf ?? "").replace(/\D/g, "");
+        if (eCpfLimpo === cpfTarget && e.oabs?.[0]) oab = e.oabs[0];
+        for (const adv of e.advogados ?? []) {
+          const aCpfLimpo = (adv.cpf ?? "").replace(/\D/g, "");
+          if (aCpfLimpo === cpfTarget && adv.oabs?.[0]) oab = adv.oabs[0];
+        }
+      }
+    }
+    return {
+      polo: "advogado",
+      papel_advogado: true,
+      oab_numero: oab ? `${oab.uf ?? ""} ${oab.numero ?? ""}`.trim() : null,
+    };
+  }
 
   // (2) Percorrer envolvidos[] + advogados[] em busca de match por CPF
   for (const f of fontes) {

@@ -26,6 +26,14 @@ export type ProcessoPublico = {
   resultado: string | null;
   objeto_resumo: string | null;
   atualizado_em: string;
+  // Enriquecimento IA + Escavador (via edge function enrich-processo-ia)
+  status_predito: string | null;
+  quantidade_movimentacoes: number | null;
+  tem_sentenca: boolean | null;
+  sentenca_resumo: string | null;
+  movimentacao_recente: string | null;
+  resumo_ia: string | null;
+  resumo_ia_gerado_em: string | null;
   pessoa_id: string;
   nome: string;
   nome_publico: string | null;

@@ -97,8 +97,15 @@ export default async function ProcessosPublicosIndex() {
         <p className="mt-2">
           Filtros automáticos aplicados:{" "}
           <strong>processos em segredo de justiça</strong>,{" "}
-          <strong>ações de família</strong> e processos em que a pessoa figura
-          como <strong>vítima ou testemunha</strong> NÃO são exibidos.
+          <strong>ações de família</strong>, processos em que a pessoa figura
+          como <strong>vítima/testemunha</strong>, ou em que atua{" "}
+          <strong>apenas como advogado de terceiros</strong> (não como parte),
+          NÃO são exibidos.
+        </p>
+        <p className="mt-2">
+          Cada processo traz um <strong>resumo gerado por IA</strong> (Gemini
+          2.5) com base nas movimentações públicas, explicando a natureza, as
+          partes e a situação atual em linguagem acessível.
         </p>
       </div>
 

@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Scale,
   ExternalLink,
-  AlertTriangle,
   FileText,
   Briefcase,
   Vote,
@@ -10,6 +9,9 @@ import {
   Shield,
   Calendar,
   CircleAlert,
+  Sparkles,
+  Gavel,
+  Activity,
 } from "lucide-react";
 import type { ProcessoPublico } from "@/lib/data/processos-publicos";
 import { agregarPorTipo } from "@/lib/data/processos-publicos";
@@ -80,13 +82,42 @@ function fmtDateTime(d: string | null) {
   }
 }
 
+/** Resumo curto do texto bruto da sentença (corta no primeiro parágrafo). */
+function trimSentencaResumo(s: string | null): string | null {
+  if (!s) return null;
+  const cleaned = s
+    .replace(/&gt;/g, ">")
+    .replace(/&lt;/g, "<")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+  // Pega só os primeiros 280 chars; corta na próxima fronteira de frase.
+  if (cleaned.length <= 280) return cleaned;
+  const slice = cleaned.slice(0, 280);
+  const lastPeriod = Math.max(slice.lastIndexOf(". "), slice.lastIndexOf("\n"));
+  return (lastPeriod > 100 ? slice.slice(0, lastPeriod + 1) : slice) + "…";
+}
+
+function statusLabel(p: ProcessoPublico): { texto: string; cor: string } {
+  // Prefere status_predito da Escavador. Cai pro nosso status genérico.
+  const sp = (p.status_predito ?? "").toUpperCase();
+  if (sp === "ATIVO") return { texto: "Ativo", cor: "bg-amber-500/15 text-amber-700" };
+  if (sp === "INATIVO") return { texto: "Encerrado", cor: "bg-emerald-500/15 text-emerald-700" };
+  if (p.status === "ativo") return { texto: "Ativo", cor: "bg-amber-500/15 text-amber-700" };
+  if (p.status) return { texto: STATUS_LABEL[p.status] ?? p.status, cor: "bg-emerald-500/15 text-emerald-700" };
+  return { texto: "Sem status", cor: "bg-muted text-muted-foreground" };
+}
+
 export default function ProcessosPanel({
   processos,
   nomePessoa,
   ultimaAtualizacao,
 }: Props) {
-  const totalAtivos = processos.filter((p) => p.status === "ativo").length;
+  const totalAtivos = processos.filter(
+    (p) => (p.status_predito ?? "").toUpperCase() === "ATIVO" || p.status === "ativo",
+  ).length;
   const totalCriminais = processos.filter((p) => p.tipo_categoria === "criminal").length;
+  const totalComSentenca = processos.filter((p) => p.tem_sentenca).length;
   const stats = agregarPorTipo(processos);
 
   if (processos.length === 0) {
@@ -136,10 +167,16 @@ export default function ProcessosPanel({
                 · <strong className="text-amber-700">{totalAtivos} ativo{totalAtivos > 1 ? "s" : ""}</strong>
               </>
             )}
+            {totalComSentenca > 0 && (
+              <>
+                {" "}
+                · <strong className="text-blue-700">{totalComSentenca} com sentença</strong>
+              </>
+            )}
             {totalCriminais > 0 && (
               <>
                 {" "}
-                · <strong className="text-red-600">{totalCriminais} criminal{totalCriminais > 1 ? "is" : ""}</strong>
+                · <strong className="text-red-600">{totalCriminais} {totalCriminais === 1 ? "criminal" : "criminais"}</strong>
               </>
             )}
           </p>
@@ -172,75 +209,126 @@ export default function ProcessosPanel({
       )}
 
       {/* Lista de processos */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {processos.map((p) => {
           const Icon = p.tipo_categoria ? TIPO_ICON[p.tipo_categoria] || FileText : FileText;
           const cor = p.tipo_categoria ? TIPO_COR[p.tipo_categoria] || "text-slate-500" : "text-slate-500";
-          const isAtivo = p.status === "ativo";
+          const { texto: statusTxt, cor: statusCor } = statusLabel(p);
+          const isAtivo = statusTxt === "Ativo";
+          const sentencaTrim = trimSentencaResumo(p.sentenca_resumo);
+
           return (
-            <div
+            <article
               key={p.id}
-              className={`p-3 rounded-lg border ${
-                isAtivo ? "border-amber-500/30 bg-amber-500/5" : "border-border bg-background/40"
+              className={`p-4 rounded-xl border ${
+                isAtivo
+                  ? "border-amber-500/30 bg-amber-500/5"
+                  : "border-border bg-background/40"
               }`}
             >
-              <div className="flex items-start gap-3">
-                <Icon className={`w-4 h-4 ${cor} shrink-0 mt-0.5`} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className={`text-[10px] uppercase font-bold tracking-wider ${cor}`}>
-                      {p.tipo_categoria ? TIPO_LABEL[p.tipo_categoria] : "—"}
-                    </span>
-                    {p.polo && (
-                      <span className="text-[10px] uppercase font-semibold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
-                        {p.polo}
-                      </span>
-                    )}
-                    {p.status && (
-                      <span
-                        className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${
-                          isAtivo
-                            ? "bg-amber-500/15 text-amber-700"
-                            : "bg-emerald-500/15 text-emerald-700"
-                        }`}
-                      >
-                        {STATUS_LABEL[p.status] || p.status}
-                      </span>
-                    )}
-                  </div>
-                  {p.numero_processo && (
-                    <p className="text-sm font-mono text-foreground/85 break-all">
-                      {p.numero_processo}
-                    </p>
-                  )}
-                  {p.classe && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {p.classe}
-                      {p.assunto && p.assunto !== p.classe && ` · ${p.assunto}`}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[11px] text-muted-foreground">
-                    {p.tribunal && (
-                      <span>
-                        🏛️ {p.tribunal}
-                        {p.comarca && ` · ${p.comarca}`}
-                      </span>
-                    )}
-                    {p.data_distribuicao && (
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Distribuído: {fmtDate(p.data_distribuicao)}
-                      </span>
-                    )}
-                    {p.data_ultima_movimentacao && (
-                      <span>
-                        Última mov.: {fmtDate(p.data_ultima_movimentacao)}
-                      </span>
-                    )}
-                  </div>
-                </div>
+              {/* Header: tipo, polo, status, num movs */}
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span
+                  className={`inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider ${cor}`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {p.tipo_categoria ? TIPO_LABEL[p.tipo_categoria] : "—"}
+                </span>
+                {p.polo && (
+                  <span className="text-[10px] uppercase font-semibold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
+                    {p.polo}
+                  </span>
+                )}
+                <span
+                  className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${statusCor}`}
+                >
+                  {statusTxt}
+                </span>
+                {p.tem_sentenca && (
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700">
+                    <Gavel className="w-3 h-3" /> Sentença
+                  </span>
+                )}
+                {p.quantidade_movimentacoes !== null && p.quantidade_movimentacoes > 0 && (
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase font-semibold text-muted-foreground">
+                    <Activity className="w-3 h-3" />
+                    {p.quantidade_movimentacoes} mov.
+                    {p.quantidade_movimentacoes >= 50 ? "+" : ""}
+                  </span>
+                )}
               </div>
-            </div>
+
+              {/* Numero CNJ */}
+              {p.numero_processo && (
+                <p className="text-sm font-mono text-foreground/85 break-all mb-1">
+                  {p.numero_processo}
+                </p>
+              )}
+
+              {/* Classe + assunto */}
+              {p.classe && (
+                <p className="text-xs text-muted-foreground mb-2">
+                  {p.classe}
+                  {p.assunto && p.assunto !== p.classe && ` · ${p.assunto}`}
+                </p>
+              )}
+
+              {/* RESUMO IA — destaque principal */}
+              {p.resumo_ia && (
+                <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+                  <p className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-primary mb-1.5">
+                    <Sparkles className="w-3 h-3" />
+                    Resumo do processo
+                  </p>
+                  <p className="text-[13px] text-foreground leading-relaxed">
+                    {p.resumo_ia}
+                  </p>
+                </div>
+              )}
+
+              {/* SENTENÇA — se houver */}
+              {p.tem_sentenca && sentencaTrim && (
+                <div className="mt-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+                  <p className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-blue-700 mb-1.5">
+                    <Gavel className="w-3 h-3" />
+                    Decisão/Sentença
+                  </p>
+                  <p className="text-[12px] text-foreground/85 leading-relaxed">
+                    {sentencaTrim}
+                  </p>
+                </div>
+              )}
+
+              {/* Movimentação recente */}
+              {p.movimentacao_recente && (
+                <p className="mt-2 text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                  <Activity className="w-3 h-3" />
+                  <span className="font-semibold">Última atividade:</span>{" "}
+                  {p.movimentacao_recente}
+                </p>
+              )}
+
+              {/* Meta: tribunal + datas */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+                {p.tribunal && (
+                  <span>
+                    🏛️ {p.tribunal}
+                    {p.comarca && ` · ${p.comarca}`}
+                  </span>
+                )}
+                {p.data_distribuicao && (
+                  <span className="inline-flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    Distribuído: {fmtDate(p.data_distribuicao)}
+                  </span>
+                )}
+                {p.data_ultima_movimentacao && (
+                  <span>
+                    Última mov.: {fmtDate(p.data_ultima_movimentacao)}
+                  </span>
+                )}
+              </div>
+            </article>
           );
         })}
       </div>
@@ -258,17 +346,19 @@ function Disclaimer({ ultimaAtualizacao }: { ultimaAtualizacao?: string | null }
         Sobre estes dados
       </p>
       <p>
-        Lista consultada via <strong>Escavador</strong> (API oficial sobre dados
-        de tribunais brasileiros, integrada ao Datajud/CNJ). Filtros aplicados
-        automaticamente: processos em segredo de justiça, ações de família,
-        quando a pessoa figura como vítima/testemunha e quando atua{" "}
-        <strong>apenas como advogado</strong> de terceiros (não como parte){" "}
-        <strong>NÃO</strong> são exibidos.
+        Lista consultada via <strong>Escavador</strong> (API oficial integrada
+        ao Datajud/CNJ e bases públicas dos tribunais brasileiros). Os resumos
+        são gerados por IA (Gemini 2.5) com base nas movimentações públicas.
+        Filtros aplicados automaticamente: processos em segredo de justiça,
+        ações de família, e casos onde a pessoa figura como vítima/testemunha
+        ou atua <strong>apenas como advogado</strong> de terceiros (não como
+        parte) <strong>NÃO</strong> são exibidos.
       </p>
       {ultimaAtualizacao && (
         <p className="mt-1">
           Última atualização: <strong>{fmtDateTime(ultimaAtualizacao)}</strong>.
-          Atualizações trimestrais automáticas (janeiro / abril / julho / outubro).
+          Atualizações trimestrais automáticas (janeiro / abril / julho /
+          outubro).
         </p>
       )}
       <p className="mt-1">
