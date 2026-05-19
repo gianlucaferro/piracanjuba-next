@@ -18,6 +18,7 @@ import {
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { pageMetadata } from "@/lib/seo";
 import SubscriptionForm from "./SubscriptionForm";
+import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 
 export const metadata = pageMetadata({
   title:
@@ -178,6 +179,11 @@ export default function SobrePage() {
         otimizado por inteligência artificial do Brasil</strong> — independente, criado
         e mantido por um cidadão comum, com base 100% em dados oficiais.
       </p>
+
+      {/* Piracanjuba em números — IBGE em tempo real */}
+      <div className="mb-10">
+        <PiracanjubaNumeros />
+      </div>
 
       {/* Lead — bloco de destaque visual */}
       <section

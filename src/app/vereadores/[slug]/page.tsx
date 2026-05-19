@@ -26,6 +26,7 @@ import { fetchIndicacoesPorVereador } from "@/lib/data/indicacoes-camara";
 import { fetchAtividadesPorAutor } from "@/lib/data/atividades-legislativas";
 import { fetchAtosPorVereador } from "@/lib/data/atos-camara";
 import ProcessosPanel from "@/components/processos/ProcessosPanel";
+import FinanciadoresCampanhaCard from "@/components/vereadores/FinanciadoresCampanhaCard";
 import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
 import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
@@ -382,6 +383,11 @@ export default async function VereadorPage({
           />
         </div>
       )}
+
+      {/* Financiadores de campanha eleitoral (TSE — dados públicos) */}
+      <div id="financiadores-campanha" className="scroll-mt-20">
+        <FinanciadoresCampanhaCard vereadorSlug={vereador.slug} />
+      </div>
 
       {/* Remuneração histórica */}
       {remuneracoes.length > 0 && (

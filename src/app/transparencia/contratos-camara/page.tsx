@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Briefcase, Building2, ExternalLink, Calendar, DollarSign } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchContratosCamara, fetchContratosStats } from "@/lib/data/contratos-camara";
+import AlertaContratosSancao from "@/components/transparencia/AlertaContratosSancao";
 
 export const metadata = pageMetadata({
   title: "Contratos da Câmara — Fornecedores e Valores em Piracanjuba GO",
@@ -57,6 +58,9 @@ export default async function ContratosCamaraPage() {
           portal LAI.
         </p>
       </header>
+
+      {/* Alerta cívico: contratos × empresas em CEIS/CNEP (cruzamento Portal da Transparência Federal) */}
+      <AlertaContratosSancao />
 
       {stats && (
         <>
