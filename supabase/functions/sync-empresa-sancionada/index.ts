@@ -27,7 +27,7 @@ type CeisItem = {
   sancionado?: { nome?: string; codigoFormatado?: string; tipoPessoa?: "F" | "J" };
 };
 
-type CnepItem = CeisItem & { valorMulta?: number };
+type CnepItem = CeisItem & { valorMulta?: number | string };
 
 async function fetchPagina(
   token: string,
@@ -49,6 +49,44 @@ async function fetchPagina(
   return (await resp.json()) as (CeisItem | CnepItem)[];
 }
 
+/**
+ * Numero brasileiro -> Number. "3.633.606,84" -> 3633606.84, "0,00" -> 0, "" -> null.
+ */
+function parseNumeroBR(v: number | string | null | undefined): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  const trimmed = String(v).trim();
+  if (!trimmed) return null;
+  // Remove pontos de milhar e troca virgula decimal por ponto
+  const limpo = trimmed.replace(/\./g, "").replace(",", ".");
+  const n = Number(limpo);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Normaliza datas vindas do Portal da Transparencia:
+ * - "31/12/2026" (DD/MM/YYYY) -> "2026-12-31"
+ * - "Sem informacao" / "" / null -> null
+ * - Datas com ano absurdo (>9999) -> null (proteção contra "31/12/9999" sentinela)
+ */
+function parseDate(s: string | null | undefined): string | null {
+  if (!s) return null;
+  const trimmed = String(s).trim();
+  if (!trimmed) return null;
+  // Rejeita placeholders nao-data
+  if (/sem\s+informa|n\/?a|nao\s+inform/i.test(trimmed)) return null;
+  // DD/MM/YYYY
+  const m = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (m) {
+    const ano = Number(m[3]);
+    if (ano < 1900 || ano > 2200) return null;
+    return `${m[3]}-${m[2]}-${m[1]}`;
+  }
+  // Ja em YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10);
+  return null;
+}
+
 function normRow(
   item: CeisItem | CnepItem,
   cadastro: "CEIS" | "CNEP",
@@ -64,12 +102,12 @@ function normRow(
     cadastro,
     tipo_sancao:
       item.tipoSancao?.descricaoPortal ?? item.tipoSancao?.descricaoResumida ?? null,
-    data_inicio_sancao: item.dataInicioSancao ?? null,
-    data_fim_sancao: item.dataFimSancao ?? null,
+    data_inicio_sancao: parseDate(item.dataInicioSancao),
+    data_fim_sancao: parseDate(item.dataFimSancao),
     orgao_sancionador: item.orgaoSancionador?.nome ?? null,
     fundamentacao:
       item.fundamentacao?.map((f) => f.descricao).filter(Boolean).join("; ") || null,
-    valor_multa: (item as CnepItem).valorMulta ?? null,
+    valor_multa: parseNumeroBR((item as CnepItem).valorMulta ?? null),
     id_externo: String(item.id),
     raw_payload: item as Record<string, unknown>,
   };
