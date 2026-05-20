@@ -577,6 +577,7 @@ function ContratosTab() {
   });
   const [selectedContrato, setSelectedContrato] = useState<Contrato | null>(null);
   const [resumo, setResumo] = useState<string | null>(null);
+  const [resumoError, setResumoError] = useState<{ code: string; message: string } | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
   const [busca, setBusca] = useState("");
   const [anoFiltro, setAnoFiltro] = useState<string>("todos");
@@ -633,9 +634,9 @@ function ContratosTab() {
     return () => { cancelled = true; };
   }, [data, aditivosReady, aditivos, cnpjData]);
 
-  const handleOpenResumo = async (c: Contrato) => {
-    setSelectedContrato(c);
+  const fetchResumoContrato = async (c: Contrato, forceRefresh = false) => {
     setResumo(null);
+    setResumoError(null);
     setLoadingResumo(true);
 
     const isOutlier = suspeitos.has(c.id);
@@ -651,19 +652,46 @@ function ContratosTab() {
 
     try {
       const { data: respData, error } = await supabase.functions.invoke("summarize-contrato", {
-        body: { contrato_id: c.id, is_outlier: isOutlier, outlier_context: outlierContext },
+        body: {
+          contrato_id: c.id,
+          is_outlier: isOutlier,
+          outlier_context: outlierContext,
+          force_refresh: forceRefresh,
+        },
       });
-      if (error) throw error;
-      if (respData?.error) {
-        setResumo("Não foi possível gerar o resumo no momento.");
+      // Edge function pode retornar { error, error_code } no body em vez de throw
+      const body = (respData ?? (error as { context?: { body?: Record<string, unknown> } })?.context?.body) as
+        | { resumo?: string; error?: string; error_code?: string; cached?: boolean }
+        | undefined;
+      if (body?.resumo) {
+        setResumo(body.resumo);
+        setResumoError(null);
+      } else if (body?.error_code) {
+        setResumoError({ code: body.error_code, message: body.error ?? "Não foi possível gerar o resumo." });
+      } else if (error) {
+        setResumoError({
+          code: "network",
+          message: "Falha de conexão ao gerar resumo. Verifique sua internet e tente novamente.",
+        });
       } else {
-        setResumo(respData.resumo);
+        setResumoError({
+          code: "unknown",
+          message: "Não foi possível gerar o resumo no momento.",
+        });
       }
     } catch {
-      setResumo("Não foi possível gerar o resumo no momento.");
+      setResumoError({
+        code: "network",
+        message: "Falha de conexão ao gerar resumo. Verifique sua internet e tente novamente.",
+      });
     } finally {
       setLoadingResumo(false);
     }
+  };
+
+  const handleOpenResumo = async (c: Contrato) => {
+    setSelectedContrato(c);
+    await fetchResumoContrato(c);
   };
 
   if (isLoading) return (
@@ -852,7 +880,7 @@ function ContratosTab() {
         )}
       </div>
 
-      <Dialog open={!!selectedContrato} onOpenChange={(open) => !open && setSelectedContrato(null)}>
+      <Dialog open={!!selectedContrato} onOpenChange={(open) => { if (!open) { setSelectedContrato(null); setResumoError(null); } }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-base">
@@ -884,6 +912,20 @@ function ContratosTab() {
               {loadingResumo ? (
                 <div className="flex items-center gap-2 py-4 justify-center text-sm text-muted-foreground">
                   <Loader2 className="w-4 h-4 animate-spin" /> Gerando resumo...
+                </div>
+              ) : resumoError ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-amber-700 leading-relaxed">{resumoError.message}</p>
+                  {selectedContrato && (
+                    <button
+                      type="button"
+                      onClick={() => fetchResumoContrato(selectedContrato, true)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                      disabled={loadingResumo}
+                    >
+                      <Loader2 className="w-3 h-3" /> Tentar novamente
+                    </button>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{resumo}</p>
