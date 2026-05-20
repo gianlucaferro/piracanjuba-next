@@ -2,6 +2,7 @@ import { TrendingUp } from "lucide-react";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import EmColetaSection from "@/components/EmColetaSection";
 import EconomiaPanel from "@/components/economia/EconomiaPanel";
+import PiracanjubaAgroCard from "@/components/economia/PiracanjubaAgroCard";
 import { fetchIndicadores } from "@/lib/data/home";
 import {
   fetchEconomiaIndicadores,
@@ -124,6 +125,11 @@ export default async function EconomiaPage() {
           de Piracanjuba.
         </p>
       </header>
+
+      {/* Piracanjuba na agricultura — IBGE/SIDRA */}
+      <section className="mb-6">
+        <PiracanjubaAgroCard />
+      </section>
 
       {/* Painel principal — 6 paineis com dados reais consolidados */}
       <section className="mb-10">
