@@ -10,6 +10,8 @@ export type ContratoComSancao = {
   fornecedor_nome: string;
   valor: number | null;
   data_firmatura: string | null;
+  inicio_vigencia: string | null;
+  fim_vigencia: string | null;
   objeto: string | null;
   situacao: string | null;
   cadastro: "CEIS" | "CNEP";
@@ -17,6 +19,7 @@ export type ContratoComSancao = {
   data_inicio_sancao: string | null;
   data_fim_sancao: string | null;
   orgao_sancionador: string | null;
+  severidade: "critico" | "atencao" | "informativo";
 };
 
 export const fetchContratosComSancao = unstable_cache(
