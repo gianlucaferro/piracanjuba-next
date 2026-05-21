@@ -71,15 +71,15 @@ Deno.serve(async (req) => {
   const startedAt = Date.now();
 
   try {
-    // Itera por ano pra garantir paginacao completa
-    const allContratos: CentiContrato[] = [];
-    for (const ano of [2026, 2025, 2024, 2023]) {
-      const batch = await centiListAll<CentiContrato>(REFERER, ACAO, {
-        extra: { orgao: "", ano: String(ano) },
-        pageSize: 100, maxPages: 10,
-      });
-      allContratos.push(...batch);
-    }
+    // Busca TODOS os contratos, sem filtro de ano. O endpoint Centi aceita
+    // listagem completa numa unica paginacao (validado 2026-05-20: 161
+    // registros de 2013 a 2026). A versao anterior iterava apenas
+    // [2026,2025,2024,2023] e ignorava ~107 contratos historicos.
+    const allContratos = await centiListAll<CentiContrato>(REFERER, ACAO, {
+      extra: { orgao: "" },
+      pageSize: 200,
+      maxPages: 25,
+    });
 
     // Dedupe por centi_id
     const dedupMap = new Map<number, CentiContrato>();
