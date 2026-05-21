@@ -172,8 +172,14 @@ Deno.serve(async (req) => {
   const errors: string[] = [];
   const counts = { licitacoes: 0, contratos: 0, receitas: 0, diarias: 0 };
   const currentYear = new Date().getFullYear();
-  const defaultYears = [currentYear, currentYear - 1];
-  const contractYears = customYears || [currentYear, currentYear - 1, currentYear - 2, currentYear - 3, currentYear - 4];
+  // Range completo 2013..ano atual pra licitacoes e contratos (era 2 e 5
+  // anos hard-coded — perdia historico). Anos sem dados retornam vazio.
+  const allYearsFin = Array.from({ length: currentYear - 2012 }, (_, i) => currentYear - i);
+  const defaultYears = allYearsFin;
+  const contractYears = customYears || allYearsFin;
+  // Receitas/duodecimo: dado mensal de execucao orcamentaria. 4 anos recentes
+  // cobrem a serie util sem inflar o tempo de execucao (12 meses x N anos).
+  const receitaYears = [currentYear, currentYear - 1, currentYear - 2, currentYear - 3];
 
   try {
     // === LICITAÇÕES ===
@@ -239,7 +245,7 @@ Deno.serve(async (req) => {
 
     if (!onlyContratos) {
     // === RECEITAS / DUODÉCIMO ===
-    for (const ano of [currentYear]) {
+    for (const ano of receitaYears) {
       for (let mes = 1; mes <= 12; mes++) {
         try {
           await delay(300);
@@ -263,8 +269,10 @@ Deno.serve(async (req) => {
     try {
       await delay(500);
       const now = new Date();
-      const startDate = `01/01/${currentYear - 1}`;
-      const endDate = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${currentYear}`;
+      // Endpoint getdiariasportal exige datas em ISO yyyy-MM-dd (nao DD/MM/YYYY).
+      // Range ampliado: desde 2013 ate hoje.
+      const startDate = `2013-01-01`;
+      const endDate = `${currentYear}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
       const data = await centiPost("getdiariasportal", {
         DataInicio: startDate, DataFim: endDate, IdOrgao: 3,
         Page: { Number: 1, Size: 200 },

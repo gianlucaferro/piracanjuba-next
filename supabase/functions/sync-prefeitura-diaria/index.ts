@@ -232,7 +232,9 @@ Deno.serve(async (req) => {
   try {
     // ====== 1. CONTRATOS ======
     console.log("Scraping contratos...");
-    const allAnos = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+    // Range completo 2013..ano atual (era hard-coded 2020-2026, perdia historico)
+    const anoAtualPref = new Date().getFullYear();
+    const allAnos = Array.from({ length: anoAtualPref - 2012 }, (_, i) => anoAtualPref - i);
     const anosContratos = anoParam ? [parseInt(anoParam)] : allAnos;
     // All municipal organs: Executivo(22), Câmara(23), Educação(55), Saúde(67),
     // Assistência Social(66), Cultura(44), Meio Ambiente(71), Esporte(68),
@@ -245,8 +247,15 @@ Deno.serve(async (req) => {
       for (const orgao of orgaosContratos) {
         try {
           const url = `${BASE_URL}/contratos?ano=${ano}&idorgao=${orgao}&pagina=1&itensporpagina=500`;
-          const resp = await fetch(url, { headers: { "User-Agent": UA } });
-          
+          // Throttle pra nao tomar HTTP 429 do portal Centi
+          await new Promise((r) => setTimeout(r, 300));
+          let resp = await fetch(url, { headers: { "User-Agent": UA } });
+          // Retry unico em 429
+          if (resp.status === 429) {
+            await new Promise((r) => setTimeout(r, 3000));
+            resp = await fetch(url, { headers: { "User-Agent": UA } });
+          }
+
           if (!resp.ok) {
             errors.push(`Contratos ${ano}/orgao${orgao}: HTTP ${resp.status}`);
             continue;
@@ -258,34 +267,32 @@ Deno.serve(async (req) => {
 
           if (scraped.length === 0) continue;
 
-          // Fetch existing contract numbers for this year to avoid duplicates
-          const { data: existing } = await supabase.from("contratos")
-            .select("numero, vigencia_inicio")
-            .gte("vigencia_inicio", `${ano}-01-01`)
-            .lte("vigencia_inicio", `${ano}-12-31`);
-          
-          const existingKeys = new Set(
-            (existing || []).map(e => `${e.numero}|${e.vigencia_inicio}`)
-          );
+          // UPSERT idempotente via constraint contratos_uniq_negocio
+          // (numero, vigencia_inicio, empresa, valor). Substitui o dedup
+          // manual antigo (`existingKeys` por vigencia_inicio no ano), que
+          // falhava quando vigencia_inicio era null ou de outro ano —
+          // causava re-insercao a cada execucao do cron.
+          const toUpsert = scraped.map(c => ({
+            numero: c.numero,
+            empresa: c.empresa,
+            valor: c.valor,
+            vigencia_inicio: c.vigencia_inicio,
+            vigencia_fim: c.vigencia_fim,
+            status: "ativo" as const,
+            fonte_url: c.fonte_url,
+          }));
 
-          const toInsert = scraped
-            .filter(c => !existingKeys.has(`${c.numero}|${c.vigencia_inicio}`))
-            .map(c => ({
-              numero: c.numero,
-              empresa: c.empresa,
-              valor: c.valor,
-              vigencia_inicio: c.vigencia_inicio,
-              vigencia_fim: c.vigencia_fim,
-              status: "ativo" as const,
-              fonte_url: c.fonte_url,
-            }));
-
-          if (toInsert.length > 0) {
-            const { error } = await supabase.from("contratos").insert(toInsert);
+          if (toUpsert.length > 0) {
+            const { error } = await supabase
+              .from("contratos")
+              .upsert(toUpsert, {
+                onConflict: "numero,vigencia_inicio,empresa,valor",
+                ignoreDuplicates: true,
+              });
             if (error) {
-              errors.push(`Insert contratos ${ano}/orgao${orgao}: ${error.message}`);
+              errors.push(`Upsert contratos ${ano}/orgao${orgao}: ${error.message}`);
             } else {
-              newContratos += toInsert.length;
+              newContratos += toUpsert.length;
             }
           }
         } catch (e) {
@@ -323,9 +330,15 @@ Deno.serve(async (req) => {
     let newLicitacoes = 0;
 
     if (!skipLicitacoes && !anoParam) {
-    for (const ano of [2026, 2025]) {
+    // Lei 14.133/21 entrou em vigor em 2021 — licitacoes pela nova lei
+    // existem de 2021 em diante. Range dinamico 2021..ano atual.
+    const anosLicitacao = Array.from(
+      { length: anoAtualPref - 2020 },
+      (_, i) => anoAtualPref - i,
+    );
+    for (const ano of anosLicitacao) {
       try {
-        // Lei 14.133/21 (nova lei) 
+        // Lei 14.133/21 (nova lei)
         const url = `${BASE_URL}/licitacoes?lei=2&ano=${ano}&idorgao=22&pagina=1&itensporpagina=100`;
         const resp = await fetch(url, { headers: { "User-Agent": UA } });
 

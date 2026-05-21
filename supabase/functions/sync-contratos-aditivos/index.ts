@@ -104,7 +104,13 @@ Deno.serve(async (req) => {
       { name: "prefeitura", baseUrl: PREFEITURA_URL, orgaos: orgaoParam ? [orgaoParam] : [22, 23, 55, 67, 66, 44, 71, 68, 70, 72, 56] },
       { name: "camara", baseUrl: CAMARA_URL, orgaos: orgaoParam ? [orgaoParam] : [3, 12, 13, 14] },
     ];
-    const anos = anoParam ? [anoParam] : [2026, 2025, 2024, 2023, 2022];
+    // Range completo 2013..ano atual (contratos da Camara vao desde 2013;
+    // aditivos podem existir pra qualquer contrato historico). Anos sem
+    // dados retornam 404/vazio e o loop quebra rapido.
+    const anoAtualAdt = new Date().getFullYear();
+    const anos = anoParam
+      ? [anoParam]
+      : Array.from({ length: anoAtualAdt - 2012 }, (_, i) => anoAtualAdt - i);
     let totalNew = 0;
     let totalUpdated = 0;
     const errors: string[] = [];
@@ -118,7 +124,14 @@ Deno.serve(async (req) => {
 
             while (pagina <= maxPages) {
               const url = `${source.baseUrl}/contratos/aditivos?ano=${ano}&idorgao=${orgao}&pagina=${pagina}&itensporpagina=50`;
-              const resp = await fetch(url, { headers: { "User-Agent": UA } });
+              // Throttle pra nao tomar HTTP 429 do portal Centi
+              await new Promise((r) => setTimeout(r, 350));
+              let resp = await fetch(url, { headers: { "User-Agent": UA } });
+              // Retry unico em 429: espera 3s e tenta de novo
+              if (resp.status === 429) {
+                await new Promise((r) => setTimeout(r, 3000));
+                resp = await fetch(url, { headers: { "User-Agent": UA } });
+              }
               if (!resp.ok) {
                 if (resp.status !== 404) errors.push(`Aditivos ${source.name}/${ano}/orgao${orgao}/p${pagina}: HTTP ${resp.status}`);
                 break;

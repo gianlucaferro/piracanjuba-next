@@ -81,7 +81,12 @@ Deno.serve(async (req) => {
   let newCount = 0;
   const reqUrl = new URL(req.url);
   const anoParam = reqUrl.searchParams.get("ano");
-  const anos = anoParam ? [parseInt(anoParam)] : [2026, 2025];
+  // Range completo 2013..ano atual. Anos sem dados retornam !resp.ok e o
+  // loop usa `continue`, entao expandir o range nao quebra nada.
+  const anoAtualDia = new Date().getFullYear();
+  const anos = anoParam
+    ? [parseInt(anoParam)]
+    : Array.from({ length: anoAtualDia - 2012 }, (_, i) => anoAtualDia - i);
 
   try {
     for (const ano of anos) {
