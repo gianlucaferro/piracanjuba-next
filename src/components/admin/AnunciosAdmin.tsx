@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+const SESSION_KEY = "pba_admin_token";
+
 type Anuncio = {
   id: string;
   nome_empresa: string;
@@ -70,6 +72,16 @@ const PLAN_INFO = {
   },
 };
 
+// Helper: chama a edge function admin-anuncios-update com o token de sessao
+async function adminAnuncioAction(payload: Record<string, unknown>): Promise<void> {
+  const token = localStorage.getItem(SESSION_KEY) || "";
+  const { data, error } = await supabase.functions.invoke("admin-anuncios-update", {
+    body: { ...payload, admin_token: token },
+  });
+  if (error) throw new Error(error.message || "Erro de conexão");
+  if (data?.error) throw new Error(data.error);
+}
+
 export default function AnunciosAdmin() {
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
@@ -101,7 +113,7 @@ export default function AnunciosAdmin() {
 
   const uploadImage = async (nomeEmpresa: string, file: File): Promise<string> => {
     const slug = nomeEmpresa.toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
       .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     const path = `${slug}-${Date.now()}.webp`;
     const compressed = await compressToWebP(file);
@@ -129,21 +141,21 @@ export default function AnunciosAdmin() {
       if (newImageFile) {
         imagemUrl = await uploadImage(newNome.trim(), newImageFile);
       }
-      const { error } = await supabase.from("anuncios").insert({
+      await adminAnuncioAction({
+        action: "create",
         nome_empresa: newNome.trim(),
         plano: newPlano,
         link_destino: newLink.trim() || null,
         whatsapp: newWhatsapp.trim() || null,
         imagem_url: imagemUrl,
       });
-      if (error) throw error;
       toast.success(`Anúncio de ${newNome} criado!`);
       setCreating(false);
       setNewNome(""); setNewLink(""); setNewWhatsapp("");
       setNewImageFile(null); setNewImagePreview(null);
       invalidate();
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao criar anúncio");
     } finally {
       setUploading(null);
     }
@@ -153,51 +165,67 @@ export default function AnunciosAdmin() {
     setUploading(anuncio.id);
     try {
       const publicUrl = await uploadImage(anuncio.nome_empresa, file);
-      const { error: dbError } = await supabase
-        .from("anuncios")
-        .update({ imagem_url: publicUrl })
-        .eq("id", anuncio.id);
-      if (dbError) throw dbError;
+      await adminAnuncioAction({ action: "update_imagem", id: anuncio.id, imagem_url: publicUrl });
       toast.success("Banner atualizado!");
       invalidate();
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao atualizar imagem");
     } finally {
       setUploading(null);
     }
   };
 
   const toggleAtivo = async (anuncio: Anuncio) => {
-    await supabase.from("anuncios").update({ ativo: !anuncio.ativo }).eq("id", anuncio.id);
-    toast.success(anuncio.ativo ? "Anuncio desativado" : "Anuncio ativado");
-    invalidate();
+    try {
+      await adminAnuncioAction({ action: "toggle_ativo", id: anuncio.id, ativo: !anuncio.ativo });
+      toast.success(anuncio.ativo ? "Anúncio desativado" : "Anúncio ativado");
+      invalidate();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao alterar status");
+    }
   };
 
   const handleDelete = async (anuncio: Anuncio) => {
-    if (!confirm(`Excluir anuncio de ${anuncio.nome_empresa}?`)) return;
-    await supabase.from("anuncios").delete().eq("id", anuncio.id);
-    toast.success("Anuncio excluido");
-    invalidate();
+    if (!confirm(`Excluir anúncio de ${anuncio.nome_empresa}?`)) return;
+    try {
+      await adminAnuncioAction({ action: "delete", id: anuncio.id });
+      toast.success("Anúncio excluído");
+      invalidate();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao excluir");
+    }
   };
 
   const handleSaveLink = async (id: string) => {
-    await supabase.from("anuncios").update({ link_destino: editLinkValue.trim() || null }).eq("id", id);
-    toast.success("Link atualizado");
-    setEditingLink(null);
-    invalidate();
+    try {
+      await adminAnuncioAction({ action: "update_link", id, link_destino: editLinkValue.trim() || null });
+      toast.success("Link atualizado");
+      setEditingLink(null);
+      invalidate();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao atualizar link");
+    }
   };
 
   const handleSaveWhatsapp = async (id: string) => {
-    await supabase.from("anuncios").update({ whatsapp: editWhatsappValue.trim() || null }).eq("id", id);
-    toast.success("WhatsApp atualizado");
-    setEditingWhatsapp(null);
-    invalidate();
+    try {
+      await adminAnuncioAction({ action: "update_whatsapp", id, whatsapp: editWhatsappValue.trim() || null });
+      toast.success("WhatsApp atualizado");
+      setEditingWhatsapp(null);
+      invalidate();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao atualizar WhatsApp");
+    }
   };
 
   const resetStats = async (id: string) => {
-    await supabase.from("anuncios").update({ impressoes: 0, cliques: 0 }).eq("id", id);
-    toast.success("Estatisticas zeradas");
-    invalidate();
+    try {
+      await adminAnuncioAction({ action: "reset_stats", id });
+      toast.success("Estatísticas zeradas");
+      invalidate();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Erro ao zerar stats");
+    }
   };
 
   if (isLoading) return <div className="animate-pulse h-40" />;
@@ -236,28 +264,28 @@ export default function AnunciosAdmin() {
           })}
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Formatos aceitos: JPG, PNG, WebP. A imagem sera automaticamente comprimida para WebP (max 1200px de largura).
-          O badge "Patrocinado" aparece automaticamente no canto inferior direito.
+          Formatos aceitos: JPG, PNG, WebP. A imagem será automaticamente comprimida para WebP (max 1200px de largura).
+          O badge &quot;Patrocinado&quot; aparece automaticamente no canto inferior direito.
         </p>
       </div>
 
       {/* Stats summary */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span>{anuncios?.length || 0} anuncio(s)</span>
+          <span>{anuncios?.length || 0} anúncio(s)</span>
           <span className="text-[10px]">|</span>
           <span className="text-accent">{ativos} ativo(s)</span>
-          {destaques > 0 && <span className="text-[10px]">({destaques} destaque, {padroes} padrao)</span>}
+          {destaques > 0 && <span className="text-[10px]">({destaques} destaque, {padroes} padrão)</span>}
         </div>
         <Button size="sm" onClick={() => setCreating(true)} disabled={creating}>
-          <Plus className="w-3.5 h-3.5 mr-1" /> Novo anuncio
+          <Plus className="w-3.5 h-3.5 mr-1" /> Novo anúncio
         </Button>
       </div>
 
       {/* Create form */}
       {creating && (
         <div className="stat-card border-primary/30 space-y-4">
-          <p className="text-sm font-semibold text-foreground">Novo anuncio</p>
+          <p className="text-sm font-semibold text-foreground">Novo anúncio</p>
 
           <Input placeholder="Nome da empresa" value={newNome} onChange={e => setNewNome(e.target.value)} />
 
@@ -265,10 +293,10 @@ export default function AnunciosAdmin() {
             <p className="text-xs text-muted-foreground mb-1.5">Plano</p>
             <div className="flex gap-2">
               <Button variant={newPlano === "padrao" ? "default" : "outline"} size="sm" onClick={() => setNewPlano("padrao")}>
-                Padrao (R$200/mes)
+                Padrão (R$200/mês)
               </Button>
               <Button variant={newPlano === "destaque" ? "default" : "outline"} size="sm" onClick={() => setNewPlano("destaque")}>
-                Destaque (R$400/mes)
+                Destaque (R$400/mês)
               </Button>
             </div>
           </div>
@@ -276,7 +304,7 @@ export default function AnunciosAdmin() {
           {/* Image upload in create form */}
           <div>
             <p className="text-xs text-muted-foreground mb-1.5">
-              Banner do anuncio — {PLAN_INFO[newPlano].dimensions}
+              Banner do anúncio — {PLAN_INFO[newPlano].dimensions}
             </p>
             {newImagePreview ? (
               <div className="relative rounded-lg overflow-hidden border">
@@ -309,7 +337,7 @@ export default function AnunciosAdmin() {
           <div className="flex gap-2">
             <Button size="sm" onClick={handleCreate} disabled={uploading === "new"}>
               {uploading === "new" ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Plus className="w-3.5 h-3.5 mr-1" />}
-              Criar anuncio
+              Criar anúncio
             </Button>
             <Button size="sm" variant="ghost" onClick={() => { setCreating(false); setNewImageFile(null); setNewImagePreview(null); }}>
               Cancelar
@@ -413,7 +441,7 @@ export default function AnunciosAdmin() {
                 <div className="flex items-center gap-4 pt-1 border-t border-border">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Eye className="w-3.5 h-3.5" />
-                    <span><strong className="text-foreground">{a.impressoes.toLocaleString("pt-BR")}</strong> impressoes</span>
+                    <span><strong className="text-foreground">{a.impressoes.toLocaleString("pt-BR")}</strong> impressões</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <MousePointerClick className="w-3.5 h-3.5" />
@@ -469,10 +497,13 @@ export default function AnunciosAdmin() {
       {(!anuncios || anuncios.length === 0) && (
         <div className="stat-card flex flex-col items-center justify-center py-12 text-center">
           <Image className="w-10 h-10 text-muted-foreground/30 mb-3" />
-          <p className="text-sm font-medium text-foreground">Nenhum anuncio cadastrado</p>
-          <p className="text-xs text-muted-foreground mt-1">Clique em "Novo anuncio" para criar o primeiro</p>
+          <p className="text-sm font-medium text-foreground">Nenhum anúncio cadastrado</p>
+          <p className="text-xs text-muted-foreground mt-1">Clique em &quot;Novo anúncio&quot; para criar o primeiro</p>
         </div>
       )}
+
+      {/* Hidden ref for potential future use */}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
     </div>
   );
 }
