@@ -1,14 +1,19 @@
 // enrich-contratos-cnpj — popula CNPJ + dados cadastrais nos contratos
 // da Prefeitura (originalmente so com nome de empresa).
 //
-// LIMITACAO: APIs gratuitas (BrasilAPI, Compras.gov.br) so retornam dados
-// por CNPJ — busca por nome confiavel exige BigData Corp ou similar pago.
-// Por isso, esta funcao opera em 3 modos:
-//   1) Se o texto do nome contem um CNPJ valido -> extrai e enriquece via BrasilAPI
-//   2) Se contrato_camara ja tem CNPJ pra mesmo nome -> propaga para tabela contratos
-//   3) Caso contrario -> marca como "sem_match" (manual ou API paga depois)
+// Estrategia dual-source:
+//   1) Se texto do nome contem CNPJ valido -> usa diretamente
+//   2) Se contrato_camara ja tem CNPJ pra mesmo nome -> propaga (lookup local)
+//   3) Compras.gov.br por nome (estava quebrado, mantido como fallback)
 //
-// Body: { limit?: number, force?: boolean }
+// Enriquecimento: BrasilAPI (primario) + ReceitaWS (fallback com mais campos)
+//   BrasilAPI: CNAE descricao, codigo IBGE municipio, regime tributario
+//   ReceitaWS: email, telefone, capital_social, simples, QSA (socios)
+//
+// Colunas de destino em contratos:
+//   empresa_cnpj, empresa_razao_social, empresa_situacao_cadastral,
+//   empresa_cnae_descricao, empresa_data_abertura, empresa_enriquecido_em,
+//   + novos campos via ReceitaWS: empresa_email, empresa_telefone
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkCentiAuth } from "../_shared/centi-auth.ts";
@@ -19,6 +24,7 @@ const corsHeaders = {
 };
 
 const BRASILAPI = "https://brasilapi.com.br/api";
+const RECEITAWS = "https://www.receitaws.com.br/v1";
 const COMPRAS = "https://compras.dados.gov.br";
 
 function normalize(s: string): string {
@@ -31,7 +37,6 @@ function normalize(s: string): string {
     .trim();
 }
 
-/** Extrai um CNPJ se estiver presente no texto do nome (raro mas acontece). */
 function extractCnpjFromText(s: string): string | null {
   const m = s.match(/(\d{2})\D?(\d{3})\D?(\d{3})\D?(\d{4})\D?(\d{2})/);
   if (!m) return null;
@@ -42,22 +47,34 @@ type BrasilApiCnpj = {
   cnpj: string;
   razao_social: string;
   nome_fantasia?: string | null;
-  situacao_cadastral?: number;
   descricao_situacao_cadastral?: string;
   cnae_fiscal_descricao?: string;
   data_inicio_atividade?: string;
+  ddd_telefone_1?: string;
+  email?: string | null;
 };
 
-async function buscarBrasilApiPorCnpj(cnpj: string): Promise<BrasilApiCnpj | null> {
+type ReceitaWsCnpj = {
+  status: "OK" | "ERROR";
+  nome?: string;
+  fantasia?: string | null;
+  situacao?: string;
+  abertura?: string;
+  email?: string | null;
+  telefone?: string | null;
+  capital_social?: string;
+  simples?: { optante: boolean } | null;
+};
+
+async function fetchWithTimeout(url: string, ms = 10_000): Promise<Response | null> {
   const ctl = new AbortController();
-  const tid = setTimeout(() => ctl.abort(), 10000);
+  const tid = setTimeout(() => ctl.abort(), ms);
   try {
-    const r = await fetch(`${BRASILAPI}/cnpj/v1/${cnpj}`, {
+    const r = await fetch(url, {
       headers: { Accept: "application/json" },
       signal: ctl.signal,
     });
-    if (!r.ok) return null;
-    return (await r.json()) as BrasilApiCnpj;
+    return r;
   } catch {
     return null;
   } finally {
@@ -65,38 +82,40 @@ async function buscarBrasilApiPorCnpj(cnpj: string): Promise<BrasilApiCnpj | nul
   }
 }
 
-type ComprasFornecedor = {
-  cnpj?: string;
-  cpf?: string;
-  nome?: string;
-  razao_social?: string;
-};
+async function buscarBrasilApi(cnpj: string): Promise<BrasilApiCnpj | null> {
+  const r = await fetchWithTimeout(`${BRASILAPI}/cnpj/v1/${cnpj}`);
+  if (!r?.ok) return null;
+  try { return (await r.json()) as BrasilApiCnpj; } catch { return null; }
+}
 
-/** Compras.gov.br: lista fornecedores cujo nome contém o termo. Retorna CNPJ + razao social. */
-async function buscarCnpjPorNomeCompras(nome: string): Promise<string | null> {
-  const ctl = new AbortController();
-  const tid = setTimeout(() => ctl.abort(), 12000);
+async function buscarReceitaWS(cnpj: string): Promise<ReceitaWsCnpj | null> {
+  const r = await fetchWithTimeout(`${RECEITAWS}/cnpj/${cnpj}`, 12_000);
+  if (!r?.ok) return null;
   try {
-    const url = `${COMPRAS}/fornecedores/v1/fornecedores.json?nome=${encodeURIComponent(nome)}`;
-    const r = await fetch(url, { headers: { Accept: "application/json" }, signal: ctl.signal });
-    if (!r.ok) return null;
+    const d = await r.json() as ReceitaWsCnpj;
+    return d.status === "OK" ? d : null;
+  } catch { return null; }
+}
+
+/** Compras.gov.br por nome — mantido como fallback (endpoint instável). */
+async function buscarCnpjPorNomeCompras(nome: string): Promise<string | null> {
+  const r = await fetchWithTimeout(
+    `${COMPRAS}/fornecedores/v1/fornecedores.json?nome=${encodeURIComponent(nome)}`,
+    12_000,
+  );
+  if (!r?.ok) return null;
+  try {
     const data = await r.json();
-    const lista = (data?._embedded?.fornecedores ?? []) as ComprasFornecedor[];
+    const lista = (data?._embedded?.fornecedores ?? []) as Array<{ cnpj?: string; nome?: string; razao_social?: string }>;
     const target = normalize(nome);
     for (const f of lista) {
       const fNome = normalize(f.nome ?? f.razao_social ?? "");
-      if (!fNome) continue;
-      // Match exato ou contains
-      if (fNome === target || fNome.includes(target) || target.includes(fNome)) {
+      if (fNome && (fNome === target || fNome.includes(target) || target.includes(fNome))) {
         if (f.cnpj && /^\d{14}$/.test(f.cnpj)) return f.cnpj;
       }
     }
-    return null;
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(tid);
-  }
+  } catch { /* ok */ }
+  return null;
 }
 
 Deno.serve(async (req) => {
@@ -118,18 +137,15 @@ Deno.serve(async (req) => {
 
   const startedAt = Date.now();
 
-  // Pega nomes distintos sem CNPJ (group by — economiza chamadas)
-  let query = supabase
-    .from("contratos")
-    .select("empresa")
-    .not("empresa", "is", null);
+  // Pega nomes distintos sem CNPJ
+  let query = supabase.from("contratos").select("empresa").not("empresa", "is", null);
   if (!force) query = query.is("empresa_cnpj", null);
   const { data: rows } = await query;
   const nomesUnicos = [...new Set((rows ?? []).map((r: { empresa: string }) => r.empresa.trim()))]
     .filter(Boolean)
     .slice(0, limit);
 
-  // Carregar lookup CNPJ por nome a partir de contrato_camara (45 CNPJs unicos)
+  // Lookup CNPJ de contrato_camara (sobreposicao de fornecedores)
   const { data: camaraRows } = await supabase
     .from("contrato_camara")
     .select("fornecedor_nome, fornecedor_cnpj_limpo")
@@ -147,21 +163,20 @@ Deno.serve(async (req) => {
   const detalhes: Array<Record<string, unknown>> = [];
 
   for (const nome of nomesUnicos) {
-    // 1) Tenta extrair CNPJ do nome direto (raros casos onde vem no texto)
+    // 1. CNPJ no texto
     let cnpj = extractCnpjFromText(nome);
-    let fonte = "regex_nome";
+    let fonteMatch = "regex_nome";
 
-    // 2) Lookup em contrato_camara (mesma empresa pode ter contratado Camara + Prefeitura)
+    // 2. Lookup câmara
     if (!cnpj) {
-      const norm = normalize(nome);
-      cnpj = camaraLookup.get(norm) ?? null;
-      if (cnpj) fonte = "camara_lookup";
+      cnpj = camaraLookup.get(normalize(nome)) ?? null;
+      if (cnpj) fonteMatch = "camara_lookup";
     }
 
-    // 3) Compras.gov.br busca por nome (atualmente quebrado, mantido pra futuro)
+    // 3. Compras.gov.br
     if (!cnpj) {
       cnpj = await buscarCnpjPorNomeCompras(nome);
-      fonte = "compras_gov";
+      if (cnpj) fonteMatch = "compras_gov";
       await new Promise((r) => setTimeout(r, 400));
     }
 
@@ -171,29 +186,100 @@ Deno.serve(async (req) => {
       continue;
     }
 
-    // 3) BrasilAPI/CNPJ pra detalhes
-    const info = await buscarBrasilApiPorCnpj(cnpj);
+    // 4. Enriquecimento dual-source
+    let razao_social: string | null = null;
+    let situacao: string | null = null;
+    let cnae: string | null = null;
+    let data_abertura: string | null = null;
+    let email: string | null = null;
+    let telefone: string | null = null;
+    let fonteEnrich = "nenhuma";
+
+    // Primário: BrasilAPI
+    const brasilData = await buscarBrasilApi(cnpj);
     await new Promise((r) => setTimeout(r, 300));
 
-    // 4) Persistir em todos os contratos com esse nome
+    if (brasilData) {
+      razao_social = brasilData.razao_social ?? null;
+      situacao = brasilData.descricao_situacao_cadastral ?? null;
+      cnae = brasilData.cnae_fiscal_descricao ?? null;
+      data_abertura = brasilData.data_inicio_atividade ?? null;
+      email = brasilData.email ?? null;
+      fonteEnrich = "brasilapi";
+    }
+
+    // Fallback / complemento: ReceitaWS (tem email, telefone, simples, socios)
+    if (!brasilData || !email || !telefone) {
+      const receitaData = await buscarReceitaWS(cnpj);
+      await new Promise((r) => setTimeout(r, 400));
+      if (receitaData) {
+        razao_social = razao_social ?? receitaData.nome ?? null;
+        situacao = situacao ?? receitaData.situacao ?? null;
+        // ReceitaWS usa "DD/MM/YYYY" — converter pra ISO
+        if (!data_abertura && receitaData.abertura) {
+          const m = receitaData.abertura.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+          if (m) data_abertura = `${m[3]}-${m[2]}-${m[1]}`;
+        }
+        email = email ?? receitaData.email ?? null;
+        telefone = telefone ?? receitaData.telefone ?? null;
+        fonteEnrich = brasilData ? "brasilapi+receitaws" : "receitaws";
+      }
+    }
+
+    // 5. Persistir em todos os contratos com esse nome
     const update: Record<string, unknown> = {
       empresa_cnpj: cnpj,
-      empresa_razao_social: info?.razao_social ?? null,
-      empresa_situacao_cadastral: info?.descricao_situacao_cadastral ?? null,
-      empresa_cnae_descricao: info?.cnae_fiscal_descricao ?? null,
-      empresa_data_abertura: info?.data_inicio_atividade ?? null,
+      empresa_razao_social: razao_social,
+      empresa_situacao_cadastral: situacao,
+      empresa_cnae_descricao: cnae,
+      empresa_data_abertura: data_abertura,
       empresa_enriquecido_em: new Date().toISOString(),
     };
+
+    // Adicionar email/telefone se colunas existirem (podem nao existir ainda)
+    // Usamos update sem errar se coluna nao existe
+    if (email) update.empresa_email = email;
+    if (telefone) update.empresa_telefone = telefone;
+
     const { error, count } = await supabase
       .from("contratos")
       .update(update, { count: "exact" })
       .eq("empresa", nome);
+
     if (error) {
-      detalhes.push({ nome, cnpj, fonte, erro: error.message });
-    } else {
-      enriquecidos++;
-      detalhes.push({ nome, cnpj, fonte, contratos_atualizados: count ?? 0 });
+      // Se colunas email/telefone nao existem, retry sem elas
+      if ((error.message ?? "").includes("column")) {
+        const { error: e2 } = await supabase
+          .from("contratos")
+          .update({
+            empresa_cnpj: cnpj,
+            empresa_razao_social: razao_social,
+            empresa_situacao_cadastral: situacao,
+            empresa_cnae_descricao: cnae,
+            empresa_data_abertura: data_abertura,
+            empresa_enriquecido_em: new Date().toISOString(),
+          })
+          .eq("empresa", nome);
+        if (e2) {
+          detalhes.push({ nome, cnpj, fonte: fonteEnrich, erro: e2.message });
+          continue;
+        }
+      } else {
+        detalhes.push({ nome, cnpj, fonte: fonteEnrich, erro: error.message });
+        continue;
+      }
     }
+
+    enriquecidos++;
+    detalhes.push({
+      nome,
+      cnpj,
+      fonte_match: fonteMatch,
+      fonte_enrich: fonteEnrich,
+      contratos_atualizados: count ?? 0,
+      email: email ? "✓" : null,
+      telefone: telefone ? "✓" : null,
+    });
   }
 
   return new Response(

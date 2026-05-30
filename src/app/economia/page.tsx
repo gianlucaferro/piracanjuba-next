@@ -3,6 +3,7 @@ import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import EmColetaSection from "@/components/EmColetaSection";
 import EconomiaPanel from "@/components/economia/EconomiaPanel";
 import PiracanjubaAgroCard from "@/components/economia/PiracanjubaAgroCard";
+import IndicadoresBCBCard from "@/components/economia/IndicadoresBCBCard";
 import { fetchIndicadores } from "@/lib/data/home";
 import {
   fetchEconomiaIndicadores,
@@ -125,6 +126,11 @@ export default async function EconomiaPage() {
           de Piracanjuba.
         </p>
       </header>
+
+      {/* Indicadores Econômicos — BCB (SELIC, IPCA, câmbio) */}
+      <section className="mb-6">
+        <IndicadoresBCBCard />
+      </section>
 
       {/* Piracanjuba na agricultura — IBGE/SIDRA */}
       <section className="mb-6">

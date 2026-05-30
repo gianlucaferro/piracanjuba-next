@@ -3,6 +3,7 @@ import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import MapBiomasPanel from "@/components/meio-ambiente/MapBiomasPanel";
 import IndicadoresAmbientaisPanel from "@/components/meio-ambiente/IndicadoresAmbientaisPanel";
 import AnaliseAmbientalIntegrada from "@/components/meio-ambiente/AnaliseAmbientalIntegrada";
+import QueimadasCard from "@/components/meio-ambiente/QueimadasCard";
 import { fetchMapbiomasSerie } from "@/lib/data/meio-ambiente";
 import {
   fetchChuvaUltimosDias,
@@ -117,6 +118,11 @@ export default async function MeioAmbientePage() {
           evolução do uso do solo e emissões.
         </p>
       </header>
+
+      {/* Card de Risco de Fogo — Open-Meteo + metodologia FWI */}
+      <section className="mb-6">
+        <QueimadasCard />
+      </section>
 
       {/* Painel novo: análise integrada cruzando dados que ja temos */}
       {rows.length > 0 && (
