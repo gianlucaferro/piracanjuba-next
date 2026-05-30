@@ -73,6 +73,14 @@ export type Contrato = {
   secretaria_id: string | null;
   fonte_url: string | null;
   updated_at: string;
+  // Enriquecimento via BrasilAPI + ReceitaWS (cache em fornecedores_cnpj)
+  empresa_cnpj: string | null;
+  empresa_razao_social: string | null;
+  empresa_situacao_cadastral: string | null;
+  empresa_cnae_descricao: string | null;
+  empresa_municipio: string | null;
+  empresa_uf: string | null;
+  empresa_porte: string | null;
 };
 
 export type Licitacao = {
@@ -287,7 +295,7 @@ export async function fetchDespesas(): Promise<Despesa[]> {
 }
 
 export async function fetchContratos(): Promise<Contrato[]> {
-  const COLS = "id,numero,empresa,valor,objeto,vigencia_inicio,vigencia_fim,status,secretaria_id,fonte_url,updated_at";
+  const COLS = "id,numero,empresa,valor,objeto,vigencia_inicio,vigencia_fim,status,secretaria_id,fonte_url,updated_at,empresa_cnpj,empresa_razao_social,empresa_situacao_cadastral,empresa_cnae_descricao,empresa_municipio,empresa_uf,empresa_porte";
   const allData: Contrato[] = [];
   let from = 0;
   const PAGE = 1000;

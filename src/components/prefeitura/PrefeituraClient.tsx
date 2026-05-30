@@ -31,6 +31,7 @@ import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
 import PullToRefresh from "@/components/PullToRefresh";
 import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
+import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 import { LayoutDashboard } from "lucide-react";
 import { calcularSuspeitaContrato, normalizarPrefeitura, type FornecedorCNPJ } from "@/lib/contratoSuspeita";
 import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditivos";
@@ -825,7 +826,22 @@ function ContratosTab() {
             <div className="flex items-start justify-between gap-2">
               <div>
                 {c.numero && <p className="text-xs text-muted-foreground">Contrato {c.numero}</p>}
-                <p className="font-medium text-foreground text-sm">{c.empresa || "—"}</p>
+                <div className="flex items-start gap-1.5 flex-wrap">
+                  <p className="font-medium text-foreground text-sm">{c.empresa || "—"}</p>
+                  <SituacaoCadastralBadge
+                    situacao={c.empresa_situacao_cadastral}
+                    razaoSocial={c.empresa_razao_social}
+                    cnae={c.empresa_cnae_descricao}
+                  />
+                </div>
+                {c.empresa_razao_social &&
+                  c.empresa &&
+                  c.empresa_razao_social.trim().toUpperCase() !==
+                    c.empresa.trim().toUpperCase() && (
+                    <p className="text-[11px] text-muted-foreground/80">
+                      Razão social: <span className="font-medium">{c.empresa_razao_social}</span>
+                    </p>
+                  )}
                 <p className="text-xs text-muted-foreground">{c.objeto}</p>
                 {(c.vigencia_inicio || c.vigencia_fim) && (
                   <p className="text-[11px] text-muted-foreground mt-0.5">

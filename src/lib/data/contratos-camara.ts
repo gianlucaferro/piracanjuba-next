@@ -19,19 +19,33 @@ export type ContratoCamara = {
   objeto: string | null;
   assunto: string | null;
   tipo: string | null;
+  // Enriquecimento via BrasilAPI + ReceitaWS (cache 180d)
+  empresa_razao_social: string | null;
+  empresa_situacao_cadastral: string | null;
+  empresa_cnae_descricao: string | null;
+  empresa_municipio: string | null;
+  empresa_uf: string | null;
+  empresa_porte: string | null;
+  empresa_natureza_juridica: string | null;
+  empresa_data_abertura: string | null;
+  empresa_email: string | null;
+  empresa_telefone: string | null;
 };
+
+const SELECT_FIELDS =
+  "id, label, numero, ano, valor, data_publicacao, data_firmatura, inicio_vigencia, fim_vigencia, fornecedor_nome, fornecedor_cnpj, fiscal_contrato, situacao, objeto, assunto, tipo, empresa_razao_social, empresa_situacao_cadastral, empresa_cnae_descricao, empresa_municipio, empresa_uf, empresa_porte, empresa_natureza_juridica, empresa_data_abertura, empresa_email, empresa_telefone";
 
 export const fetchContratosCamara = unstable_cache(
   async (limit = 100): Promise<ContratoCamara[]> => {
     const supabase = createPublicSupabaseClient();
     const { data } = await supabase
       .from("contrato_camara")
-      .select("id, label, numero, ano, valor, data_publicacao, data_firmatura, inicio_vigencia, fim_vigencia, fornecedor_nome, fornecedor_cnpj, fiscal_contrato, situacao, objeto, assunto, tipo")
+      .select(SELECT_FIELDS)
       .order("data_publicacao", { ascending: false, nullsFirst: false })
       .limit(limit);
     return (data ?? []) as ContratoCamara[];
   },
-  ["contratos-camara"],
+  ["contratos-camara-v2"],
   { revalidate: 3600, tags: ["contratos-camara"] },
 );
 

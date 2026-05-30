@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowLeft, Briefcase, Building2, ExternalLink, Calendar, DollarSign } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, ExternalLink, Calendar, DollarSign, MapPin } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchContratosCamara, fetchContratosStats } from "@/lib/data/contratos-camara";
 import AlertaContratosSancao from "@/components/transparencia/AlertaContratosSancao";
+import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 
 export const metadata = pageMetadata({
   title: "Contratos da Câmara — Fornecedores e Valores em Piracanjuba GO",
@@ -153,7 +154,21 @@ export default async function ContratosCamaraPage() {
                 {fmtBRL(c.valor)}
               </p>
             </div>
-            <p className="text-sm font-semibold text-foreground">{c.fornecedor_nome}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-semibold text-foreground">{c.fornecedor_nome}</p>
+              <SituacaoCadastralBadge
+                situacao={c.empresa_situacao_cadastral}
+                razaoSocial={c.empresa_razao_social}
+                cnae={c.empresa_cnae_descricao}
+              />
+            </div>
+            {c.empresa_razao_social &&
+              c.empresa_razao_social.trim().toUpperCase() !==
+                c.fornecedor_nome.trim().toUpperCase() && (
+                <p className="text-[11px] text-muted-foreground">
+                  Razão social: <span className="font-medium text-foreground/80">{c.empresa_razao_social}</span>
+                </p>
+              )}
             <p className="text-[11px] text-muted-foreground font-mono mb-1">{fmtCnpj(c.fornecedor_cnpj)}</p>
             {c.objeto && (
               <p className="text-xs text-foreground/85 leading-relaxed mt-1">
@@ -171,6 +186,21 @@ export default async function ContratosCamaraPage() {
                 <span>Fiscal: <strong>{c.fiscal_contrato}</strong></span>
               )}
               {c.tipo && <span>Tipo: {c.tipo}</span>}
+              {(c.empresa_municipio || c.empresa_uf) && (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {[c.empresa_municipio, c.empresa_uf].filter(Boolean).join("/")}
+                </span>
+              )}
+              {c.empresa_cnae_descricao && (
+                <span title={c.empresa_cnae_descricao}>
+                  CNAE: <span className="text-foreground/70">
+                    {c.empresa_cnae_descricao.length > 50
+                      ? c.empresa_cnae_descricao.slice(0, 50) + "..."
+                      : c.empresa_cnae_descricao}
+                  </span>
+                </span>
+              )}
             </div>
           </article>
         ))}
