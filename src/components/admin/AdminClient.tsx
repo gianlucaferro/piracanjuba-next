@@ -17,11 +17,12 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity } from "lucide-react";
+import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity, UserSearch } from "lucide-react";
 import FarmaciaFotosAdmin from "@/components/admin/FarmaciaFotosAdmin";
 import AnunciosAdmin from "@/components/admin/AnunciosAdmin";
 import ClassificadosAdmin from "@/components/admin/ClassificadosAdmin";
 import SyncStatusAdmin from "@/components/admin/SyncStatusAdmin";
+import ConsultaCpfAdmin from "@/components/admin/ConsultaCpfAdmin";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -467,6 +468,9 @@ export default function Admin() {
               <TabsTrigger value="classificados" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
                 <Package className="w-3 h-3" /> C&V
               </TabsTrigger>
+              <TabsTrigger value="cpf" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
+                <UserSearch className="w-3 h-3" /> CPF
+              </TabsTrigger>
               <TabsTrigger value="syncs" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
                 <Activity className="w-3 h-3" /> Syncs
               </TabsTrigger>
@@ -538,6 +542,10 @@ export default function Admin() {
 
             <TabsContent value="classificados" className="mt-4">
               <ClassificadosAdmin adminToken={adminToken} />
+            </TabsContent>
+
+            <TabsContent value="cpf" className="mt-4">
+              <ConsultaCpfAdmin />
             </TabsContent>
 
             <TabsContent value="syncs" className="mt-4">
