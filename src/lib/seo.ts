@@ -66,6 +66,61 @@ const ID = {
   tcmGo: `${SITE_URL}/#tcm-go`,
 } as const;
 
+// Inline data dos nodes governamentais — usado em Dataset/Article que sao validados
+// isoladamente pelo Google Rich Results Test (cross-script @id refs nao funcionam).
+type SchemaEntityRef = {
+  "@type": string;
+  "@id": string;
+  name: string;
+  url?: string;
+};
+
+const ENTITY_DATA: Record<string, SchemaEntityRef> = {
+  [ID.org]: {
+    "@type": "NewsMediaOrganization",
+    "@id": ID.org,
+    name: "Piracanjuba.ai",
+    url: SITE_URL,
+  },
+  [ID.prefeitura]: {
+    "@type": "GovernmentOrganization",
+    "@id": ID.prefeitura,
+    name: "Prefeitura Municipal de Piracanjuba",
+    url: "https://piracanjuba.go.gov.br",
+  },
+  [ID.camara]: {
+    "@type": "GovernmentOrganization",
+    "@id": ID.camara,
+    name: "Câmara Municipal de Piracanjuba",
+    url: "https://camarapiracanjuba.centi.com.br",
+  },
+  [ID.tcmGo]: {
+    "@type": "GovernmentOrganization",
+    "@id": ID.tcmGo,
+    name: "Tribunal de Contas dos Municípios do Estado de Goiás",
+    url: "https://www.tcm.go.gov.br",
+  },
+};
+
+// Place node usado em spatialCoverage — inline pra Datasets validarem
+// isoladamente. Mantem @id pra consistencia com siteIdentityGraph.
+const MUNICIPIO_PLACE = {
+  "@type": "Place",
+  "@id": ID.municipio,
+  name: "Piracanjuba, Goiás, Brasil",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Piracanjuba",
+    addressRegion: "GO",
+    addressCountry: "BR",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -17.3028,
+    longitude: -49.0167,
+  },
+} as const;
+
 /**
  * @graph principal injetado em todas as páginas via layout.tsx.
  *
@@ -213,8 +268,15 @@ export function datasetJsonLd(opts: {
   /** Encontros: distribuicao em diferentes formatos */
   distribution?: Array<{ encodingFormat: string; contentUrl: string }>;
 }) {
+  // creator: SEMPRE inline com @type+name. Cross-script @id refs nao validam
+  // no Google Rich Results (sao avaliados isoladamente). Resolve por lookup
+  // no ENTITY_DATA quando creatorId for um ID conhecido.
   const creator = opts.creatorId
-    ? { "@id": opts.creatorId }
+    ? ENTITY_DATA[opts.creatorId] ?? {
+        "@type": "Organization" as const,
+        "@id": opts.creatorId,
+        name: opts.creatorId.split("#").pop() || "Organization",
+      }
     : opts.creator
     ? {
         "@type": opts.creator.type || "Organization",
@@ -222,6 +284,9 @@ export function datasetJsonLd(opts: {
         ...(opts.creator.url ? { url: opts.creator.url } : {}),
       }
     : undefined;
+
+  // publisher: inline (mesmo motivo do creator). Piracanjuba.ai sempre publica.
+  const publisher = ENTITY_DATA[ID.org];
 
   return {
     "@context": "https://schema.org",
@@ -233,8 +298,8 @@ export function datasetJsonLd(opts: {
     isAccessibleForFree: true,
     license: opts.license || "https://creativecommons.org/licenses/by/4.0/",
     ...(creator ? { creator } : {}),
-    publisher: { "@id": `${SITE_URL}/#org` },
-    spatialCoverage: { "@id": `${SITE_URL}/#municipio` },
+    publisher,
+    spatialCoverage: MUNICIPIO_PLACE,
     ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
     ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     ...(opts.keywords?.length ? { keywords: opts.keywords.join(", ") } : {}),
@@ -309,13 +374,20 @@ export function articleJsonLd(opts: {
     ...(opts.articleSection ? { articleSection: opts.articleSection } : {}),
     ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
-    author: { "@id": ID.org },
-    publisher: { "@id": ID.org },
-    about: { "@id": ID.municipio },
-    spatialCoverage: { "@id": ID.municipio },
+    author: ENTITY_DATA[ID.org],
+    publisher: ENTITY_DATA[ID.org],
+    about: MUNICIPIO_PLACE,
+    spatialCoverage: MUNICIPIO_PLACE,
     ...(opts.isBasedOn ? { isBasedOn: opts.isBasedOn } : {}),
     ...(opts.sourceOrganizationId
-      ? { sourceOrganization: { "@id": opts.sourceOrganizationId } }
+      ? {
+          sourceOrganization:
+            ENTITY_DATA[opts.sourceOrganizationId] ?? {
+              "@type": "Organization",
+              "@id": opts.sourceOrganizationId,
+              name: opts.sourceOrganizationId.split("#").pop() || "Organization",
+            },
+        }
       : {}),
     ...(mentions.length ? { mentions } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
