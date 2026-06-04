@@ -12,8 +12,18 @@ const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
 // Câmara é idorgao=23 — fica fora da rotina de Prefeitura
 const ORGAOS_PREFEITURA = [22, 55, 67, 66, 44, 71, 68, 70, 72, 56];
 
-// Volume mínimo para considerar uma competência "publicada" pela Prefeitura
-const MIN_PREFEITURA_ROWS = 100;
+// Órgãos com maior volume historico — sempre revalidar quando count=0 nesses (retry 1x).
+// 22=Administração, 44=Educação, 55=Saúde, 71=Obras. Cobrem 80%+ do volume.
+const ORGAOS_ESSENCIAIS = new Set([22, 44, 55, 71]);
+
+// Volume mínimo para considerar uma competência "publicada" pela Prefeitura.
+// Reduzido de 100 → 50 (2026-06-03) porque o Centi nao suporta 10 reqs simultaneas;
+// mesmo com retry serializado as vezes só 1-2 orgaos respondem por race condition.
+// Threshold conservador: mes inicial costuma ter so o orgao 22 (~241 rows), passa folgado.
+const MIN_PREFEITURA_ROWS = 50;
+
+// Delay entre fetches sequenciais (ms). Centi rate-limit empirico ≥ 200ms entre reqs.
+const CENTI_REQ_DELAY_MS = 250;
 
 function parseBRL(str: string): number | null {
   if (!str || str.trim() === "") return null;
@@ -75,6 +85,8 @@ async function fetchFolhaCount(idorgao: number, mes: number, ano: number): Promi
     pagina: "1",
     itensporpagina: "5",
   });
+  const ctl = new AbortController();
+  const tid = setTimeout(() => ctl.abort(), 15_000);
   try {
     const r = await fetch(`${BASE_URL}/servidor/remuneracao`, {
       method: "POST",
@@ -84,13 +96,36 @@ async function fetchFolhaCount(idorgao: number, mes: number, ano: number): Promi
         "X-Requested-With": "XMLHttpRequest",
       },
       body: body.toString(),
+      signal: ctl.signal,
     });
     if (!r.ok) return 0;
     return parseDataResult(await r.text());
   } catch (e) {
     console.error(`Count orgao=${idorgao} ${mes}/${ano}: ${(e as Error).message}`);
     return 0;
+  } finally {
+    clearTimeout(tid);
   }
+}
+
+/**
+ * Conta servidores com retry 1x para órgãos essenciais quando count=0.
+ * Mitiga race condition do Centi que silenciosamente retorna 0 sob carga.
+ */
+async function fetchFolhaCountWithRetry(
+  idorgao: number,
+  mes: number,
+  ano: number,
+): Promise<number> {
+  const c1 = await fetchFolhaCount(idorgao, mes, ano);
+  if (c1 > 0 || !ORGAOS_ESSENCIAIS.has(idorgao)) return c1;
+  // Órgão essencial retornou 0: tenta de novo depois de 500ms (provável race condition)
+  await new Promise((r) => setTimeout(r, 500));
+  const c2 = await fetchFolhaCount(idorgao, mes, ano);
+  if (c2 > 0) {
+    console.log(`[retry-success] orgao=${idorgao} ${mes}/${ano}: 0 → ${c2}`);
+  }
+  return c2;
 }
 
 async function descobrirCompetenciaMaisRecente(
@@ -104,11 +139,18 @@ async function descobrirCompetenciaMaisRecente(
       : buildCandidateMonths();
 
   for (const candidate of candidates) {
-    const counts = await Promise.all(
-      orgaos.map(async (orgao) => [orgao, await fetchFolhaCount(orgao, candidate.mes, candidate.ano)] as const),
-    );
-    const countsPorOrgao = Object.fromEntries(counts) as Record<number, number>;
+    // SEQUENCIAL com delay (NAO Promise.all): Centi nao suporta paralelismo.
+    // Em paralelo, 9 de 10 orgaos retornavam 0 silenciosamente — bug que causou
+    // 2 ciclos consecutivos de detecao de competencia errada (2026-04 ao inves
+    // de 2026-05 mesmo com maio publicado). Ver Pesquisas/2026-06-03 Codex.
+    const countsPorOrgao: Record<number, number> = {};
+    for (const orgao of orgaos) {
+      countsPorOrgao[orgao] = await fetchFolhaCountWithRetry(orgao, candidate.mes, candidate.ano);
+      await new Promise((r) => setTimeout(r, CENTI_REQ_DELAY_MS));
+    }
     const totalFonte = Object.values(countsPorOrgao).reduce((sum, count) => sum + count, 0);
+
+    console.log(`[discover] ${candidate.ano}-${String(candidate.mes).padStart(2, "0")}: total=${totalFonte}`, countsPorOrgao);
 
     if (forcedMes && forcedAno) {
       return {
@@ -174,17 +216,22 @@ async function fetchFolha(idorgao: number, mes: number, ano: number): Promise<Sc
     nome: "", cargo: "", decreto: "", admissao: "",
     pagina: "1", itensporpagina: "2000",
   });
+  const ctl = new AbortController();
+  const tid = setTimeout(() => ctl.abort(), 30_000);
   try {
     const r = await fetch(`${BASE_URL}/servidor/remuneracao`, {
       method: "POST",
       headers: { "User-Agent": UA, "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
       body: body.toString(),
+      signal: ctl.signal,
     });
     if (!r.ok) return [];
     return parseServidoresHtml(await r.text());
   } catch (e) {
     console.error(`Fetch orgao=${idorgao}: ${(e as Error).message}`);
     return [];
+  } finally {
+    clearTimeout(tid);
   }
 }
 
@@ -236,16 +283,24 @@ Deno.serve(async (req) => {
   const logId = log?.id;
 
   try {
-    // Fetch all orgãos in parallel (3 at a time to avoid overwhelming the portal)
-    const CONCURRENCY = 3;
+    // Fetch sequencial com delay entre orgaos. Centi nao suporta paralelismo:
+    // mesmo CONCURRENCY=3 perde respostas. Sequencial leva ~30s pra 10 orgaos
+    // (trade-off aceitavel pra cron mensal).
     const allResults: ScrapedServidor[][] = new Array(orgaos.length);
-    for (let i = 0; i < orgaos.length; i += CONCURRENCY) {
-      const batch = orgaos.slice(i, i + CONCURRENCY);
-      const results = await Promise.all(batch.map(id => fetchFolha(id, mes, ano)));
-      results.forEach((r, j) => {
-        allResults[i + j] = r;
-        console.log(`Orgao ${batch[j]}: ${r.length}`);
-      });
+    for (let i = 0; i < orgaos.length; i++) {
+      let result = await fetchFolha(orgaos[i], mes, ano);
+      // Retry 1x para orgaos essenciais que retornaram vazio (race condition Centi)
+      if (result.length === 0 && ORGAOS_ESSENCIAIS.has(orgaos[i])) {
+        await new Promise((r) => setTimeout(r, 500));
+        const retry = await fetchFolha(orgaos[i], mes, ano);
+        if (retry.length > 0) {
+          console.log(`[retry-success] orgao=${orgaos[i]}: 0 → ${retry.length} servidores`);
+          result = retry;
+        }
+      }
+      allResults[i] = result;
+      console.log(`Orgao ${orgaos[i]}: ${result.length}`);
+      await new Promise((r) => setTimeout(r, CENTI_REQ_DELAY_MS));
     }
 
     // Deduplicate: prefer entries WITH salary data
