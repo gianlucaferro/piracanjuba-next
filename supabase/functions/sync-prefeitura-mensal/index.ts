@@ -3,8 +3,26 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, x-cron-secret, x-centi-ingest-secret, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+/**
+ * Codex 2026-06-03: auth obrigatória. Aceita cron_secret OU centi_ingest_secret OU SR no header.
+ * Mesma logica de _shared/centi-auth.ts mas inline pra evitar import dynamic em deploy MCP.
+ */
+function checkCentiAuth(req: Request): boolean {
+  const SR = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const CRON_SECRET = Deno.env.get("CRON_SECRET") ?? "";
+  const INGEST = Deno.env.get("CENTI_INGEST_SECRET") ?? "";
+  const cron = req.headers.get("x-cron-secret") ?? "";
+  const ingest = req.headers.get("x-centi-ingest-secret") ?? "";
+  const auth = req.headers.get("authorization") ?? "";
+  return (
+    (CRON_SECRET !== "" && cron === CRON_SECRET) ||
+    (INGEST !== "" && ingest === INGEST) ||
+    (SR !== "" && auth.includes(SR))
+  );
+}
 
 const BASE_URL = "https://piracanjuba.centi.com.br";
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
@@ -16,11 +34,28 @@ const ORGAOS_PREFEITURA = [22, 55, 67, 66, 44, 71, 68, 70, 72, 56];
 // 22=Administração, 44=Educação, 55=Saúde, 71=Obras. Cobrem 80%+ do volume.
 const ORGAOS_ESSENCIAIS = new Set([22, 44, 55, 71]);
 
-// Volume mínimo para considerar uma competência "publicada" pela Prefeitura.
-// Reduzido de 100 → 50 (2026-06-03) porque o Centi nao suporta 10 reqs simultaneas;
-// mesmo com retry serializado as vezes só 1-2 orgaos respondem por race condition.
-// Threshold conservador: mes inicial costuma ter so o orgao 22 (~241 rows), passa folgado.
+// Threshold simples (mantido pra forced manual)
 const MIN_PREFEITURA_ROWS = 50;
+
+/**
+ * Codex 2026-06-03: gate triplo pra evitar competencia prematura quando so um
+ * orgao grande publicou (ex: dia 1 com so orgao 22 = 241). Aceita competencia se:
+ *  - total >= 500 (publicacao consistente), OU
+ *  - total >= 200 E pelo menos 2 dos 4 essenciais com dados, OU
+ *  - total >= 50 E pelo menos 3 orgaos quaisquer com dados.
+ * Evita falso positivo onde so um orgao publicou parte da folha.
+ */
+function isCompetenciaPublicada(
+  counts: Record<number, number>,
+  total: number,
+): boolean {
+  if (total >= 500) return true;
+  const essentialNonZero = [...ORGAOS_ESSENCIAIS].filter((id) => (counts[id] ?? 0) > 0).length;
+  if (total >= 200 && essentialNonZero >= 2) return true;
+  const nonZero = Object.values(counts).filter((v) => v > 0).length;
+  if (total >= 50 && nonZero >= 3) return true;
+  return false;
+}
 
 // Delay entre fetches sequenciais (ms). Centi rate-limit empirico ≥ 200ms entre reqs.
 const CENTI_REQ_DELAY_MS = 250;
@@ -162,7 +197,7 @@ async function descobrirCompetenciaMaisRecente(
       };
     }
 
-    if (totalFonte >= MIN_PREFEITURA_ROWS) {
+    if (isCompetenciaPublicada(countsPorOrgao, totalFonte)) {
       return {
         ...candidate,
         competencia: competenciaKey(candidate.ano, candidate.mes),
@@ -237,6 +272,14 @@ async function fetchFolha(idorgao: number, mes: number, ano: number): Promise<Sc
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  // Codex 2026-06-03: auth obrigatoria (function estava aberta apesar de verify_jwt=false).
+  if (!checkCentiAuth(req)) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Unauthorized" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
 
   const url = new URL(req.url);
   const orgaoFilter = url.searchParams.get("orgao");
@@ -373,8 +416,9 @@ Deno.serve(async (req) => {
     for (let i = 0; i < rems.length; i += BATCH) {
       const batch = rems.slice(i, i + BATCH);
       remBatches.push(
+        // Codex 2026-06-03: chave inclui tipo_folha pra preservar NORMAL + 13º + RESCISÃO + FÉRIAS
         sb.from("remuneracao_servidores").upsert(batch, {
-          onConflict: "servidor_id,competencia",
+          onConflict: "servidor_id,competencia,tipo_folha",
         }).select("id").then(({ data, error }) => {
           if (error) console.error(`Rem batch ${i}: ${error.message}`);
           return (data || []).length;
