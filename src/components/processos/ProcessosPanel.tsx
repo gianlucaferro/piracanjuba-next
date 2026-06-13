@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { contestacaoMailto } from "@/lib/contestacao";
 import {
   Scale,
   ExternalLink,
@@ -363,12 +363,12 @@ function Disclaimer({ ultimaAtualizacao }: { ultimaAtualizacao?: string | null }
       )}
       <p className="mt-1">
         Encontrou imprecisão?{" "}
-        <Link
-          href="/contato?assunto=processos-publicos"
+        <a
+          href={contestacaoMailto()}
           className="underline hover:text-foreground inline-flex items-center gap-0.5"
         >
           Solicitar revisão <ExternalLink className="w-3 h-3" />
-        </Link>
+        </a>
       </p>
     </div>
   );

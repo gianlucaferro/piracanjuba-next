@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Scale, AlertTriangle, Users, ExternalLink, ShieldCheck } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchPessoasPublicasResumo } from "@/lib/data/processos-publicos";
+import { contestacaoMailto } from "@/lib/contestacao";
 
 export const metadata = pageMetadata({
   title: "Processos Judiciais de Agentes Públicos de Piracanjuba",
@@ -144,13 +145,13 @@ export default async function ProcessosPublicosIndex() {
           <li>
             Encontrou imprecisão, dado incorreto ou processo que não deveria
             estar listado?{" "}
-            <Link
-              href="/contato?assunto=processos-publicos"
+            <a
+              href={contestacaoMailto()}
               className="underline hover:text-foreground inline-flex items-center gap-0.5"
             >
               Solicite revisão <ExternalLink className="w-3 h-3" />
-            </Link>{" "}
-            — respondemos em até <strong>72 horas úteis</strong>.
+            </a>
+            . Respondemos em até <strong>72 horas úteis</strong>.
           </li>
         </ul>
       </div>
