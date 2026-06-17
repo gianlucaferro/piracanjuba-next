@@ -17,12 +17,13 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity, UserSearch } from "lucide-react";
+import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity, UserSearch, Scale } from "lucide-react";
 import FarmaciaFotosAdmin from "@/components/admin/FarmaciaFotosAdmin";
 import AnunciosAdmin from "@/components/admin/AnunciosAdmin";
 import ClassificadosAdmin from "@/components/admin/ClassificadosAdmin";
 import SyncStatusAdmin from "@/components/admin/SyncStatusAdmin";
 import ConsultaCpfAdmin from "@/components/admin/ConsultaCpfAdmin";
+import NepotismoAdmin from "@/components/admin/NepotismoAdmin";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -474,6 +475,9 @@ export default function Admin() {
               <TabsTrigger value="syncs" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
                 <Activity className="w-3 h-3" /> Syncs
               </TabsTrigger>
+              <TabsTrigger value="nepotismo" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
+                <Scale className="w-3 h-3" /> Nepotismo
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="pending" className="space-y-3 mt-4">
@@ -550,6 +554,10 @@ export default function Admin() {
 
             <TabsContent value="syncs" className="mt-4">
               <SyncStatusAdmin />
+            </TabsContent>
+
+            <TabsContent value="nepotismo" className="mt-4">
+              <NepotismoAdmin />
             </TabsContent>
           </Tabs>
         )}
