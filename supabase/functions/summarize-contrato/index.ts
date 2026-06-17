@@ -24,7 +24,7 @@ const corsHeaders = {
 };
 
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
-const PROMPT_VERSAO = 2; // bump para invalidar cache em mudanças de prompt
+const PROMPT_VERSAO = 4; // v4: PDF multimodal via OpenRouter + resposta sem markdown/saudacao
 
 // Modelos Gemini em ordem de preferência. Se primeiro falhar com 429/500, tenta próximo.
 const GEMINI_MODELS_FALLBACK = [
@@ -228,6 +228,67 @@ async function gerarComFallback(apiKey: string, prompt: string): Promise<GeminiR
   return ultimoErro!;
 }
 
+// ============== OPENROUTER (multimodal PDF, travado no modelo barato) ==============
+
+const OR_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OR_MODELO = "google/gemini-2.5-flash-lite"; // unico, travado (sem fallback de modelo, sem auto-router)
+
+function uint8ToBase64(bytes: Uint8Array): string {
+  let bin = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  return btoa(bin);
+}
+
+/** Baixa o PDF e devolve base64 (null se falhar ou nao for PDF). */
+async function baixarPdfBase64(url: string): Promise<string | null> {
+  try {
+    const resp = await fetchWithTimeout(url, { headers: { "User-Agent": UA }, redirect: "follow" }, TIMEOUT_PDF_DOWNLOAD);
+    if (!resp.ok) return null;
+    const buf = new Uint8Array(await resp.arrayBuffer());
+    if (buf.length < 100 || buf.length > 15_000_000) return null;
+    if (!new TextDecoder("latin1").decode(buf.subarray(0, 5)).startsWith("%PDF")) return null;
+    return uint8ToBase64(buf);
+  } catch (_e) {
+    return null;
+  }
+}
+
+async function chamarOpenRouter(orKey: string, content: unknown, multimodal: boolean): Promise<GeminiResult> {
+  try {
+    const resp = await fetchWithTimeout(OR_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${orKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://piracanjuba.ai",
+        "X-Title": "Piracanjuba.ai",
+      },
+      body: JSON.stringify({
+        model: OR_MODELO,
+        messages: [{ role: "user", content }],
+        // Trava de custo: modelo unico fixo + nao deixa cair pra outro provider/modelo.
+        provider: { allow_fallbacks: false },
+        ...(multimodal ? { plugins: [{ id: "file-parser", pdf: { engine: "native" } }] } : {}),
+      }),
+    }, TIMEOUT_GEMINI);
+    if (resp.status === 429) return { ok: false, errorCode: "quota", modeloTentado: OR_MODELO };
+    if (resp.status === 402) return { ok: false, errorCode: "credits", modeloTentado: OR_MODELO };
+    if (!resp.ok) {
+      console.error(`OpenRouter ${resp.status}:`, (await resp.text()).slice(0, 300));
+      return { ok: false, errorCode: "api_error", modeloTentado: OR_MODELO };
+    }
+    const data = await resp.json();
+    const resumo = data?.choices?.[0]?.message?.content;
+    if (!resumo) return { ok: false, errorCode: "api_error", modeloTentado: OR_MODELO };
+    return { ok: true, resumo: String(resumo).trim(), modelo: OR_MODELO };
+  } catch (e) {
+    const msg = (e as Error).message || "";
+    if (msg.includes("abort")) return { ok: false, errorCode: "timeout", modeloTentado: OR_MODELO };
+    return { ok: false, errorCode: "api_error", modeloTentado: OR_MODELO };
+  }
+}
+
 // ============== HANDLER ==============
 
 Deno.serve(async (req) => {
@@ -292,9 +353,10 @@ Deno.serve(async (req) => {
     }
 
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) {
+    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+    if (!GEMINI_API_KEY && !OPENROUTER_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "GEMINI_API_KEY não configurada", error_code: "config" }),
+        JSON.stringify({ error: "Nenhuma chave de IA configurada", error_code: "config" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -302,10 +364,16 @@ Deno.serve(async (req) => {
     // ===== 2) BEST-EFFORT FETCH CONTEXTO EXTERNO =====
     let portalDetails = "";
     let pdfText: string | null = null;
+    let pdfBase64: string | null = null;
     if (contrato.fonte_url && String(contrato.fonte_url).includes("centi.com.br/contratos/contrato/")) {
       const { details, pdfUrls } = await fetchContratoDetailPage(contrato.fonte_url);
       portalDetails = details;
-      if (pdfUrls.length > 0) pdfText = await fetchAndExtractPdf(pdfUrls);
+      if (pdfUrls.length > 0) {
+        // Com OpenRouter, manda o PDF inteiro pro modelo (le o teor real, ate escaneado).
+        // Sem OpenRouter, cai no extrator de texto simples (so PDF nativo).
+        if (OPENROUTER_API_KEY) pdfBase64 = await baixarPdfBase64(pdfUrls[0]);
+        if (!pdfBase64) pdfText = await fetchAndExtractPdf(pdfUrls);
+      }
     }
 
     // ===== 3) ADITIVOS =====
@@ -346,6 +414,7 @@ Inclua no resumo uma seção "📋 Aditivos" com o total e o valor consolidado.`
     let extra = "";
     if (portalDetails) extra += `\n\nInformações do portal de transparência:\n${portalDetails}`;
     if (pdfText) extra += `\n\nTexto extraído do PDF oficial:\n"""${pdfText}"""`;
+    if (pdfBase64) extra += `\n\nO PDF oficial assinado do contrato está ANEXADO a esta mensagem. Leia-o e baseie o resumo no teor real do documento (objeto detalhado, condições, prazos).`;
 
     let outlierSection = "";
     if (is_outlier && outlier_context) {
@@ -369,10 +438,22 @@ Dados:
 - Status: ${contrato.status || "—"}
 - Vigência: ${contrato.vigencia_inicio || "?"} a ${contrato.vigencia_fim || "?"}${extra}${aditivosSection}${outlierSection}
 
-Português objetivo. ${hasExtras ? "Use até 10 frases pra incluir as seções." : "Use no máximo 4 frases."} Não invente.`;
+Português objetivo, direto ao cidadão, SEM saudação/despedida e SEM markdown (nada de ** ou #). ${hasExtras ? "Use até 10 frases pra incluir as seções." : "Use no máximo 4 frases."} Não invente.`;
 
-    // ===== 5) GERAR COM FALLBACK =====
-    const r = await gerarComFallback(GEMINI_API_KEY, prompt);
+    // ===== 5) GERAR =====
+    // Prioriza OpenRouter (saldo pago, modelo travado). Com PDF -> multimodal, le o teor
+    // real do contrato (ate escaneado). Sem OpenRouter -> Gemini free (extrator de texto).
+    let r: GeminiResult;
+    if (OPENROUTER_API_KEY && pdfBase64) {
+      r = await chamarOpenRouter(OPENROUTER_API_KEY, [
+        { type: "text", text: prompt },
+        { type: "file", file: { filename: "contrato.pdf", file_data: "data:application/pdf;base64," + pdfBase64 } },
+      ], true);
+    } else if (OPENROUTER_API_KEY) {
+      r = await chamarOpenRouter(OPENROUTER_API_KEY, prompt, false);
+    } else {
+      r = await gerarComFallback(GEMINI_API_KEY!, prompt);
+    }
     if (!r.ok) {
       const msgs: Record<string, string> = {
         quota: "Limite gratuito de IA atingido neste momento. Tente novamente em alguns minutos.",
