@@ -6,315 +6,185 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Map author names to slugs for matching
-const AUTHOR_SLUG_MAP: Record<string, string> = {
-  "adriana dias pinheiro": "adriana-pinheiro",
-  "aparecida divani rocha cordeiro": "aparecida-divani",
-  "douglas miranda silva": "douglas-miranda",
-  "edimar lopes machado": "edimar-lopes",
-  "fernando abraão magalhães silva": "fernando-abraao",
-  "fernando abraao magalhaes silva": "fernando-abraao",
-  "marco antônio antunes da cruz": "marco-antonio",
-  "marco antonio antunes da cruz": "marco-antonio",
-  "reginaldo moreira da silva": "reginaldo-moreira",
-  "sirley de fatima menezes wehbe": "sirley-wehbe",
-  "welton eterno da silva": "welton-eterno",
-  "wennder trindade e silva": "wennder-trindade",
-  "yuri santiago alves": "yuri-santiago",
+// 2026-06: o portal SAPL (acessoainformacao.piracanjuba.go.leg.br) saiu do ar (403).
+// A Camara migrou pro Centi. Projetos ficam em /transparencia/atosadministrativos/{codigo},
+// uma tabela [Descricao, Observacao, Publicacao, Documento] por tipo de ato.
+const CENTI_BASE = "https://camarapiracanjuba.centi.com.br/transparencia/atosadministrativos";
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+
+// codigo Centi -> {tipo logico, origem}
+const TIPOS: Record<number, { tipo: string; origem: string }> = {
+  21: { tipo: "Projeto de Lei", origem: "Executivo" },
+  22: { tipo: "Projeto de Lei", origem: "Legislativo" },
+  23: { tipo: "Projeto de Resolução", origem: "Legislativo" },
+  30: { tipo: "Projeto de Decreto Legislativo", origem: "Legislativo" },
 };
 
-interface ScrapedProject {
-  tipo: string;
-  numero: string;
-  ano: number;
-  data: string;
-  ementa: string;
-  origem: string;
-  autor_texto: string;
-  fonte_visualizar_url: string;
-  fonte_download_url: string | null;
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
 }
 
-function parseProjectsFromHtml(html: string): ScrapedProject[] {
-  const projects: ScrapedProject[] = [];
+function toIsoDate(d: string | null): string | null {
+  if (!d) return null;
+  const m = d.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.split("T")[0];
+  return null;
+}
 
-  // Match project blocks - each project has a header, date, description, author, and links
-  // Pattern: "Projeto de Lei nº 002/2025 - Legislativo" or "Projeto de Resolução nº 001/2025"
-  const projectPattern =
-    /(Projeto\s+de\s+(?:Lei|Resolução|Lei Complementar|Emenda à Lei Orgânica|Decreto Legislativo))\s+n[ºo°]\s*(\d+)\/(\d{4})(?:\s*-\s*(Legislativo|Executivo))?/gi;
+// Extrai o autor "- VER. WENNDER" / "- VEREADOR XXX" do fim da descricao, quando existe.
+function extrairAutor(descricao: string): string | null {
+  const m = descricao.match(/[-–]\s*(VER(?:EADOR|EADORA)?\.?\s*.+)$/i);
+  if (m) return m[1].replace(/^VER(?:EADOR|EADORA)?\.?\s*/i, "").trim() || null;
+  if (/poder\s+executivo/i.test(descricao)) return "Poder Executivo";
+  if (/mesa\s+diretora/i.test(descricao)) return "Mesa Diretora";
+  return null;
+}
 
-  let match;
-  const htmlLower = html;
+interface AtoRow {
+  descricao: string;
+  observacao: string;
+  data: string | null;
+  documento_url: string | null;
+}
 
-  // Split by project headers
-  const sections = html.split(
-    /(?=<[^>]*>(?:\s*<[^>]*>)*\s*Projeto\s+de\s+(?:Lei|Resolução|Lei Complementar))/i
-  );
-
-  for (const section of sections) {
-    const headerMatch = section.match(
-      /(Projeto\s+de\s+(?:Lei|Resolução|Lei Complementar|Emenda à Lei Orgânica|Decreto Legislativo))\s+n[ºo°]\s*(\d+)\/(\d{4})(?:\s*-\s*(Legislativo|Executivo))?/i
-    );
-
-    if (!headerMatch) continue;
-
-    const tipo = headerMatch[1].trim();
-    const numero = headerMatch[2];
-    const ano = parseInt(headerMatch[3]);
-    const origem = headerMatch[4] || "Legislativo";
-
-    // Extract date (DD/MM/YYYY)
-    const dateMatch = section.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-    const data = dateMatch
-      ? `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`
-      : "";
-
-    // Extract description - text after date, before author
-    const ementaMatch = section.match(
-      /\d{2}\/\d{2}\/\d{4}<\/[^>]+>\s*<[^>]+>([\s\S]*?)<\/[^>]+>\s*<[^>]+>/
-    );
-    let ementa = "";
-    if (ementaMatch) {
-      ementa = ementaMatch[1].replace(/<[^>]*>/g, "").trim();
+async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
+  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}`, { headers: { "User-Agent": UA } });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const html = await resp.text();
+  const tbody = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+  if (!tbody) return [];
+  const rows = tbody[1].split(/<tr[^>]*>/i).filter((r) => r.includes("<td"));
+  const out: AtoRow[] = [];
+  for (const row of rows) {
+    const cells: string[] = [];
+    const re = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    let m;
+    while ((m = re.exec(row)) !== null) {
+      cells.push(decodeEntities(m[1].replace(/<[^>]*>/g, " ")).replace(/\s+/g, " ").trim());
     }
-    // Fallback: try to find long text
-    if (!ementa) {
-      const textBlocks = section.match(/>([^<]{50,})</g);
-      if (textBlocks) {
-        for (const block of textBlocks) {
-          const text = block.slice(1, -1).trim();
-          if (
-            !text.match(/Projeto\s+de/) &&
-            !text.match(/^\d{2}\/\d{2}\/\d{4}$/)
-          ) {
-            ementa = text;
-            break;
-          }
-        }
-      }
-    }
-
-    // Extract author
-    const authorPatterns = [
-      /Poder\s+Executivo/i,
-      /Mesa\s+Diretora/i,
-      ...Object.keys(AUTHOR_SLUG_MAP).map(
-        (name) => new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i")
-      ),
-    ];
-
-    let autor_texto = "Não identificado";
-    for (const pattern of authorPatterns) {
-      const authorMatch = section.match(pattern);
-      if (authorMatch) {
-        autor_texto = authorMatch[0];
-        break;
-      }
-    }
-
-    // Extract links
-    const vizMatch = section.match(
-      /href="(https:\/\/acessoainformacao[^"]*projetos[^"]*visualizar[^"]*|https:\/\/acessoainformacao[^"]*projetos\/[^"]*)"[^>]*>\s*(?:Visualizar|Ver)/i
-    );
-    const vizMatch2 = section.match(
-      /href="(https:\/\/acessoainformacao\.camaradepiracanjuba\.go\.gov\.br\/projetos\/[^"]*)"/i
-    );
-    const fonte_visualizar_url = vizMatch?.[1] || vizMatch2?.[1] || "";
-
-    const dlMatch = section.match(
-      /href="(https:\/\/acessoainformacao[^"]*\.pdf)"/i
-    );
-    const fonte_download_url = dlMatch?.[1] || null;
-
-    if (data && (ementa || fonte_visualizar_url)) {
-      projects.push({
-        tipo,
-        numero,
-        ano,
-        data,
-        ementa: ementa || `${tipo} nº ${numero}/${ano}`,
-        origem,
-        autor_texto,
-        fonte_visualizar_url,
-        fonte_download_url,
-      });
-    }
+    if (cells.length < 3) continue;
+    const link =
+      row.match(/href="([^"]*\/download\/[^"]*)"/i) || row.match(/href="([^"]*\.(?:pdf|PDF)[^"]*)"/i);
+    // a coluna Publicacao e a 3a (indice 2); fallback pra primeira celula com data
+    const data =
+      cells[2] && /\d{2}\/\d{2}\/\d{4}/.test(cells[2])
+        ? cells[2]
+        : cells.find((c) => /\d{2}\/\d{2}\/\d{4}/.test(c)) || null;
+    out.push({
+      descricao: cells[0] || "",
+      observacao: cells[1] || "",
+      data,
+      documento_url: link ? decodeEntities(link[1]) : null,
+    });
   }
-
-  return projects;
+  return out;
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const supabase = createClient(supabaseUrl, serviceKey);
-
-  // Create sync log entry
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: logEntry } = await supabase
     .from("sync_log")
     .insert({ tipo: "projetos", status: "running", detalhes: {} })
     .select()
     .single();
-
   const logId = logEntry?.id;
-  let newCount = 0;
-  let updatedCount = 0;
+
   const errors: string[] = [];
+  let total = 0;
 
   try {
-    // Fetch the projects page
-    const tipos = [
-      { path: "projeto-de-lei", label: "Projeto de Lei" },
-      { path: "projeto-de-resolucao", label: "Projeto de Resolução" },
-      { path: "projeto-de-lei-complementar", label: "Projeto de Lei Complementar" },
-    ];
-
-    // Get all vereadores for author matching
-    const { data: vereadores } = await supabase
-      .from("vereadores")
-      .select("id, nome, slug");
-
-    const vereadorMap = new Map(
-      (vereadores || []).map((v: any) => [v.slug, v.id])
-    );
-
-    // Fetch the main projects page (HTML)
-    // 2026-05: Camara migrou pra piracanjuba.go.leg.br. Atos legislativos
-    // (projetos de lei) agora moram no portal LAI Centi:
-    const url = "https://acessoainformacao.piracanjuba.go.leg.br/cidadao/atos_adm/mp/id=2";
-    console.log("Fetching:", url);
-
-    let response;
-    try {
-      response = await fetch(url, {
-        headers: {
-          "User-Agent": "seuvereador.ai/1.0 (transparencia legislativa)",
-        },
+    // mapa de vereadores pra vincular o autor por nome (melhor esforco)
+    const { data: vereadores } = await supabase.from("vereadores").select("id, nome");
+    const vlist = (vereadores || []) as { id: string; nome: string }[];
+    const matchVereador = (autor: string | null): string | null => {
+      if (!autor) return null;
+      const a = autor.toUpperCase();
+      const found = vlist.find((v) => {
+        const tokens = (v.nome || "").toUpperCase().split(/\s+/).filter((t) => t.length > 2);
+        return tokens.some((t) => a.includes(t));
       });
-    } catch (fetchError) {
-      errors.push(`Fetch failed: ${fetchError.message}`);
-      throw fetchError;
-    }
+      return found?.id ?? null;
+    };
 
-    if (!response.ok) {
-      errors.push(`HTTP ${response.status} from ${url}`);
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const html = await response.text();
-    const scraped = parseProjectsFromHtml(html);
-
-    console.log(`Found ${scraped.length} projects in HTML`);
-
-    for (const proj of scraped) {
-      // Find author vereador_id
-      const authorSlug = AUTHOR_SLUG_MAP[proj.autor_texto.toLowerCase()];
-      const autorVereadorId = authorSlug ? vereadorMap.get(authorSlug) || null : null;
-
-      // Check if project already exists
-      const { data: existing } = await supabase
-        .from("projetos")
-        .select("id")
-        .eq("tipo", proj.tipo)
-        .eq("numero", proj.numero)
-        .eq("ano", proj.ano)
-        .eq("origem", proj.origem)
-        .maybeSingle();
-
-      if (!existing) {
-        // Insert new project
-        const { error } = await supabase.from("projetos").insert({
-          tipo: proj.tipo,
-          numero: proj.numero,
-          ano: proj.ano,
-          data: proj.data,
-          ementa: proj.ementa,
-          origem: proj.origem,
-          autor_vereador_id: autorVereadorId,
-          autor_texto: proj.autor_texto,
-          status: "em_tramitacao",
-          fonte_visualizar_url: proj.fonte_visualizar_url,
-          fonte_download_url: proj.fonte_download_url,
-          resumo_simples: null,
-          tags: [],
-        });
-
-        if (error) {
-          errors.push(`Insert error: ${error.message}`);
-          console.error("Insert error:", error);
-        } else {
-          newCount++;
-          console.log(`New project: ${proj.tipo} ${proj.numero}/${proj.ano}`);
+    for (const [codigoStr, info] of Object.entries(TIPOS)) {
+      const codigo = Number(codigoStr);
+      try {
+        await delay(800);
+        const atos = await scrapeCenti(codigo);
+        const batch: any[] = [];
+        for (const ato of atos) {
+          const numMatch = ato.descricao.match(/(\d+)\s*\/\s*(\d{4})/);
+          if (!numMatch) continue;
+          const numero = numMatch[1];
+          const ano = parseInt(numMatch[2]);
+          const autorTexto = extrairAutor(ato.descricao);
+          batch.push({
+            tipo: info.tipo,
+            numero,
+            ano,
+            origem: info.origem,
+            data: toIsoDate(ato.data),
+            ementa: (ato.observacao || ato.descricao).slice(0, 2000),
+            autor_texto: autorTexto || "Não identificado",
+            autor_vereador_id: matchVereador(autorTexto),
+            fonte_visualizar_url: `${CENTI_BASE}/${codigo}`,
+            fonte_download_url: ato.documento_url,
+          });
         }
-      } else {
-        // Update existing if ementa changed
-        const { error } = await supabase
-          .from("projetos")
-          .update({
-            ementa: proj.ementa,
-            fonte_visualizar_url: proj.fonte_visualizar_url,
-            fonte_download_url: proj.fonte_download_url,
-          })
-          .eq("id", existing.id);
-
-        if (!error) updatedCount++;
+        // dedup por chave unica (a fonte pode repetir a mesma linha; o upsert em lote
+        // falha com "ON CONFLICT ... cannot affect row a second time" se houver duplicata)
+        const seen = new Set<string>();
+        const deduped = batch.filter((b) => {
+          const k = `${b.tipo}|${b.numero}|${b.ano}|${b.origem}`;
+          if (seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        });
+        if (deduped.length) {
+          const { error } = await supabase
+            .from("projetos")
+            .upsert(deduped, { onConflict: "tipo,numero,ano,origem" });
+          if (error) errors.push(`${info.tipo}/${info.origem}: ${error.message}`);
+          else total += deduped.length;
+        }
+      } catch (e) {
+        errors.push(`tipo ${codigo}: ${(e as Error).message?.slice(0, 120)}`);
       }
     }
 
-    // Update sync log
     if (logId) {
-      await supabase
-        .from("sync_log")
-        .update({
-          status: errors.length > 0 ? "partial" : "success",
-          detalhes: {
-            scraped_count: scraped.length,
-            new_count: newCount,
-            updated_count: updatedCount,
-            errors,
-          },
-          finished_at: new Date().toISOString(),
-        })
-        .eq("id", logId);
+      await supabase.from("sync_log").update({
+        status: errors.length ? "partial" : "success",
+        detalhes: { upserted: total, errors: errors.slice(0, 20) },
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        scraped: scraped.length,
-        new: newCount,
-        updated: updatedCount,
-        errors,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (error) {
-    console.error("Sync error:", error);
-
+    return new Response(JSON.stringify({ success: true, upserted: total, errors: errors.slice(0, 10) }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (e) {
     if (logId) {
-      await supabase
-        .from("sync_log")
-        .update({
-          status: "error",
-          detalhes: {
-            error: error.message,
-            errors,
-          },
-          finished_at: new Date().toISOString(),
-        })
-        .eq("id", logId);
+      await supabase.from("sync_log").update({
+        status: "error",
+        detalhes: { error: (e as Error).message },
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
     }
-
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    console.error("sync-projetos error:", e);
+    return new Response(JSON.stringify({ success: false, error: e instanceof Error ? e.message : "erro" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

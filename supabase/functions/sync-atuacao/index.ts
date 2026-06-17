@@ -6,92 +6,87 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const TIPO_IDS: Record<number, string> = {
-  79: "Indicação",
-  80: "Moção",
-  81: "Requerimento",
+// 2026-06: o portal SAPL (acessoainformacao / piracanjuba.go.leg.br) saiu do ar (404).
+// A Camara migrou pro Centi. Indicacoes/Mocoes/Requerimentos ficam em
+// /transparencia/atosadministrativos/{codigo}: tabela [Descricao, Observacao, Publicacao, Documento].
+const CENTI_BASE = "https://camarapiracanjuba.centi.com.br/transparencia/atosadministrativos";
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+
+// codigo Centi -> tipo logico (atuacao_parlamentar.tipo)
+const TIPOS: Record<number, string> = {
+  24: "Indicação",
+  26: "Moção",
+  9: "Requerimento",
 };
 
-const WP_VEREADOR_SLUG: Record<number, string> = {
-  334: "adriana-pinheiro",
-  333: "aparecida-divani",
-  335: "douglas-miranda",
-  336: "edimar-lopes",
-  337: "fernando-abraao",
-  339: "marco-antonio",
-  342: "reginaldo-moreira",
-  338: "sirley-wehbe",
-  344: "welton-eterno",
-  341: "wennder-trindade",
-  343: "yuri-santiago",
-};
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const WP_VEREADOR_NAMES: Record<number, string> = {
-  334: "Adriana Dias Pinheiro",
-  333: "Aparecida Divani Rocha Cordeiro",
-  335: "Douglas Miranda Silva",
-  336: "Edimar Lopes Machado",
-  337: "Fernando Abraão Magalhães Silva",
-  339: "Marco Antonio Antunes da Cruz",
-  340: "Mesa Diretora",
-  342: "Reginaldo Moreira da Silva",
-  338: "Sirley de Fatima Menezes Wehbe",
-  344: "Welton Eterno da Silva",
-  341: "Wennder Trindade e Silva",
-  343: "Yuri Santiago Alves",
-};
-
-function parseTitle(title: string): { tipo: string; numero: number; ano: number } | null {
-  const match = title.match(/(Indicação|Moção|Requerimento)\s+n[ºo°]\s*(\d+)\/(\d{4})/i);
-  if (!match) return null;
-  return { tipo: match[1], numero: parseInt(match[2]), ano: parseInt(match[3]) };
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
 }
 
-// Scrape the main listing HTML page to get descriptions for the first page of each tab
-async function scrapeDescriptionsFromListing(): Promise<Map<string, string>> {
-  const descs = new Map<string, string>();
-  try {
-    // 2026-05: Camara migrou pra piracanjuba.go.leg.br. Atividades
-    // legislativas agora ficam no portal LAI Centi.
-    const resp = await fetch(
-      "https://acessoainformacao.piracanjuba.go.leg.br/cidadao/legislacao/atividades_legislativas/",
-      { headers: { "User-Agent": "seuvereador.ai/1.0 (transparencia legislativa)" } }
-    );
-    if (!resp.ok) return descs;
-    const html = await resp.text();
+function toIsoDate(d: string | null): string | null {
+  if (!d) return null;
+  const m = d.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.split("T")[0];
+  return null;
+}
 
-    // Each item in the listing grid follows this pattern:
-    // jet-listing-dynamic-field__content with title -> date -> description -> author
-    const itemPattern = /jet-listing-dynamic-field__content">((?:Indicação|Moção|Requerimento)[^<]*)<\/div>[\s\S]*?jet-listing-dynamic-field__content">(\d{2}\/\d{2}\/\d{4})<\/div>[\s\S]*?jet-listing-dynamic-field__content"><p>([\s\S]*?)<\/p>/gi;
-    
-    let match;
-    while ((match = itemPattern.exec(html)) !== null) {
-      const title = match[1].trim();
-      const desc = match[3]
-        .replace(/<[^>]*>/g, " ")
-        .replace(/&nbsp;/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-      if (desc.length > 5) {
-        descs.set(title, desc);
-      }
+function extrairAutor(descricao: string): string | null {
+  const m = descricao.match(/[-–]\s*(VER(?:EADOR|EADORA)?\.?\s*.+)$/i);
+  if (m) return m[1].replace(/^VER(?:EADOR|EADORA)?\.?\s*/i, "").trim() || null;
+  return null;
+}
+
+interface AtoRow {
+  descricao: string;
+  observacao: string;
+  data: string | null;
+  documento_url: string | null;
+}
+
+async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
+  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}`, { headers: { "User-Agent": UA } });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const html = await resp.text();
+  const tbody = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+  if (!tbody) return [];
+  const rows = tbody[1].split(/<tr[^>]*>/i).filter((r) => r.includes("<td"));
+  const out: AtoRow[] = [];
+  for (const row of rows) {
+    const cells: string[] = [];
+    const re = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    let m;
+    while ((m = re.exec(row)) !== null) {
+      cells.push(decodeEntities(m[1].replace(/<[^>]*>/g, " ")).replace(/\s+/g, " ").trim());
     }
-    console.log(`Scraped ${descs.size} descriptions from listing page`);
-  } catch (e) {
-    console.error("Error scraping listing:", e);
+    if (cells.length < 3) continue;
+    const link =
+      row.match(/href="([^"]*\/download\/[^"]*)"/i) || row.match(/href="([^"]*\.(?:pdf|PDF)[^"]*)"/i);
+    const data =
+      cells[2] && /\d{2}\/\d{2}\/\d{4}/.test(cells[2])
+        ? cells[2]
+        : cells.find((c) => /\d{2}\/\d{2}\/\d{4}/.test(c)) || null;
+    out.push({
+      descricao: cells[0] || "",
+      observacao: cells[1] || "",
+      data,
+      documento_url: link ? decodeEntities(link[1]) : null,
+    });
   }
-  return descs;
+  return out;
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const supabase = createClient(supabaseUrl, serviceKey);
-
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: logEntry } = await supabase
     .from("sync_log")
     .insert({ tipo: "atuacao", status: "running", detalhes: {} })
@@ -99,140 +94,89 @@ Deno.serve(async (req) => {
     .single();
   const logId = logEntry?.id;
 
-  let newCount = 0;
-  let skippedCount = 0;
   const errors: string[] = [];
+  let total = 0;
 
   try {
-    const { data: vereadores } = await supabase.from("vereadores").select("id, slug");
-    const vereadorMap = new Map((vereadores || []).map((v: any) => [v.slug, v.id]));
+    const { data: vereadores } = await supabase.from("vereadores").select("id, nome");
+    const vlist = (vereadores || []) as { id: string; nome: string }[];
+    const matchVereador = (autor: string | null): string | null => {
+      if (!autor) return null;
+      const a = autor.toUpperCase();
+      const found = vlist.find((v) => {
+        const tokens = (v.nome || "").toUpperCase().split(/\s+/).filter((t) => t.length > 2);
+        return tokens.some((t) => a.includes(t));
+      });
+      return found?.id ?? null;
+    };
 
-    // Scrape listing page for descriptions (recent items)
-    const descriptions = await scrapeDescriptionsFromListing();
-
-    const WP_API = "https://piracanjuba.go.leg.br/wp-json/wp/v2";
-
-    // Batch upsert approach: collect all items, then batch insert
-    for (const [tipoId, tipoLabel] of Object.entries(TIPO_IDS)) {
-      let page = 1;
-      let totalPages = 1;
-
-      while (page <= totalPages) {
-        const url = `${WP_API}/atos-legislativo?tipo-de-ato-legislativo=${tipoId}&per_page=100&page=${page}&_fields=id,title,date,link,vereador,ano-do-ato-legislativo`;
-        console.log(`Fetching ${tipoLabel} page ${page}/${totalPages}`);
-
-        const response = await fetch(url, {
-          headers: { "User-Agent": "seuvereador.ai/1.0" },
-        });
-
-        if (!response.ok) {
-          if (response.status === 400 && page > 1) break;
-          errors.push(`HTTP ${response.status} for ${tipoLabel} page ${page}`);
-          break;
-        }
-
-        const tp = response.headers.get("X-WP-TotalPages");
-        if (tp) totalPages = parseInt(tp);
-
-        const posts = await response.json();
-        if (posts.length === 0) break;
-
-        // Build batch for insert
-        const batch = [];
-        for (const post of posts) {
-          const parsed = parseTitle(post.title.rendered);
-          if (!parsed) continue;
-
-          const wpVereadorId = post.vereador?.[0];
-          const autorSlug = wpVereadorId ? WP_VEREADOR_SLUG[wpVereadorId] : undefined;
-          const autorVereadorId = autorSlug ? vereadorMap.get(autorSlug) || null : null;
-          const autorTexto = wpVereadorId
-            ? WP_VEREADOR_NAMES[wpVereadorId] || "Não identificado"
-            : "Não identificado";
-
-          // Try to find description from scraped listing page
-          const titleKey = post.title.rendered
-            .replace(/&nbsp;/g, " ")
-            .replace(/&#8211;/g, "–")
-            .replace(/&#8212;/g, "—")
-            .replace(/&amp;/g, "&")
-            .trim();
-          const descricao = descriptions.get(titleKey) || post.title.rendered;
-
-          // Use WordPress post date but correct the year if it doesn't match
-          // the authoritative year from the title (e.g. "Indicação 551/2025")
-          // WP date is when the post was published, NOT when the act happened
-          const wpDate = post.date.split("T")[0]; // e.g. "2025-11-06"
-          const wpYear = parseInt(wpDate.slice(0, 4));
-          let dataFinal = wpDate;
-          if (wpYear !== parsed.ano) {
-            // Year mismatch: WP date year differs from act year
-            // Use Jan 1 of the correct year as fallback since we don't have the real date
-            dataFinal = `${parsed.ano}-01-01`;
-            console.log(`Date fix: ${parsed.tipo} ${parsed.numero}/${parsed.ano} — WP date ${wpDate} → ${dataFinal}`);
-          }
-
+    for (const [codigoStr, tipo] of Object.entries(TIPOS)) {
+      const codigo = Number(codigoStr);
+      try {
+        await delay(800);
+        const atos = await scrapeCenti(codigo);
+        const batch: any[] = [];
+        for (const ato of atos) {
+          // "INDICAÇÃO Nº 551/2025" -> numero 551, ano 2025
+          const numMatch = ato.descricao.match(/(\d+)\s*\/\s*(\d{4})/);
+          if (!numMatch) continue;
+          const numero = parseInt(numMatch[1]);
+          const ano = parseInt(numMatch[2]);
+          const autorTexto = extrairAutor(ato.descricao) || extrairAutor(ato.observacao);
           batch.push({
-            tipo: parsed.tipo,
-            numero: parsed.numero,
-            ano: parsed.ano,
-            data: dataFinal,
-            descricao,
-            autor_texto: autorTexto,
-            autor_vereador_id: autorVereadorId,
-            fonte_url: post.link,
+            tipo,
+            numero,
+            ano,
+            data: toIsoDate(ato.data),
+            descricao: (ato.observacao || ato.descricao).slice(0, 2000),
+            autor_texto: autorTexto || "Não identificado",
+            autor_vereador_id: matchVereador(autorTexto),
+            fonte_url: ato.documento_url,
           });
         }
-
-        if (batch.length > 0) {
-          // Use upsert with conflict on (tipo, numero, ano)
-          const { data: upserted, error } = await supabase
+        // dedup por chave unica (tipo,numero,ano): a fonte pode repetir a linha
+        const seen = new Set<string>();
+        const deduped = batch.filter((b) => {
+          const k = `${b.tipo}|${b.numero}|${b.ano}`;
+          if (seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        });
+        if (deduped.length) {
+          const { error } = await supabase
             .from("atuacao_parlamentar")
-            .upsert(batch, { onConflict: "tipo,numero,ano", ignoreDuplicates: true })
-            .select("id");
-
-          if (error) {
-            errors.push(`Batch insert ${tipoLabel} page ${page}: ${error.message}`);
-            console.error("Batch error:", error.message);
-          } else {
-            const insertedCount = upserted?.length || 0;
-            newCount += insertedCount;
-            skippedCount += batch.length - insertedCount;
-            console.log(`${tipoLabel} page ${page}: ${insertedCount} new, ${batch.length - insertedCount} skipped`);
-          }
+            .upsert(deduped, { onConflict: "tipo,numero,ano" });
+          if (error) errors.push(`${tipo}: ${error.message}`);
+          else total += deduped.length;
         }
-
-        page++;
-        if (page <= totalPages) {
-          await new Promise((r) => setTimeout(r, 200));
-        }
+      } catch (e) {
+        errors.push(`tipo ${codigo}: ${(e as Error).message?.slice(0, 120)}`);
       }
     }
 
     if (logId) {
       await supabase.from("sync_log").update({
-        status: errors.length > 0 ? "partial" : "success",
-        detalhes: { new_count: newCount, skipped: skippedCount, errors: errors.slice(0, 20) },
+        status: errors.length ? "partial" : "success",
+        detalhes: { upserted: total, errors: errors.slice(0, 20) },
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
 
-    return new Response(
-      JSON.stringify({ success: true, new: newCount, skipped: skippedCount, errors: errors.slice(0, 10) }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (error) {
-    console.error("Sync atuacao error:", error);
+    return new Response(JSON.stringify({ success: true, upserted: total, errors: errors.slice(0, 10) }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (e) {
     if (logId) {
       await supabase.from("sync_log").update({
         status: "error",
-        detalhes: { error: error.message, new_so_far: newCount, errors },
+        detalhes: { error: (e as Error).message },
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
-    return new Response(
-      JSON.stringify({ success: false, error: error.message, new_so_far: newCount }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    console.error("sync-atuacao error:", e);
+    return new Response(JSON.stringify({ success: false, error: e instanceof Error ? e.message : "erro" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
