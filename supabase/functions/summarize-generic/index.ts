@@ -66,11 +66,55 @@ async function fetchPdfBase64(rawUrl: string): Promise<string | null> {
   }
 }
 
+const OR_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OR_MODELO = "google/gemini-2.5-flash-lite";
+
+// OpenRouter (provider padrao quando ha saldo): modelo unico travado, sem fallback de
+// provider/modelo, pra nao escalar custo. Mesmo formato OpenAI-compat (texto e file).
+async function chamarOpenRouter(content: unknown, multimodal: boolean): Promise<{ resumo: string } | { erro: number }> {
+  const key = Deno.env.get("OPENROUTER_API_KEY")!;
+  try {
+    const resp = await fetch(OR_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://piracanjuba.ai",
+        "X-Title": "Piracanjuba.ai",
+      },
+      body: JSON.stringify({
+        model: OR_MODELO,
+        messages: [{ role: "user", content }],
+        provider: { allow_fallbacks: false }, // trava de custo
+        ...(multimodal ? { plugins: [{ id: "file-parser", pdf: { engine: "native" } }] } : {}),
+        max_tokens: 800,
+        temperature: 0.3,
+      }),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (resp.ok) {
+      const d = await resp.json();
+      const txt = d?.choices?.[0]?.message?.content?.trim();
+      if (txt) return { resumo: txt };
+      return { erro: 500 };
+    }
+    return { erro: resp.status };
+  } catch (_e) {
+    return { erro: 503 };
+  }
+}
+
 async function resumirComPdf(
   apiKey: string,
   b64: string,
   prompt: string
 ): Promise<{ resumo: string } | { erro: number }> {
+  if (Deno.env.get("OPENROUTER_API_KEY")) {
+    return chamarOpenRouter([
+      { type: "text", text: prompt },
+      { type: "file", file: { filename: "documento.pdf", file_data: "data:application/pdf;base64," + b64 } },
+    ], true);
+  }
   let ultimo = 0;
   for (const model of MODELOS) {
     try {
@@ -109,6 +153,9 @@ async function resumirComTexto(
   apiKey: string,
   prompt: string
 ): Promise<{ resumo: string } | { erro: number }> {
+  if (Deno.env.get("OPENROUTER_API_KEY")) {
+    return chamarOpenRouter(prompt, false);
+  }
   let ultimo = 0;
   for (const model of MODELOS) {
     try {
