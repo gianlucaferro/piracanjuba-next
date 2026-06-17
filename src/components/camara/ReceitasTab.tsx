@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCamaraOrcamento, type CamaraOrcamento } from "@/data/camaraApi";
-import { TrendingUp, Sparkles, Download, ExternalLink, Info } from "lucide-react";
+import { TrendingUp, Sparkles, Download, ExternalLink, BookOpen, ChevronDown } from "lucide-react";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
 import { formatCurrency } from "@/lib/formatters";
 import { downloadCSV } from "@/lib/csvExport";
@@ -49,13 +49,39 @@ export default function ReceitasTab() {
 
   return (
     <div className="container py-4 space-y-4">
-      <div className="rounded-lg border border-border/60 bg-muted/40 p-3 flex gap-2">
-        <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          A Câmara não possui receita própria: é mantida pelo <strong>duodécimo</strong> repassado mensalmente pela Prefeitura.
-          Abaixo está o orçamento da Câmara (função Legislativa) e sua execução, conforme declarado ao SICONFI / Tesouro Nacional.
-        </p>
-      </div>
+      <details open className="rounded-lg border border-primary/20 bg-primary/5 overflow-hidden">
+        <summary className="flex items-center gap-2 cursor-pointer select-none p-3 text-sm font-semibold text-foreground hover:bg-primary/10 transition-colors">
+          <BookOpen className="w-4 h-4 text-primary shrink-0" />
+          O que é o duodécimo? Como funciona?
+          <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto transition-transform [[open]_&]:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="px-4 pb-4 pt-1 space-y-3 text-xs text-muted-foreground leading-relaxed border-t border-primary/10">
+          <p>
+            <strong className="text-foreground">Duodécimo</strong> quer dizer &quot;a duodécima parte&quot;, ou seja, 1/12.
+            É a parcela mensal que a Prefeitura é obrigada a repassar à Câmara para custear o funcionamento do Legislativo.
+            A Câmara não cobra impostos nem tem receita própria: vive desse repasse.
+          </p>
+          <div>
+            <p className="font-semibold text-foreground mb-1">Como funciona</p>
+            <ul className="space-y-1 list-disc pl-4">
+              <li>Todo ano, o orçamento do município (a Lei Orçamentária) fixa quanto a Câmara vai receber no exercício. Esse total é, em regra, dividido em 12 parcelas mensais iguais (daí o nome).</li>
+              <li>O repasse deve chegar até o <strong className="text-foreground">dia 20 de cada mês</strong> (art. 29-A da Constituição). Atrasar, reter ou repassar a menos é crime de responsabilidade do prefeito.</li>
+              <li>Há um teto: a despesa total da Câmara não pode passar de <strong className="text-foreground">7% da receita</strong> tributária do município apurada no ano anterior (limite para municípios de até 100 mil habitantes, caso de Piracanjuba).</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground mb-1">Como deve ser usado</p>
+            <ul className="space-y-1 list-disc pl-4">
+              <li>Só para manter o Legislativo: folha de pagamento de vereadores e servidores, diárias, contratos, materiais e estrutura da Câmara.</li>
+              <li>No máximo <strong className="text-foreground">70% do duodécimo</strong> pode ir para a folha de pagamento (art. 29-A, §1º). Estourar esse limite é crime de responsabilidade do presidente da Câmara.</li>
+              <li>O que sobra (não executado) ao fim do ano costuma voltar ao caixa da Prefeitura.</li>
+            </ul>
+          </div>
+          <p className="pt-1 border-t border-primary/10 text-[11px]">
+            Os valores abaixo são o orçamento da Câmara (função Legislativa) e sua execução, conforme declarado ao SICONFI / Tesouro Nacional.
+          </p>
+        </div>
+      </details>
 
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-foreground">Orçamento da Câmara (duodécimo)</p>
