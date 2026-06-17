@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: log } = await sb.from("sync_log")
-    .insert({ tipo: "camara-despesas", status: "running", detalhes: {} })
+    .insert({ tipo: "despesas", status: "running", detalhes: {} })
     .select("id").single();
   const logId = log?.id;
 
@@ -117,29 +117,29 @@ Deno.serve(async (req) => {
 
           // Check existing
           const mesStr = `${ano}-${String(mes).padStart(2, "0")}`;
-          const { data: existing } = await sb.from("camara_despesas")
-            .select("credor, data_pagamento, valor")
-            .gte("data_pagamento", `${mesStr}-01`)
-            .lte("data_pagamento", `${mesStr}-31`);
+          // Despesas da PREFEITURA vao pra tabela `despesas` (lida pela aba da prefeitura).
+          // Antes iam por engano pra camara_despesas (copia de uma funcao da camara).
+          const { data: existing } = await sb.from("despesas")
+            .select("favorecido, data, valor")
+            .gte("data", `${mesStr}-01`)
+            .lte("data", `${mesStr}-31`);
 
           const existingKeys = new Set(
-            (existing || []).map(e => `${e.credor}|${e.data_pagamento}|${e.valor}`)
+            (existing || []).map(e => `${e.favorecido}|${e.data}|${e.valor}`)
           );
 
           const toInsert = scraped
             .filter(d => !existingKeys.has(`${d.favorecido}|${d.data}|${d.valor}`))
             .map(d => ({
-              ano,
-              mes,
-              credor: d.favorecido,
-              data_pagamento: d.data,
+              data: d.data,
+              favorecido: d.favorecido,
               valor: d.valor,
               descricao: d.descricao,
               fonte_url: `${BASE_URL}/despesas/orgao`,
             }));
 
           if (toInsert.length > 0) {
-            const { error } = await sb.from("camara_despesas").insert(toInsert);
+            const { error } = await sb.from("despesas").insert(toInsert);
             if (error) errors.push(`Insert despesas orgao${orgao}/${mes}: ${error.message}`);
             else newCount += toInsert.length;
           }
