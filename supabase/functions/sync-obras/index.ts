@@ -17,6 +17,16 @@ function parseBRL(str: string): number | null {
   return isNaN(num) ? null : num;
 }
 
+// Decodifica entidades HTML (&#xC3; etc) pra obra nao mostrar codigo cru na UI.
+function decodeEntities(s: string | null): string | null {
+  if (!s) return s;
+  return s
+    .replace(/&#[xX]([0-9A-Fa-f]+);/g, (_m, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_m, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ");
+}
+
 interface ScrapedObra {
   nome: string;
   local: string | null;
@@ -46,9 +56,9 @@ async function findObrasFromContratos(sb: any): Promise<ScrapedObra[]> {
     const isObra = keywords.some(k => objeto.includes(k));
     if (isObra) {
       obras.push({
-        nome: c.objeto || `Contrato ${c.numero}`,
+        nome: decodeEntities(c.objeto) || `Contrato ${c.numero}`,
         local: null,
-        empresa: c.empresa,
+        empresa: decodeEntities(c.empresa),
         valor: c.valor,
         status: c.status === "ativo" ? "em_andamento" : "concluida",
         fonte_url: c.fonte_url || `${CENTI_URL}/contratos`,
