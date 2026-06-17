@@ -53,9 +53,10 @@ Deno.serve(async (req) => {
     // "desde" (ex "2021-01-01"): recorta a analise a contratos com vigencia_inicio >= desde.
     const desde = typeof body?.desde === "string" ? body.desde : null;
 
-    // Provider por chamada: body.provider="openrouter" usa o saldo pago (sem rate limit
-    // apertado, delay curto) pro backfill manual. O cron usa Gemini free por padrao.
-    const useOR = body?.provider === "openrouter" && Deno.env.get("OPENROUTER_API_KEY");
+    // Provider: por padrao usa OpenRouter quando ha OPENROUTER_API_KEY (saldo pago, sem
+    // rate limit, delay curto). body.provider="gemini" força o free tier. Reverter tudo
+    // pro Gemini free: remover o secret OPENROUTER_API_KEY.
+    const useOR = body?.provider !== "gemini" && Deno.env.get("OPENROUTER_API_KEY");
     const aiUrl = useOR
       ? "https://openrouter.ai/api/v1/chat/completions"
       : "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
@@ -102,7 +103,7 @@ Deno.serve(async (req) => {
     const toAnalyze = allContratos
       .filter((c: any) => !desde || (c.vigencia_inicio && c.vigencia_inicio >= desde))
       .filter((c: any) => !alreadyAnalyzed.has(chaveContrato(c.numero, c.vigencia_inicio, c.empresa)))
-      .slice(0, batchSize);
+      .slice(0, useOR ? Math.min(batchSize, 8) : batchSize); // cap no OpenRouter: cabe no limite de 150s da edge function
 
     if (toAnalyze.length === 0) {
       return new Response(
@@ -242,6 +243,8 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
               },
             ],
             tool_choice: { type: "function", function: { name: "classificar_risco" } },
+            // Trava de custo: no OpenRouter, nao cai pra outro provider/modelo mais caro.
+            ...(useOR ? { provider: { allow_fallbacks: false } } : {}),
           }),
         });
 

@@ -108,6 +108,8 @@ async function extrairPresenca(
       },
     ],
     plugins: [{ id: "file-parser", pdf: { engine: "native" } }],
+    // Trava de custo: nao deixa o OpenRouter cair pra outro provider/modelo mais caro.
+    provider: { allow_fallbacks: false },
   };
   try {
     const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {

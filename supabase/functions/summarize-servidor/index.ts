@@ -97,10 +97,10 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
 
-    // Provider por chamada: body.provider="openrouter" usa o saldo pago do OpenRouter
-    // (sem rate limit apertado), pro backfill manual. Sem isso, Gemini free tier (o que
-    // o cron e o on-demand usam por padrao).
-    const useOR = body?.provider === "openrouter" && OPENROUTER_API_KEY;
+    // Provider: por padrao usa OpenRouter quando ha OPENROUTER_API_KEY (consumir saldo
+    // pago, sem rate limit). body.provider="gemini" força o free tier. Pra reverter tudo
+    // pro Gemini free: basta remover o secret OPENROUTER_API_KEY.
+    const useOR = body?.provider !== "gemini" && OPENROUTER_API_KEY;
     const aiUrl = useOR
       ? "https://openrouter.ai/api/v1/chat/completions"
       : "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
@@ -130,6 +130,8 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
             { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
             { role: "user", content: prompt },
           ],
+          // Trava de custo: no OpenRouter, nao deixa cair pra outro provider/modelo mais caro.
+          ...(useOR ? { provider: { allow_fallbacks: false } } : {}),
         }),
       });
 
