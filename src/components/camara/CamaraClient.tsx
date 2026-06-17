@@ -39,7 +39,7 @@ const tabs = [
   { value: "transmissao", label: "Transmissão", icon: Video },
   { value: "licitacoes", label: "Licitações", icon: Gavel },
   { value: "despesas", label: "Despesas", icon: Receipt },
-  { value: "receitas", label: "Receitas", icon: TrendingUp },
+  { value: "receitas", label: "Orçamento", icon: TrendingUp },
   { value: "diarias", label: "Diárias", icon: Plane },
 ];
 

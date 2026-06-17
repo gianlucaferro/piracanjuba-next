@@ -265,17 +265,26 @@ Deno.serve(async (req) => {
       for (let mes = 1; mes <= 12; mes++) {
         try {
           await delay(300);
-          const data = await centiPost("GetReceita", { Ano: ano, Mes: mes, IdOrgao: 3 });
+          // API exige o campo "Orgao" (nao "IdOrgao", que retorna erro de campo obrigatorio).
+          const data = await centiPost("GetReceita", { Ano: ano, Mes: mes, Orgao: 3 });
           const items = extractItems(data);
           if (items.length > 0) {
-            const totalPrevisto = items.reduce((s: number, i: any) => s + (i.ValorPrevisto || i.Orcado || 0), 0);
-            const totalArrecadado = items.reduce((s: number, i: any) => s + (i.ValorArrecadado || i.Realizado || i.Valor || 0), 0);
-            const descricao = items.map((i: any) => i.Descricao || i.Categoria).filter(Boolean).join("; ").slice(0, 500) || `Receita ${mes}/${ano}`;
-            const { error } = await sb.from("camara_receitas").upsert({
-              ano, mes, descricao, valor_previsto: totalPrevisto || null, valor_arrecadado: totalArrecadado || null,
-            }, { onConflict: "ano,mes" });
-            if (error) errors.push(`Rec: ${error.message}`);
-            else counts.receitas++;
+            // A API devolve a arvore de receita (RECEITAS CORRENTES -> sub-elementos).
+            // Somar so os totais de nivel 1 ("X.0.0.0.00.0.0") evita dobrar pai + filhos.
+            const topo = items.filter((i: any) => /^\d+(\.0+){6}$/.test(String(i.CodigoElemento || "")));
+            const base = topo.length ? topo : items;
+            const totalPrevisto = base.reduce((s: number, i: any) => s + (i.ValorOrcado || i.ValorPrevisto || 0), 0);
+            const totalArrecadado = base.reduce((s: number, i: any) => s + (i.ValoReceitaAcumuladoMes || i.ValorArrecadado || i.Valor || 0), 0);
+            // A camara nao tem receita propria (vive de duodecimo) e a API retorna zeros.
+            // So grava se houver valor real, pra nao poluir a aba com linhas R$ 0,00.
+            if (totalPrevisto > 0 || totalArrecadado > 0) {
+              const descricao = base.map((i: any) => i.DescricaoElemento || i.Descricao).filter(Boolean).join("; ").slice(0, 500) || `Receita ${mes}/${ano}`;
+              const { error } = await sb.from("camara_receitas").upsert({
+                ano, mes, descricao, valor_previsto: totalPrevisto || null, valor_arrecadado: totalArrecadado || null,
+              }, { onConflict: "ano,mes" });
+              if (error) errors.push(`Rec: ${error.message}`);
+              else counts.receitas++;
+            }
           }
         } catch { /* month may not have data */ }
       }
@@ -295,7 +304,7 @@ Deno.serve(async (req) => {
       });
       const items = extractItems(data);
       for (const item of items) {
-        const centiId = `dia-${item.Id || item.id || `${item.Nome}-${item.Data}`}`;
+        const centiId = `dia-${item.Id || item.id || `${item.Credor}-${item.Data}`}`;
         const rawDate = item.Data || item.DataViagem || null;
         let isoDate: string | null = null;
         if (rawDate) {
@@ -305,10 +314,10 @@ Deno.serve(async (req) => {
         }
         const { error } = await sb.from("camara_diarias").upsert({
           centi_id: centiId, data: isoDate,
-          beneficiario: item.Nome || item.Servidor || item.Beneficiario || null,
+          beneficiario: item.Credor || item.Nome || item.Servidor || item.Beneficiario || null,
           cargo: item.Cargo || item.Funcao || null,
-          destino: item.Destino || null,
-          motivo: item.Motivo || item.Objetivo || null,
+          destino: item.Destino || item.CidadeDestino || null,
+          motivo: item.Objetivo || item.Motivo || null,
           valor: item.Valor || item.ValorDiaria || null,
         }, { onConflict: "centi_id" });
         if (error) errors.push(`Dia: ${error.message}`);

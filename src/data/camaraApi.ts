@@ -49,6 +49,15 @@ export type CamaraReceita = {
   fonte_url: string | null;
 };
 
+export type CamaraOrcamento = {
+  ano: number;
+  dotacao: number | null;
+  liquidada: number | null;
+  periodo_referencia: number | null;
+  fonte: string | null;
+  fonte_url: string | null;
+};
+
 export type CamaraDiaria = {
   id: string;
   beneficiario: string | null;
@@ -108,6 +117,15 @@ export async function fetchCamaraReceitas(ano?: number): Promise<CamaraReceita[]
   const { data, error } = await query.order("mes", { ascending: true });
   if (error) throw error;
   return (data || []) as CamaraReceita[];
+}
+
+export async function fetchCamaraOrcamento(): Promise<CamaraOrcamento[]> {
+  const { data, error } = await supabase
+    .from("camara_orcamento")
+    .select("*")
+    .order("ano", { ascending: false });
+  if (error) throw error;
+  return (data || []) as CamaraOrcamento[];
 }
 
 export async function fetchCamaraDiarias(): Promise<CamaraDiaria[]> {

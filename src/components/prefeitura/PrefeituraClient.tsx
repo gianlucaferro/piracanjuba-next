@@ -38,6 +38,7 @@ import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditi
 import { downloadCSV } from "@/lib/csvExport";
 import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
 
 function EmptyState({ icon: Icon, title, description, fonteUrl }: {
   icon: React.ElementType; title: string; description: string; fonteUrl?: string;
@@ -523,6 +524,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
 
 function GastosTab() {
   const { data, isLoading } = useQuery({ queryKey: ["despesas"], queryFn: fetchDespesas });
+  const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
   if (isLoading) return <div className="stat-card animate-pulse h-40" />;
   if (!data?.length) {
     return <EmptyState icon={DollarSign} title="Sem dados de despesas"
@@ -530,26 +532,48 @@ function GastosTab() {
       fonteUrl="https://piracanjuba.centi.com.br/" />;
   }
   return (
-    <div className="space-y-2">
-      {data.map((d) => (
-        <div key={d.id} className="stat-card flex items-center justify-between">
-          <div>
-            <p className="font-medium text-foreground text-sm">{d.favorecido || "Sem favorecido"}</p>
-            <p className="text-xs text-muted-foreground">{d.descricao}</p>
-            <p className="text-xs text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>
+    <>
+      <div className="space-y-2">
+        {data.map((d) => (
+          <div key={d.id} className="stat-card flex items-center justify-between">
+            <div>
+              <p className="font-medium text-foreground text-sm">{d.favorecido || "Sem favorecido"}</p>
+              {d.descricao && <p className="text-xs text-muted-foreground">{d.descricao}</p>}
+              <p className="text-xs text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>
+              <button
+                onClick={() =>
+                  requestSummary(
+                    d.id,
+                    "Despesa da Prefeitura",
+                    `- Favorecido: ${d.favorecido || "não informado"}\n- Descrição: ${d.descricao || "não informada"}\n- Data: ${d.data ? new Date(d.data).toLocaleDateString("pt-BR") : "não informada"}\n- Valor: ${d.valor != null ? formatCurrency(d.valor) : "não informado"}`,
+                    `Despesa - ${d.favorecido || "Sem favorecido"}`,
+                  )
+                }
+                className="text-[11px] text-primary/70 hover:text-primary flex items-center gap-1 mt-1"
+              >
+                <Sparkles className="w-3 h-3" /> Resumo IA
+              </button>
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-foreground">{formatCurrency(d.valor)}</p>
+              {d.fonte_url && (
+                <a href={d.fonte_url} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline flex items-center gap-1 justify-end">
+                  <ExternalLink className="w-3 h-3" /> Fonte
+                </a>
+              )}
+            </div>
           </div>
-          <div className="text-right">
-            <p className="font-bold text-foreground">{formatCurrency(d.valor)}</p>
-            {d.fonte_url && (
-              <a href={d.fonte_url} target="_blank" rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline flex items-center gap-1 justify-end">
-                <ExternalLink className="w-3 h-3" /> Fonte
-              </a>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <AISummaryDialog
+        open={!!selectedItem}
+        onOpenChange={(open) => !open && close()}
+        title={selectedItem?.title || ""}
+        resumo={resumo}
+        loading={loading}
+      />
+    </>
   );
 }
 
