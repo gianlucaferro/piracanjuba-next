@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
   BarChart3,
+  BookOpen,
   Building2,
   HeartHandshake,
   Home,
@@ -40,6 +41,7 @@ const moreNav: NavItem[] = [
   { to: "/plantao-farmacias", label: "Plantão Farmácias", icon: Pill },
   { to: "/compra-e-venda", label: "Compra e Venda PBA", icon: Package },
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
+  { to: "/historia-pba", label: "História PBA", icon: BookOpen },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];
 

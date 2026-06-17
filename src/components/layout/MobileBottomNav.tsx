@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   BarChart3,
+  BookOpen,
   Home,
   Landmark,
   Building2,
@@ -33,6 +34,7 @@ const mobileMoreNav = [
   { to: "/contatos", label: "Contatos Úteis", icon: Phone },
   { to: "/compra-e-venda", label: "Compra e Venda PBA", icon: Package },
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
+  { to: "/historia-pba", label: "História PBA", icon: BookOpen },
   { to: "/anuncie", label: "Anuncie", icon: HeartHandshake },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];
