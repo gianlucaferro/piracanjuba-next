@@ -147,6 +147,12 @@ verify_jwt = false
 [functions.analyze-contrato-risco]
 verify_jwt = false
 
+[functions.backfill-contrato-objeto]
+verify_jwt = false
+
+[functions.backfill-servidor-resumos]
+verify_jwt = false
+
 [functions.send-push]
 verify_jwt = false
 
