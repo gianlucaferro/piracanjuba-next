@@ -1,20 +1,35 @@
 "use client";
 
 import { useMemo } from "react";
-import { Trophy } from "lucide-react";
+import { Trophy, Info } from "lucide-react";
 import Link from "next/link";
-import type { AtuacaoParlamentar, Vereador } from "@/data/api";
+import type { AtuacaoParlamentar, Projeto, Vereador } from "@/data/api";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+// Pesos por tipo de proposicao: projeto de lei (produz norma) pesa mais que indicacao
+// (mero pedido ao Executivo, sem forca de lei).
+const PESO = {
+  projetoLei: 5,
+  projetoOutro: 3, // Projeto de Resolucao / Decreto Legislativo
+  requerimento: 2,
+  indicacao: 1,
+  mocao: 1,
+} as const;
 
 type RankingEntry = {
   name: string;
   slug?: string;
-  indicacoes: number;
+  projetosLei: number;
+  projetosOutros: number;
   requerimentos: number;
-  total: number;
+  indicacoes: number;
+  mocoes: number;
+  score: number;
 };
 
 interface RankingChartProps {
   atuacoes: AtuacaoParlamentar[];
+  projetos: Projeto[];
   vereadores: Vereador[];
   show: boolean;
   onToggle: (v: boolean) => void;
@@ -22,36 +37,68 @@ interface RankingChartProps {
   isError?: boolean;
 }
 
-export function useRankingData(atuacoes: AtuacaoParlamentar[], vereadores: Vereador[]): RankingEntry[] {
+export function useRankingData(
+  atuacoes: AtuacaoParlamentar[],
+  projetos: Projeto[],
+  vereadores: Vereador[],
+): RankingEntry[] {
   return useMemo(() => {
     const vereadorMap = new Map<string, { nome: string; slug: string }>();
     vereadores.forEach((v) => vereadorMap.set(v.id, { nome: v.nome, slug: v.slug }));
 
     const map = new Map<string, RankingEntry>();
-    atuacoes.forEach((a) => {
-      if (a.tipo === "Moção") return;
-      const vInfo = a.autor_vereador_id ? vereadorMap.get(a.autor_vereador_id) : undefined;
-      const nome = vInfo?.nome || a.autor_texto;
-      const slug = vInfo?.slug;
-      if (!map.has(nome)) map.set(nome, { name: nome, slug, indicacoes: 0, requerimentos: 0, total: 0 });
-      const entry = map.get(nome)!;
-      if (a.tipo === "Indicação") entry.indicacoes++;
-      else if (a.tipo === "Requerimento") entry.requerimentos++;
-      entry.total = entry.indicacoes + entry.requerimentos;
+    // So atribui a vereadores identificados (exclui projetos de autoria do Executivo).
+    const getEntry = (vereadorId: string | null) => {
+      if (!vereadorId) return null;
+      const info = vereadorMap.get(vereadorId);
+      if (!info) return null;
+      const key = info.slug || info.nome;
+      if (!map.has(key)) {
+        map.set(key, {
+          name: info.nome, slug: info.slug,
+          projetosLei: 0, projetosOutros: 0, requerimentos: 0, indicacoes: 0, mocoes: 0, score: 0,
+        });
+      }
+      return map.get(key)!;
+    };
+
+    projetos.forEach((p) => {
+      const e = getEntry(p.autor_vereador_id);
+      if (!e) return;
+      if (p.tipo === "Projeto de Lei") e.projetosLei++;
+      else e.projetosOutros++; // Resolucao, Decreto Legislativo
     });
-    return Array.from(map.values()).sort((a, b) => b.total - a.total);
-  }, [atuacoes, vereadores]);
+    atuacoes.forEach((a) => {
+      const e = getEntry(a.autor_vereador_id);
+      if (!e) return;
+      if (a.tipo === "Requerimento") e.requerimentos++;
+      else if (a.tipo === "Indicação") e.indicacoes++;
+      else if (a.tipo === "Moção") e.mocoes++;
+    });
+
+    map.forEach((e) => {
+      e.score =
+        e.projetosLei * PESO.projetoLei +
+        e.projetosOutros * PESO.projetoOutro +
+        e.requerimentos * PESO.requerimento +
+        e.indicacoes * PESO.indicacao +
+        e.mocoes * PESO.mocao;
+    });
+
+    return Array.from(map.values()).sort((a, b) => b.score - a.score);
+  }, [atuacoes, projetos, vereadores]);
 }
 
 export default function RankingChart({
   atuacoes,
+  projetos,
   vereadores,
   show,
   onToggle,
   isLoading = false,
   isError = false,
 }: RankingChartProps) {
-  const chartData = useRankingData(atuacoes, vereadores);
+  const chartData = useRankingData(atuacoes, projetos, vereadores);
 
   if (!show) {
     return (
@@ -64,21 +111,33 @@ export default function RankingChart({
     );
   }
 
-  const maxTotal = chartData[0]?.total || 1;
+  const maxScore = chartData[0]?.score || 1;
 
   return (
     <div className="stat-card">
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-1">
         <h2 id="heading-ranking" className="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
           <Trophy className="w-5 h-5 text-accent" /> Ranking de atuação por vereador
         </h2>
-        <button
-          onClick={() => onToggle(false)}
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
+        <button onClick={() => onToggle(false)} className="text-xs text-muted-foreground hover:text-foreground">
           Ocultar
         </button>
       </div>
+      <p className="text-xs text-muted-foreground mb-5 inline-flex items-center gap-1">
+        Índice ponderado por relevância da proposição
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help"><Info className="w-3 h-3" /></span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <p className="text-xs">
+              Cada proposição vale conforme o peso legislativo: Projeto de Lei = {PESO.projetoLei},
+              Resolução/Decreto Legislativo = {PESO.projetoOutro}, Requerimento = {PESO.requerimento},
+              Indicação e Moção = {PESO.indicacao}. Projeto de lei pode virar norma; indicação é só um pedido ao Executivo.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </p>
 
       {isLoading && chartData.length === 0 && (
         <div className="space-y-4" aria-label="Carregando ranking de atuação">
@@ -96,20 +155,22 @@ export default function RankingChart({
       )}
 
       {isError && chartData.length === 0 && !isLoading && (
-        <p className="text-sm text-muted-foreground">
-          Não foi possível carregar o ranking de atuação agora.
-        </p>
+        <p className="text-sm text-muted-foreground">Não foi possível carregar o ranking de atuação agora.</p>
       )}
 
       {!isError && chartData.length === 0 && !isLoading && (
-        <p className="text-sm text-muted-foreground">
-          Dados de atuação parlamentar ainda não disponíveis.
-        </p>
+        <p className="text-sm text-muted-foreground">Dados de atuação parlamentar ainda não disponíveis.</p>
       )}
 
       {chartData.length > 0 && (
         <div className="space-y-3">
           {chartData.map((v, i) => {
+            const segs = [
+              { val: v.projetosLei * PESO.projetoLei, cls: "bg-emerald-600", label: `${v.projetosLei} PL` },
+              { val: v.projetosOutros * PESO.projetoOutro, cls: "bg-blue-500", label: `${v.projetosOutros} proj.` },
+              { val: v.requerimentos * PESO.requerimento, cls: "bg-accent", label: `${v.requerimentos} req.` },
+              { val: (v.indicacoes + v.mocoes) * PESO.indicacao, cls: "bg-primary/40", label: `${v.indicacoes} ind.` },
+            ];
             const content = (
               <div className="flex items-center gap-3">
                 <span
@@ -123,48 +184,30 @@ export default function RankingChart({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between mb-1">
                     <p className="text-sm font-medium text-foreground truncate">{v.name}</p>
-                    <span className="text-sm font-bold text-primary ml-2 flex-shrink-0">{v.total}</span>
+                    <span className="text-sm font-bold text-primary ml-2 flex-shrink-0">{v.score}</span>
                   </div>
-                  <div className="h-5 rounded-full bg-muted overflow-hidden flex" role="img" aria-label={`${v.indicacoes} indicações, ${v.requerimentos} requerimentos`}>
-                    {v.indicacoes > 0 && (
-                      <div
-                        className="h-full bg-primary transition-all duration-500"
-                        style={{ width: `${(v.indicacoes / maxTotal) * 100}%` }}
-                      />
-                    )}
-                    {v.requerimentos > 0 && (
-                      <div
-                        className="h-full bg-accent transition-all duration-500"
-                        style={{ width: `${(v.requerimentos / maxTotal) * 100}%` }}
-                      />
-                    )}
+                  <div className="h-5 rounded-full bg-muted overflow-hidden flex" role="img" aria-label={`Índice ${v.score}`}>
+                    {segs.map((s, k) => s.val > 0 && (
+                      <div key={k} className={`h-full ${s.cls} transition-all duration-500`} style={{ width: `${(s.val / maxScore) * 100}%` }} />
+                    ))}
                   </div>
-                  <div className="flex gap-3 mt-1 text-[10px] text-muted-foreground">
-                    {v.indicacoes > 0 && (
-                      <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-primary inline-block" aria-hidden="true" />
-                        {v.indicacoes} ind.
-                      </span>
-                    )}
-                    {v.requerimentos > 0 && (
-                      <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-accent inline-block" aria-hidden="true" />
-                        {v.requerimentos} req.
-                      </span>
-                    )}
+                  <div className="flex flex-wrap gap-3 mt-1 text-[10px] text-muted-foreground">
+                    {v.projetosLei > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" aria-hidden="true" />{v.projetosLei} proj. de lei</span>}
+                    {v.projetosOutros > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" aria-hidden="true" />{v.projetosOutros} resol./decreto</span>}
+                    {v.requerimentos > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-accent inline-block" aria-hidden="true" />{v.requerimentos} req.</span>}
+                    {v.indicacoes > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary/40 inline-block" aria-hidden="true" />{v.indicacoes} ind.</span>}
+                    {v.mocoes > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary/40 inline-block" aria-hidden="true" />{v.mocoes} moç.</span>}
                   </div>
                 </div>
               </div>
             );
 
             return v.slug ? (
-              <Link key={v.name} href={`/vereadores/${v.slug}`} className="block hover:bg-muted/50 rounded-lg p-1 -m-1 transition-colors">
+              <Link key={v.slug} href={`/vereadores/${v.slug}`} className="block hover:bg-muted/50 rounded-lg p-1 -m-1 transition-colors">
                 {content}
               </Link>
             ) : (
-              <div key={v.name} className="p-1 -m-1">
-                {content}
-              </div>
+              <div key={v.name} className="p-1 -m-1">{content}</div>
             );
           })}
         </div>

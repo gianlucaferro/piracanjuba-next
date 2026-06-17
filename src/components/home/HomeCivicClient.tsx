@@ -142,6 +142,7 @@ export function HomeCivicInsights() {
     isLoading: isLoadingAtuacoes,
     isError: isAtuacoesError,
   } = useQuery({ queryKey: ["home-atuacoes"], queryFn: fetchAllAtuacao });
+  const { data: projetosRanking = [] } = useQuery({ queryKey: ["home-projetos-ranking"], queryFn: fetchProjetos });
   const { data: atividade } = useQuery({ queryKey: ["home-atividade-recente"], queryFn: fetchAtividadeRecente });
 
   return (
@@ -160,6 +161,7 @@ export function HomeCivicInsights() {
 
       <RankingChart
         atuacoes={atuacoes}
+        projetos={projetosRanking}
         vereadores={vereadores}
         show={showRanking}
         onToggle={setShowRanking}
