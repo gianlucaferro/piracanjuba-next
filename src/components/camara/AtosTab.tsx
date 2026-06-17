@@ -65,22 +65,30 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
       )}
 
       <div className="space-y-2">
-        {filtered.map((a) => (
-          <button key={a.id} onClick={() => handleClick(a)} className="stat-card card-hover block w-full text-left">
+        {filtered.map((a) => {
+          const temResumo = typeof a.resumo_ia === "string" && a.resumo_ia.length > 0;
+          const corpo = (
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 {a.numero && <p className="text-xs font-semibold text-primary mb-0.5">Nº {a.numero}</p>}
                 <p className="text-sm text-foreground line-clamp-3">{a.descricao || "Sem descrição"}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  {a.data_publicacao && (
-                    <p className="text-[11px] text-muted-foreground">
-                      {new Date(a.data_publicacao + "T12:00:00").toLocaleDateString("pt-BR")}
+                {a.data_publicacao && (
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {new Date(a.data_publicacao + "T12:00:00").toLocaleDateString("pt-BR")}
+                  </p>
+                )}
+                {temResumo ? (
+                  <div className="mt-2 rounded-md bg-accent/5 border border-accent/15 p-2">
+                    <p className="text-[10px] font-medium text-accent flex items-center gap-1 mb-0.5">
+                      <Sparkles className="w-3 h-3" /> Resumo IA
                     </p>
-                  )}
-                  <p className="text-[11px] text-primary/70 flex items-center gap-1">
+                    <p className="text-xs text-foreground/85 leading-relaxed">{a.resumo_ia}</p>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
                     <Sparkles className="w-3 h-3" /> Clique para resumo IA
                   </p>
-                </div>
+                )}
               </div>
               <div className="flex flex-col items-end shrink-0 gap-1">
                 <Badge variant="secondary" className="text-[10px]">{a.ano}</Badge>
@@ -97,8 +105,15 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
                 )}
               </div>
             </div>
-          </button>
-        ))}
+          );
+          return temResumo ? (
+            <div key={a.id} className="stat-card block w-full text-left">{corpo}</div>
+          ) : (
+            <button key={a.id} onClick={() => handleClick(a)} className="stat-card card-hover block w-full text-left">
+              {corpo}
+            </button>
+          );
+        })}
       </div>
 
       <AISummaryDialog

@@ -1,6 +1,7 @@
 import { pageMetadata, datasetJsonLd, articleJsonLd, SCHEMA_IDS } from "@/lib/seo";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import PrefeituraClient from "@/components/prefeitura/PrefeituraClient";
+import { FinanciadoresExecutivoCard } from "@/components/vereadores/FinanciadoresCampanhaCard";
 
 export const dynamic = "force-dynamic";
 
@@ -237,7 +238,7 @@ export default async function PrefeituraPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(art) }}
         />
       ))}
-      <PrefeituraClient />
+      <PrefeituraClient financiadoresExecutivo={<FinanciadoresExecutivoCard />} />
     </>
   );
 }

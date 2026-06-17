@@ -79,7 +79,7 @@ function formatCurrency(value: number | null) {
 // ===== SUB-TABS =====
 
 
-function ChefiaExecutivo() {
+function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode }) {
   const { data: executivo, isLoading } = useQuery({ queryKey: ["executivo"], queryFn: fetchExecutivo });
   const { data: remuneracoes } = useQuery({ queryKey: ["executivo-remuneracao"], queryFn: fetchExecutivoRemuneracao });
 
@@ -94,6 +94,7 @@ function ChefiaExecutivo() {
   };
 
   return (
+    <div className="space-y-6">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {executivo.map((a) => {
         const rem = getRemuneracao(a.nome);
@@ -175,6 +176,8 @@ function ChefiaExecutivo() {
         </div>
         );
       })}
+    </div>
+      {financiadores}
     </div>
   );
 }
@@ -3271,7 +3274,7 @@ const tabs = [
   { value: "admin", label: "Admin", icon: Settings },
 ];
 
-export default function Prefeitura() {
+export default function Prefeitura({ financiadoresExecutivo }: { financiadoresExecutivo?: React.ReactNode }) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "visao-geral";
@@ -3329,7 +3332,7 @@ export default function Prefeitura() {
           </div>
 
           <TabsContent value="visao-geral"><PrefeituraDestaques /></TabsContent>
-          <TabsContent value="chefia"><ChefiaExecutivo /></TabsContent>
+          <TabsContent value="chefia"><ChefiaExecutivo financiadores={financiadoresExecutivo} /></TabsContent>
           <TabsContent value="secretarias"><SecretariasTab /></TabsContent>
           <TabsContent value="despesas"><GastosTab /></TabsContent>
           <TabsContent value="tcm-go"><TCMTab /></TabsContent>

@@ -1,12 +1,13 @@
-import { HandCoins, Building2, User, ExternalLink } from "lucide-react";
+import { HandCoins, Building2, User, ExternalLink, Info } from "lucide-react";
 import Link from "next/link";
-import { fetchDoadoresPorVereadorSlug } from "@/lib/data/tse-doadores";
+import {
+  fetchDoadoresPorVereadorSlug,
+  fetchDoadoresDoExecutivo,
+  type DoadoresResult,
+} from "@/lib/data/tse-doadores";
 
 function fmtMoeda(n: number) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(n);
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 }
 
 function mascararCpf(s: string) {
@@ -18,14 +19,13 @@ function mascararCpf(s: string) {
   return s;
 }
 
-export default async function FinanciadoresCampanhaCard({
-  vereadorSlug,
-}: {
-  vereadorSlug: string;
-}) {
-  const { resumo, topDoadores } = await fetchDoadoresPorVereadorSlug(vereadorSlug);
-
-  // Sem dados ainda — não renderiza (fail-open silencioso até ingestão TSE).
+// Apresentacional: recebe o resultado ja buscado/agregado e renderiza o card.
+function FinanciadoresView({
+  resumo,
+  topDoadores,
+  titulo,
+  subtitulo,
+}: DoadoresResult & { titulo?: string; subtitulo?: string }) {
   if (!resumo || topDoadores.length === 0) return null;
 
   return (
@@ -38,28 +38,29 @@ export default async function FinanciadoresCampanhaCard({
           <HandCoins className="w-5 h-5 text-emerald-600" />
         </div>
         <div className="flex-1">
-          <h3
-            id="financiadores-heading"
-            className="text-base font-semibold text-foreground"
-          >
-            Financiadores de campanha {resumo.ano_eleicao}
+          <h3 id="financiadores-heading" className="text-base font-semibold text-foreground">
+            {titulo || `Financiadores de campanha ${resumo.ano_eleicao}`}
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
             {resumo.total_doacoes} doaç{resumo.total_doacoes > 1 ? "ões" : "ão"} ·{" "}
-            <strong className="text-emerald-700">{fmtMoeda(resumo.total_arrecadado)}</strong>{" "}
-            arrecadado · {resumo.doacoes_pj} PJ · {resumo.doacoes_pf} PF
+            <strong className="text-emerald-700">{fmtMoeda(resumo.total_arrecadado)}</strong> arrecadado ·{" "}
+            {resumo.doacoes_pj} PJ · {resumo.doacoes_pf} PF
           </p>
         </div>
       </header>
 
+      {subtitulo && (
+        <p className="text-[11px] text-muted-foreground leading-relaxed inline-flex items-start gap-1.5 rounded-lg border border-border bg-background/40 p-2">
+          <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+          {subtitulo}
+        </p>
+      )}
+
       <div className="space-y-2">
         {topDoadores.map((d, i) => {
-          const isPj = (d.tipo_doador ?? "").toLowerCase().includes("juridica");
+          const isPj = (d.tipo_doador ?? "").toLowerCase().includes("jurid") || d.cpf_cnpj_doador.replace(/\D/g, "").length === 14;
           return (
-            <div
-              key={d.id}
-              className="flex items-start gap-3 p-3 rounded-lg border border-border bg-background/40"
-            >
+            <div key={d.id} className="flex items-start gap-3 p-3 rounded-lg border border-border bg-background/40">
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
                   isPj ? "bg-blue-500/10 text-blue-700" : "bg-amber-500/10 text-amber-700"
@@ -68,25 +69,17 @@ export default async function FinanciadoresCampanhaCard({
                 #{i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-foreground truncate">
-                  {d.nome_doador}
-                </p>
+                <p className="font-semibold text-sm text-foreground truncate">{d.nome_doador}</p>
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     {isPj ? <Building2 className="w-3 h-3" /> : <User className="w-3 h-3" />}
                     {isPj ? "Pessoa Jurídica" : "Pessoa Física"}
                   </span>
                   <span className="font-mono">{mascararCpf(d.cpf_cnpj_doador)}</span>
-                  {d.dt_receita && (
-                    <span>
-                      {new Date(d.dt_receita).toLocaleDateString("pt-BR")}
-                    </span>
-                  )}
+                  {d.dt_receita && <span>{new Date(d.dt_receita).toLocaleDateString("pt-BR")}</span>}
                 </div>
               </div>
-              <p className="text-sm font-bold text-emerald-700 shrink-0">
-                {fmtMoeda(d.vr_receita)}
-              </p>
+              <p className="text-sm font-bold text-emerald-700 shrink-0">{fmtMoeda(d.vr_receita)}</p>
             </div>
           );
         })}
@@ -100,12 +93,29 @@ export default async function FinanciadoresCampanhaCard({
           rel="noopener noreferrer"
           className="underline hover:text-foreground inline-flex items-center gap-0.5"
         >
-          TSE — Prestação de Contas Eleitorais{" "}
-          <ExternalLink className="w-3 h-3" />
+          TSE · Prestação de Contas Eleitorais <ExternalLink className="w-3 h-3" />
         </Link>{" "}
-        · Dados oficiais públicos · CPFs de pessoas físicas são exibidos
-        mascarados (LGPD).
+        · Dados oficiais públicos · CPFs de pessoas físicas são exibidos mascarados (LGPD).
       </p>
     </section>
+  );
+}
+
+// Vereador (por slug) — usado na pagina /vereadores/[slug].
+export default async function FinanciadoresCampanhaCard({ vereadorSlug }: { vereadorSlug: string }) {
+  const { resumo, topDoadores } = await fetchDoadoresPorVereadorSlug(vereadorSlug);
+  return <FinanciadoresView resumo={resumo} topDoadores={topDoadores} />;
+}
+
+// Executivo (chapa da prefeita) — usado na pagina /prefeitura.
+export async function FinanciadoresExecutivoCard() {
+  const { resumo, topDoadores, nome } = await fetchDoadoresDoExecutivo();
+  return (
+    <FinanciadoresView
+      resumo={resumo}
+      topDoadores={topDoadores}
+      titulo={`Financiadores da campanha ${resumo?.ano_eleicao ?? ""}`.trim()}
+      subtitulo={`Doações declaradas pela chapa de ${nome || "prefeito(a)"}. Prefeito e vice compartilham as finanças de campanha: a prestação de contas é feita pela titular.`}
+    />
   );
 }
