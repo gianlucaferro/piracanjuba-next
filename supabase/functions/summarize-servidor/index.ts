@@ -97,40 +97,54 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY não configurada");
 
-    const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${GEMINI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
+    // Fallback de modelo: cada modelo do free tier tem cota (RPM/RPD) SEPARADA. Se o
+    // gemini-2.5-flash satura (ex: batch do Radar de Risco consumindo a cota), caimos
+    // no lite e depois no 2.0-flash, e o resumo on-demand continua funcionando em vez
+    // de devolver 429 pro cidadao. body.model força um modelo unico (teste A/B).
+    const modelos = body?.model
+      ? [model]
+      : ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
 
-    if (!aiResponse.ok) {
-      const status = aiResponse.status;
-      if (status === 429) {
-        return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em instantes." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+    let resumo = "";
+    let ultimoStatus = 0;
+    for (const m of modelos) {
+      const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GEMINI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: m,
+          messages: [
+            { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
+            { role: "user", content: prompt },
+          ],
+        }),
+      });
+
+      if (aiResponse.ok) {
+        const aiData = await aiResponse.json();
+        resumo = aiData.choices?.[0]?.message?.content || "";
+        if (resumo) break;
       }
-      if (status === 402) {
+      ultimoStatus = aiResponse.status;
+      // 429 (cota) e 503 (sobrecarga) -> tenta o proximo modelo. 402 (creditos) -> aborta.
+      if (aiResponse.status === 402) break;
+    }
+
+    if (!resumo) {
+      if (ultimoStatus === 402) {
         return new Response(JSON.stringify({ error: "Créditos de IA esgotados." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error(`AI error: ${status}`);
+      return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em instantes." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
-
-    const aiData = await aiResponse.json();
-    const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
 
     // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
     if (resumo && resumo !== "Não foi possível gerar o resumo.") {
