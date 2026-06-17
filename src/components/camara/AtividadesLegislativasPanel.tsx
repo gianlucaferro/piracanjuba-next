@@ -101,7 +101,7 @@ export default function AtividadesLegislativasPanel({
                 </div>
               </div>
               {a.descricao_texto && (
-                <p className="text-xs text-foreground/85 leading-relaxed mt-2">
+                <p className="text-sm text-foreground/85 leading-relaxed mt-2">
                   {a.descricao_texto.length > 220
                     ? a.descricao_texto.slice(0, 220) + "..."
                     : a.descricao_texto}

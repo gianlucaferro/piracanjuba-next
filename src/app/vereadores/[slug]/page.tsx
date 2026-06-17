@@ -265,7 +265,7 @@ export default async function VereadorPage({
                       {p.ementa?.slice(0, 240) || "—"}
                     </p>
                     {p.resumo_simples && (
-                      <p className="text-xs text-muted-foreground mt-1 italic">
+                      <p className="text-sm text-foreground/80 mt-1 italic leading-relaxed">
                         {p.resumo_simples}
                       </p>
                     )}
@@ -303,7 +303,7 @@ export default async function VereadorPage({
                 </p>
                 <p className="text-sm text-foreground mt-1">{a.descricao?.slice(0, 240) || "—"}</p>
                 {a.resumo && (
-                  <p className="text-xs text-muted-foreground mt-1 italic">{a.resumo.slice(0, 240)}</p>
+                  <p className="text-sm text-foreground/80 mt-1 italic leading-relaxed">{a.resumo.slice(0, 240)}</p>
                 )}
               </article>
             ))}

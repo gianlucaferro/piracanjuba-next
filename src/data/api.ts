@@ -130,15 +130,17 @@ export async function fetchRemuneracaoByVereador(vereadorId: string): Promise<Re
 export async function fetchProjetosCountByVereador(vereadorId: string) {
   const { data, error } = await supabase
     .from("projetos")
-    .select("status")
+    .select("status, tipo")
     .eq("autor_vereador_id", vereadorId);
   if (error) throw error;
-  const projs = data || [];
+  // Conta apenas Projetos de Lei, pra bater com o ranking. Resoluções e decretos
+  // legislativos aparecem no ranking e na página do vereador, não neste contador.
+  const leis = (data || []).filter((p) => p.tipo === "Projeto de Lei");
   return {
-    apresentados: projs.length,
-    aprovados: projs.filter((p) => p.status === "aprovado").length,
-    recusados: projs.filter((p) => p.status === "recusado").length,
-    tramitacao: projs.filter((p) => p.status === "em_tramitacao").length,
+    apresentados: leis.length,
+    aprovados: leis.filter((p) => p.status === "aprovado").length,
+    recusados: leis.filter((p) => p.status === "recusado").length,
+    tramitacao: leis.filter((p) => p.status === "em_tramitacao").length,
   };
 }
 

@@ -59,7 +59,7 @@ export default function IndicacoesPanel({
               </p>
             </div>
             {i.ementa && (
-              <p className="text-xs text-foreground/85 leading-relaxed mt-1">
+              <p className="text-sm text-foreground/85 leading-relaxed mt-1">
                 {i.ementa}
               </p>
             )}

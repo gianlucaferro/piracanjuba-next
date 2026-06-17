@@ -82,7 +82,7 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
                     <p className="text-[10px] font-medium text-accent flex items-center gap-1 mb-0.5">
                       <Sparkles className="w-3 h-3" /> Resumo IA
                     </p>
-                    <p className="text-xs text-foreground/85 leading-relaxed">{a.resumo_ia}</p>
+                    <p className="text-sm text-foreground/85 leading-relaxed">{a.resumo_ia}</p>
                   </div>
                 ) : (
                   <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">

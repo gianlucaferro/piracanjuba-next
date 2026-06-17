@@ -106,7 +106,7 @@ export default function VereadorCard({ v }: { v: Vereador }) {
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-md bg-muted p-2">
           <p className="text-lg font-bold text-foreground">{projectCounts.apresentados}</p>
-          <p className="text-[11px] text-muted-foreground">Projetos</p>
+          <p className="text-[11px] text-muted-foreground">Projetos de Lei</p>
         </div>
         <div className="rounded-md bg-success/10 p-2">
           <p className="text-lg font-bold text-success">{projectCounts.aprovados}</p>
