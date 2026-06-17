@@ -26,6 +26,29 @@ Deno.serve(async (req) => {
 
     if (error || !decreto) throw new Error("Decreto não encontrado");
 
+    // Cache por conteudo: a chave inclui o que alimenta o resumo (numero + data + ementa).
+    // Ementa e texto longo, entao usamos so os primeiros 80 chars. Se qualquer um desses
+    // dados muda, a chave muda e o resumo se regenera sozinho.
+    const cacheChave = `${decreto_id}:${decreto.numero ?? ""}:${decreto.data_publicacao ?? ""}:${(decreto.ementa ?? "").slice(0, 80)}`;
+    const cacheAno = decreto.data_publicacao
+      ? Number(String(decreto.data_publicacao).slice(0, 4))
+      : new Date().getFullYear();
+
+    const { data: cached } = await supabase
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "decreto")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(
+        JSON.stringify({ success: true, resumo: cached.resumo, cached: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const prompt = `Você é um assistente que explica documentos legais para cidadãos comuns.
 
 Decreto: ${decreto.numero}
@@ -62,6 +85,16 @@ Use linguagem acessível, sem jargão jurídico. Máximo 150 palavras.`;
     const resumo = data.choices?.[0]?.message?.content?.trim() || "Não foi possível gerar resumo.";
 
     await supabase.from("decretos").update({ resumo_ia: resumo }).eq("id", decreto_id);
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar resumo.") {
+      await supabase.from("resumos_ia_cache").upsert({
+        contexto: "decreto",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     return new Response(
       JSON.stringify({ success: true, resumo }),

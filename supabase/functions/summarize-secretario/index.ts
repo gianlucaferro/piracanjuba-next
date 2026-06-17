@@ -35,6 +35,27 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Cache por conteudo: a chave inclui o que alimenta o resumo (nome + secretario +
+    // subsidio + contato). Se qualquer um desses dados muda, a chave muda e o resumo se
+    // regenera sozinho. Assim nunca servimos informacao desatualizada.
+    const cacheChave = `${secretaria_id}:${secretaria.nome ?? ""}:${secretaria.secretario_nome ?? ""}:${secretaria.subsidio ?? 0}:${secretaria.email ?? ""}:${secretaria.telefone ?? ""}`;
+    const cacheAno = new Date().getFullYear();
+
+    const { data: cached } = await sb
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "secretario")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(
+        JSON.stringify({ secretaria, resumo: cached.resumo, cached: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const prompt = `Você é um assistente de transparência pública municipal de Piracanjuba, GO.
 Gere um resumo curto (3-5 frases) sobre esta secretaria e seu(a) secretário(a), explicando de forma acessível ao cidadão:
 - O que faz a "${secretaria.nome}"
@@ -58,7 +79,7 @@ Responda em português, de forma clara e objetiva. Não invente dados.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         messages: [
           { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
           { role: "user", content: prompt },
@@ -83,6 +104,16 @@ Responda em português, de forma clara e objetiva. Não invente dados.`;
 
     const aiData = await aiResponse.json();
     const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await sb.from("resumos_ia_cache").upsert({
+        contexto: "secretario",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     return new Response(
       JSON.stringify({ secretaria, resumo }),

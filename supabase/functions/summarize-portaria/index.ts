@@ -31,6 +31,28 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Cache por conteudo: a chave inclui os campos que alimentam o resumo (numero,
+    // data, ementa). Se qualquer um muda, a chave muda e o resumo se regenera sozinho.
+    // Ementa pode ser longa: usa so os primeiros 80 chars.
+    const cacheChave = `${portaria_id}:${portaria.numero ?? ""}:${portaria.data_publicacao ?? ""}:${String(portaria.ementa ?? "").slice(0, 80)}`;
+    const cacheAno = portaria.data_publicacao
+      ? Number(String(portaria.data_publicacao).slice(0, 4))
+      : new Date().getFullYear();
+
+    const { data: cached } = await supabase
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "portaria")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(JSON.stringify({ resumo: cached.resumo, cached: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const prompt = `Você é um assistente que explica atos administrativos municipais de Piracanjuba-GO para cidadãos comuns.
 
 Portaria: ${portaria.numero}
@@ -55,6 +77,16 @@ Escreva um resumo de 2-3 frases em linguagem simples, explicando o impacto prát
     if (!aiResp.ok) throw new Error(`AI error: ${aiResp.status}`);
     const aiData = await aiResp.json();
     const resumo = aiData.choices?.[0]?.message?.content?.trim() || "Não foi possível gerar o resumo.";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await supabase.from("resumos_ia_cache").upsert({
+        contexto: "portaria",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     await supabase.from("portarias").update({ resumo_ia: resumo }).eq("id", portaria_id);
 

@@ -49,6 +49,28 @@ Deno.serve(async (req) => {
       ? Number(obra.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
       : "não informado";
 
+    // Cache por conteudo: a chave inclui o que alimenta o resumo (nome + local + empresa +
+    // valor + status). Se qualquer um desses campos muda, a chave muda e o resumo se
+    // regenera sozinho. Assim nunca servimos resumo desatualizado.
+    const cacheChave = `${obra_id}:${(obra.nome ?? "").slice(0, 80)}:${obra.local ?? ""}:${obra.empresa ?? ""}:${obra.valor ?? 0}:${obra.status ?? ""}`;
+    const cacheAno = obra.ano
+      ? Number(obra.ano)
+      : new Date().getFullYear();
+
+    const { data: cached } = await supabase
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "obra")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(JSON.stringify({ resumo: cached.resumo, cached: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const prompt = `Você é um assistente de transparência pública municipal de Piracanjuba, Goiás.
 Analise a obra pública abaixo e gere um resumo claro e acessível para o cidadão comum, explicando:
 1. O que foi adquirido ou construído
@@ -72,7 +94,7 @@ Responda em português, de forma objetiva, em no máximo 4 frases. Não invente 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         messages: [
           { role: "system", content: "Você é um especialista em transparência pública municipal." },
           { role: "user", content: prompt },
@@ -103,6 +125,16 @@ Responda em português, de forma objetiva, em no máximo 4 frases. Não invente 
 
     const aiData = await aiResponse.json();
     const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await supabase.from("resumos_ia_cache").upsert({
+        contexto: "obra",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     return new Response(JSON.stringify({ resumo }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

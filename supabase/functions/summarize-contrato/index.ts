@@ -28,7 +28,7 @@ const PROMPT_VERSAO = 2; // bump para invalidar cache em mudanças de prompt
 
 // Modelos Gemini em ordem de preferência. Se primeiro falhar com 429/500, tenta próximo.
 const GEMINI_MODELS_FALLBACK = [
-  "gemini-3-flash-preview",
+  "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
   "gemini-2.0-flash",
 ] as const;

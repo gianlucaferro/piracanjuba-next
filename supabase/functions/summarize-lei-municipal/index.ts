@@ -48,6 +48,29 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Cache por conteudo: a chave inclui os campos que alimentam o resumo (numero,
+    // data, ementa). Se qualquer um muda, a chave muda e o resumo se regenera sozinho.
+    // Ementa pode ser longa: usa so os primeiros 80 chars.
+    const cacheChave = `${lei_id}:${lei.numero ?? ""}:${lei.data_publicacao ?? ""}:${String(lei.ementa ?? "").slice(0, 80)}`;
+    const cacheAno = lei.data_publicacao
+      ? Number(String(lei.data_publicacao).slice(0, 4))
+      : new Date().getFullYear();
+
+    const { data: cached } = await supabase
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "lei_municipal")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(
+        JSON.stringify({ resumo: cached.resumo, categoria: lei.categoria || "Outros", cached: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const prompt = `Você é um assistente que analisa leis municipais de Piracanjuba-GO.
 
 Lei Municipal: ${lei.numero}
@@ -96,6 +119,16 @@ CATEGORIA: [categoria escolhida]`;
 
     if (!resumo) resumo = "Não foi possível gerar o resumo.";
     if (!categoria) categoria = "Outros";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await supabase.from("resumos_ia_cache").upsert({
+        contexto: "lei_municipal",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     await supabase.from("leis_municipais").update({ resumo_ia: resumo, categoria }).eq("id", lei_id);
 

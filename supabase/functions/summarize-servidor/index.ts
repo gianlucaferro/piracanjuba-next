@@ -10,7 +10,11 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { servidor_id } = await req.json();
+    const body = await req.json();
+    const servidor_id = body?.servidor_id;
+    // Modelo parametrizavel. Default gemini-2.5-flash (estavel e rapido; o preview
+    // tinha cota free apertada). Override por body.model permite teste A/B.
+    const model = typeof body?.model === "string" ? body.model : "gemini-2.5-flash";
     if (!servidor_id) {
       return new Response(JSON.stringify({ error: "servidor_id é obrigatório" }), {
         status: 400,
@@ -49,6 +53,34 @@ Deno.serve(async (req) => {
       ? `Competência mais recente (${latestRem.competencia}): Bruto R$ ${latestRem.bruto?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} | Líquido R$ ${latestRem.liquido?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
       : "Sem dados de remuneração disponíveis.";
 
+    // Cache por conteudo: a chave inclui o que alimenta o resumo (cargo + competencia +
+    // valores). Se o salario muda (nova competencia ou correcao do mesmo mes), a chave
+    // muda e o resumo se regenera sozinho. Assim nunca servimos salario desatualizado.
+    const cacheChave = `${servidor_id}:${servidor.cargo ?? ""}:${latestRem?.competencia ?? "sem"}:${latestRem?.bruto ?? 0}:${latestRem?.liquido ?? 0}`;
+    const cacheAno = latestRem?.competencia
+      ? Number(String(latestRem.competencia).slice(0, 4))
+      : new Date().getFullYear();
+
+    const { data: cached } = await sb
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "servidor")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(
+        JSON.stringify({
+          servidor: { nome: servidor.nome, cargo: servidor.cargo },
+          remuneracoes: remuneracoes || [],
+          resumo: cached.resumo,
+          cached: true,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const prompt = `Você é um assistente de transparência pública municipal de Piracanjuba, GO.
 Gere um resumo curto (3-5 frases) sobre este servidor público, explicando de forma acessível ao cidadão:
 - O que faz o cargo "${servidor.cargo || "não informado"}"
@@ -72,7 +104,7 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-3-flash-preview",
+        model,
         messages: [
           { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
           { role: "user", content: prompt },
@@ -99,6 +131,16 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
 
     const aiData = await aiResponse.json();
     const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await sb.from("resumos_ia_cache").upsert({
+        contexto: "servidor",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     return new Response(
       JSON.stringify({

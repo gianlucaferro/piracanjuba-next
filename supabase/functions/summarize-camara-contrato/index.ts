@@ -49,6 +49,28 @@ Deno.serve(async (req) => {
       ? Number(contrato.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
       : "não informado";
 
+    // Cache por conteudo: a chave inclui os campos que alimentam o resumo (numero,
+    // credor, objeto, valor, status, vigencia). Se qualquer um muda, a chave muda e o
+    // resumo se regenera sozinho. Objeto pode ser longo: usa so os primeiros 80 chars.
+    const cacheChave = `${contrato_id}:${contrato.numero ?? ""}:${contrato.credor ?? ""}:${String(contrato.objeto ?? "").slice(0, 80)}:${contrato.valor ?? ""}:${contrato.status ?? ""}:${contrato.vigencia_inicio ?? ""}:${contrato.vigencia_fim ?? ""}`;
+    const cacheAno = contrato.vigencia_inicio
+      ? Number(String(contrato.vigencia_inicio).slice(0, 4))
+      : new Date().getFullYear();
+
+    const { data: cached } = await supabase
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "camara_contrato")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(JSON.stringify({ resumo: cached.resumo, cached: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const prompt = `Você é um assistente de transparência pública municipal de Piracanjuba, Goiás.
 Analise o contrato da Câmara Municipal abaixo e gere um resumo claro e acessível para o cidadão comum, explicando:
 1. Qual a finalidade do contrato (o que está sendo contratado)
@@ -101,6 +123,16 @@ Responda em português, de forma objetiva, em no máximo 4 frases. Não invente 
 
     const aiData = await aiResponse.json();
     const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
+
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await supabase.from("resumos_ia_cache").upsert({
+        contexto: "camara_contrato",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
 
     return new Response(JSON.stringify({ resumo }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -6,6 +6,16 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Hash simples (djb2) pra encurtar conteudo longo numa chave de cache estavel.
+// Se o conteudo do registro muda, o hash muda e o resumo se regenera sozinho.
+function hashContent(input: string): string {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) + hash + input.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(36);
+}
+
 async function extractPdfText(url: string): Promise<string | null> {
   try {
     const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
@@ -77,6 +87,30 @@ Deno.serve(async (req) => {
     if (!GEMINI_API_KEY) {
       return new Response(JSON.stringify({ error: "GEMINI_API_KEY não configurada" }), {
         status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Cache por conteudo: a chave inclui o tipo + hash do conteudo + a URL do
+    // documento (tudo que alimenta o resumo). Se qualquer um muda, a chave muda
+    // e o resumo se regenera. Contexto "generic" isola da tabela compartilhada.
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const cacheChave = `${tipo}:${hashContent(conteudo)}:${documento_url ?? "sem"}`;
+    const cacheAno = new Date().getFullYear();
+
+    const { data: cached } = await sb
+      .from("resumos_ia_cache")
+      .select("resumo")
+      .eq("contexto", "generic")
+      .eq("chave", cacheChave)
+      .eq("ano", cacheAno)
+      .maybeSingle();
+
+    if (cached?.resumo) {
+      return new Response(JSON.stringify({ resumo: cached.resumo, cached: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -178,7 +212,17 @@ Responda em português, de forma objetiva, em no máximo 4 frases. Não invente 
     const aiData = await aiResponse.json();
     const resumo = aiData.choices?.[0]?.message?.content || "Não foi possível gerar o resumo.";
 
-    return new Response(JSON.stringify({ resumo }), {
+    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
+    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
+      await sb.from("resumos_ia_cache").upsert({
+        contexto: "generic",
+        chave: cacheChave,
+        ano: cacheAno,
+        resumo,
+      }, { onConflict: "contexto,chave,ano" });
+    }
+
+    return new Response(JSON.stringify({ resumo, cached: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
