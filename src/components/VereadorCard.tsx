@@ -2,9 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { DollarSign, Vote, Wallet, Info, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { DollarSign, Vote, Wallet, Info, ArrowRight, HandCoins } from "lucide-react";
 import type { Vereador } from "@/data/api";
-import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador } from "@/data/api";
+import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador, fetchDoacoesCampanhaPorVereador } from "@/data/api";
 import { fetchCamaraDiarias, fetchCamaraCustoTotal } from "@/data/camaraApi";
 import { Badge } from "@/components/ui/badge";
 import ShareButton from "@/components/ShareButton";
@@ -15,6 +16,7 @@ const NUM_VEREADORES = 11;
 
 export default function VereadorCard({ v }: { v: Vereador }) {
   const initials = getInitials(v.nome);
+  const router = useRouter();
 
   const { data: counts } = useQuery({
     queryKey: ["projetos-count", v.id],
@@ -42,6 +44,13 @@ export default function VereadorCard({ v }: { v: Vereador }) {
     queryFn: fetchCamaraCustoTotal,
     staleTime: 10 * 60 * 1000,
   });
+
+  const { data: doacoesMap } = useQuery({
+    queryKey: ["doacoes-campanha-vereadores"],
+    queryFn: fetchDoacoesCampanhaPorVereador,
+    staleTime: 10 * 60 * 1000,
+  });
+  const totalDoacoes = v.slug ? (doacoesMap?.[v.slug] ?? 0) : 0;
 
   const projectCounts = counts || { apresentados: 0, aprovados: 0, recusados: 0, tramitacao: 0 };
   const atuacaoCounts = atuacao || { indicacoes: 0, mocoes: 0, requerimentos: 0, total: 0 };
@@ -177,6 +186,23 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           </div>
         </div>
       )}
+      {/* Doações de campanha (TSE) — leva à seção de doadores no perfil */}
+      {totalDoacoes > 0 && (
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/vereadores/${v.slug}#financiadores`); }}
+          className="mt-2 w-full flex items-center gap-2 rounded-md bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-left hover:bg-emerald-500/20 transition-colors"
+          aria-label={`Ver doadores de campanha de ${v.nome}`}
+        >
+          <HandCoins className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-foreground">{formatCurrency(totalDoacoes)}</p>
+            <p className="text-[10px] text-muted-foreground">Doações de campanha 2024 · ver doadores</p>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+        </button>
+      )}
+
       <div className="mt-3 flex items-center justify-between gap-2 pt-3 border-t border-border">
         <span
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:translate-x-0.5 transition-transform"

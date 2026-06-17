@@ -30,8 +30,9 @@ function FinanciadoresView({
 
   return (
     <section
+      id="financiadores"
       aria-labelledby="financiadores-heading"
-      className="stat-card border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent space-y-4"
+      className="stat-card border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent space-y-4 scroll-mt-24"
     >
       <header className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">

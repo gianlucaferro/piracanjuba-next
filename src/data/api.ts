@@ -67,6 +67,25 @@ export async function fetchVereadores(): Promise<Vereador[]> {
   return data || [];
 }
 
+// Soma das doações de campanha (TSE) por vereador, mapeado por slug.
+// Casa pessoa_publica.vereador_slug -> id -> soma de tse_doador_campanha.
+export async function fetchDoacoesCampanhaPorVereador(): Promise<Record<string, number>> {
+  const [{ data: pessoas }, { data: doacoes }] = await Promise.all([
+    supabase.from("pessoa_publica").select("id, vereador_slug").not("vereador_slug", "is", null),
+    supabase.from("tse_doador_campanha").select("pessoa_publica_id, vr_receita"),
+  ]);
+  const somaPorId = new Map<string, number>();
+  for (const d of doacoes || []) {
+    if (!d.pessoa_publica_id) continue;
+    somaPorId.set(d.pessoa_publica_id, (somaPorId.get(d.pessoa_publica_id) || 0) + Number(d.vr_receita || 0));
+  }
+  const out: Record<string, number> = {};
+  for (const p of pessoas || []) {
+    if (p.vereador_slug) out[p.vereador_slug] = somaPorId.get(p.id) || 0;
+  }
+  return out;
+}
+
 export async function fetchVereadorBySlug(slug: string): Promise<Vereador | null> {
   const { data, error } = await supabase
     .from("vereadores")
