@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     const toAnalyze = allContratos
       .filter((c: any) => !desde || (c.vigencia_inicio && c.vigencia_inicio >= desde))
       .filter((c: any) => !alreadyAnalyzed.has(chaveContrato(c.numero, c.vigencia_inicio, c.empresa)))
-      .slice(0, useOR ? Math.min(batchSize, 8) : batchSize); // cap no OpenRouter: cabe no limite de 150s da edge function
+      .slice(0, useOR ? Math.min(batchSize, 4) : batchSize); // cap no OpenRouter: tool calling ~8.5s/contrato, batch 4 cabe nos 150s da edge function
 
     if (toAnalyze.length === 0) {
       return new Response(
