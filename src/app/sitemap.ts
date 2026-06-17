@@ -33,6 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/noticias`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
   ];
 
+  // Abas indexáveis da Prefeitura e da Câmara (rotas próprias para SEO).
+  const prefeituraAbas = ["chefia", "secretarias", "contratos", "servidores", "despesas", "tcm-go", "decretos", "portarias", "leis", "lei-organica", "diarias", "licitacoes", "obras", "veiculos"];
+  const camaraAbas = ["servidores", "contratos", "projetos", "atuacao", "indicacoes", "resolucoes", "decretos-leg", "pautas", "atas", "transmissao", "licitacoes", "despesas", "receitas", "diarias"];
+  const tabRoutes: MetadataRoute.Sitemap = [
+    ...prefeituraAbas.map((a) => ({ url: `${SITE_URL}/prefeitura/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...camaraAbas.map((a) => ({ url: `${SITE_URL}/camara/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
+  ];
+
   // Anúncios ativos do classificados (dinâmico)
   const dynamicRoutes: MetadataRoute.Sitemap = [];
 
@@ -80,5 +88,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap dynamic routes failed:", e);
   }
 
-  return [...staticRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...tabRoutes, ...dynamicRoutes];
 }

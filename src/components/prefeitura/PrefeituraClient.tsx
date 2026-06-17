@@ -3274,12 +3274,20 @@ const tabs = [
   { value: "admin", label: "Admin", icon: Settings },
 ];
 
-export default function Prefeitura({ financiadoresExecutivo }: { financiadoresExecutivo?: React.ReactNode }) {
+export default function Prefeitura({ financiadoresExecutivo, aba }: { financiadoresExecutivo?: React.ReactNode; aba?: string }) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") || "visao-geral";
+  const initialTab = aba || searchParams.get("tab") || "visao-geral";
   const initialBusca = searchParams.get("busca") || "";
   const [activeTab, setActiveTab] = useState(initialTab);
+  // Troca de aba reflete na URL (/prefeitura/<aba>) sem navegação de servidor,
+  // pra SEO (rota indexável) e link compartilhável. A aba "visão geral" fica em /prefeitura.
+  const onTabChange = useCallback((v: string) => {
+    setActiveTab(v);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(window.history.state, "", v === "visao-geral" ? "/prefeitura" : `/prefeitura/${v}`);
+    }
+  }, []);
 
   // Prefetch contratos + aditivos + CNPJ assim que a página monta (antes de clicar na aba)
   useEffect(() => {
@@ -3318,7 +3326,7 @@ export default function Prefeitura({ financiadoresExecutivo }: { financiadoresEx
           Dados oficiais do Poder Executivo — mandato 2025–2028. Todos os dados vêm de fontes oficiais.
         </p>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6 scrollbar-hide">
             <TabsList className="inline-flex w-max md:w-full md:flex-wrap h-auto gap-1 bg-transparent p-0">
               {tabs.map((t) => (

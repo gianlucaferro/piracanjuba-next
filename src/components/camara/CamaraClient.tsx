@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, CalendarCheck, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal } from "lucide-react";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
@@ -246,8 +246,16 @@ function TransmissaoTab() {
   );
 }
 
-export default function CamaraMunicipal() {
-  const [activeTab, setActiveTab] = useState("vereadores");
+export default function CamaraMunicipal({ aba }: { aba?: string }) {
+  const [activeTab, setActiveTab] = useState(aba || "vereadores");
+  // Troca de aba reflete na URL (/camara/<aba>) sem navegação de servidor, pra SEO e
+  // link compartilhável. A aba "vereadores" (padrão) fica em /camara.
+  const onTabChange = useCallback((v: string) => {
+    setActiveTab(v);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(window.history.state, "", v === "vereadores" ? "/camara" : `/camara/${v}`);
+    }
+  }, []);
 
   return (
     <Layout>
@@ -263,7 +271,7 @@ export default function CamaraMunicipal() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
         <div className="container">
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6 scrollbar-hide">
             <TabsList className="inline-flex w-max md:w-full md:flex-wrap h-auto gap-1 bg-transparent p-0">

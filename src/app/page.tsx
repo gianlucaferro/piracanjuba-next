@@ -200,7 +200,7 @@ export default async function HomePage() {
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-[#25D366] transition-colors" />
           </Link>
-          <Link href="/prefeitura?tab=servidores" className="stat-card card-hover flex items-center gap-3 group">
+          <Link href="/prefeitura/servidores" className="stat-card card-hover flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <DollarSign className="w-5 h-5 text-primary" />
             </div>
@@ -210,7 +210,7 @@ export default async function HomePage() {
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
           </Link>
-          <Link href="/prefeitura?tab=contratos" className="stat-card card-hover flex items-center gap-3 group">
+          <Link href="/prefeitura/contratos" className="stat-card card-hover flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
               <FileText className="w-5 h-5 text-blue-600" />
             </div>
