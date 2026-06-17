@@ -4,13 +4,12 @@ import { useMemo } from "react";
 import { Trophy, Info } from "lucide-react";
 import Link from "next/link";
 import type { AtuacaoParlamentar, Projeto, Vereador } from "@/data/api";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Pesos por tipo de proposicao: projeto de lei (produz norma) pesa mais que indicacao
 // (mero pedido ao Executivo, sem forca de lei).
 const PESO = {
-  projetoLei: 5,
-  projetoOutro: 3, // Projeto de Resolucao / Decreto Legislativo
+  projetoLei: 15,
+  projetoOutro: 6, // Projeto de Resolucao / Decreto Legislativo
   requerimento: 2,
   indicacao: 1,
   mocao: 1,
@@ -123,21 +122,15 @@ export default function RankingChart({
           Ocultar
         </button>
       </div>
-      <p className="text-xs text-muted-foreground mb-5 inline-flex items-center gap-1">
-        Índice ponderado por relevância da proposição
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-help"><Info className="w-3 h-3" /></span>
-          </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p className="text-xs">
-              Cada proposição vale conforme o peso legislativo: Projeto de Lei = {PESO.projetoLei},
-              Resolução/Decreto Legislativo = {PESO.projetoOutro}, Requerimento = {PESO.requerimento},
-              Indicação e Moção = {PESO.indicacao}. Projeto de lei pode virar norma; indicação é só um pedido ao Executivo.
-            </p>
-          </TooltipContent>
-        </Tooltip>
-      </p>
+      <div className="text-xs text-muted-foreground mb-5 rounded-lg bg-muted/40 border border-border p-2.5 leading-relaxed flex gap-2">
+        <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
+        <span>
+          <strong className="text-foreground">Índice ponderado por relevância da proposição.</strong>{" "}
+          Um projeto de lei (que pode virar norma) pesa muito mais que uma indicação (pedido ao Executivo, sem força de lei).
+          Pesos: Projeto de Lei = {PESO.projetoLei} · Resolução/Decreto Legislativo = {PESO.projetoOutro} ·
+          Requerimento = {PESO.requerimento} · Indicação/Moção = {PESO.indicacao}.
+        </span>
+      </div>
 
       {isLoading && chartData.length === 0 && (
         <div className="space-y-4" aria-label="Carregando ranking de atuação">
