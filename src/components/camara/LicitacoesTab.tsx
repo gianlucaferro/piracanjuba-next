@@ -23,7 +23,7 @@ export default function LicitacoesTab() {
 
   const handleClick = (l: any) => {
     const conteudo = `- Número: ${l.numero || "não informado"}\n- Modalidade: ${l.modalidade || "não informada"}\n- Objeto: ${l.objeto || "não informado"}\n- Situação: ${l.situacao || "não informada"}\n- Data abertura: ${l.data_abertura || "não informada"}\n- Valor estimado: ${l.valor_estimado ? formatCurrency(l.valor_estimado) : "não informado"}`;
-    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`);
+    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`, undefined, l.documento_url);
   };
 
   const handleExportCSV = () => {
