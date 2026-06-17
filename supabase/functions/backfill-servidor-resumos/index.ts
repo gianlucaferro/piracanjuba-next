@@ -21,8 +21,10 @@ Deno.serve(async (req) => {
     const sb = createClient(supabaseUrl, serviceKey);
 
     const body = await req.json().catch(() => ({}));
-    const batchSize = Math.min(Number(body?.batch_size) || 12, 25);
-    const delayMs = Number(body?.delay_ms) || 4000;
+    const provider = body?.provider === "openrouter" ? "openrouter" : undefined;
+    // OpenRouter (pago) aguenta batch maior e delay curto; Gemini free vai devagar.
+    const batchSize = Math.min(Number(body?.batch_size) || (provider ? 40 : 12), provider ? 50 : 25);
+    const delayMs = Number(body?.delay_ms) || (provider ? 400 : 4000);
 
     // servidores que ainda nao tem nenhum resumo em cache (prioriza quem nunca gerou)
     const { data: alvos, error } = await sb.rpc("servidores_sem_resumo", { lim: batchSize });
@@ -39,13 +41,15 @@ Deno.serve(async (req) => {
     let cacheHits = 0;
     let erros = 0;
     let quotaParou = false;
+    // OpenRouter (pago) aguenta concorrencia; Gemini free vai 1 a 1 com delay.
+    const conc = provider ? 6 : 1;
 
-    for (const row of alvos) {
+    const processOne = async (row: any) => {
       try {
         const resp = await fetch(`${supabaseUrl}/functions/v1/summarize-servidor`, {
           method: "POST",
           headers: { Authorization: `Bearer ${anonKey}`, apikey: anonKey, "Content-Type": "application/json" },
-          body: JSON.stringify({ servidor_id: row.id }),
+          body: JSON.stringify({ servidor_id: row.id, ...(provider ? { provider } : {}) }),
           signal: AbortSignal.timeout(60000),
         });
         if (resp.ok) {
@@ -53,16 +57,18 @@ Deno.serve(async (req) => {
           if (d?.cached) cacheHits++;
           else gerados++;
         } else if (resp.status === 429 || resp.status === 402) {
-          // cota esgotada: para o lote, a proxima run do cron continua
           quotaParou = true;
-          break;
         } else {
           erros++;
         }
       } catch (_e) {
         erros++;
       }
-      await new Promise((r) => setTimeout(r, delayMs));
+    };
+
+    for (let i = 0; i < alvos.length && !quotaParou; i += conc) {
+      await Promise.all(alvos.slice(i, i + conc).map(processOne));
+      if (!provider) await new Promise((r) => setTimeout(r, delayMs));
     }
 
     // quantos ainda faltam no total

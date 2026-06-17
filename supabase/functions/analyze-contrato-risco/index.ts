@@ -53,6 +53,16 @@ Deno.serve(async (req) => {
     // "desde" (ex "2021-01-01"): recorta a analise a contratos com vigencia_inicio >= desde.
     const desde = typeof body?.desde === "string" ? body.desde : null;
 
+    // Provider por chamada: body.provider="openrouter" usa o saldo pago (sem rate limit
+    // apertado, delay curto) pro backfill manual. O cron usa Gemini free por padrao.
+    const useOR = body?.provider === "openrouter" && Deno.env.get("OPENROUTER_API_KEY");
+    const aiUrl = useOR
+      ? "https://openrouter.ai/api/v1/chat/completions"
+      : "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+    const aiKey = useOR ? Deno.env.get("OPENROUTER_API_KEY")! : lovableKey;
+    const aiModel = useOR ? "google/gemini-2.5-flash-lite" : "gemini-2.5-flash";
+    const aiDelayMs = useOR ? 300 : 4500;
+
     // 1. Fetch contracts that haven't been analyzed yet (or all if force)
     const tableName = orgao === "camara" ? "camara_contratos" : "contratos";
 
@@ -189,14 +199,15 @@ ${contratoAditivos.length > 0 ? `- Aditivos: ${contratoAditivos.length} termos, 
 
 NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falsos negativos neste contexto.`;
 
-        const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+        const aiResponse = await fetch(aiUrl, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${lovableKey}`,
+            Authorization: `Bearer ${aiKey}`,
             "Content-Type": "application/json",
+            ...(useOR ? { "HTTP-Referer": "https://piracanjuba.ai", "X-Title": "Piracanjuba.ai" } : {}),
           },
           body: JSON.stringify({
-            model: "gemini-2.5-flash",
+            model: aiModel,
             messages: [
               { role: "system", content: "Você é um analista de contratos públicos. Responda sempre usando a função fornecida." },
               { role: "user", content: prompt },
@@ -283,9 +294,9 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
           if (riscoAlto) flagged++;
         }
 
-        // Delay entre chamadas pra respeitar o rate limit do Gemini free (~13 req/min).
-        // 500ms era agressivo demais e estourava 429 em poucos contratos.
-        await new Promise(r => setTimeout(r, 4500));
+        // Delay entre chamadas. Gemini free ~13 req/min (4.5s); OpenRouter pago sem
+        // limite apertado (300ms), pra fechar o backfill rapido.
+        await new Promise(r => setTimeout(r, aiDelayMs));
       } catch (e) {
         errors.push(`Contrato ${(contrato as any).numero}: ${(e as Error).message}`);
       }

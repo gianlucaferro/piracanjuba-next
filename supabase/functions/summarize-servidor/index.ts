@@ -95,24 +95,34 @@ ${remInfo}
 Responda em português, de forma clara e objetiva. Não invente dados. Sempre mencione a competência (mês/ano) ao citar valores.`;
 
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY não configurada");
+    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
 
-    // Fallback de modelo: cada modelo do free tier tem cota (RPM/RPD) SEPARADA. Se o
-    // gemini-2.5-flash satura (ex: batch do Radar de Risco consumindo a cota), caimos
-    // no lite e depois no 2.0-flash, e o resumo on-demand continua funcionando em vez
-    // de devolver 429 pro cidadao. body.model força um modelo unico (teste A/B).
-    const modelos = body?.model
-      ? [model]
-      : ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
+    // Provider por chamada: body.provider="openrouter" usa o saldo pago do OpenRouter
+    // (sem rate limit apertado), pro backfill manual. Sem isso, Gemini free tier (o que
+    // o cron e o on-demand usam por padrao).
+    const useOR = body?.provider === "openrouter" && OPENROUTER_API_KEY;
+    const aiUrl = useOR
+      ? "https://openrouter.ai/api/v1/chat/completions"
+      : "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+    const aiKey = useOR ? OPENROUTER_API_KEY! : GEMINI_API_KEY;
+    if (!aiKey) throw new Error("Nenhuma chave de IA configurada");
+
+    // Fallback de modelo no Gemini free (cota por modelo). No OpenRouter, 1 modelo barato.
+    const modelos = useOR
+      ? ["google/gemini-2.5-flash-lite"]
+      : body?.model
+        ? [model]
+        : ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
 
     let resumo = "";
     let ultimoStatus = 0;
     for (const m of modelos) {
-      const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+      const aiResponse = await fetch(aiUrl, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${GEMINI_API_KEY}`,
+          Authorization: `Bearer ${aiKey}`,
           "Content-Type": "application/json",
+          ...(useOR ? { "HTTP-Referer": "https://piracanjuba.ai", "X-Title": "Piracanjuba.ai" } : {}),
         },
         body: JSON.stringify({
           model: m,
