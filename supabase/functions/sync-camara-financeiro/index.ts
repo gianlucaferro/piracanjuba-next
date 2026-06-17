@@ -155,6 +155,20 @@ function extractItems(data: any): any[] {
   return [];
 }
 
+// Monta a URL de download do PDF a partir do FileKey/FileName que a API Centi retorna
+// (contratos em item.docs[], licitacoes em item.Documentos[] ou no topo do item).
+// Prefere o doc de "contrato"/"edital"; senao o primeiro disponivel.
+function buildDocUrl(item: any): string | null {
+  const arr = item?.docs || item?.Documentos || [];
+  const doc = Array.isArray(arr) && arr.length
+    ? (arr.find((d: any) => /contrat|edital/i.test(`${d?.Descricao || ""} ${d?.FileName || ""}`)) || arr[0])
+    : null;
+  const key = doc?.FileKey || item?.FileKey;
+  const name = doc?.FileName || item?.FileName;
+  if (!key || !name) return null;
+  return `https://camarapiracanjuba.centi.com.br/download/${key}/${name}`;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -209,6 +223,7 @@ Deno.serve(async (req) => {
             data_abertura: dataAbertura,
             valor_estimado: parseBrNumber(item.ValorEstimado || item.Valor),
             fonte_url: `https://camarapiracanjuba.centi.com.br/licitacoes`,
+            documento_url: buildDocUrl(item),
           }, { onConflict: "centi_id" });
           if (error) errors.push(`Lic: ${error.message}`);
           else counts.licitacoes++;
@@ -236,6 +251,7 @@ Deno.serve(async (req) => {
             valor: item.Valor || item.ValorContrato || null,
             vigencia_inicio: vigInicio,
             vigencia_fim: vigFim, status,
+            documento_url: buildDocUrl(item),
           }, { onConflict: "centi_id" });
           if (error) errors.push(`Ctr: ${error.message}`);
           else counts.contratos++;
