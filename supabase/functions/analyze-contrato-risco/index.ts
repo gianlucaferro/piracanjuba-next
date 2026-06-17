@@ -6,6 +6,33 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Chave estavel de negocio do contrato (numero + vigencia_inicio + empresa), no
+// lugar do UUID volatil: mantem a analise vinculada mesmo quando o sync regenera
+// o id do contrato (correcao de valor/empresa na fonte gerava analises orfas).
+function chaveContrato(numero: unknown, vigencia: unknown, empresa: unknown): string {
+  return `${numero ?? ""}|${vigencia ?? ""}|${empresa ?? ""}`;
+}
+
+// Busca todas as linhas contornando o limite default de 1000 do PostgREST,
+// paginando por .range() ate esgotar. Sem isso a analise so via os 1000
+// contratos de maior valor e a cobertura travava.
+async function fetchAllRows(supabase: any, table: string, columns: string, orderCol: string): Promise<any[]> {
+  const pageSize = 1000;
+  const all: any[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(columns)
+      .order(orderCol, { ascending: false })
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    if (!data?.length) break;
+    all.push(...data);
+    if (data.length < pageSize) break;
+  }
+  return all;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -23,17 +50,14 @@ Deno.serve(async (req) => {
     const orgao = body?.orgao || "prefeitura"; // "prefeitura" or "camara"
     const forceRefresh = body?.force === true;
     const batchSize = body?.batch_size || 20;
+    // "desde" (ex "2021-01-01"): recorta a analise a contratos com vigencia_inicio >= desde.
+    const desde = typeof body?.desde === "string" ? body.desde : null;
 
     // 1. Fetch contracts that haven't been analyzed yet (or all if force)
     const tableName = orgao === "camara" ? "camara_contratos" : "contratos";
 
-    const { data: allContratos, error: cErr } = await supabase
-      .from(tableName)
-      .select("*")
-      .order("valor", { ascending: false });
-
-    if (cErr) throw cErr;
-    if (!allContratos?.length) {
+    const allContratos = await fetchAllRows(supabase, tableName, "*", "valor");
+    if (!allContratos.length) {
       return new Response(
         JSON.stringify({ success: true, analyzed: 0, flagged: 0 }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -45,14 +69,21 @@ Deno.serve(async (req) => {
     if (!forceRefresh) {
       const { data: existing } = await supabase
         .from("contratos_risco")
-        .select("contrato_id")
+        .select("contrato_numero, contrato_vigencia_inicio, contrato_empresa")
         .eq("orgao", orgao);
       if (existing) {
-        alreadyAnalyzed = new Set(existing.map((r: any) => r.contrato_id));
+        alreadyAnalyzed = new Set(
+          existing.map((r: any) =>
+            chaveContrato(r.contrato_numero, r.contrato_vigencia_inicio, r.contrato_empresa)
+          )
+        );
       }
     }
 
-    const toAnalyze = allContratos.filter((c: any) => !alreadyAnalyzed.has(c.id)).slice(0, batchSize);
+    const toAnalyze = allContratos
+      .filter((c: any) => !desde || (c.vigencia_inicio && c.vigencia_inicio >= desde))
+      .filter((c: any) => !alreadyAnalyzed.has(chaveContrato(c.numero, c.vigencia_inicio, c.empresa)))
+      .slice(0, batchSize);
 
     if (toAnalyze.length === 0) {
       return new Response(
@@ -156,7 +187,7 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "gemini-3-flash-preview",
+            model: "gemini-2.5-flash",
             messages: [
               { role: "system", content: "Você é um analista de contratos públicos. Responda sempre usando a função fornecida." },
               { role: "user", content: prompt },
@@ -225,13 +256,16 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
           .from("contratos_risco")
           .upsert({
             contrato_id: contrato.id,
+            contrato_numero: contrato.numero ?? null,
+            contrato_vigencia_inicio: contrato.vigencia_inicio ?? null,
+            contrato_empresa: contrato.empresa ?? null,
             orgao,
             risco_alto: riscoAlto,
             score: result.score || 0,
             fatores: result.fatores || [],
             modelo_versao: "gemini-3-flash-v1",
             analisado_em: new Date().toISOString(),
-          }, { onConflict: "contrato_id,orgao" });
+          }, { onConflict: "orgao,contrato_numero,contrato_vigencia_inicio,contrato_empresa" });
 
         if (uErr) {
           errors.push(`Upsert error: ${uErr.message}`);
@@ -240,8 +274,9 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
           if (riscoAlto) flagged++;
         }
 
-        // Small delay to avoid rate limiting
-        await new Promise(r => setTimeout(r, 500));
+        // Delay entre chamadas pra respeitar o rate limit do Gemini free (~13 req/min).
+        // 500ms era agressivo demais e estourava 429 em poucos contratos.
+        await new Promise(r => setTimeout(r, 4500));
       } catch (e) {
         errors.push(`Contrato ${(contrato as any).numero}: ${(e as Error).message}`);
       }
