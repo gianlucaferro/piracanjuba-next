@@ -18,6 +18,7 @@ const TIPOS: Record<number, string> = {
   12: "Decreto Legislativo",
   14: "Pauta das Sessões",
   24: "Indicação",
+  44: "Votação",
 };
 
 function toIsoDate(d: string | null | undefined): string | null {
@@ -95,6 +96,9 @@ Deno.serve(async (req) => {
         const numMatch = (item.numero || "").match(/(\d+)\/(\d{4})/);
         const parsedAno = numMatch ? parseInt(numMatch[2]) : (dataIso ? parseInt(dataIso.slice(0, 4)) : currentYear);
         const ano = parsedAno;
+        // Saneia data suja da fonte: se o ano da data difere do ano do numero (ex:
+        // Indicacao 551/2025 publicada como 2026-09-15), a data e nao-confiavel -> null.
+        const dataFinal = dataIso && numMatch && parseInt(dataIso.slice(0, 4)) !== parsedAno ? null : dataIso;
         const centiId = `ato-${tipoCodigo}-${item.numero || "s"}-${ano}`;
 
         const { error } = await sb.from("camara_atos").upsert({
@@ -103,7 +107,7 @@ Deno.serve(async (req) => {
           tipo_codigo: tipoCodigo,
           numero: item.numero,
           descricao: item.descricao?.slice(0, 2000) || null,
-          data_publicacao: dataIso,
+          data_publicacao: dataFinal,
           ano,
           documento_url: item.documento_url,
           fonte_url: `${CENTI_BASE}/${tipoCodigo}`,
