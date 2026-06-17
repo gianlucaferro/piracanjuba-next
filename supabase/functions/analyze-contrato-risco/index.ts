@@ -64,19 +64,28 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 2. Get already analyzed contracts (skip if not force)
+    // 2. Get already analyzed contracts (skip if not force).
+    // Pagina a leitura: sem isso o limite default de 1000 do PostgREST truncaria o
+    // Set, e os contratos ja analisados alem do 1000 voltariam pro lote sendo
+    // REPROCESSADOS a cada run (desperdicio de cota Gemini). O alvo 2021+ (~1.789)
+    // passa de 1000, entao a paginacao e necessaria pra idempotencia real do cron.
     let alreadyAnalyzed = new Set<string>();
     if (!forceRefresh) {
-      const { data: existing } = await supabase
-        .from("contratos_risco")
-        .select("contrato_numero, contrato_vigencia_inicio, contrato_empresa")
-        .eq("orgao", orgao);
-      if (existing) {
-        alreadyAnalyzed = new Set(
-          existing.map((r: any) =>
+      const pageSize = 1000;
+      for (let from = 0; ; from += pageSize) {
+        const { data: existing, error } = await supabase
+          .from("contratos_risco")
+          .select("contrato_numero, contrato_vigencia_inicio, contrato_empresa")
+          .eq("orgao", orgao)
+          .range(from, from + pageSize - 1);
+        if (error) throw error;
+        if (!existing?.length) break;
+        for (const r of existing) {
+          alreadyAnalyzed.add(
             chaveContrato(r.contrato_numero, r.contrato_vigencia_inicio, r.contrato_empresa)
-          )
-        );
+          );
+        }
+        if (existing.length < pageSize) break;
       }
     }
 
