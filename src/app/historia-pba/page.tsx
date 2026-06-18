@@ -1,4 +1,4 @@
-import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star, Bug, Music, Flag } from "lucide-react";
+import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star, Bug, Music, Flag, Clock } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 import HistoriaUpload from "@/components/historia/HistoriaUpload";
@@ -181,8 +181,8 @@ export default function HistoriaPBAPage() {
             </p>
             <FotoOpcional
               src="/historia/peixe-piracanjuba.jpg"
-              alt="A piracanjuba, peixe que dá nome à cidade"
-              legenda="A piracanjuba (Brycon orbignyanus), o peixe que batiza a cidade."
+              alt="Peixe que dá nome à cidade de Piracanjuba"
+              legenda="O peixe que dá nome à cidade."
             />
           </div>
         </div>
@@ -292,6 +292,11 @@ export default function HistoriaPBAPage() {
               batizada de <em>Cheiridium piracanjubae</em> em homenagem à cidade, que virou, assim, nome científico de
               uma espécie nova para a ciência.
             </p>
+            <FotoOpcional
+              src="/historia/cheiridium-piracanjubae.jpg"
+              alt="Pseudoescorpião Cheiridium piracanjubae visto ao microscópio"
+              legenda="Cheiridium piracanjubae, a nova espécie descrita em Piracanjuba (imagem ampliada ao microscópio)."
+            />
           </div>
         </div>
       </section>
@@ -424,6 +429,34 @@ export default function HistoriaPBAPage() {
               <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{c.d}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* A Praça do Relógio */}
+      <section aria-labelledby="praca" className="stat-card mb-6 border-rose-500/20 bg-gradient-to-br from-rose-500/5 to-transparent">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0">
+            <Clock className="w-5 h-5 text-rose-500" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 id="praca" className="text-xl md:text-2xl font-bold text-foreground mb-2">A Praça do Relógio</h2>
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+              A <strong>Praça Guarda-Mor Francisco José Pinheiro</strong>, conhecida por todos como
+              <strong> Praça do Relógio</strong>, é o principal cartão-postal de Piracanjuba: uma torre alta com relógio
+              e sino, no coração da cidade, ponto de referência e de encontro dos moradores. Repare nos peixes
+              desenhados no piso da praça, uma homenagem ao nome da cidade.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3 mt-3">
+              Conta-se na cidade que a torre teria sido um presente do governo e que o terreno, no passado, teria
+              abrigado um antigo cemitério. São histórias da memória local: não encontramos documento oficial que as
+              confirme, e seguimos buscando os registros.
+            </p>
+            <FotoOpcional
+              src="/historia/praca-do-relogio.jpg"
+              alt="Praça do Relógio de Piracanjuba à noite, com a torre iluminada"
+              legenda="A Praça do Relógio (Praça Guarda-Mor Francisco José Pinheiro), vista do alto à noite."
+            />
+          </div>
         </div>
       </section>
 

@@ -17,7 +17,7 @@ export default function PessoaFoto({ slug, nome }: { slug: string; nome: string 
     .toUpperCase();
 
   return (
-    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-rose-500/10 flex items-center justify-center shrink-0">
+    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-rose-500/10 flex items-center justify-center shrink-0">
       {!erro ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -28,7 +28,7 @@ export default function PessoaFoto({ slug, nome }: { slug: string; nome: string 
           onError={() => setErro(true)}
         />
       ) : (
-        <span className="text-rose-600 dark:text-rose-400 font-bold text-lg">{iniciais}</span>
+        <span className="text-rose-600 dark:text-rose-400 font-bold text-2xl">{iniciais}</span>
       )}
     </div>
   );

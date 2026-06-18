@@ -19,7 +19,10 @@ Basta soltar o arquivo com o nome certo e fazer commit/push; a foto aparece sozi
 
 Um nível acima, em `public/historia/`:
 
-- `peixe-piracanjuba.jpg` -> foto da piracanjuba (peixe) na seção "A origem do nome".
-- `bandeira-piracanjuba.jpg` -> bandeira oficial na seção "A bandeira e o brasão".
+- `peixe-piracanjuba.jpg` -> peixe na seção "A origem do nome".
+- `bandeira-piracanjuba.jpg` -> bandeira na seção "A bandeira e o brasão".
+- `cheiridium-piracanjubae.jpg` -> pseudoescorpião na seção da espécie nova.
+- `praca-do-relogio.jpg` -> Praça do Relógio na seção homônima.
 
-  Ambas somem sozinhas se o arquivo não existir; aparecem assim que você soltar o arquivo.
+  Todas somem sozinhas se o arquivo não existir; aparecem assim que você soltar o arquivo.
+  (As imagens enviadas no chat já foram extraídas e salvas aqui.)
