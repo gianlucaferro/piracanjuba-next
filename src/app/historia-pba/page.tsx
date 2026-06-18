@@ -197,6 +197,7 @@ export default function HistoriaPBAPage() {
               src="/historia/peixe-piracanjuba.jpg"
               alt="Peixe que dá nome à cidade de Piracanjuba"
               legenda="O peixe que dá nome à cidade."
+              className="max-w-sm"
             />
           </div>
         </div>
@@ -256,6 +257,7 @@ export default function HistoriaPBAPage() {
               src="/historia/bandeira-piracanjuba.jpg"
               alt="Bandeira de Piracanjuba"
               legenda="Bandeira oficial do município de Piracanjuba."
+              className="max-w-xs"
             />
           </div>
         </div>
@@ -316,6 +318,7 @@ export default function HistoriaPBAPage() {
               src="/historia/cheiridium-piracanjubae.jpg"
               alt="Pseudoescorpião Cheiridium piracanjubae visto ao microscópio"
               legenda="Cheiridium piracanjubae, a nova espécie descrita em Piracanjuba (imagem ampliada ao microscópio)."
+              className="max-w-sm"
             />
           </div>
         </div>
@@ -480,6 +483,7 @@ export default function HistoriaPBAPage() {
               src="/historia/praca-do-relogio.jpg"
               alt="Praça do Relógio de Piracanjuba à noite, com a torre iluminada"
               legenda="A Praça do Relógio (Praça Guarda-Mor Francisco José Pinheiro), vista do alto à noite."
+              className="max-w-md"
             />
           </div>
         </div>
