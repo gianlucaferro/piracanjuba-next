@@ -2,6 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   corsHeaders,
   geminiChat,
+  openrouterChat,
+  hasOpenRouter,
   MODELS,
   GeminiUpstreamError,
   geminiErrorToResponse,
@@ -12,15 +14,30 @@ import {
 // Responde perguntas sobre o município usando SOMENTE os dados públicos do banco
 // (grounding). Modelo barato (gemini-2.5-flash-lite), rate limit por IP, histórico
 // curto (multi-turn) e máscara de qualquer CPF que escape ao contexto.
+//
+// O contexto é montado por intenção: um núcleo institucional sempre presente +
+// blocos por assunto (DOMAINS) acionados por palavra-chave. Assim o bot tem acesso
+// a todo o mapa de dados do portal sem inflar cada chamada.
 
 const RATE_MAX_PER_MIN = 12;
 const MAX_PERGUNTA = 500;
+const MAX_DOMAINS = 9; // teto de blocos por assunto por pergunta (custo/latência)
 
 type SB = ReturnType<typeof createClient>;
 type Msg = { role: "user" | "assistant"; content: string };
+type DomainBlock = { keys: string[]; run: (sb: SB) => Promise<string | null> };
 
 const cur = (n: number | null | undefined): string =>
   n != null && !Number.isNaN(Number(n)) ? `R$ ${Number(n).toLocaleString("pt-BR")}` : "N/D";
+
+const trunc = (s: string | null | undefined, n: number): string =>
+  (s || "").replace(/\s+/g, " ").trim().slice(0, n);
+
+// minúsculas + sem acento, para casar palavras-chave de forma robusta.
+const norm = (s: string): string => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+const fmtList = (title: string, rows: string[]): string | null =>
+  rows.length ? `### ${title}\n${rows.join("\n")}` : null;
 
 function maskCpf(s: string): string {
   return s.replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, "***.***.***-**");
@@ -46,20 +63,16 @@ function sanitizeHistory(raw: unknown): Msg[] {
   return out;
 }
 
-async function buildContext(sb: SB, pergunta: string): Promise<string> {
-  const q = pergunta.toLowerCase();
-  const has = (...ks: string[]) => ks.some((k) => q.includes(k));
-  const blocks: string[] = [];
-
-  // Núcleo (sempre presente): executivo, vereadores, secretarias, indicadores.
+// Núcleo institucional: sempre presente (pequeno e de alto valor).
+async function coreContext(sb: SB): Promise<string[]> {
   const [exec, vers, secs, inds] = await Promise.all([
     sb.from("executivo").select("tipo, nome, partido, mandato_inicio, mandato_fim").limit(5),
     sb.from("vereadores").select("nome, partido, cargo_mesa, votos_eleicao").order("nome").limit(20),
     sb.from("secretarias").select("nome, secretario_nome, subsidio").limit(40),
     sb.from("indicadores_municipais").select("chave, valor_texto, valor, ano_referencia").limit(40),
   ]);
-
   const verList = vers.data || [];
+  const blocks: string[] = [];
   blocks.push(
     `### Poder Executivo\n${
       (exec.data || []).map((e) => `- ${e.tipo}: ${e.nome} (${e.partido || "s/partido"}), mandato ${e.mandato_inicio} a ${e.mandato_fim}`).join("\n") || "Sem dados"
@@ -76,54 +89,337 @@ async function buildContext(sb: SB, pergunta: string): Promise<string> {
     }`,
   );
   if (inds.data?.length) {
-    blocks.push(`### Indicadores municipais\n${inds.data.map((i) => `- ${i.chave}: ${i.valor_texto ?? i.valor} (${i.ano_referencia})`).join("\n")}`);
+    blocks.push(`### Indicadores municipais (IBGE e outros)\n${inds.data.map((i) => `- ${i.chave}: ${i.valor_texto ?? i.valor} (${i.ano_referencia})`).join("\n")}`);
   }
+  return blocks;
+}
 
-  // Blocos por palavra-chave.
-  if (has("projeto", "lei", "ementa", "propos", "vereador")) {
-    const { data } = await sb.from("projetos").select("tipo, numero, ano, ementa, autor_texto, status").order("data", { ascending: false }).limit(15);
-    if (data?.length) {
-      blocks.push(`### Projetos recentes\n${data.map((p) => `- ${p.tipo} nº ${p.numero}/${p.ano} (${p.status}), autor ${p.autor_texto}: ${(p.ementa || "").slice(0, 120)}`).join("\n")}`);
-    }
-  }
-  if (has("contrato", "fornecedor", "empresa", "gasto", "gastou")) {
-    const { data } = await sb.from("contratos").select("numero, objeto, empresa, valor, status").order("vigencia_inicio", { ascending: false }).limit(12);
-    if (data?.length) {
-      blocks.push(`### Contratos recentes\n${data.map((c) => `- Contrato ${c.numero} (${c.status}): ${(c.objeto || "").slice(0, 90)} — ${c.empresa || "N/D"} — ${cur(c.valor)}`).join("\n")}`);
-    }
-  }
-  if (has("obra", "reforma", "construç", "pavimenta", "asfalto")) {
-    const { data } = await sb.from("obras").select("nome, local, valor, empresa, status").limit(12);
-    if (data?.length) {
-      blocks.push(`### Obras\n${data.map((o) => `- ${o.nome} (${o.status || "N/D"}) em ${o.local || "N/D"} — ${cur(o.valor)} — ${o.empresa || "N/D"}`).join("\n")}`);
-    }
-  }
-  if (has("licitaç", "licitac", "pregão", "pregao", "edital")) {
-    const { data } = await sb.from("licitacoes").select("numero, modalidade, objeto, status, data_publicacao").order("data_publicacao", { ascending: false }).limit(10);
-    if (data?.length) {
-      blocks.push(`### Licitações\n${data.map((l) => `- ${l.modalidade || "N/D"} nº ${l.numero} (${l.status}): ${(l.objeto || "").slice(0, 90)}`).join("\n")}`);
-    }
-  }
-  if (has("salário", "salario", "remuneraç", "remuneracao", "ganha", "recebe", "subsídio", "subsidio", "folha", "servidor")) {
-    const { data: rem } = await sb.from("remuneracao_servidores").select("servidor_id, bruto, liquido, competencia").order("competencia", { ascending: false }).limit(120);
-    if (rem?.length) {
+// Blocos por assunto. Cada um só é consultado se a pergunta casar com alguma
+// palavra-chave (sem acento) e só entra no contexto se houver dado.
+const DOMAINS: DomainBlock[] = [
+  {
+    keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha"],
+    run: async (sb) => {
+      const { data } = await sb.from("remuneracao_mensal").select("vereador_id, bruto, liquido, subsidio_referencia, competencia").order("competencia", { ascending: false }).limit(40);
+      if (!data?.length) return null;
+      const ids = [...new Set(data.map((r) => r.vereador_id))];
+      const { data: vs } = await sb.from("vereadores").select("id, nome").in("id", ids);
+      const nm = new Map((vs || []).map((v) => [v.id, v.nome]));
+      const seen = new Set<string>();
+      const rows: string[] = [];
+      for (const r of data) {
+        if (seen.has(r.vereador_id)) continue;
+        seen.add(r.vereador_id);
+        rows.push(`- ${nm.get(r.vereador_id) || "Vereador"}: bruto ${cur(r.bruto)}, líquido ${cur(r.liquido)} (subsídio ref. ${cur(r.subsidio_referencia)}, ${r.competencia})`);
+      }
+      return fmtList("Remuneração dos vereadores (folha recente)", rows);
+    },
+  },
+  {
+    keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "folha", "servidor", "secretario", "funcionario"],
+    run: async (sb) => {
+      const { data: rem } = await sb.from("remuneracao_servidores").select("servidor_id, bruto, liquido, competencia").order("competencia", { ascending: false }).limit(120);
+      if (!rem?.length) return null;
       const seen = new Map<string, { bruto: number | null; liquido: number | null }>();
       for (const r of rem) if (!seen.has(r.servidor_id)) seen.set(r.servidor_id, { bruto: r.bruto, liquido: r.liquido });
       const ids = [...seen.keys()].slice(0, 60);
       const { data: ss } = await sb.from("servidores").select("id, nome, cargo, orgao_tipo").in("id", ids);
-      if (ss?.length) {
-        blocks.push(
-          `### Remuneração de servidores (folha mais recente)\n${ss.map((s) => {
-            const r = seen.get(s.id);
-            return `- ${s.nome} (${s.cargo || "s/cargo"}, ${s.orgao_tipo === "camara" ? "Câmara" : "Prefeitura"}): bruto ${cur(r?.bruto)}, líquido ${cur(r?.liquido)}`;
-          }).join("\n")}`,
-        );
+      return fmtList(
+        "Remuneração de servidores (folha mais recente)",
+        (ss || []).map((s) => {
+          const r = seen.get(s.id);
+          return `- ${s.nome} (${s.cargo || "s/cargo"}, ${s.orgao_tipo === "camara" ? "Câmara" : "Prefeitura"}): bruto ${cur(r?.bruto)}, líquido ${cur(r?.liquido)}`;
+        }),
+      );
+    },
+  },
+  {
+    keys: ["projeto", "lei", "ementa", "propos", "legisla"],
+    run: async (sb) => {
+      const { data } = await sb.from("projetos").select("tipo, numero, ano, ementa, autor_texto, status").order("data", { ascending: false }).limit(15);
+      return fmtList("Projetos da Câmara (autoria dos vereadores)", (data || []).map((p) => `- ${p.tipo} nº ${p.numero}/${p.ano} (${p.status}), autor ${p.autor_texto}: ${trunc(p.ementa, 120)}`));
+    },
+  },
+  {
+    keys: ["requerimento", "mocao", "indica", "atuacao", "fiscaliz", "propos"],
+    run: async (sb) => {
+      const { data } = await sb.from("atuacao_parlamentar").select("tipo, numero, ano, descricao, autor_texto").order("data", { ascending: false }).limit(15);
+      return fmtList("Atuação parlamentar (requerimentos, moções, indicações)", (data || []).map((a) => `- ${a.tipo} ${a.numero}/${a.ano}, ${a.autor_texto}: ${trunc(a.descricao, 110)}`));
+    },
+  },
+  {
+    keys: ["presenca", "falta", "faltou", "frequencia", "sessao", "assiduidade", "compareceu"],
+    run: async (sb) => {
+      const { data } = await sb.from("presenca_sessoes").select("vereador_nome, presente, sessao_data").order("sessao_data", { ascending: false }).limit(220);
+      if (!data?.length) return null;
+      const m = new Map<string, { t: number; p: number }>();
+      for (const r of data) {
+        const n = r.vereador_nome || "?";
+        const e = m.get(n) || { t: 0, p: 0 };
+        e.t++;
+        if (r.presente) e.p++;
+        m.set(n, e);
       }
-    }
-  }
+      return fmtList("Presença em sessões (registros recentes)", [...m.entries()].map(([n, { t, p }]) => `- ${n}: ${p}/${t} presenças (${Math.round((p / t) * 100)}%)`));
+    },
+  },
+  {
+    keys: ["contrato", "fornecedor", "licitad", "contratad", "terceiriz"],
+    run: async (sb) => {
+      const [pref, cam] = await Promise.all([
+        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("vigencia_inicio", { ascending: false }).limit(10),
+        sb.from("camara_contratos").select("numero, ano, credor, objeto, valor, status").order("vigencia_inicio", { ascending: false }).limit(8),
+      ]);
+      const rows = [
+        ...(pref.data || []).map((c) => `- [Prefeitura] Contrato ${c.numero} (${c.status}): ${trunc(c.objeto, 80)} - ${c.empresa || "N/D"} - ${cur(c.valor)}`),
+        ...(cam.data || []).map((c) => `- [Câmara] Contrato ${c.numero}/${c.ano} (${c.status}): ${trunc(c.objeto, 80)} - ${c.credor || "N/D"} - ${cur(c.valor)}`),
+      ];
+      return fmtList("Contratos recentes", rows);
+    },
+  },
+  {
+    keys: ["despesa", "gasto", "gastou", "pagamento", "pagou", "empenho", "favorecido", "quanto custou"],
+    run: async (sb) => {
+      const [pref, cam] = await Promise.all([
+        sb.from("despesas").select("data, favorecido, valor, descricao").order("data", { ascending: false }).limit(15),
+        sb.from("camara_despesas").select("ano, mes, credor, descricao, valor").order("data_pagamento", { ascending: false }).limit(10),
+      ]);
+      const rows = [
+        ...(pref.data || []).map((d) => `- [Prefeitura] ${d.data}: ${d.favorecido || "N/D"} - ${cur(d.valor)} - ${trunc(d.descricao, 70)}`),
+        ...(cam.data || []).map((d) => `- [Câmara] ${d.mes}/${d.ano}: ${d.credor || "N/D"} - ${cur(d.valor)} - ${trunc(d.descricao, 70)}`),
+      ];
+      return fmtList("Despesas recentes", rows);
+    },
+  },
+  {
+    keys: ["diaria", "viagem", "viajou", "deslocamento"],
+    run: async (sb) => {
+      const [pref, cam] = await Promise.all([
+        sb.from("diarias").select("servidor_nome, destino, motivo, valor, data").order("data", { ascending: false }).limit(12),
+        sb.from("camara_diarias").select("beneficiario, cargo, destino, valor, data").order("data", { ascending: false }).limit(10),
+      ]);
+      const rows = [
+        ...(pref.data || []).map((d) => `- [Prefeitura] ${d.servidor_nome || "N/D"} para ${d.destino || "N/D"}: ${cur(d.valor)} (${d.data}) ${trunc(d.motivo, 50)}`),
+        ...(cam.data || []).map((d) => `- [Câmara] ${d.beneficiario || "N/D"} (${d.cargo || ""}) para ${d.destino || "N/D"}: ${cur(d.valor)} (${d.data})`),
+      ];
+      return fmtList("Diárias recentes", rows);
+    },
+  },
+  {
+    keys: ["obra", "reforma", "construc", "pavimenta", "asfalto", "praca", "ponte", "calcamento"],
+    run: async (sb) => {
+      const { data } = await sb.from("obras").select("nome, local, valor, empresa, status").limit(15);
+      return fmtList("Obras", (data || []).map((o) => `- ${o.nome} (${o.status || "N/D"})${o.local ? ` em ${o.local}` : ""} - ${cur(o.valor)} - ${o.empresa || "N/D"}`));
+    },
+  },
+  {
+    keys: ["licita", "pregao", "edital", "dispensa", "concorrencia", "tomada de preco"],
+    run: async (sb) => {
+      const { data } = await sb.from("licitacoes").select("numero, modalidade, objeto, status, data_publicacao").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Licitações da Prefeitura", (data || []).map((l) => `- ${l.modalidade || "N/D"} nº ${l.numero} (${l.status}): ${trunc(l.objeto, 80)}`));
+    },
+  },
+  {
+    keys: ["decreto"],
+    run: async (sb) => {
+      const { data } = await sb.from("decretos").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Decretos do Executivo", (data || []).map((d) => `- Decreto ${d.numero} (${d.data_publicacao}): ${trunc(d.resumo_ia || d.ementa, 110)}`));
+    },
+  },
+  {
+    keys: ["portaria"],
+    run: async (sb) => {
+      const { data } = await sb.from("portarias").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Portarias", (data || []).map((p) => `- Portaria ${p.numero} (${p.data_publicacao}): ${trunc(p.resumo_ia || p.ementa, 110)}`));
+    },
+  },
+  {
+    keys: ["lei municipal", "leis", "sanciona", "norma", "lei "],
+    run: async (sb) => {
+      const { data } = await sb.from("leis_municipais").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Leis municipais", (data || []).map((l) => `- Lei ${l.numero} (${l.data_publicacao}): ${trunc(l.resumo_ia || l.ementa, 110)}`));
+    },
+  },
+  {
+    keys: ["lei organica", "organica"],
+    run: async (sb) => {
+      const { data } = await sb.from("lei_organica_artigos").select("titulo, artigo_numero, resumo_ia, artigo_texto").order("ordem").limit(12);
+      return fmtList("Lei Orgânica (artigos)", (data || []).map((a) => `- Art. ${a.artigo_numero} (${a.titulo || ""}): ${trunc(a.resumo_ia || a.artigo_texto, 110)}`));
+    },
+  },
+  {
+    keys: ["resolucao"],
+    run: async (sb) => {
+      const { data } = await sb.from("resolucoes").select("numero, ano, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(10);
+      return fmtList("Resoluções da Câmara", (data || []).map((r) => `- Resolução ${r.numero}/${r.ano}: ${trunc(r.resumo_ia || r.ementa, 110)}`));
+    },
+  },
+  {
+    keys: ["veiculo", "carro", "frota", "placa", "caminhao", "onibus", "ambulancia"],
+    run: async (sb) => {
+      const { data } = await sb.from("veiculos_frota").select("placa, descricao, marca, ano_fabricacao, situacao, orgao").limit(30);
+      if (!data?.length) return null;
+      return fmtList(`Frota de veículos (${data.length} no total)`, data.slice(0, 20).map((v) => `- ${v.descricao || v.marca || "Veículo"} ${v.ano_fabricacao || ""} (placa ${v.placa || "N/D"}, ${v.situacao || ""}, ${v.orgao || ""})`));
+    },
+  },
+  {
+    keys: ["saude", "posto", "hospital", "ubs", "medico", "dengue", "vacina", "sus", "leito", "cnes", "doenca"],
+    run: async (sb) => {
+      const [ind, est] = await Promise.all([
+        sb.from("saude_indicadores").select("categoria, indicador, ano, valor_texto, valor").order("ano", { ascending: false }).limit(25),
+        sb.from("saude_estabelecimentos").select("nome, tipo, endereco, telefone").limit(15),
+      ]);
+      const rows = [
+        ...(ind.data || []).map((s) => `- [${s.categoria}] ${s.indicador} (${s.ano}): ${s.valor_texto ?? s.valor}`),
+        ...(est.data || []).map((e) => `- Unidade: ${e.nome} (${e.tipo || ""})${e.endereco ? `, ${trunc(e.endereco, 40)}` : ""}${e.telefone ? `, tel ${e.telefone}` : ""}`),
+      ];
+      return fmtList("Saúde", rows);
+    },
+  },
+  {
+    keys: ["educac", "escola", "ideb", "matricula", "creche", "ensino", "aluno", "professor"],
+    run: async (sb) => {
+      const [ind, ideb] = await Promise.all([
+        sb.from("educacao_indicadores").select("categoria, chave, valor_texto, ano_referencia").order("ano_referencia", { ascending: false }).limit(25),
+        sb.from("educacao_ideb").select("ano, etapa, rede, ideb, meta").order("ano", { ascending: false }).limit(12),
+      ]);
+      const rows = [
+        ...(ind.data || []).map((e) => `- [${e.categoria}] ${e.chave}: ${e.valor_texto} (${e.ano_referencia})`),
+        ...(ideb.data || []).map((i) => `- IDEB ${i.etapa}/${i.rede} (${i.ano}): ${i.ideb}${i.meta ? ` (meta ${i.meta})` : ""}`),
+      ];
+      return fmtList("Educação", rows);
+    },
+  },
+  {
+    keys: ["seguran", "crime", "homic", "roubo", "furto", "violen", "policia", "assassin", "criminal"],
+    run: async (sb) => {
+      const { data } = await sb.from("seguranca_indicadores").select("ano, indicador, ocorrencias, vitimas").eq("municipio", "Piracanjuba").order("ano", { ascending: false }).limit(40);
+      return fmtList("Segurança pública (SINESP/SSP-GO)", (data || []).map((s) => `- ${s.indicador} (${s.ano}): ${s.ocorrencias ?? "?"} ocorrências, ${s.vitimas ?? "?"} vítimas`));
+    },
+  },
+  {
+    keys: ["beneficio", "bolsa familia", "auxilio", "cadunico", "programa social", "assistencia", "cras"],
+    run: async (sb) => {
+      const [ben, bf] = await Promise.all([
+        sb.from("beneficios_sociais").select("programa, competencia, beneficiarios, valor_pago").order("competencia", { ascending: false }).limit(15),
+        sb.from("bolsa_familia_municipio").select("mes_ano, valor, beneficiados").order("mes_ano", { ascending: false }).limit(6),
+      ]);
+      const rows = [
+        ...(ben.data || []).map((b) => `- ${b.programa} (${b.competencia}): ${b.beneficiarios} beneficiários, ${cur(b.valor_pago)}`),
+        ...(bf.data || []).map((b) => `- Bolsa Família (${b.mes_ano}): ${b.beneficiados} famílias, ${cur(b.valor)}`),
+      ];
+      return fmtList("Benefícios sociais", rows);
+    },
+  },
+  {
+    keys: ["arrecada", "imposto", "iptu", "iss", "tributo", "receita propria"],
+    run: async (sb) => {
+      const { data } = await sb.from("arrecadacao_municipal").select("tipo, categoria, valor, competencia, ano").order("ano", { ascending: false }).limit(25);
+      return fmtList("Arrecadação municipal", (data || []).map((a) => `- [${a.tipo}] ${a.categoria}: ${cur(a.valor)} (${a.competencia || a.ano})`));
+    },
+  },
+  {
+    keys: ["agro", "agricultura", "pecuaria", "rebanho", "plantac", "soja", "milho", "leite", "gado", "producao rural", "lavoura", "safra"],
+    run: async (sb) => {
+      const { data } = await sb.from("agro_indicadores").select("categoria, chave, valor_texto, ano_referencia").not("categoria", "like", "historico%").limit(30);
+      return fmtList("Agropecuária (IBGE)", (data || []).map((a) => `- [${a.categoria}] ${a.chave}: ${a.valor_texto} (${a.ano_referencia})`));
+    },
+  },
+  {
+    keys: ["emenda", "deputado", "senador", "verba parlamentar"],
+    run: async (sb) => {
+      const { data } = await sb.from("emendas_parlamentares").select("parlamentar_nome, objeto, valor_empenhado, valor_pago, ano").order("ano", { ascending: false }).limit(15);
+      return fmtList("Emendas parlamentares", (data || []).map((e) => `- ${e.parlamentar_nome} (${e.ano}): ${trunc(e.objeto, 70)} - empenhado ${cur(e.valor_empenhado)}, pago ${cur(e.valor_pago)}`));
+    },
+  },
+  {
+    keys: ["transferencia", "repasse", "uniao", "federal", "convenio"],
+    run: async (sb) => {
+      const { data } = await sb.from("transferencias_federais").select("tipo, orgao_concedente, objeto, valor_total, valor_liberado, ano").order("ano", { ascending: false }).limit(15);
+      return fmtList("Transferências federais", (data || []).map((t) => `- ${t.tipo}${t.orgao_concedente ? ` (${t.orgao_concedente})` : ""} ${t.ano}: ${trunc(t.objeto, 60)} - total ${cur(t.valor_total)}, liberado ${cur(t.valor_liberado)}`));
+    },
+  },
+  {
+    keys: ["economia", "selic", "ipca", "inflac", "cambio", "dolar", "pib", "emprego", "caged", "salario minimo", "juros"],
+    run: async (sb) => {
+      const { data } = await sb.from("economia_indicadores").select("categoria, indicador, ano, mes, valor_texto, valor").order("ano", { ascending: false }).limit(20);
+      return fmtList("Indicadores econômicos", (data || []).map((e) => `- [${e.categoria}] ${e.indicador}: ${e.valor_texto ?? e.valor} (${e.mes ? `${e.mes}/` : ""}${e.ano})`));
+    },
+  },
+  {
+    keys: ["infraestrutura", "saneamento", "esgoto", "agua", "iluminac", "energia eletrica", "internet"],
+    run: async (sb) => {
+      const { data } = await sb.from("infraestrutura_indicadores").select("categoria, indicador, valor_texto, ano").order("ano", { ascending: false }).limit(20);
+      return fmtList("Infraestrutura", (data || []).map((i) => `- [${i.categoria}] ${i.indicador}: ${i.valor_texto} (${i.ano})`));
+    },
+  },
+  {
+    keys: ["tcm", "tribunal de contas", "apontamento", "irregularidade", "conta rejeitada", "auditoria"],
+    run: async (sb) => {
+      const { data } = await sb.from("tcm_go_apontamentos").select("numero_processo, ano, orgao_alvo, tipo, status, ementa, ementa_resumo_ia, valor_envolvido").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Apontamentos do TCM-GO", (data || []).map((t) => `- ${t.tipo || "Processo"} ${t.numero_processo || ""} (${t.ano}, ${t.status || ""}) sobre ${t.orgao_alvo || "município"}: ${trunc(t.ementa_resumo_ia || t.ementa, 110)}${t.valor_envolvido ? ` - ${cur(t.valor_envolvido)}` : ""}`));
+    },
+  },
+  {
+    keys: ["ministerio publico", "mp-go", "mpgo", "promotoria", "acao civil", "improbidade", "promotor"],
+    run: async (sb) => {
+      const { data } = await sb.from("mpgo_atuacao").select("tipo, promotoria, ementa, ementa_resumo_ia, data_publicacao").order("data_publicacao", { ascending: false }).limit(12);
+      return fmtList("Atuação do Ministério Público (MP-GO)", (data || []).map((m) => `- ${m.tipo || "Atuação"} (${m.promotoria || ""}, ${m.data_publicacao || ""}): ${trunc(m.ementa_resumo_ia || m.ementa, 120)}`));
+    },
+  },
+  {
+    keys: ["processo", "judicial", "justica", "reu", "condenado", "tjgo", "acao judicial", "sentenca"],
+    run: async (sb) => {
+      const { data } = await sb.from("processo_judicial").select("numero_processo, tribunal, classe, assunto, status, objeto_resumo, resumo_ia, pessoa_publica_id").eq("visivel_publico", true).order("data_ultima_movimentacao", { ascending: false }).limit(12);
+      if (!data?.length) return null;
+      const ids = [...new Set(data.map((p) => p.pessoa_publica_id).filter(Boolean))] as string[];
+      const pp = ids.length ? (await sb.from("pessoa_publica").select("id, nome_publico, nome").in("id", ids)).data : [];
+      const nm = new Map((pp || []).map((p) => [p.id, p.nome_publico || p.nome]));
+      return fmtList(
+        "Processos judiciais de agentes públicos (apenas os marcados como públicos)",
+        data.map((p) => `- ${nm.get(p.pessoa_publica_id) || "Agente público"}: ${p.classe || ""}${p.assunto ? ` (${p.assunto})` : ""} no ${p.tribunal || ""} - ${p.status || ""}: ${trunc(p.resumo_ia || p.objeto_resumo, 100)}`),
+      );
+    },
+  },
+  {
+    keys: ["duodecimo", "orcamento da camara", "custo da camara", "quanto custa a camara", "orcamento camara"],
+    run: async (sb) => {
+      const { data } = await sb.from("camara_orcamento").select("ano, dotacao, liquidada, periodo_referencia").order("ano", { ascending: false }).limit(6);
+      return fmtList("Orçamento da Câmara (duodécimo)", (data || []).map((o) => `- ${o.ano}${o.periodo_referencia && o.periodo_referencia < 6 ? " (parcial)" : ""}: orçado ${cur(o.dotacao)}, executado ${cur(o.liquidada)}`));
+    },
+  },
+  {
+    keys: ["doador", "doacao", "financiad", "campanha", "quem financiou", "financiamento"],
+    run: async (sb) => {
+      const { data } = await sb.from("tse_doador_campanha").select("nome_candidato, ds_cargo, nome_doador, vr_receita, ano_eleicao").order("vr_receita", { ascending: false }).limit(25);
+      return fmtList("Doadores de campanha (TSE 2024)", (data || []).map((d) => `- ${d.nome_candidato} (${d.ds_cargo}) recebeu ${cur(d.vr_receita)} de ${d.nome_doador} (${d.ano_eleicao})`));
+    },
+  },
+  {
+    keys: ["noticia", "aconteceu", "ultimas", "novidade", "acontecendo", "imprensa"],
+    run: async (sb) => {
+      const { data } = await sb.from("noticias").select("title, source, pub_date").order("pub_date", { ascending: false }).limit(12);
+      return fmtList("Notícias recentes sobre Piracanjuba", (data || []).map((n) => `- ${n.title} (${n.source || ""}${n.pub_date ? `, ${String(n.pub_date).slice(0, 10)}` : ""})`));
+    },
+  },
+  {
+    keys: ["sanciona", "sancao", "inidonea", "ceis", "cnep", "impedida de contratar", "empresa punida", "empresa irregular"],
+    run: async (sb) => {
+      const { data } = await sb.from("empresa_sancionada").select("nome, cnpj, tipo_sancao, data_inicio_sancao, orgao_sancionador").order("data_inicio_sancao", { ascending: false }).limit(15);
+      return fmtList("Empresas sancionadas (CEIS/CNEP)", (data || []).map((e) => `- ${e.nome} (CNPJ ${e.cnpj || "N/D"}): ${e.tipo_sancao || ""} por ${e.orgao_sancionador || ""}${e.data_inicio_sancao ? ` desde ${e.data_inicio_sancao}` : ""}`));
+    },
+  },
+];
 
-  return blocks.join("\n\n");
+async function buildContext(sb: SB, pergunta: string): Promise<string> {
+  const q = norm(pergunta);
+  const core = await coreContext(sb);
+  const matched = DOMAINS.filter((d) => d.keys.some((k) => q.includes(k))).slice(0, MAX_DOMAINS);
+  const extra = (await Promise.all(matched.map((d) => d.run(sb).catch(() => null)))).filter((b): b is string => !!b);
+  return [...core, ...extra].join("\n\n");
 }
+
+const PLATFORM = `O Piracanjuba.ai é um portal independente (da Ferro Labs, sem vínculo com órgão público) que reúne dados públicos de Piracanjuba, Goiás. Seções: Câmara (vereadores, projetos de lei, atuação, indicações, presença em sessões, contratos, despesas, diárias, orçamento/duodécimo, licitações), Prefeitura (secretarias, servidores e salários, contratos, despesas, licitações, obras, decretos, portarias, leis, lei orgânica, diárias, veículos, TCM-GO), e ainda Saúde, Educação, Segurança, Benefícios sociais, Arrecadação, Economia, Agro, Emendas, Transferências federais, MP-GO, Processos, Notícias. Fontes oficiais: Portal da Transparência municipal, Câmara, IBGE, DataSUS, INEP, SINESP/SSP-GO, Tesouro Nacional, TCM-GO, MP-GO, TSE.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -154,12 +450,14 @@ Deno.serve(async (req) => {
 
     const systemPrompt = `Você é o assistente do Piracanjuba.ai, portal independente de transparência pública do município de Piracanjuba, Goiás, Brasil.
 
+${PLATFORM}
+
 Regras:
-- Responda APENAS com base nos dados abaixo. Se a informação não estiver nos dados, diga com franqueza que ainda não tem esse dado no portal e indique a aba mais provável (Prefeitura, Câmara, Vereadores, Contratos, etc.).
-- Seja conciso e use português simples. Use markdown leve (negrito e listas) quando ajudar.
-- Ao dar números, cite a origem (ex: "segundo o Portal da Transparência", "dados da Câmara", "IBGE").
-- NUNCA invente nomes, valores, datas ou documentos. Nunca exiba CPF.
-- Você não é órgão público e não dá aconselhamento jurídico. Para atos oficiais, oriente conferir a fonte.
+- Responda APENAS com base nos dados abaixo. Se a informação não estiver nos dados, diga com franqueza que ainda não tem esse dado no portal e indique a seção mais provável onde procurar.
+- Seja conciso e use português simples. Use markdown leve (negrito e listas) quando ajudar. Prefira o ano/competência mais recente quando houver vários.
+- Ao dar números, cite a origem (ex: "segundo o Portal da Transparência", "dados da Câmara", "IBGE", "DataSUS").
+- NUNCA invente nomes, valores, datas ou documentos. Não exiba CPF. Não dê aconselhamento jurídico.
+- Você não é órgão público. Para atos oficiais, oriente conferir a fonte.
 
 ## Dados disponíveis
 ${contexto}`;
@@ -170,7 +468,11 @@ ${contexto}`;
       { role: "user" as const, content: pergunta },
     ];
 
-    const resp = await geminiChat({ model: MODELS.flashLite, messages, temperature: 0.3, stream: true });
+    // OpenRouter é o provider primário (Gemini direto satura no free-tier e devolve 429).
+    // O modelo barato fica travado dentro de openrouterChat, sem fallback para modelo caro.
+    const resp = hasOpenRouter()
+      ? await openrouterChat({ messages, temperature: 0.3, stream: true })
+      : await geminiChat({ model: MODELS.flashLite, messages, temperature: 0.3, stream: true });
     if (!resp.ok) {
       return geminiErrorToResponse(new GeminiUpstreamError(resp.status, await resp.text()));
     }

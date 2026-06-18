@@ -86,6 +86,47 @@ export async function geminiChat(options: GeminiChatOptions): Promise<Response> 
   });
 }
 
+// --- OpenRouter (provider primário quando há OPENROUTER_API_KEY) ---
+// O chatbot foi migrado do Gemini direto porque a key do Gemini é free-tier e satura (429).
+// TRAVA DE CUSTO: modelo único mais barato + provider.allow_fallbacks:false, para NUNCA
+// escalar para um modelo/provider mais caro. Não aceita modelo por parâmetro de propósito.
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+export const OPENROUTER_MODEL = "google/gemini-2.5-flash-lite";
+
+export function hasOpenRouter(): boolean {
+  return !!Deno.env.get("OPENROUTER_API_KEY");
+}
+
+interface OpenRouterOptions {
+  messages: ChatMessage[];
+  temperature?: number;
+  maxTokens?: number;
+  stream?: boolean;
+}
+
+export async function openrouterChat(options: OpenRouterOptions): Promise<Response> {
+  const key = Deno.env.get("OPENROUTER_API_KEY");
+  if (!key) throw new GeminiAuthError();
+  const body = {
+    model: OPENROUTER_MODEL,
+    messages: options.messages,
+    provider: { allow_fallbacks: false }, // trava de custo: não escala para modelo/provider mais caro
+    ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+    ...(options.maxTokens !== undefined ? { max_tokens: options.maxTokens } : {}),
+    ...(options.stream ? { stream: true } : {}),
+  };
+  return await fetch(OPENROUTER_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "https://piracanjuba.ai",
+      "X-Title": "Piracanjuba.ai",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 interface ChatResponseShape {
   choices?: Array<{ message?: { content?: string } }>;
 }
