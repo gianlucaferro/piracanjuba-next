@@ -31,6 +31,7 @@ Um nível acima, em `public/historia/`:
 - `leite-piracanjuba.jpg` -> produtos da marca Piracanjuba (seção "A terra do leite").
 - `romeiros-cavalgada.jpg` -> romeiros a cavalo (seção "Fé e devoção popular").
 - `romeiros-grupo.jpg` -> comitiva dos romeiros na igreja (seção "Fé e devoção popular").
+- `menina-milagreira.jpg` -> túmulo da Menina Milagreira (seção "Fé e devoção popular").
 
   Todas somem sozinhas se o arquivo não existir; aparecem assim que você soltar o arquivo.
   (As imagens enviadas no chat já foram extraídas e salvas aqui.)

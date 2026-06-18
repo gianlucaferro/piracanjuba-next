@@ -442,6 +442,12 @@ export default function HistoriaPBAPage() {
               alcançadas no cemitério local. É um ponto de fé popular que atravessa gerações e chegou a virar tema de
               reportagens e estudos.
             </p>
+            <FotoOpcional
+              src="/historia/menina-milagreira.jpg"
+              alt="Túmulo da Menina Milagreira coberto de bonecas, brinquedos e flores no cemitério de Piracanjuba"
+              legenda="O túmulo de Romilda, a Menina Milagreira, coberto de bonecas, brinquedos e flores deixados por devotos."
+              className="max-w-sm"
+            />
           </div>
         </div>
       </section>
