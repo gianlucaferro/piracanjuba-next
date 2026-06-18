@@ -384,6 +384,7 @@ export default function HistoriaPBAPage() {
               src="/historia/leite-piracanjuba.jpg"
               alt="Linha de produtos da marca de leite Piracanjuba"
               legenda="A marca Piracanjuba, que leva o nome da cidade, hoje tem mais de 200 produtos derivados do leite."
+              className="max-w-sm"
             />
           </div>
         </div>
@@ -483,7 +484,7 @@ export default function HistoriaPBAPage() {
               src="/historia/praca-do-relogio.jpg"
               alt="Praça do Relógio de Piracanjuba à noite, com a torre iluminada"
               legenda="A Praça do Relógio (Praça Guarda-Mor Francisco José Pinheiro), vista do alto à noite."
-              className="max-w-md"
+              className="max-w-sm"
             />
           </div>
         </div>
