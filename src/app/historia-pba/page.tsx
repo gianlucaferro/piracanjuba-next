@@ -111,6 +111,13 @@ const pessoas = [
     periodo: "",
     bio: "Lembrado entre os filhos ilustres de Piracanjuba pela veia humorística. Estamos reunindo mais detalhes da sua trajetória: se você conhece a história dele ou tem fotos, ajude a completar pela seção de contribuição.",
   },
+  {
+    slug: "piquizinha",
+    nome: "Piquizinha",
+    papel: "Influenciadora",
+    periodo: "",
+    bio: "Luiza Cristina Rodrigues de Souza, a Piquizinha, é influenciadora digital natural de Piracanjuba e fisioterapeuta. Faz humor nas redes sociais e viralizou no país com vídeos emocionando o pai ao revelar sua aprovação e a formatura em Fisioterapia. No TikTok (@piquizinha) reúne mais de 3 milhões de seguidores.",
+  },
 ];
 
 export default function HistoriaPBAPage() {

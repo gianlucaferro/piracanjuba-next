@@ -11,5 +11,6 @@ Arquivos esperados (nome = slug.jpg):
 - `frankito-lopes.jpg`       -> Frankito Lopes (cantor)
 - `carlos-magno-de-melo.jpg` -> Carlos Magno de Melo (escritor)
 - `jacques-vanier.jpg`       -> Jacques Vanier (humorista)
+- `piquizinha.jpg`           -> Piquizinha / Luiza Souza (influenciadora)
 
 Basta soltar o arquivo com o nome certo e fazer commit/push; a foto aparece sozinha.
