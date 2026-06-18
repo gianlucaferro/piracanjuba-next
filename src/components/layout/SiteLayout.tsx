@@ -5,6 +5,7 @@ import HeaderControls from "./HeaderControls";
 import DesktopNav from "./DesktopNav";
 import MobileBottomNav from "./MobileBottomNav";
 import QueryProvider from "@/components/providers/QueryProvider";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -114,6 +115,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         </footer>
 
         <MobileBottomNav />
+        <ChatWidget />
       </div>
     </QueryProvider>
   );
