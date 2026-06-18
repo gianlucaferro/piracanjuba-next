@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function FotoOpcional({ src, alt, legenda }: { src: string; alt: string; legenda?: string }) {
+export default function FotoOpcional({ src, alt, legenda, className }: { src: string; alt: string; legenda?: string; className?: string }) {
   const [ok, setOk] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function FotoOpcional({ src, alt, legenda }: { src: string; alt: 
   if (!ok) return null;
 
   return (
-    <figure className="mt-4">
+    <figure className={`mt-4${className ? ` ${className}` : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} loading="lazy" className="w-full rounded-xl border border-border object-cover" />
       {legenda && <figcaption className="text-xs text-muted-foreground mt-1.5">{legenda}</figcaption>}

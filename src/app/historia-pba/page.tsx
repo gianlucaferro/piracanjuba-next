@@ -110,11 +110,18 @@ const pessoas = [
     bio: "Escritor, poeta e médico, com atuação literária em jornais e revistas. É autor do romance histórico Guaibimpará Caramuru, que recria a história de Diogo Álvares Correia, o Caramuru, e de Guaibimpará.",
   },
   {
+    slug: "ney-teles-de-paula",
+    nome: "Ney Teles de Paula",
+    papel: "Desembargador",
+    periodo: "n. 1949",
+    bio: "Natural de Piracanjuba, ingressou na magistratura goiana em 1978 e tomou posse como desembargador do Tribunal de Justiça de Goiás em 2001. Chegou à presidência do TJGO e presidiu o Tribunal Regional Eleitoral de Goiás entre 2010 e 2011, em mais de quatro décadas de judicatura. Também é escritor e integra academias e institutos culturais, como a Academia Goiana de Letras e a Academia Piracanjubense de Letras e Artes.",
+  },
+  {
     slug: "jacques-vanier",
     nome: "Jacques Vanier",
     papel: "Humorista",
     periodo: "",
-    bio: "Lembrado entre os filhos ilustres de Piracanjuba pela veia humorística. Estamos reunindo mais detalhes da sua trajetória: se você conhece a história dele ou tem fotos, ajude a completar pela seção de contribuição.",
+    bio: "Engenheiro civil de formação, Jacques Vanier virou um dos maiores humoristas da internet brasileira com o personagem agroboy, de camiseta xadrez e chapéu. Morou nos Estados Unidos, onde começou a produzir vídeos misturando o jeitão goiano com o inglês, e estourou com o bordão 'I am bão, e ocê?', nascido de uma tentativa de pedir pamonha e pão de queijo num drive-thru. Reúne mais de 6 milhões de seguidores no Instagram e leva seu humor sobre a vida no interior também para o stand-up.",
   },
   {
     slug: "piquizinha",
@@ -122,6 +129,13 @@ const pessoas = [
     papel: "Influenciadora",
     periodo: "",
     bio: "Luiza Cristina Rodrigues de Souza, a Piquizinha, é influenciadora digital natural de Piracanjuba e fisioterapeuta. Faz humor nas redes sociais e viralizou no país com vídeos emocionando o pai ao revelar sua aprovação e a formatura em Fisioterapia. No TikTok (@piquizinha) reúne mais de 3 milhões de seguidores.",
+  },
+  {
+    slug: "carros-com-thiago",
+    nome: "Tiago Martins",
+    papel: "Criador do 'Carros com Tiago'",
+    periodo: "",
+    bio: "Natural de Piracanjuba, Tiago Martins é o rosto do 'Carros com Tiago' (@carroscomtiagoo), um dos maiores criadores de conteúdo automotivo do país. Publica todo dia apresentando carros, comparando preços e dando dicas para quem vai comprar. Reúne cerca de 2 milhões de seguidores no Instagram e passa de 5 milhões somando todas as redes, além de mais de 500 mil inscritos no YouTube.",
   },
 ];
 
@@ -273,6 +287,12 @@ export default function HistoriaPBAPage() {
               Pela projeção do evento, a cidade também é divulgada como &ldquo;Capital Nacional das Orquídeas&rdquo;.
               É um título de divulgação do evento: o reconhecimento oficial, por lei, é o estadual (Capital Goiana das Orquídeas).
             </p>
+            <FotoOpcional
+              src="/historia/orquideas-expo.jpg"
+              alt="Cartaz da 43ª Exposição Nacional de Orquídeas de Piracanjuba"
+              legenda="Cartaz da 43ª Exposição Nacional de Orquídeas: 22 a 24 de maio de 2026, no Palácio das Orquídeas, com entrada gratuita."
+              className="max-w-xs"
+            />
           </div>
         </div>
       </section>
@@ -357,6 +377,11 @@ export default function HistoriaPBAPage() {
               popular, contada de geração em geração na cidade. Resultado curioso: muita gente conhece &ldquo;Piracanjuba&rdquo;
               pelo leite antes de saber que é uma cidade.
             </p>
+            <FotoOpcional
+              src="/historia/leite-piracanjuba.jpg"
+              alt="Linha de produtos da marca de leite Piracanjuba"
+              legenda="A marca Piracanjuba, que leva o nome da cidade, hoje tem mais de 200 produtos derivados do leite."
+            />
           </div>
         </div>
       </section>
