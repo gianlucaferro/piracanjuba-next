@@ -84,7 +84,7 @@ export default function HistoriaPBAPage() {
       <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight">
         A história de Piracanjuba
       </h1>
-      <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl">
+      <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
         Do antigo arraial de <strong className="text-foreground">Pouso Alto</strong> à terra que deu nome a um dos
         leites mais conhecidos do Brasil e que Goiás reconhece como <strong className="text-foreground">Capital das
         Orquídeas</strong>. Um retrato da cultura, da fé, das festas e das curiosidades de um município do coração de Goiás.
@@ -103,14 +103,14 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="origem" className="text-xl md:text-2xl font-bold text-foreground mb-2">A origem do nome</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               <strong>Piracanjuba</strong> vem do tupi e significa, em tradução corrente,
               <strong> &ldquo;peixe de cabeça amarela&rdquo;</strong>: <em>pira</em> (peixe) + <em>cã</em> (cabeça)
               + <em>juba</em> (amarelo). O nome é o mesmo de um peixe nativo, a piracanjuba
               (<em>Brycon orbignyanus</em>), que chega a 80 cm e mais de 6 kg e é um grande migrador dos
               rios da bacia do Paraná.
             </p>
-            <p className="text-sm text-foreground/80 leading-relaxed">
+            <p className="text-base md:text-lg text-foreground/80 leading-relaxed">
               Curiosamente, esse peixe que batiza a cidade está hoje <strong>criticamente ameaçado de
               extinção</strong>, vítima de barragens, perda de matas ciliares e pesca excessiva. O nome
               carrega, assim, um lembrete da relação entre o desenvolvimento e a natureza do Cerrado.
@@ -127,20 +127,20 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="historia" className="text-xl md:text-2xl font-bold text-foreground mb-2">De Pouso Alto a Piracanjuba</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               O povoado nasceu com o nome de <strong>Pouso Alto</strong>. Em <strong>22 de novembro de 1855</strong>,
               a lei provincial nº 21 criou oficialmente o distrito, formado a partir de terras dos antigos
               distritos de <strong>Santa Cruz de Goiás</strong> e <strong>Bomfim</strong>. No mesmo período surgiu a
               freguesia católica de <strong>Nossa Senhora d&rsquo;Abadia de Pouso Alto</strong>, que organizou a vida
               religiosa e social da comunidade.
             </p>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               Com o tempo, o arraial passou a se chamar <strong>Piracanjuba</strong>, em referência ao peixe da
               região. Em <strong>1953</strong>, já como município consolidado, Piracanjuba teve o distrito de
               <strong> Mairipotaba</strong> desmembrado de seu território (lei estadual nº 899), que se tornou
               município autônomo.
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
               Nota de transparência: as datas exatas da troca de nome (Pouso Alto para Piracanjuba) e da
               elevação a município não foram localizadas em fontes oficiais consultadas. Mantemos aqui
               apenas o que é documentado e seguimos buscando os registros para completar essa parte.
@@ -160,18 +160,18 @@ export default function HistoriaPBAPage() {
               Capital Goiana das Orquídeas
             </span>
             <h2 id="orquideas" className="text-xl md:text-2xl font-bold text-foreground mb-2">A Capital das Orquídeas</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               Em Goiás, Piracanjuba é oficialmente a <strong>Capital Goiana das Orquídeas</strong>, título concedido
               por <strong>lei estadual (nº 23.281)</strong>. A cidade tem forte tradição no cultivo de orquídeas e uma
               comunidade organizada na <strong>Associação Piracanjubense de Orquidófilos (APO)</strong>.
             </p>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               O ponto alto é a <strong>Exposição Nacional de Orquídeas de Piracanjuba</strong>, realizada todo mês de
               <strong> maio</strong>, ao longo de três dias, no <strong>Palácio das Orquídeas</strong>. A 43ª edição
               acontece de <strong>22 a 24 de maio de 2026</strong>, com entrada gratuita, e reúne expositores e
               visitantes de várias partes do país.
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
               Pela projeção do evento, a cidade também é divulgada como &ldquo;Capital Nacional das Orquídeas&rdquo;.
               É um título de divulgação do evento: o reconhecimento oficial, por lei, é o estadual (Capital Goiana das Orquídeas).
             </p>
@@ -187,19 +187,19 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="festas" className="text-xl md:text-2xl font-bold text-foreground mb-2">Festas e tradições</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               A celebração mais tradicional é a <strong>Festa de Agosto</strong>, em louvor a
               <strong> Nossa Senhora d&rsquo;Abadia</strong>, padroeira da cidade. É uma das festas religiosas mais
               antigas da região: a divulgação recente já fala em <strong>194ª edição</strong>. Reúne novenas, missas e
               procissões, e tem como marca o <strong>tradicional leilão de 14 de agosto</strong>, realizado no adro, em
               frente à igreja, que mistura fé, cultura e o encontro da comunidade.
             </p>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               A cultura popular aparece também nas <strong>congadas</strong>, com grupos como a Congada Branca
               Marinheiros e a Verde Periquito, que se apresentam no Palácio das Orquídeas. Tudo isso convive com a
               cultura sertaneja goiana: a viola, as cavalgadas e a culinária de raiz, com milho, pequi, queijos e o doce de leite.
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
               Datas e números de edições seguem a divulgação local; os registros oficiais da primeira festa não foram
               localizados. Tem fotos antigas ou lembranças das festas? Ajude a completar essa memória.
             </p>
@@ -215,21 +215,21 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="economia" className="text-xl md:text-2xl font-bold text-foreground mb-2">A terra do leite (e a marca que não fica aqui)</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               Piracanjuba é uma das <strong>maiores bacias leiteiras de Goiás</strong>. E aqui mora uma das
               curiosidades mais comentadas do Brasil: o nome do município batiza uma das marcas de leite mais
               conhecidas do país, a <strong>Piracanjuba</strong>, da empresa Laticínios Bela Vista. Pela própria
               empresa, a história começou <strong>na cidade de Piracanjuba</strong>, o que deu origem ao nome da marca.
               Em 2025 a marca completou <strong>70 anos</strong>, com mais de 200 produtos derivados do leite.
             </p>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               A surpresa é que a <strong>fábrica e a sede não ficam em Piracanjuba</strong>. O parque industrial está,
               entre outras cidades, em <strong>Bela Vista de Goiás</strong>, município vizinho. Conta-se na cidade que a
               empresa, nascida aqui, acabou indo embora por <strong>falta de incentivos fiscais</strong>, e foi em Bela
               Vista que cresceu e se tornou uma das maiores empregadoras da região. Hoje a Laticínios Bela Vista é uma
               das maiores indústrias de laticínios do Brasil.
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
               O que é registrado: o nome da marca veio da cidade de Piracanjuba e o coração industrial hoje fica em Bela
               Vista de Goiás. A versão de que a empresa &ldquo;foi embora por falta de incentivos&rdquo; é memória
               popular, contada de geração em geração na cidade. Resultado curioso: muita gente conhece &ldquo;Piracanjuba&rdquo;
@@ -247,11 +247,11 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="cultura" className="text-xl md:text-2xl font-bold text-foreground mb-2">Fé e devoção popular</h2>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed mb-3">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
               A identidade de Piracanjuba é marcada pela <strong>tradição católica</strong>, herança da antiga
               freguesia de Nossa Senhora d&rsquo;Abadia, que ainda hoje organiza o calendário da cidade em torno da fé.
             </p>
-            <p className="text-sm md:text-base text-foreground/90 leading-relaxed">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
               Um capítulo à parte é a religiosidade popular em torno de <strong>Romilda, a &ldquo;Menina
               Milagreira&rdquo;</strong>. Segundo a memória da cidade, ela foi uma criança vítima de um crime que
               chocou a comunidade, e em torno dela cresceu uma devoção espontânea, com ex-votos e relatos de graças
@@ -273,8 +273,8 @@ export default function HistoriaPBAPage() {
         <div className="grid gap-2.5 sm:grid-cols-2">
           {curiosidades.map((c) => (
             <div key={c.t} className="rounded-xl border border-border bg-card/60 p-3">
-              <p className="text-sm font-semibold text-foreground">{c.t}</p>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{c.d}</p>
+              <p className="text-base font-semibold text-foreground">{c.t}</p>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{c.d}</p>
             </div>
           ))}
         </div>
@@ -288,7 +288,7 @@ export default function HistoriaPBAPage() {
           </div>
           <div className="min-w-0">
             <h2 id="turismo" className="text-xl md:text-2xl font-bold text-foreground mb-2">Para conhecer</h2>
-            <ul className="text-sm md:text-base text-foreground/90 leading-relaxed space-y-2 list-disc list-inside">
+            <ul className="text-base md:text-lg text-foreground/90 leading-relaxed space-y-2 list-disc list-inside">
               <li><strong>Palácio das Orquídeas</strong>: o centro de convenções que sedia a Exposição Nacional de Orquídeas, shows, festas e apresentações de congada.</li>
               <li><strong>Lago Afonso Dias Fernandes Sobrinho</strong>: cartão-postal de lazer, indicado por visitantes para caminhadas e passeios em família.</li>
               <li><strong>Viticultura Fonte Viva</strong>: fazenda de cultivo de uvas, com vocação para o turismo rural.</li>
@@ -305,7 +305,7 @@ export default function HistoriaPBAPage() {
           <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden />
           <div>
             <h2 id="contribua" className="text-lg font-semibold text-foreground mb-1.5">Conhece mais da nossa história?</h2>
-            <p className="text-sm text-foreground/85 leading-relaxed">
+            <p className="text-base text-foreground/85 leading-relaxed">
               Esta página vai crescer com a colaboração dos moradores. Tem fotos antigas da cidade, das festas ou das
               orquídeas, datas de tradições, causos ou registros históricos de Piracanjuba? Envie suas fotos abaixo, ou
               fale pelo <Brand />, e ajude a preservar a memória da cidade.
