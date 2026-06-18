@@ -12,6 +12,7 @@ Arquivos esperados (nome = slug.jpg):
 - `carlos-magno-de-melo.jpg` -> Carlos Magno de Melo (escritor)
 - `ney-teles-de-paula.jpg`   -> Ney Teles de Paula (desembargador)
 - `sebastiao-melo.jpg`       -> Sebastião Melo (prefeito de Porto Alegre)
+- `amauri-ribeiro.jpg`       -> Amauri Ribeiro (deputado estadual, ex-prefeito de Piracanjuba)
 - `jacques-vanier.jpg`       -> Jacques Vanier (humorista / agroboy)
 - `piquizinha.jpg`           -> Piquizinha / Luiza Souza (influenciadora)
 - `carros-com-thiago.jpg`    -> Tiago Martins (Carros com Tiago, influenciador)

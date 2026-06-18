@@ -124,6 +124,13 @@ const pessoas = [
     bio: "Advogado e político do MDB, nasceu em Piracanjuba e mudou-se para Porto Alegre em 1978, onde fez a carreira. Foi vereador da capital gaúcha por três mandatos (2001 a 2012), presidiu a Câmara Municipal duas vezes, foi vice-prefeito (2013 a 2016) e deputado estadual do Rio Grande do Sul. Elegeu-se prefeito de Porto Alegre em 2020 e foi reeleito em 2024 para um segundo mandato.",
   },
   {
+    slug: "amauri-ribeiro",
+    nome: "Amauri Ribeiro",
+    papel: "Deputado estadual",
+    periodo: "n. 1973",
+    bio: "Natural de Trindade, mudou-se para Piracanjuba aos 10 anos e fez na cidade toda a sua trajetória. Agropecuarista, foi vereador e prefeito de Piracanjuba antes de se eleger deputado estadual de Goiás em 2018, hoje no segundo mandato.",
+  },
+  {
     slug: "jacques-vanier",
     nome: "Jacques Vanier",
     papel: "Humorista",
@@ -448,7 +455,7 @@ export default function HistoriaPBAPage() {
           <div className="min-w-0">
             <h2 id="pessoas" className="text-xl md:text-2xl font-bold text-foreground mb-1">Filhos ilustres</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Gente nascida em Piracanjuba que deixou marca na cultura do Brasil.
+              Gente nascida ou criada em Piracanjuba que deixou marca no Brasil.
             </p>
           </div>
         </div>
