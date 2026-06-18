@@ -11,6 +11,7 @@ Arquivos esperados (nome = slug.jpg):
 - `frankito-lopes.jpg`       -> Frankito Lopes (cantor)
 - `carlos-magno-de-melo.jpg` -> Carlos Magno de Melo (escritor)
 - `ney-teles-de-paula.jpg`   -> Ney Teles de Paula (desembargador)
+- `sebastiao-melo.jpg`       -> Sebastião Melo (prefeito de Porto Alegre)
 - `jacques-vanier.jpg`       -> Jacques Vanier (humorista / agroboy)
 - `piquizinha.jpg`           -> Piquizinha / Luiza Souza (influenciadora)
 - `carros-com-thiago.jpg`    -> Tiago Martins (Carros com Tiago, influenciador)

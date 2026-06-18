@@ -117,6 +117,13 @@ const pessoas = [
     bio: "Natural de Piracanjuba, ingressou na magistratura goiana em 1978 e tomou posse como desembargador do Tribunal de Justiça de Goiás em 2001. Chegou à presidência do TJGO e presidiu o Tribunal Regional Eleitoral de Goiás entre 2010 e 2011, em mais de quatro décadas de judicatura. Também é escritor e integra academias e institutos culturais, como a Academia Goiana de Letras e a Academia Piracanjubense de Letras e Artes.",
   },
   {
+    slug: "sebastiao-melo",
+    nome: "Sebastião Melo",
+    papel: "Prefeito de Porto Alegre",
+    periodo: "n. 1958",
+    bio: "Advogado e político do MDB, nasceu em Piracanjuba e mudou-se para Porto Alegre em 1978, onde fez a carreira. Foi vereador da capital gaúcha por três mandatos (2001 a 2012), presidiu a Câmara Municipal duas vezes, foi vice-prefeito (2013 a 2016) e deputado estadual do Rio Grande do Sul. Elegeu-se prefeito de Porto Alegre em 2020 e foi reeleito em 2024 para um segundo mandato.",
+  },
+  {
     slug: "jacques-vanier",
     nome: "Jacques Vanier",
     papel: "Humorista",
