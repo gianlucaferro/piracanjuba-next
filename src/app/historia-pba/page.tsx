@@ -1,4 +1,4 @@
-import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star, Bug } from "lucide-react";
+import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star, Bug, Music, Flag } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 import HistoriaUpload from "@/components/historia/HistoriaUpload";
@@ -77,6 +77,7 @@ const curiosidades = [
   { t: "Capital das Orquídeas", d: "Goiás reconhece a cidade por lei como Capital Goiana das Orquídeas." },
   { t: 'A origem do "feito nas coxas"?', d: 'Conta-se que as telhas coloniais do antigo Pouso Alto, rústicas e irregulares, deram origem à expressão "feito nas coxas". É uma etimologia popular, contada na cidade.' },
   { t: "Uma espécie com o nome daqui", d: "Em 2023, a UEG batizou um pseudoescorpião novo de Cheiridium piracanjubae, achado no Parque das Orquídeas." },
+  { t: "Anhanguera e a \"Meia Ponte\"", d: "Conta-se que, por volta de 1732, Anhanguera cruzou o rio da região sobre duas pranchas; na volta, achando só uma, batizou-o de Meia Ponte, nome até hoje." },
 ];
 
 const pessoas = [
@@ -123,6 +124,19 @@ const pessoas = [
     bio: "Luiza Cristina Rodrigues de Souza, a Piquizinha, é influenciadora digital natural de Piracanjuba e fisioterapeuta. Faz humor nas redes sociais e viralizou no país com vídeos emocionando o pai ao revelar sua aprovação e a formatura em Fisioterapia. No TikTok (@piquizinha) reúne mais de 3 milhões de seguidores.",
   },
 ];
+
+const hino = {
+  estrofes: [
+    "Formosa e amada terra\nde beleza primaveril.\nExuberante vergel florido,\nsuave aurora de encantos mil.",
+    "Piracanjuba cidade altaneira\nSoma progresso e altruísmo\nFlor mimosa que desabrochou\nNos campos férteis do civismo.",
+    "Planalto goiano\nTerra querida\nAmor dileto\nPleno de vida.\nPiracanjuba\npara os filhos teus\nÉs mães sublime\nÉs um pedacinho\nDeste Brasil.",
+    "Povo ordeiro, alegre e gentil\nFlorescente marco da história\nCidade centenária e querida\nSuntuoso monumento de glória.",
+    "Canção sublime de harmonia\nQue no coração goiano encerra\nPinceladas de cores e melodias\nPoetizando as belezas desta terra.",
+    "Planalto goiano\nTerra querida\nAmor dileto\nPleno de vida.\nPiracanjuba\npara os filhos teus\nÉs mães sublime\nÉs um pedacinho\nDeste Brasil.",
+  ],
+  letra: "Antônio Alves Magalhães",
+  melodia: "Salim Miguel Tanus",
+};
 
 export default function HistoriaPBAPage() {
   return (
@@ -198,13 +212,37 @@ export default function HistoriaPBAPage() {
               <strong> Nossa Senhora da Abadia</strong>.
             </p>
             <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
-              Em <strong>18 de novembro de 1886</strong> (lei provincial nº 786), o povoado foi elevado à categoria de
-              cidade já com o nome de <strong>Piracanjuba</strong>, em referência ao peixe da região. O nome ainda foi
+              Em <strong>1869</strong>, o lugar foi elevado a vila com o nome de Nossa Senhora da Abadia (instalada em
+              1874) e, em <strong>18 de novembro de 1886</strong> (lei provincial nº 786), à categoria de cidade já com
+              o nome de <strong>Piracanjuba</strong>, em referência ao peixe da região. O nome ainda foi
               e voltou: em <strong>1907</strong> a cidade tornou a se chamar Pouso Alto (lei nº 312) e só em
               <strong> 31 de dezembro de 1943</strong> voltou em definitivo a Piracanjuba (decreto-lei nº 8.305).
               Antigos distritos seus se emanciparam: <strong>Cromínia</strong> e <strong>Mairipotaba</strong> em 1953,
               e Campo Limpo (hoje Professor Jamil Sáfady) em 1991.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* A bandeira */}
+      <section aria-labelledby="bandeira" className="stat-card mb-6 border-red-500/20 bg-gradient-to-br from-red-500/5 to-transparent">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
+            <Flag className="w-5 h-5 text-red-500" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 id="bandeira" className="text-xl md:text-2xl font-bold text-foreground mb-2">A bandeira e o brasão</h2>
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+              A bandeira de Piracanjuba tem três faixas (vermelha, branca e azul) e, ao centro, o brasão do município
+              cercado por ramos. No escudo aparecem símbolos da terra: o gado e a indústria, o milho, a banana e a
+              cana, e o peixe <strong>piracanjuba</strong> em vermelho; abaixo, uma cornucópia, símbolo da fartura. No
+              alto, a data <strong>22 de novembro de 1855</strong>, da criação do distrito de Pouso Alto.
+            </p>
+            <FotoOpcional
+              src="/historia/bandeira-piracanjuba.jpg"
+              alt="Bandeira de Piracanjuba"
+              legenda="Bandeira oficial do município de Piracanjuba."
+            />
           </div>
         </div>
       </section>
@@ -406,6 +444,25 @@ export default function HistoriaPBAPage() {
             </ul>
           </div>
         </div>
+      </section>
+
+      {/* Hino Municipal */}
+      <section aria-labelledby="hino" className="stat-card mb-6 border-sky-500/20 bg-gradient-to-br from-sky-500/5 to-transparent">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+            <Music className="w-5 h-5 text-sky-600" aria-hidden />
+          </div>
+          <h2 id="hino" className="text-xl md:text-2xl font-bold text-foreground">Hino Municipal</h2>
+        </div>
+        <div className="space-y-3 text-base md:text-lg text-foreground/90 leading-relaxed italic">
+          {hino.estrofes.map((e, i) => (
+            <p key={i} className="whitespace-pre-line">{e}</p>
+          ))}
+        </div>
+        <p className="text-sm text-muted-foreground mt-4">
+          Letra de <strong className="text-foreground/80">{hino.letra}</strong>. Melodia de{" "}
+          <strong className="text-foreground/80">{hino.melodia}</strong>.
+        </p>
       </section>
 
       {/* Contribua */}

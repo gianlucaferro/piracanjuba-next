@@ -20,4 +20,6 @@ Basta soltar o arquivo com o nome certo e fazer commit/push; a foto aparece sozi
 Um nível acima, em `public/historia/`:
 
 - `peixe-piracanjuba.jpg` -> foto da piracanjuba (peixe) na seção "A origem do nome".
-  Some sozinha se o arquivo não existir; aparece assim que você soltar o arquivo.
+- `bandeira-piracanjuba.jpg` -> bandeira oficial na seção "A bandeira e o brasão".
+
+  Ambas somem sozinhas se o arquivo não existir; aparecem assim que você soltar o arquivo.
