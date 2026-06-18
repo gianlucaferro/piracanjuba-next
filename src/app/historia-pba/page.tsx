@@ -409,6 +409,25 @@ export default function HistoriaPBAPage() {
               A identidade de Piracanjuba é marcada pela <strong>tradição católica</strong>, herança da antiga
               freguesia de Nossa Senhora d&rsquo;Abadia, que ainda hoje organiza o calendário da cidade em torno da fé.
             </p>
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
+              Outra forte expressão da fé local são os <strong>Romeiros do Divino Pai Eterno</strong>. Todos os anos,
+              no fim de junho e início de julho, comitivas de cavaleiros e muladeiros saem de Piracanjuba rumo ao
+              <strong> Santuário do Divino Pai Eterno, em Trindade</strong>, sede da maior romaria religiosa do
+              Centro-Oeste e uma das maiores do Brasil. Vestindo o azul do grupo, os romeiros encaram a estrada a
+              cavalo para cumprir suas promessas e participar do tradicional encontro de carreiros, cavaleiros e muladeiros.
+            </p>
+            <FotoOpcional
+              src="/historia/romeiros-cavalgada.jpg"
+              alt="Romeiros do Divino Pai Eterno de Piracanjuba a cavalo, na estrada rumo a Trindade"
+              legenda="Romeiros do Divino Pai Eterno na estrada, rumo a Trindade."
+              className="max-w-sm"
+            />
+            <FotoOpcional
+              src="/historia/romeiros-grupo.jpg"
+              alt="Comitiva dos Romeiros do Divino Pai Eterno de Piracanjuba reunida na igreja"
+              legenda="A comitiva dos Romeiros do Divino Pai Eterno de Piracanjuba."
+              className="max-w-sm"
+            />
             <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
               Um capítulo à parte é a religiosidade popular em torno de <strong>Romilda, a &ldquo;Menina
               Milagreira&rdquo;</strong>. Segundo a memória da cidade, ela foi uma criança vítima de um crime que
