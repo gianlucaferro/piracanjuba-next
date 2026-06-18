@@ -14,3 +14,10 @@ Arquivos esperados (nome = slug.jpg):
 - `piquizinha.jpg`           -> Piquizinha / Luiza Souza (influenciadora)
 
 Basta soltar o arquivo com o nome certo e fazer commit/push; a foto aparece sozinha.
+
+## Outras imagens da página
+
+Um nível acima, em `public/historia/`:
+
+- `peixe-piracanjuba.jpg` -> foto da piracanjuba (peixe) na seção "A origem do nome".
+  Some sozinha se o arquivo não existir; aparece assim que você soltar o arquivo.

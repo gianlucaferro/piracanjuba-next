@@ -1,8 +1,9 @@
-import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star } from "lucide-react";
+import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star, Bug } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 import HistoriaUpload from "@/components/historia/HistoriaUpload";
 import PessoaFoto from "@/components/historia/PessoaFoto";
+import FotoOpcional from "@/components/historia/FotoOpcional";
 
 export const metadata = pageMetadata({
   title: "História de Piracanjuba GO: Capital das Orquídeas, festas e o leite",
@@ -64,6 +65,7 @@ const fontes = [
   { label: "Wikipédia: Piracanjuba (peixe)", url: "https://pt.wikipedia.org/wiki/Piracanjuba_(peixe)" },
   { label: "Lei estadual nº 899/1953 (desmembramento de Mairipotaba)", url: "https://legisla.casacivil.go.gov.br/pesquisa_legislacao/90351/lei-899" },
   { label: "Laticínios Bela Vista (marca Piracanjuba)", url: "https://www.piracanjuba.com.br/sobre-nos" },
+  { label: "UEG: nova espécie de pseudoescorpião (Cheiridium piracanjubae)", url: "https://www.ueg.br/noticia/62770_estudantes_da_ueg_descobrem_nova_especie_de_pseudoescorpiao" },
 ];
 
 const curiosidades = [
@@ -73,6 +75,8 @@ const curiosidades = [
   { t: "O peixe que dá o nome", d: "A piracanjuba (Brycon orbignyanus) está criticamente ameaçada de extinção." },
   { t: "O leite famoso não é daqui", d: "A marca Piracanjuba leva o nome da cidade, mas a fábrica fica em Bela Vista de Goiás." },
   { t: "Capital das Orquídeas", d: "Goiás reconhece a cidade por lei como Capital Goiana das Orquídeas." },
+  { t: 'A origem do "feito nas coxas"?', d: 'Conta-se que as telhas coloniais do antigo Pouso Alto, rústicas e irregulares, deram origem à expressão "feito nas coxas". É uma etimologia popular, contada na cidade.' },
+  { t: "Uma espécie com o nome daqui", d: "Em 2023, a UEG batizou um pseudoescorpião novo de Cheiridium piracanjubae, achado no Parque das Orquídeas." },
 ];
 
 const pessoas = [
@@ -161,6 +165,11 @@ export default function HistoriaPBAPage() {
               extinção</strong>, vítima de barragens, perda de matas ciliares e pesca excessiva. O nome
               carrega, assim, um lembrete da relação entre o desenvolvimento e a natureza do Cerrado.
             </p>
+            <FotoOpcional
+              src="/historia/peixe-piracanjuba.jpg"
+              alt="A piracanjuba, peixe que dá nome à cidade"
+              legenda="A piracanjuba (Brycon orbignyanus), o peixe que batiza a cidade."
+            />
           </div>
         </div>
       </section>
@@ -174,22 +183,27 @@ export default function HistoriaPBAPage() {
           <div className="min-w-0">
             <h2 id="historia" className="text-xl md:text-2xl font-bold text-foreground mb-2">De Pouso Alto a Piracanjuba</h2>
             <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
-              O povoado nasceu com o nome de <strong>Pouso Alto</strong>. Em <strong>22 de novembro de 1855</strong>,
-              a lei provincial nº 21 criou oficialmente o distrito, formado a partir de terras dos antigos
-              distritos de <strong>Santa Cruz de Goiás</strong> e <strong>Bomfim</strong>. No mesmo período surgiu a
-              freguesia católica de <strong>Nossa Senhora d&rsquo;Abadia de Pouso Alto</strong>, que organizou a vida
-              religiosa e social da comunidade.
+              O povoado nasceu à beira da estrada que ligava São Paulo ao interior de Goiás, na esteira da mineração
+              de ouro de <strong>Santa Cruz de Goiás</strong>. O nome <strong>Pouso Alto</strong> não veio de ser um
+              ponto de hospedagem, como muitos pensam: era o nome da <strong>fazenda de Francisco José Pinheiro</strong>,
+              que em <strong>1831</strong> mandou erguer, às suas custas, a capela (orago) em devoção a Nossa Senhora da
+              Abadia. Aos poucos, o lugarejo que se formava passou a ser chamado pelo nome da fazenda.
             </p>
             <p className="text-base md:text-lg text-foreground/90 leading-relaxed mb-3">
-              Com o tempo, o arraial passou a se chamar <strong>Piracanjuba</strong>, em referência ao peixe da
-              região. Em <strong>1953</strong>, já como município consolidado, Piracanjuba teve o distrito de
-              <strong> Mairipotaba</strong> desmembrado de seu território (lei estadual nº 899), que se tornou
-              município autônomo.
+              A formação do núcleo urbano juntou vários fatores: as terras já ocupadas, a capela como ponto de
+              referência, o aumento do fluxo de viajantes (a ocupação de Campinas a partir de 1810 e a epidemia de
+              varíola em Meia Ponte, hoje Pirenópolis, em 1811 desviaram as rotas) e o fim do ouro em Santa Cruz de
+              Goiás. Em <strong>22 de novembro de 1855</strong>, a lei provincial nº 21 criou o distrito de Pouso Alto,
+              a partir de terras de Santa Cruz de Goiás e de Bomfim (Silvânia); na mesma data nascia a paróquia de
+              <strong> Nossa Senhora da Abadia</strong>.
             </p>
-            <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
-              Nota de transparência: as datas exatas da troca de nome (Pouso Alto para Piracanjuba) e da
-              elevação a município não foram localizadas em fontes oficiais consultadas. Mantemos aqui
-              apenas o que é documentado e seguimos buscando os registros para completar essa parte.
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+              Em <strong>18 de novembro de 1886</strong> (lei provincial nº 786), o povoado foi elevado à categoria de
+              cidade já com o nome de <strong>Piracanjuba</strong>, em referência ao peixe da região. O nome ainda foi
+              e voltou: em <strong>1907</strong> a cidade tornou a se chamar Pouso Alto (lei nº 312) e só em
+              <strong> 31 de dezembro de 1943</strong> voltou em definitivo a Piracanjuba (decreto-lei nº 8.305).
+              Antigos distritos seus se emanciparam: <strong>Cromínia</strong> e <strong>Mairipotaba</strong> em 1953,
+              e Campo Limpo (hoje Professor Jamil Sáfady) em 1991.
             </p>
           </div>
         </div>
@@ -220,6 +234,25 @@ export default function HistoriaPBAPage() {
             <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
               Pela projeção do evento, a cidade também é divulgada como &ldquo;Capital Nacional das Orquídeas&rdquo;.
               É um título de divulgação do evento: o reconhecimento oficial, por lei, é o estadual (Capital Goiana das Orquídeas).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Espécie batizada com o nome da cidade */}
+      <section aria-labelledby="especie" className="stat-card mb-6 border-lime-500/20 bg-gradient-to-br from-lime-500/5 to-transparent">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-lime-500/10 flex items-center justify-center shrink-0">
+            <Bug className="w-5 h-5 text-lime-600" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 id="especie" className="text-xl md:text-2xl font-bold text-foreground mb-2">Uma espécie com o nome da cidade</h2>
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+              Em <strong>2023</strong>, pesquisadores da <strong>Universidade Estadual de Goiás (UEG)</strong>
+              descreveram uma nova espécie de pseudoescorpião, um aracnídeo de poucos milímetros, encontrada no
+              <strong> Parque Natural Municipal das Orquídeas José Pinheiro de Souza</strong>, em Piracanjuba. Ela foi
+              batizada de <em>Cheiridium piracanjubae</em> em homenagem à cidade, que virou, assim, nome científico de
+              uma espécie nova para a ciência.
             </p>
           </div>
         </div>
