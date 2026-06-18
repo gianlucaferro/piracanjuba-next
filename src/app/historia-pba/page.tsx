@@ -1,7 +1,8 @@
-import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb } from "lucide-react";
+import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb, Star } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 import HistoriaUpload from "@/components/historia/HistoriaUpload";
+import PessoaFoto from "@/components/historia/PessoaFoto";
 
 export const metadata = pageMetadata({
   title: "História de Piracanjuba GO: Capital das Orquídeas, festas e o leite",
@@ -72,6 +73,44 @@ const curiosidades = [
   { t: "O peixe que dá o nome", d: "A piracanjuba (Brycon orbignyanus) está criticamente ameaçada de extinção." },
   { t: "O leite famoso não é daqui", d: "A marca Piracanjuba leva o nome da cidade, mas a fábrica fica em Bela Vista de Goiás." },
   { t: "Capital das Orquídeas", d: "Goiás reconhece a cidade por lei como Capital Goiana das Orquídeas." },
+];
+
+const pessoas = [
+  {
+    slug: "leo-lynce",
+    nome: "Leo Lynce",
+    papel: "Poeta",
+    periodo: "1884 - 1954",
+    bio: "Nascido em Pouso Alto (hoje Piracanjuba), Cyllenêo Marques de Araújo Valle adotou o nome literário Leo Lynce. Poeta, advogado, jornalista e juiz, é apontado como o iniciador do Modernismo na literatura goiana: seu livro Ontem (1928) é tido como marco inaugural do movimento em Goiás. Foi um dos fundadores da Academia Goiana de Letras, que presidiu em 1948 e 1949.",
+  },
+  {
+    slug: "thelma-reston",
+    nome: "Thelma Reston",
+    papel: "Atriz",
+    periodo: "1937 - 2012",
+    bio: "Atriz de teatro, cinema e televisão, com mais de 40 filmes, 30 peças e dezenas de personagens na TV. Estreou na novela Gabriela (1975) e passou por TV Globo, Manchete e Bandeirantes. Seu tipo marcante a levou com frequência a papéis cômicos. O último trabalho foi em Aquele Beijo (2011), como a Dona Violante. Morreu em 20 de dezembro de 2012, aos 75 anos, vítima de um câncer que enfrentava desde 2009.",
+  },
+  {
+    slug: "frankito-lopes",
+    nome: "Frankito Lopes",
+    papel: "Cantor",
+    periodo: "1939 - 2008",
+    bio: "Agílio Lopes da Silva, o Frankito Lopes, foi cantor e compositor de brega, bolero e guarânia, apelidado de Rei dos Bregueiros e Índio Apaixonado. Com sua persona indígena nos palcos, tornou-se um dos nomes mais marcantes da canção popular romântica do Centro-Oeste nos anos 1970 e 1980.",
+  },
+  {
+    slug: "carlos-magno-de-melo",
+    nome: "Carlos Magno de Melo",
+    papel: "Escritor",
+    periodo: "",
+    bio: "Escritor, poeta e médico, com atuação literária em jornais e revistas. É autor do romance histórico Guaibimpará Caramuru, que recria a história de Diogo Álvares Correia, o Caramuru, e de Guaibimpará.",
+  },
+  {
+    slug: "jacques-vanier",
+    nome: "Jacques Vanier",
+    papel: "Humorista",
+    periodo: "",
+    bio: "Lembrado entre os filhos ilustres de Piracanjuba pela veia humorística. Estamos reunindo mais detalhes da sua trajetória: se você conhece a história dele ou tem fotos, ajude a completar pela seção de contribuição.",
+  },
 ];
 
 export default function HistoriaPBAPage() {
@@ -259,6 +298,36 @@ export default function HistoriaPBAPage() {
               reportagens e estudos.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Filhos ilustres */}
+      <section aria-labelledby="pessoas" className="stat-card mb-6 border-rose-500/20 bg-gradient-to-br from-rose-500/5 to-transparent">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0">
+            <Star className="w-5 h-5 text-rose-500" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 id="pessoas" className="text-xl md:text-2xl font-bold text-foreground mb-1">Filhos ilustres</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Gente nascida em Piracanjuba que deixou marca na cultura do Brasil.
+            </p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {pessoas.map((p) => (
+            <div key={p.slug} className="flex gap-3 sm:gap-4 rounded-xl border border-border bg-card/60 p-3">
+              <PessoaFoto slug={p.slug} nome={p.nome} />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <h3 className="text-base md:text-lg font-bold text-foreground">{p.nome}</h3>
+                  <span className="text-xs font-medium text-rose-600 dark:text-rose-400">{p.papel}</span>
+                  {p.periodo && <span className="text-xs text-muted-foreground">· {p.periodo}</span>}
+                </div>
+                <p className="text-sm md:text-base text-foreground/85 leading-relaxed mt-1">{p.bio}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
