@@ -1,6 +1,7 @@
 import { ExternalLink, Fish, Landmark, Milk, Church, MapPin, Info, Sparkles, Flower2, CalendarHeart, Lightbulb } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
+import HistoriaUpload from "@/components/historia/HistoriaUpload";
 
 export const metadata = pageMetadata({
   title: "História de Piracanjuba GO: Capital das Orquídeas, festas e o leite",
@@ -306,9 +307,10 @@ export default function HistoriaPBAPage() {
             <h2 id="contribua" className="text-lg font-semibold text-foreground mb-1.5">Conhece mais da nossa história?</h2>
             <p className="text-sm text-foreground/85 leading-relaxed">
               Esta página vai crescer com a colaboração dos moradores. Tem fotos antigas da cidade, das festas ou das
-              orquídeas, datas de tradições, causos ou registros históricos de Piracanjuba? Compartilhe pelo{" "}
-              <Brand />, e ajude a preservar a memória da cidade.
+              orquídeas, datas de tradições, causos ou registros históricos de Piracanjuba? Envie suas fotos abaixo, ou
+              fale pelo <Brand />, e ajude a preservar a memória da cidade.
             </p>
+            <HistoriaUpload />
           </div>
         </div>
       </section>

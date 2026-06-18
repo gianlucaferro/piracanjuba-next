@@ -81,6 +81,7 @@ export default function MobileBottomNav() {
                 const isCompraVenda = item.to === "/compra-e-venda";
                 const isZapPba = item.to === "/zap-pba";
                 const isDadosPba = item.to === "/dados-pba";
+                const isHistoriaPba = item.to === "/historia-pba";
                 return (
                   <Link
                     key={item.to}
@@ -111,6 +112,10 @@ export default function MobileBottomNav() {
                     ) : isDadosPba ? (
                       <span className="text-base font-medium">
                         Dados <span className="text-[#25D366] font-semibold">PBA</span>
+                      </span>
+                    ) : isHistoriaPba ? (
+                      <span className="text-base font-medium">
+                        História <span className="text-[#25D366] font-semibold">PBA</span>
                       </span>
                     ) : isAnuncie ? (
                       <span className="text-base font-semibold text-[#25D366]">

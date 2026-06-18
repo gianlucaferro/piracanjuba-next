@@ -116,6 +116,7 @@ export default function DesktopNav() {
               const isCompraVenda = item.to === "/compra-e-venda";
               const isZapPba = item.to === "/zap-pba";
               const isDadosPba = item.to === "/dados-pba";
+              const isHistoriaPba = item.to === "/historia-pba";
               return (
                 <Link
                   key={item.to}
@@ -144,6 +145,10 @@ export default function DesktopNav() {
                   ) : isDadosPba ? (
                     <span>
                       Dados <span className="text-[#25D366] font-semibold">PBA</span>
+                    </span>
+                  ) : isHistoriaPba ? (
+                    <span>
+                      História <span className="text-[#25D366] font-semibold">PBA</span>
                     </span>
                   ) : (
                     <span>{item.label}</span>

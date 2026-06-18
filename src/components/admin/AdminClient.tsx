@@ -17,13 +17,14 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity, UserSearch, Scale } from "lucide-react";
+import { Check, X, RotateCcw, ExternalLink, Pencil, Save, Search, MousePointerClick, MessageSquare, Loader2, Download, Pill, Megaphone, Package, Activity, UserSearch, Scale, Image as ImageIcon, ArrowLeft } from "lucide-react";
 import FarmaciaFotosAdmin from "@/components/admin/FarmaciaFotosAdmin";
 import AnunciosAdmin from "@/components/admin/AnunciosAdmin";
 import ClassificadosAdmin from "@/components/admin/ClassificadosAdmin";
 import SyncStatusAdmin from "@/components/admin/SyncStatusAdmin";
 import ConsultaCpfAdmin from "@/components/admin/ConsultaCpfAdmin";
 import NepotismoAdmin from "@/components/admin/NepotismoAdmin";
+import HistoriaFotosAdmin from "@/components/admin/HistoriaFotosAdmin";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -213,6 +214,7 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [adminSearch, setAdminSearch] = useState("");
+  const [section, setSection] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   // Validate token on mount
@@ -415,23 +417,11 @@ export default function Admin() {
   const filteredApproved = filteredBySearch.approved;
   const filteredRejected = filteredBySearch.rejected;
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-6 md:py-10 max-w-4xl">
-        <div className="flex items-center justify-between mb-4 gap-2">
-          <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">Painel Admin</h1>
-          <div className="flex gap-1.5 shrink-0">
-            <Button variant="outline" size="sm" className="text-xs h-8 gap-1" onClick={handleExportCsv} disabled={dataLoading || !adminData}>
-              <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Exportar</span> CSV
-            </Button>
-            <Button variant="ghost" size="sm" className="text-xs h-8" onClick={logout}>
-              Sair
-            </Button>
-          </div>
-        </div>
-
-        {/* Admin search bar */}
-        <div className="relative mb-4">
+  // Seção "Zap PBA": busca + exportar + abas internas (pendentes / aprovados / reprovados).
+  const renderZap = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nome, telefone ou categoria..."
@@ -440,126 +430,143 @@ export default function Admin() {
             className="pl-10"
           />
         </div>
+        <Button variant="outline" size="sm" className="text-xs h-9 gap-1 shrink-0" onClick={handleExportCsv} disabled={dataLoading || !adminData}>
+          <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Exportar</span> CSV
+        </Button>
+      </div>
 
-        {dataLoading && (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      {dataLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        <Tabs defaultValue="pending">
+          <TabsList className="w-full flex gap-0.5 p-1">
+            <TabsTrigger value="pending" className="relative flex-1 text-xs px-2.5">
+              Pendentes
+              {pending.length > 0 && (
+                <Badge className="ml-1 h-4 min-w-4 px-0.5 bg-amber-500 text-white text-[10px]">{pending.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="approved" className="flex-1 text-xs px-2.5">Aprovados</TabsTrigger>
+            <TabsTrigger value="rejected" className="flex-1 text-xs px-2.5">Reprovados</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pending" className="space-y-3 mt-4">
+            {filteredPending.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum cadastro pendente.</p>}
+            {filteredPending.map((item) => (
+              <EditableEstablishmentRow
+                key={item.id}
+                item={item}
+                onSaveEdit={saveEdit}
+                suggestions={suggestions}
+                actions={
+                  <>
+                    <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white h-8 text-xs" onClick={() => updateStatus(item.id, "approved")}>
+                      <Check className="w-3.5 h-3.5 mr-1" /> Aprovar
+                    </Button>
+                    <Button size="sm" variant="destructive" className="h-8 text-xs" onClick={() => updateStatus(item.id, "rejected")}>
+                      <X className="w-3.5 h-3.5 mr-1" /> Reprovar
+                    </Button>
+                  </>
+                }
+              />
+            ))}
+          </TabsContent>
+
+          <TabsContent value="approved" className="space-y-3 mt-4">
+            {filteredApproved.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum estabelecimento aprovado.</p>}
+            {filteredApproved.map((item) => (
+              <EditableEstablishmentRow
+                key={item.id}
+                item={item}
+                onSaveEdit={saveEdit}
+                suggestions={suggestions}
+                actions={
+                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
+                    <RotateCcw className="w-3.5 h-3.5 mr-1" /> Remover
+                  </Button>
+                }
+              />
+            ))}
+          </TabsContent>
+
+          <TabsContent value="rejected" className="space-y-3 mt-4">
+            {filteredRejected.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum estabelecimento reprovado.</p>}
+            {filteredRejected.map((item) => (
+              <EditableEstablishmentRow
+                key={item.id}
+                item={item}
+                onSaveEdit={saveEdit}
+                suggestions={suggestions}
+                actions={
+                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
+                    <RotateCcw className="w-3.5 h-3.5 mr-1" /> Revisar
+                  </Button>
+                }
+              />
+            ))}
+          </TabsContent>
+        </Tabs>
+      )}
+    </div>
+  );
+
+  // Áreas do admin como cards (substitui o sistema de abas, que ficava apertado).
+  const SECTIONS: { key: string; label: string; desc: string; icon: typeof MessageSquare; badge?: number; render: () => React.ReactNode }[] = [
+    { key: "zap", label: "Zap PBA", desc: "Estabelecimentos: aprovar, editar e exportar", icon: MessageSquare, badge: pending.length, render: renderZap },
+    { key: "historia", label: "Fotos da História", desc: "Fotos enviadas pelos moradores para moderar", icon: ImageIcon, render: () => <HistoriaFotosAdmin /> },
+    { key: "farmacias", label: "Farmácias", desc: "Fotos e telefones do plantão", icon: Pill, render: () => <FarmaciaFotosAdmin /> },
+    { key: "anuncios", label: "Anúncios", desc: "Banners e patrocínios", icon: Megaphone, render: () => <AnunciosAdmin /> },
+    { key: "classificados", label: "Compra e Venda", desc: "Moderar classificados", icon: Package, render: () => <ClassificadosAdmin adminToken={adminToken} /> },
+    { key: "cpf", label: "Consulta CPF", desc: "CPFHub, uso restrito (LGPD)", icon: UserSearch, render: () => <ConsultaCpfAdmin /> },
+    { key: "nepotismo", label: "Nepotismo", desc: "Cruzamento de sobrenomes (privado)", icon: Scale, render: () => <NepotismoAdmin /> },
+    { key: "syncs", label: "Syncs", desc: "Saúde dos cron jobs", icon: Activity, render: () => <SyncStatusAdmin /> },
+  ];
+
+  const active = SECTIONS.find((s) => s.key === section);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container py-6 md:py-10 max-w-4xl">
+        <div className="flex items-center justify-between mb-5 gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            {active && (
+              <Button variant="ghost" size="sm" className="h-8 px-2 shrink-0" onClick={() => setSection(null)} aria-label="Voltar ao painel">
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            )}
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">{active ? active.label : "Painel Admin"}</h1>
           </div>
-        )}
+          <Button variant="ghost" size="sm" className="text-xs h-8 shrink-0" onClick={logout}>Sair</Button>
+        </div>
 
-        {!dataLoading && (
-          <Tabs defaultValue="pending">
-            <TabsList className="w-full flex overflow-x-auto scrollbar-hide gap-0.5 p-1">
-              <TabsTrigger value="pending" className="relative shrink-0 text-xs px-2.5">
-                Pendentes
-                {pending.length > 0 && (
-                  <Badge className="ml-1 h-4 min-w-4 px-0.5 bg-amber-500 text-white text-[10px]">
-                    {pending.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="approved" className="shrink-0 text-xs px-2.5">Aprovados</TabsTrigger>
-              <TabsTrigger value="rejected" className="shrink-0 text-xs px-2.5">Reprovados</TabsTrigger>
-              <TabsTrigger value="farmacias" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <Pill className="w-3 h-3" /> Farmácias
-              </TabsTrigger>
-              <TabsTrigger value="anuncios" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <Megaphone className="w-3 h-3" /> Anúncios
-              </TabsTrigger>
-              <TabsTrigger value="classificados" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <Package className="w-3 h-3" /> C&V
-              </TabsTrigger>
-              <TabsTrigger value="cpf" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <UserSearch className="w-3 h-3" /> CPF
-              </TabsTrigger>
-              <TabsTrigger value="syncs" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <Activity className="w-3 h-3" /> Syncs
-              </TabsTrigger>
-              <TabsTrigger value="nepotismo" className="flex items-center gap-1 shrink-0 text-xs px-2.5">
-                <Scale className="w-3 h-3" /> Nepotismo
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="pending" className="space-y-3 mt-4">
-              {filteredPending.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum cadastro pendente.</p>}
-              {filteredPending.map((item) => (
-                <EditableEstablishmentRow
-                  key={item.id}
-                  item={item}
-                  onSaveEdit={saveEdit}
-                  suggestions={suggestions}
-                  actions={
-                    <>
-                      <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white h-8 text-xs" onClick={() => updateStatus(item.id, "approved")}>
-                        <Check className="w-3.5 h-3.5 mr-1" /> Aprovar
-                      </Button>
-                      <Button size="sm" variant="destructive" className="h-8 text-xs" onClick={() => updateStatus(item.id, "rejected")}>
-                        <X className="w-3.5 h-3.5 mr-1" /> Reprovar
-                      </Button>
-                    </>
-                  }
-                />
-              ))}
-            </TabsContent>
-
-            <TabsContent value="approved" className="space-y-3 mt-4">
-              {filteredApproved.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum estabelecimento aprovado.</p>}
-              {filteredApproved.map((item) => (
-                <EditableEstablishmentRow
-                  key={item.id}
-                  item={item}
-                  onSaveEdit={saveEdit}
-                  suggestions={suggestions}
-                  actions={
-                    <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
-                      <RotateCcw className="w-3.5 h-3.5 mr-1" /> Remover
-                    </Button>
-                  }
-                />
-              ))}
-            </TabsContent>
-
-            <TabsContent value="rejected" className="space-y-3 mt-4">
-              {filteredRejected.length === 0 && <p className="text-muted-foreground text-center py-8">Nenhum estabelecimento reprovado.</p>}
-              {filteredRejected.map((item) => (
-                <EditableEstablishmentRow
-                  key={item.id}
-                  item={item}
-                  onSaveEdit={saveEdit}
-                  suggestions={suggestions}
-                  actions={
-                    <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
-                      <RotateCcw className="w-3.5 h-3.5 mr-1" /> Revisar
-                    </Button>
-                  }
-                />
-              ))}
-            </TabsContent>
-
-            <TabsContent value="farmacias" className="mt-4">
-              <FarmaciaFotosAdmin />
-            </TabsContent>
-
-            <TabsContent value="anuncios" className="mt-4">
-              <AnunciosAdmin />
-            </TabsContent>
-
-            <TabsContent value="classificados" className="mt-4">
-              <ClassificadosAdmin adminToken={adminToken} />
-            </TabsContent>
-
-            <TabsContent value="cpf" className="mt-4">
-              <ConsultaCpfAdmin />
-            </TabsContent>
-
-            <TabsContent value="syncs" className="mt-4">
-              <SyncStatusAdmin />
-            </TabsContent>
-
-            <TabsContent value="nepotismo" className="mt-4">
-              <NepotismoAdmin />
-            </TabsContent>
-          </Tabs>
+        {active ? (
+          active.render()
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            {SECTIONS.map((s) => {
+              const Icon = s.icon;
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setSection(s.key)}
+                  className="stat-card card-hover text-left flex flex-col gap-2.5 min-h-[112px] focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    {s.badge ? <Badge className="bg-amber-500 text-white text-[10px] h-5">{s.badge}</Badge> : null}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm leading-tight">{s.label}</p>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{s.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
