@@ -64,6 +64,9 @@ export default function ChatWidget() {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [kbInset, setKbInset] = useState(0); // altura coberta pelo teclado virtual
+  const [vvHeight, setVvHeight] = useState(0); // altura da viewport visível
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -72,6 +75,35 @@ export default function ChatWidget() {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     });
   }, []);
+
+  // Detecta mobile (abaixo do breakpoint md).
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  // VisualViewport: mantém o painel acima do teclado virtual e dentro da área visível.
+  useEffect(() => {
+    if (!open || typeof window === "undefined") return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      setVvHeight(vv.height);
+      setKbInset(Math.max(0, window.innerHeight - vv.height - vv.offsetTop));
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      setKbInset(0);
+      setVvHeight(0);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (open) {
@@ -169,6 +201,11 @@ export default function ChatWidget() {
     [messages, streaming, scrollToEnd],
   );
 
+  // No mobile, ancora o painel acima do teclado e limita a altura à área visível.
+  const mobileStyle: React.CSSProperties | undefined = isMobile
+    ? { bottom: kbInset + 8, maxHeight: vvHeight ? vvHeight - 16 : undefined }
+    : undefined;
+
   return (
     <>
       {/* Botão flutuante */}
@@ -188,7 +225,8 @@ export default function ChatWidget() {
         <div
           role="dialog"
           aria-label="Assistente do Piracanjuba.ai"
-          className="fixed z-[60] inset-x-2 bottom-2 md:inset-x-auto md:right-6 md:bottom-6 md:w-[390px] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden max-h-[80dvh] md:max-h-[600px]"
+          style={mobileStyle}
+          className="fixed z-[60] inset-x-2 bottom-2 md:inset-x-auto md:right-6 md:bottom-6 md:w-[390px] max-w-[calc(100vw-1rem)] md:max-w-none flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden overscroll-contain max-h-[85dvh] md:max-h-[600px]"
         >
           {/* Cabeçalho */}
           <div className="flex items-center gap-2 px-4 py-3 bg-[#25D366] text-white shrink-0">
@@ -203,7 +241,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Mensagens */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-3 space-y-3 bg-background">
+          <div ref={scrollRef} className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain px-3 py-3 space-y-3 bg-background">
             {messages.length === 0 && (
               <div className="space-y-3">
                 <div className="rounded-xl bg-muted/60 p-3 text-sm text-foreground">
@@ -227,9 +265,10 @@ export default function ChatWidget() {
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
                 <div
                   className={
-                    m.role === "user"
+                    "min-w-0 break-words [overflow-wrap:anywhere] " +
+                    (m.role === "user"
                       ? "max-w-[85%] rounded-2xl rounded-br-sm bg-[#25D366] px-3 py-2 text-sm text-white"
-                      : "max-w-[90%] rounded-2xl rounded-bl-sm bg-muted/70 px-3 py-2 text-sm text-foreground"
+                      : "max-w-[90%] rounded-2xl rounded-bl-sm bg-muted/70 px-3 py-2 text-sm text-foreground")
                   }
                 >
                   {m.role === "assistant" ? (
@@ -254,8 +293,8 @@ export default function ChatWidget() {
           </div>
 
           {/* Entrada */}
-          <div className="shrink-0 border-t border-border bg-card p-2.5">
-            <div className="flex items-end gap-2">
+          <div className="shrink-0 border-t border-border bg-card px-2.5 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
+            <div className="flex items-end gap-2 min-w-0">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -270,7 +309,10 @@ export default function ChatWidget() {
                 rows={1}
                 maxLength={500}
                 disabled={streaming}
-                className="flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#25D366]/40 max-h-28"
+                enterKeyHint="send"
+                autoCapitalize="sentences"
+                autoComplete="off"
+                className="flex-1 min-w-0 resize-none rounded-xl border border-border bg-background px-3 py-2 text-base md:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#25D366]/40 max-h-28"
               />
               <button
                 onClick={() => send(input)}
