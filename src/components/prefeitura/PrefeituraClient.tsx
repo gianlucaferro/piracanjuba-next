@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, Download, BookOpen, ScrollText } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, BookOpen, ScrollText, FileBarChart } from "lucide-react";
 import {
   ExternalLink, Phone, Mail, MapPin, Clock, Building2,
   Users, DollarSign, FileText, Gavel, Briefcase, HardHat,
@@ -30,6 +30,7 @@ import {
 import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
 import PullToRefresh from "@/components/PullToRefresh";
 import VeiculosTab from "@/components/prefeitura/VeiculosTab";
+import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 import { LayoutDashboard } from "lucide-react";
@@ -3262,6 +3263,7 @@ const tabs = [
   { value: "contratos", label: "Contratos", icon: FileText },
   { value: "servidores", label: "Servidores", icon: Users },
   { value: "despesas", label: "Despesas", icon: DollarSign },
+  { value: "prestacao-contas", label: "Prestação de Contas", icon: FileBarChart },
   { value: "tcm-go", label: "TCM-GO", icon: Gavel },
   { value: "decretos", label: "Decretos", icon: ScrollText },
   { value: "portarias", label: "Portarias", icon: FileText },
@@ -3343,6 +3345,7 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
           <TabsContent value="chefia"><ChefiaExecutivo financiadores={financiadoresExecutivo} /></TabsContent>
           <TabsContent value="secretarias"><SecretariasTab /></TabsContent>
           <TabsContent value="despesas"><GastosTab /></TabsContent>
+          <TabsContent value="prestacao-contas"><PrestacaoContasTab poder="prefeitura" /></TabsContent>
           <TabsContent value="tcm-go"><TCMTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="decretos"><DecretosTab /></TabsContent>

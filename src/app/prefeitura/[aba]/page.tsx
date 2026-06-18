@@ -15,6 +15,7 @@ const ABAS: Record<string, { title: string; description: string }> = {
   contratos: { title: "Contratos da Prefeitura de Piracanjuba GO", description: "Contratos, fornecedores, valores e vigência da Prefeitura de Piracanjuba. Dados oficiais com situação cadastral do CNPJ e resumo por IA." },
   servidores: { title: "Salários dos servidores da Prefeitura de Piracanjuba GO", description: "Folha de pagamento e remuneração dos servidores públicos da Prefeitura de Piracanjuba, por cargo e competência. Dados oficiais." },
   despesas: { title: "Despesas da Prefeitura de Piracanjuba GO", description: "Despesas e pagamentos da Prefeitura de Piracanjuba a fornecedores, com resumo por IA. Transparência municipal." },
+  "prestacao-contas": { title: "Prestação de contas da Prefeitura de Piracanjuba GO", description: "PPA, LDO, LOA, RREO, RGF, balancete e balanço anual da Prefeitura de Piracanjuba. Planejamento e prestação de contas, com links às fontes oficiais." },
   "tcm-go": { title: "Apontamentos do TCM-GO sobre Piracanjuba", description: "Acórdãos, decisões e apontamentos do Tribunal de Contas dos Municípios de Goiás sobre Piracanjuba, com resumo por IA." },
   decretos: { title: "Decretos da Prefeitura de Piracanjuba GO", description: "Decretos do Poder Executivo municipal de Piracanjuba, com resumo por IA. Transparência e legislação." },
   portarias: { title: "Portarias da Prefeitura de Piracanjuba GO", description: "Portarias do Poder Executivo municipal de Piracanjuba. Dados oficiais de transparência." },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, CalendarCheck, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal } from "lucide-react";
+import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, CalendarCheck, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +24,7 @@ import DiariasTab from "@/components/camara/DiariasTab";
 import ResolucoesTab from "@/components/camara/ResolucoesTab";
 import AtosTab from "@/components/camara/AtosTab";
 import TransmissaoCard from "@/components/camara/TransmissaoCard";
+import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 
 const tabs = [
   { value: "vereadores", label: "Vereadores", icon: Users },
@@ -40,6 +41,7 @@ const tabs = [
   { value: "licitacoes", label: "Licitações", icon: Gavel },
   { value: "despesas", label: "Despesas", icon: Receipt },
   { value: "receitas", label: "Orçamento", icon: TrendingUp },
+  { value: "prestacao-contas", label: "Prestação de Contas", icon: ClipboardCheck },
   { value: "diarias", label: "Diárias", icon: Plane },
 ];
 
@@ -333,6 +335,9 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
         </TabsContent>
         <TabsContent value="receitas">
           <ReceitasTab />
+        </TabsContent>
+        <TabsContent value="prestacao-contas">
+          <PrestacaoContasTab poder="camara" />
         </TabsContent>
         <TabsContent value="diarias">
           <DiariasTab />

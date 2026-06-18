@@ -21,6 +21,7 @@ const ABAS: Record<string, { title: string; description: string }> = {
   licitacoes: { title: "Licitações da Câmara de Piracanjuba GO", description: "Licitações e editais da Câmara Municipal de Piracanjuba, com modalidade e valor." },
   despesas: { title: "Despesas da Câmara de Piracanjuba GO", description: "Despesas e empenhos da Câmara Municipal de Piracanjuba, por credor. Transparência do Legislativo." },
   receitas: { title: "Orçamento e duodécimo da Câmara de Piracanjuba GO", description: "Orçamento da Câmara de Piracanjuba (função Legislativa), orçado vs executado, conforme SICONFI/Tesouro." },
+  "prestacao-contas": { title: "Prestação de contas da Câmara de Piracanjuba GO", description: "PPA, LDO, LOA, RREO, RGF, balancete, balanço anual e pareceres do TCM da Câmara de Piracanjuba. Planejamento e prestação de contas do Legislativo." },
   diarias: { title: "Diárias da Câmara de Piracanjuba GO", description: "Diárias pagas pela Câmara Municipal de Piracanjuba, com beneficiário, destino e valor." },
 };
 
