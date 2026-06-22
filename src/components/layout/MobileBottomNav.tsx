@@ -18,6 +18,7 @@ import {
   Package,
   MessageSquare,
   Info,
+  Trophy,
 } from "lucide-react";
 
 const mobileMainNav = [
@@ -35,6 +36,7 @@ const mobileMoreNav = [
   { to: "/compra-e-venda", label: "Compra e Venda PBA", icon: Package },
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
+  { to: "/nota-pba", label: "Nota PBA", icon: Trophy },
   { to: "/anuncie", label: "Anuncie", icon: HeartHandshake },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];
@@ -82,6 +84,7 @@ export default function MobileBottomNav() {
                 const isZapPba = item.to === "/zap-pba";
                 const isDadosPba = item.to === "/dados-pba";
                 const isHistoriaPba = item.to === "/historia-pba";
+                const isNotaPba = item.to === "/nota-pba";
                 return (
                   <Link
                     key={item.to}
@@ -116,6 +119,10 @@ export default function MobileBottomNav() {
                     ) : isHistoriaPba ? (
                       <span className="text-base font-medium">
                         História <span className="text-[#25D366] font-semibold">PBA</span>
+                      </span>
+                    ) : isNotaPba ? (
+                      <span className="text-base font-medium">
+                        Nota <span className="text-[#25D366] font-semibold">PBA</span>
                       </span>
                     ) : isAnuncie ? (
                       <span className="text-base font-semibold text-[#25D366]">

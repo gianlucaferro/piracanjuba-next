@@ -18,6 +18,7 @@ import {
   Trash2,
   Pill,
   Package,
+  Trophy,
 } from "lucide-react";
 
 type NavItem = {
@@ -42,6 +43,7 @@ const moreNav: NavItem[] = [
   { to: "/compra-e-venda", label: "Compra e Venda PBA", icon: Package },
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
+  { to: "/nota-pba", label: "Nota PBA", icon: Trophy },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];
 
@@ -117,6 +119,7 @@ export default function DesktopNav() {
               const isZapPba = item.to === "/zap-pba";
               const isDadosPba = item.to === "/dados-pba";
               const isHistoriaPba = item.to === "/historia-pba";
+              const isNotaPba = item.to === "/nota-pba";
               return (
                 <Link
                   key={item.to}
@@ -149,6 +152,10 @@ export default function DesktopNav() {
                   ) : isHistoriaPba ? (
                     <span>
                       História <span className="text-[#25D366] font-semibold">PBA</span>
+                    </span>
+                  ) : isNotaPba ? (
+                    <span>
+                      Nota <span className="text-[#25D366] font-semibold">PBA</span>
                     </span>
                   ) : (
                     <span>{item.label}</span>

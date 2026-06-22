@@ -19,8 +19,10 @@ import {
   TrendingUp,
   Building,
   Trees,
+  Trophy,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
+import { NOTA_PNTP } from "@/data/notaTransparencia";
 import { pageMetadata } from "@/lib/seo";
 import {
   fetchIndicadores,
@@ -145,6 +147,29 @@ export default async function HomePage() {
       <div className="container py-8 space-y-10">
         {/* Anúncio destaque */}
         <AnuncioBannerDestaque />
+
+        {/* Destaque: Nota de transparência da cidade (PNTP/ATRICON) */}
+        <Link
+          href="/nota-pba"
+          className="block rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 to-amber-500/5 p-4 sm:p-5 hover:from-amber-500/25 transition-colors group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+              <Trophy className="w-6 h-6 text-amber-600" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 mb-0.5">
+                Nota de transparência da cidade · {NOTA_PNTP.ano}
+              </p>
+              <p className="text-sm sm:text-base font-bold text-foreground leading-snug">
+                Piracanjuba ficou em {NOTA_PNTP.executivo.posicao}º de {NOTA_PNTP.executivo.total} municípios de Goiás no Ranking da Transparência.
+              </p>
+            </div>
+            <span className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 group-hover:underline shrink-0">
+              Ver nota <ArrowRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
 
         {/* Atalhos */}
         <section
