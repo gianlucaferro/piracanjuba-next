@@ -80,7 +80,7 @@ export default function NotaPBAPage() {
   const leg = N.legislativo;
   const ctx = N.contexto;
   const maxCount = Math.max(...ctx.niveisExec.map((n) => n.count));
-  const W = N.goExecIdx.length;
+  const W = N.rankingExec.length;
   const H = 100;
   const piraPos = exec.posicao;
 
@@ -130,10 +130,11 @@ export default function NotaPBAPage() {
             aria-label={`Piracanjuba ocupa a ${piraPos}a posicao de ${W} prefeituras de Goias`}>
             <line x1="0" y1={H * (1 - 0.75)} x2={W} y2={H * (1 - 0.75)} stroke="#16a34a" strokeWidth="0.4" strokeDasharray="2 2" opacity="0.7" />
             <line x1="0" y1={H * (1 - ctx.mediaExec)} x2={W} y2={H * (1 - ctx.mediaExec)} stroke="#334155" strokeWidth="0.4" strokeDasharray="2 2" opacity="0.6" />
-            {N.goExecIdx.map((v, i) => {
-              const isP = i + 1 === piraPos;
-              const h = v * H;
-              return <rect key={i} x={i} y={H - h} width="0.92" height={h} fill={isP ? "#dc2626" : v >= 0.75 ? "#86c7a0" : "#cbd5e1"} />;
+            {N.rankingExec.map((r) => {
+              const i = r.pos - 1;
+              const isP = r.pos === piraPos;
+              const h = r.idx * H;
+              return <rect key={r.pos} x={i} y={H - h} width="0.92" height={h} fill={isP ? "#dc2626" : r.idx >= 0.75 ? "#86c7a0" : "#cbd5e1"} />;
             })}
             <line x1={piraPos - 0.5} y1="0" x2={piraPos - 0.5} y2={H} stroke="#dc2626" strokeWidth="0.5" opacity="0.85" />
           </svg>
@@ -231,6 +232,62 @@ export default function NotaPBAPage() {
             estar abaixo da média: é estar entre as cidades menos transparentes do estado, enquanto a maioria já
             cumpre boa parte do que a lei exige.
           </p>
+        </div>
+      </section>
+
+      {/* Ranking completo */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between gap-3 mb-1 flex-wrap">
+          <h2 className="text-xl font-bold text-foreground">Ranking completo das prefeituras de Goiás</h2>
+          <a href="#pos-piracanjuba" className="text-sm font-medium text-primary hover:underline shrink-0">
+            Pular para Piracanjuba ({exec.posicao}º) ↓
+          </a>
+        </div>
+        <p className="text-sm text-muted-foreground mb-3">
+          As {exec.total} prefeituras de Goiás avaliadas no PNTP {N.ano}, do 1º ao último lugar por índice de transparência. Piracanjuba está destacada.
+        </p>
+        <div className="stat-card p-0 overflow-hidden">
+          <div className="overflow-auto max-h-[600px]">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="sticky top-0 z-10 bg-card text-[11px] uppercase tracking-wide text-muted-foreground border-b border-border">
+                  <th className="text-left font-semibold px-3 py-2 w-14">#</th>
+                  <th className="text-left font-semibold px-3 py-2">Município</th>
+                  <th className="text-left font-semibold px-3 py-2">Nível</th>
+                  <th className="text-right font-semibold px-3 py-2">Índice</th>
+                </tr>
+              </thead>
+              <tbody>
+                {N.rankingExec.map((r) => {
+                  const isP = r.pos === exec.posicao;
+                  return (
+                    <tr
+                      key={r.pos}
+                      id={isP ? "pos-piracanjuba" : undefined}
+                      className={`border-t border-border/60 ${isP ? "bg-red-500/15 scroll-mt-24" : "odd:bg-muted/20"}`}
+                    >
+                      <td className={`px-3 py-1.5 tabular-nums ${isP ? "font-bold text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>{r.pos}º</td>
+                      <td className={`px-3 py-1.5 ${isP ? "font-bold text-red-600 dark:text-red-400" : "text-foreground"}`}>
+                        {r.mun}
+                        {isP && (
+                          <span className="ml-2 inline-flex items-center rounded-full bg-red-600 text-white text-[10px] font-semibold px-2 py-0.5 align-middle">
+                            ◄ Piracanjuba
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-1.5">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-foreground whitespace-nowrap">
+                          <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: nivelColor[r.niv] || "#9ca3af" }} />
+                          {r.niv}
+                        </span>
+                      </td>
+                      <td className={`px-3 py-1.5 text-right tabular-nums ${isP ? "font-bold text-red-600 dark:text-red-400" : "text-foreground"}`}>{pct1(r.idx)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
