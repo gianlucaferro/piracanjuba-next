@@ -95,7 +95,7 @@ export default function NotaPBAPage() {
         Nota de transparência de Piracanjuba
       </h1>
       <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6 max-w-2xl">
-        Quão transparente é a própria Piracanjuba? Todo ano os Tribunais de Contas avaliam os portais
+        Quão transparente é própria Piracanjuba? Todo ano os Tribunais de Contas avaliam os portais
         públicos do Brasil no <strong className="text-foreground">Programa Nacional de Transparência Pública (PNTP)</strong>,
         e o resultado vai para o <strong className="text-foreground">Radar da Transparência da ATRICON</strong>. Veja como a
         cidade se saiu.
