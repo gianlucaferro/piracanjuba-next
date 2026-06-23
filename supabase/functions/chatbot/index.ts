@@ -90,7 +90,17 @@ async function coreContext(sb: SB): Promise<string[]> {
     }`,
   );
   if (inds.data?.length) {
-    blocks.push(`### Indicadores municipais (IBGE e outros)\n${inds.data.map((i) => `- ${i.chave}: ${i.valor_texto ?? i.valor} (${i.ano_referencia})`).join("\n")}`);
+    // despesa_anual: base IBGE antiga (2024) que conflita com o SICONFI atual; o domínio fiscal já
+    // serve a despesa/receita oficial com rótulo correto. Filtrado só do chatbot (segue no card da home).
+    const SKIP = new Set(["despesa_anual"]);
+    const LABEL: Record<string, string> = {
+      frota_veiculos: "Frota total do município (todos os proprietários, DENATRAN; a frota da Prefeitura é bem menor)",
+      pessoal_ocupado_formal: "Pessoas com emprego formal no município (IBGE; NÃO é o número de servidores da prefeitura)",
+    };
+    const linhas = inds.data
+      .filter((i) => !SKIP.has(String(i.chave)))
+      .map((i) => `- ${LABEL[String(i.chave)] ?? i.chave}: ${i.valor_texto ?? i.valor} (${i.ano_referencia})`);
+    blocks.push(`### Indicadores municipais (IBGE e outros)\n${linhas.join("\n")}`);
   }
   return blocks;
 }
@@ -98,6 +108,63 @@ async function coreContext(sb: SB): Promise<string[]> {
 // Blocos por assunto. Cada um só é consultado se a pergunta casar com alguma
 // palavra-chave (sem acento) e só entra no contexto se houver dado.
 const DOMAINS: DomainBlock[] = [
+  {
+    // Totais e contagens. Resolve "quantos servidores/contratos/obras/vereadores...",
+    // "número de X", "quantidade de Y". Sem isto o bot lista alguns itens mas nunca conta o total.
+    keys: ["quantos", "quantas", "numero de", "n. de", "quantidade", "total de", "ao todo", "qtd", "quantos sao", "quantas sao"],
+    run: async (sb) => {
+      const countOf = async (tbl: string, col?: string, val?: string): Promise<number | null> => {
+        let q = sb.from(tbl).select("*", { count: "exact", head: true });
+        if (col && val) q = q.eq(col, val);
+        const { count, error } = await q;
+        return error ? null : count ?? 0;
+      };
+      const [
+        servPref, servCam, vers, secs, contrPref, contrCam, licPref, licCam,
+        obras, leis, decretos, portarias, veiculos, fornecedores, sancionadas, emendas, diarias,
+      ] = await Promise.all([
+        countOf("servidores", "orgao_tipo", "prefeitura"),
+        countOf("servidores", "orgao_tipo", "camara"),
+        countOf("vereadores"),
+        countOf("secretarias"),
+        countOf("contratos"),
+        countOf("camara_contratos"),
+        countOf("licitacoes"),
+        countOf("camara_licitacoes"),
+        countOf("obras"),
+        countOf("leis_municipais"),
+        countOf("decretos"),
+        countOf("portarias"),
+        countOf("veiculos_frota"),
+        countOf("fornecedores_cnpj"),
+        countOf("empresa_sancionada"),
+        countOf("emendas_parlamentares"),
+        countOf("diarias"),
+      ]);
+      const line = (label: string, v: number | null): string | null =>
+        v == null ? null : `- ${label}: ${v.toLocaleString("pt-BR")}`;
+      const rows = [
+        line("Servidores da Prefeitura (folha de pessoal municipal; NÃO é o mesmo que 'pessoas ocupadas' do IBGE)", servPref),
+        line("Servidores da Câmara", servCam),
+        line("Vereadores", vers),
+        line("Secretarias municipais", secs),
+        line("Contratos da Prefeitura cadastrados", contrPref),
+        line("Contratos da Câmara cadastrados", contrCam),
+        line("Licitações da Prefeitura cadastradas", licPref),
+        line("Licitações da Câmara cadastradas", licCam),
+        line("Obras cadastradas", obras),
+        line("Leis municipais cadastradas", leis),
+        line("Decretos cadastrados", decretos),
+        line("Portarias cadastradas", portarias),
+        line("Veículos na frota", veiculos),
+        line("Fornecedores (CNPJ) com contrato", fornecedores),
+        line("Empresas sancionadas (CEIS/CNEP) na base", sancionadas),
+        line("Emendas parlamentares registradas", emendas),
+        line("Diárias da Prefeitura registradas", diarias),
+      ].filter((x): x is string => !!x);
+      return fmtList("Totais e contagens (números atuais cadastrados no portal)", rows);
+    },
+  },
   {
     // Salário do Executivo (prefeita/vice). Vem antes pra responder direto "quanto ganha a prefeita".
     keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha", "prefeita", "prefeito", "vice-prefeito", "vice prefeito", "chefe do executivo"],
@@ -187,29 +254,72 @@ const DOMAINS: DomainBlock[] = [
   {
     keys: ["contrato", "fornecedor", "licitad", "contratad", "terceiriz"],
     run: async (sb) => {
-      const [pref, cam] = await Promise.all([
-        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("vigencia_inicio", { ascending: false }).limit(10),
-        sb.from("camara_contratos").select("numero, ano, credor, objeto, valor, status").order("vigencia_inicio", { ascending: false }).limit(8),
+      const [recentes, maiores, cam] = await Promise.all([
+        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("vigencia_inicio", { ascending: false }).limit(8),
+        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("valor", { ascending: false, nullsFirst: false }).limit(6),
+        sb.from("camara_contratos").select("numero, ano, credor, objeto, valor, status").order("vigencia_inicio", { ascending: false }).limit(6),
       ]);
-      const rows = [
-        ...(pref.data || []).map((c) => `- [Prefeitura] Contrato ${c.numero} (${c.status}): ${trunc(c.objeto, 80)} - ${c.empresa || "N/D"} - ${cur(c.valor)}`),
+      const secoes: string[] = [];
+      const recentesBloco = fmtList("Contratos recentes", [
+        ...(recentes.data || []).map((c) => `- [Prefeitura] Contrato ${c.numero} (${c.status}): ${trunc(c.objeto, 80)} - ${c.empresa || "N/D"} - ${cur(c.valor)}`),
         ...(cam.data || []).map((c) => `- [Câmara] Contrato ${c.numero}/${c.ano} (${c.status}): ${trunc(c.objeto, 80)} - ${c.credor || "N/D"} - ${cur(c.valor)}`),
-      ];
-      return fmtList("Contratos recentes", rows);
+      ]);
+      if (recentesBloco) secoes.push(recentesBloco);
+      const maioresBloco = fmtList(
+        "Maiores contratos da Prefeitura por valor (entre todos os cadastrados)",
+        (maiores.data || []).filter((c) => c.valor != null).map((c) => `- Contrato ${c.numero} (${c.status}): ${cur(c.valor)} - ${c.empresa || "N/D"} - ${trunc(c.objeto, 70)}`),
+      );
+      if (maioresBloco) secoes.push(maioresBloco);
+      return secoes.length ? secoes.join("\n\n") : null;
     },
   },
   {
-    keys: ["despesa", "gasto", "gastou", "pagamento", "pagou", "empenho", "favorecido", "quanto custou"],
+    keys: ["despesa", "gasto", "gastou", "pagamento", "pagou", "empenho", "favorecido", "quanto custou", "mais recebeu", "quem recebeu", "maior pagamento"],
     run: async (sb) => {
-      const [pref, cam] = await Promise.all([
-        sb.from("despesas").select("data, favorecido, valor, descricao").order("data", { ascending: false }).limit(15),
-        sb.from("camara_despesas").select("ano, mes, credor, descricao, valor").order("data_pagamento", { ascending: false }).limit(10),
+      const [recentes, maiores, cam] = await Promise.all([
+        sb.from("despesas").select("data, favorecido, valor, descricao").order("data", { ascending: false }).limit(12),
+        sb.from("despesas").select("data, favorecido, valor, descricao").order("valor", { ascending: false, nullsFirst: false }).limit(6),
+        sb.from("camara_despesas").select("ano, mes, credor, descricao, valor").order("data_pagamento", { ascending: false }).limit(8),
       ]);
-      const rows = [
-        ...(pref.data || []).map((d) => `- [Prefeitura] ${d.data}: ${d.favorecido || "N/D"} - ${cur(d.valor)} - ${trunc(d.descricao, 70)}`),
+      const secoes: string[] = [];
+      const recentesBloco = fmtList("Despesas recentes", [
+        ...(recentes.data || []).map((d) => `- [Prefeitura] ${d.data}: ${d.favorecido || "N/D"} - ${cur(d.valor)} - ${trunc(d.descricao, 70)}`),
         ...(cam.data || []).map((d) => `- [Câmara] ${d.mes}/${d.ano}: ${d.credor || "N/D"} - ${cur(d.valor)} - ${trunc(d.descricao, 70)}`),
-      ];
-      return fmtList("Despesas recentes", rows);
+      ]);
+      if (recentesBloco) secoes.push(recentesBloco);
+      const maioresBloco = fmtList(
+        "Maiores pagamentos individuais da Prefeitura por valor (entre todos os cadastrados)",
+        (maiores.data || []).filter((d) => d.valor != null).map((d) => `- ${d.favorecido || "N/D"}: ${cur(d.valor)} (${d.data}) - ${trunc(d.descricao, 60)}`),
+      );
+      if (maioresBloco) secoes.push(maioresBloco);
+      return secoes.length ? secoes.join("\n\n") : null;
+    },
+  },
+  {
+    // Orçamento, receita/despesa totais e limite de gasto com pessoal (LRF).
+    // Dados oficiais do Tesouro Nacional (SICONFI RREO/RGF), os mesmos da aba Prestação de Contas.
+    keys: ["orcament", "arrecad", "receita", "despesa total", "despesas totais", "total de despesa", "gastou", "gasta", "gastos", "quanto gast", "prestacao de conta", "balanco municipal", "rreo", "rgf", "lrf", "limite de gasto", "gasto com pessoal", "folha total", "quanto a prefeitura recebe", "quanto entra de dinheiro"],
+    run: async (sb) => {
+      const { data } = await sb
+        .from("prestacao_contas_fiscal")
+        .select("poder, ano, periodo_rreo, receita_realizada, despesa_empenhada, despesa_liquidada, despesa_paga, despesa_dotacao, dtp, dtp_pct, limite_max_pct, rcl")
+        .order("ano", { ascending: false })
+        .limit(12);
+      if (!data?.length) return null;
+      const rows: string[] = [];
+      const exeFin = data.filter((r) => r.poder === "executivo" && r.receita_realizada != null).slice(0, 2);
+      for (const e of exeFin) {
+        const parcial = e.periodo_rreo != null && Number(e.periodo_rreo) < 6
+          ? ` (parcial, acumulado até o ${e.periodo_rreo}º bimestre)`
+          : " (exercício fechado, ano inteiro)";
+        rows.push(`- Prefeitura, exercício ${e.ano}${parcial}: receita TOTAL realizada (arrecadação total oficial do município) ${cur(e.receita_realizada)}; despesa total empenhada ${cur(e.despesa_empenhada)}, liquidada ${cur(e.despesa_liquidada)}, paga ${cur(e.despesa_paga)}; dotação orçada ${cur(e.despesa_dotacao)}`);
+      }
+      const rgfExe = data.find((r) => r.poder === "executivo" && r.dtp != null);
+      if (rgfExe) rows.push(`- Gasto com pessoal da Prefeitura (LRF/RGF ${rgfExe.ano}): ${cur(rgfExe.dtp)} = ${rgfExe.dtp_pct}% da Receita Corrente Líquida (limite máximo legal ${rgfExe.limite_max_pct}%)`);
+      const rgfLeg = data.find((r) => r.poder === "legislativo" && r.dtp != null);
+      if (rgfLeg) rows.push(`- Gasto com pessoal da Câmara (LRF/RGF ${rgfLeg.ano}): ${cur(rgfLeg.dtp)} = ${rgfLeg.dtp_pct}% da RCL (limite ${rgfLeg.limite_max_pct}%)`);
+      if (rows.length) rows.push("- (Para o TOTAL de arrecadação/receita ou de despesa anual do município, use os valores oficiais acima, fonte SICONFI/Tesouro. Somar as categorias avulsas da aba Arrecadação pode duplicar repasses e superestimar o total.)");
+      return fmtList("Orçamento e prestação de contas (Tesouro Nacional / SICONFI - RREO e RGF)", rows);
     },
   },
   {
