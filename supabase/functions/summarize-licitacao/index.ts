@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -83,6 +84,11 @@ Dados da licitação:
 - Data do resultado: ${licitacao.data_resultado || "não informada"}
 
 Responda em português, de forma objetiva, em no máximo 4 frases. Não invente dados que não estão na licitação.`;
+
+    const _g = await aiGuard(supabase, req, "summarize-licitacao");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -249,6 +250,9 @@ Ementa: ${decreto.ementa}
 Gere um resumo em 2-3 frases simples explicando o que este decreto faz na prática, quem é afetado e a relevância para os cidadãos. Linguagem acessível, sem jargão. Máximo 150 palavras.`;
 
     // 1. Tenta o caminho rico (PDF). Se nao houver PDF acessivel, cai pro texto.
+    const _g = await aiGuard(supabase, req, "summarize-decreto");
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
     let resumo = "";
     let erroQuota = 0;
     const b64 = decreto.fonte_url ? await fetchPdfBase64(decreto.fonte_url) : null;

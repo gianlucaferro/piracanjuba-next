@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -238,6 +239,9 @@ ${conteudo}
 Responda em português, de forma objetiva, em no máximo 4 frases. Não invente dados que não estão nos dados fornecidos.`;
 
     // 1. Caminho rico (PDF). Se nao houver PDF acessivel, cai pro texto/metadados.
+    const _g = await aiGuard(sb, req, "summarize-generic");
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
     let resumo = "";
     let erroQuota = 0;
     const b64 = documento_url ? await fetchPdfBase64(documento_url) : null;

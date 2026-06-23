@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,6 +56,11 @@ ${artigo.capitulo ? `Capítulo: ${artigo.capitulo}` : ""}
 ${artigo.secao ? `Seção: ${artigo.secao}` : ""}
 Artigo ${artigo.artigo_numero}:
 ${artigo.artigo_texto}`;
+
+    const _g = await aiGuard(supabase, req, "summarize-artigo");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",

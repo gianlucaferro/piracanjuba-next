@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,6 +63,11 @@ Responda em português, em no máximo 4 frases curtas:
 4. O que o cidadão deve observar
 
 Não use bullet points, escreva em texto corrido. Seja direto e objetivo.`;
+
+    const _g = await aiGuard(supabase, req, "summarize-imposto");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 import {
   corsHeaders,
   geminiChat,
@@ -75,7 +76,7 @@ async function coreContext(sb: SB): Promise<string[]> {
   const blocks: string[] = [];
   blocks.push(
     `### Poder Executivo\n${
-      (exec.data || []).map((e) => `- ${e.tipo}: ${e.nome} (${e.partido || "s/partido"}), mandato ${e.mandato_inicio} a ${e.mandato_fim}`).join("\n") || "Sem dados"
+      (exec.data || []).map((e) => `- ${e.tipo}: ${e.nome} (${e.partido || "s/partido"}), mandato ${e.mandato_inicio} a ${e.mandato_fim}, subsídio (salário do cargo) ${cur(/vice/i.test(String(e.tipo)) ? 9875 : 19875)}/mês`).join("\n") || "Sem dados"
     }`,
   );
   blocks.push(
@@ -97,6 +98,26 @@ async function coreContext(sb: SB): Promise<string[]> {
 // Blocos por assunto. Cada um só é consultado se a pergunta casar com alguma
 // palavra-chave (sem acento) e só entra no contexto se houver dado.
 const DOMAINS: DomainBlock[] = [
+  {
+    // Salário do Executivo (prefeita/vice). Vem antes pra responder direto "quanto ganha a prefeita".
+    keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha", "prefeita", "prefeito", "vice-prefeito", "vice prefeito", "chefe do executivo"],
+    run: async (sb) => {
+      const { data: exe } = await sb.from("executivo").select("tipo, nome, partido").limit(5);
+      if (!exe?.length) return null;
+      const rows: string[] = [];
+      for (const e of exe) {
+        const sub = /vice/i.test(String(e.tipo)) ? 9875 : 19875;
+        let remTxt = "";
+        const { data: srv } = await sb.from("servidores").select("id").eq("orgao_tipo", "prefeitura").ilike("nome", `%${String(e.nome).toUpperCase()}%`).limit(1);
+        if (srv?.length) {
+          const { data: rem } = await sb.from("remuneracao_servidores").select("bruto, liquido, competencia").eq("servidor_id", srv[0].id).order("competencia", { ascending: false }).limit(1);
+          if (rem?.length) remTxt = `; remuneração bruta mais recente ${cur(rem[0].bruto)} (líquido ${cur(rem[0].liquido)}, ${rem[0].competencia})`;
+        }
+        rows.push(`- ${e.tipo} ${e.nome} (${e.partido || "s/partido"}): subsídio (salário do cargo) ${cur(sub)}/mês${remTxt}`);
+      }
+      return fmtList("Salário do Executivo (prefeita e vice)", rows);
+    },
+  },
   {
     keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha"],
     run: async (sb) => {
@@ -467,6 +488,10 @@ ${contexto}`;
       ...sanitizeHistory(body.history),
       { role: "user" as const, content: pergunta },
     ];
+
+    // Circuit breaker diário global (o rate limit por IP do chatbot já passou acima).
+    const _g = await aiGuard(sb, req, "chatbot");
+    if (!_g.allowed) return guardBlockedResponse(_g);
 
     // OpenRouter é o provider primário (Gemini direto satura no free-tier e devolve 429).
     // O modelo barato fica travado dentro de openrouterChat, sem fallback para modelo caro.

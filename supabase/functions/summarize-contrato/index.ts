@@ -16,6 +16,7 @@
 // Cliente usa error_code pra mostrar mensagem certa.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -439,6 +440,10 @@ Dados:
 - Vigência: ${contrato.vigencia_inicio || "?"} a ${contrato.vigencia_fim || "?"}${extra}${aditivosSection}${outlierSection}
 
 Português objetivo, direto ao cidadão, SEM saudação/despedida e SEM markdown (nada de ** ou #). ${hasExtras ? "Use até 10 frases pra incluir as seções." : "Use no máximo 4 frases."} Não invente.`;
+
+    // ===== GUARD: rate limit por IP + circuit breaker diário (só chega aqui em cache miss/refresh) =====
+    const _guard = await aiGuard(supabase, req, "summarize-contrato");
+    if (!_guard.allowed) return guardBlockedResponse(_guard);
 
     // ===== 5) GERAR =====
     // Prioriza OpenRouter (saldo pago, modelo travado). Com PDF -> multimodal, le o teor

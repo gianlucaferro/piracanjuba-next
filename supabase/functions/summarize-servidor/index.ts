@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -113,6 +114,9 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
       : body?.model
         ? [model]
         : ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
+
+    const _g = await aiGuard(sb, req, "summarize-servidor");
+    if (!_g.allowed) return guardBlockedResponse(_g);
 
     let resumo = "";
     let ultimoStatus = 0;

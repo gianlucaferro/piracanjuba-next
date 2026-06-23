@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -176,6 +177,9 @@ ${metadados}
 Responda em português, objetivo, máximo 4 frases, sem markdown. Não invente dados.`;
 
     // 1) Caminho rico: le o PDF do contrato via OpenRouter. 2) senao, metadados.
+    const _g = await aiGuard(supabase, req, "summarize-camara-contrato");
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
     let resumo = "";
     let erro = 0;
     const b64 = OPENROUTER_API_KEY && contrato.documento_url ? await fetchPdfBase64(contrato.documento_url) : null;

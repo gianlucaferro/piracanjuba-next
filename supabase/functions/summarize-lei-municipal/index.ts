@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -84,6 +85,11 @@ Faça duas coisas:
 Responda EXATAMENTE neste formato:
 RESUMO: [seu resumo aqui]
 CATEGORIA: [categoria escolhida]`;
+
+    const _g = await aiGuard(supabase, req, "summarize-lei-municipal");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const aiResp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",

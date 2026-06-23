@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -60,6 +61,11 @@ Data: ${portaria.data_publicacao || "não informada"}
 Ementa: ${portaria.ementa}
 
 Escreva um resumo de 2-3 frases em linguagem simples, explicando o impacto prático desta portaria para os moradores. Seja direto e objetivo.`;
+
+    const _g = await aiGuard(supabase, req, "summarize-portaria");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const aiResp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",

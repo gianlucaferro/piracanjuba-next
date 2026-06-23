@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,6 +87,11 @@ Dados da obra:
 - Status: ${obra.status === "em_andamento" ? "Em andamento" : obra.status === "concluida" ? "Concluída" : obra.status === "paralisada" ? "Paralisada" : obra.status || "não informado"}
 
 Responda em português, de forma objetiva, em no máximo 4 frases. Não invente dados que não estão na obra.`;
+
+    const _g = await aiGuard(supabase, req, "summarize-obra");
+
+    if (!_g.allowed) return guardBlockedResponse(_g);
+
 
     const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
