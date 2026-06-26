@@ -2,7 +2,8 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { bolsaFamiliaPorMunicipio, auxilioBrasilPorMunicipio } from "@/lib/apis-externas/portal-transparencia";
 
-const COD_IBGE_PIRACANJUBA = "5217005";
+// Código IBGE de Piracanjuba-GO. (5217005 é Piranhas-GO, município errado.)
+const COD_IBGE_PIRACANJUBA = "5217104";
 
 export type BolsaFamiliaMes = {
   mes_ano: string;

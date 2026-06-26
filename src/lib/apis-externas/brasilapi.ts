@@ -77,4 +77,5 @@ export type MunicipioIbge = {
 export const listarMunicipiosUf = (uf: string) =>
   fetchJson<MunicipioIbge[]>(`/ibge/municipios/v1/${uf}`);
 
-export const COD_IBGE_PIRACANJUBA = "5217005";
+// Código IBGE de Piracanjuba-GO. (5217005 é Piranhas-GO, município errado.)
+export const COD_IBGE_PIRACANJUBA = "5217104";
