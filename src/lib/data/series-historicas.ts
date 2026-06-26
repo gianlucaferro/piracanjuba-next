@@ -221,3 +221,52 @@ export const PNAE_AGRICULTURA_FAMILIAR = {
   // Anos com chamada pública ativa para a agricultura familiar (continuidade institucional).
   chamadasRecentes: [2019, 2022, 2023, 2025],
 } as const;
+
+export type PontoSojaGoias = { ano: number; areaHa: number; producaoT: number };
+
+/** Soja em Goiás (estado): área plantada (ha) e produção (t), anos selecionados. IBGE/PAM 1612. */
+export const SOJA_GOIAS: PontoSojaGoias[] = [
+  { ano: 1975, areaHa: 55600, producaoT: 73392 },
+  { ano: 1985, areaHa: 734210, producaoT: 1356240 },
+  { ano: 1995, areaHa: 1121511, producaoT: 2146926 },
+  { ano: 2005, areaHa: 2663380, producaoT: 6983860 },
+  { ano: 2015, areaHa: 3260025, producaoT: 8606210 },
+  { ano: 2024, areaHa: 4940502, producaoT: 16973882 },
+];
+
+export type PontoLeiteComparado = { ano: number; piraMilL: number; goiasMilL: number };
+
+/** Produção de leite: Piracanjuba vs Goiás (mil litros), anos selecionados. IBGE/PPM 74. */
+export const LEITE_PIRA_VS_GOIAS: PontoLeiteComparado[] = [
+  { ano: 1990, piraMilL: 27791, goiasMilL: 1071966 },
+  { ano: 1995, piraMilL: 48670, goiasMilL: 1450158 },
+  { ano: 2000, piraMilL: 68258, goiasMilL: 2193799 },
+  { ano: 2005, piraMilL: 92734, goiasMilL: 2648599 },
+  { ano: 2010, piraMilL: 114313, goiasMilL: 3193731 },
+  { ano: 2014, piraMilL: 154800, goiasMilL: 3659191 },
+  { ano: 2018, piraMilL: 94878, goiasMilL: 3084080 },
+  { ano: 2023, piraMilL: 83500, goiasMilL: 2980911 },
+];
+
+export type ClasseTamanho = { faixa: string; estab: number; porte: "pequena" | "media" | "grande" };
+
+/** Estabelecimentos por grupo de área total (17 classes) — Censo Agro 2017 (tabela 6778). Soma = 2.135. */
+export const DISTRIBUICAO_TAMANHO_2017: ClasseTamanho[] = [
+  { faixa: "menos de 0,1 ha", estab: 8, porte: "pequena" },
+  { faixa: "0,1 a 0,2 ha", estab: 5, porte: "pequena" },
+  { faixa: "0,2 a 0,5 ha", estab: 10, porte: "pequena" },
+  { faixa: "0,5 a 1 ha", estab: 20, porte: "pequena" },
+  { faixa: "1 a 2 ha", estab: 23, porte: "pequena" },
+  { faixa: "2 a 3 ha", estab: 65, porte: "pequena" },
+  { faixa: "3 a 4 ha", estab: 18, porte: "pequena" },
+  { faixa: "4 a 5 ha", estab: 78, porte: "pequena" },
+  { faixa: "5 a 10 ha", estab: 192, porte: "pequena" },
+  { faixa: "10 a 20 ha", estab: 285, porte: "media" },
+  { faixa: "20 a 50 ha", estab: 592, porte: "media" },
+  { faixa: "50 a 100 ha", estab: 315, porte: "media" },
+  { faixa: "100 a 200 ha", estab: 265, porte: "grande" },
+  { faixa: "200 a 500 ha", estab: 189, porte: "grande" },
+  { faixa: "500 a 1.000 ha", estab: 46, porte: "grande" },
+  { faixa: "1.000 a 2.500 ha", estab: 19, porte: "grande" },
+  { faixa: "2.500 a 10.000 ha", estab: 5, porte: "grande" },
+];

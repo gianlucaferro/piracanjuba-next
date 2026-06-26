@@ -4,12 +4,17 @@ import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { Scale, Landmark, Info } from "lucide-react";
-import { CONCENTRACAO_FUNDIARIA_2017 as C } from "@/lib/data/series-historicas";
+import {
+  CONCENTRACAO_FUNDIARIA_2017 as C,
+  DISTRIBUICAO_TAMANHO_2017 as DIST,
+} from "@/lib/data/series-historicas";
 
 const COR_PROPRIA = "#2e8b57";
 const COR_ARREND = "#d97706";
 const COR_OUTRO = "#a3a3a3";
 const COR_PORTE = ["#2e8b57", "#eab308", "#b0451f"];
+const porteColor = (p: "pequena" | "media" | "grande"): string =>
+  p === "pequena" ? COR_PORTE[0] : p === "media" ? COR_PORTE[1] : COR_PORTE[2];
 
 function nf(v: number): string {
   return v.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
@@ -92,20 +97,26 @@ export default function ConcentracaoFundiariaPanel() {
             </div>
           ))}
         </div>
-        <ResponsiveContainer width="100%" height={140}>
-          <BarChart data={C.porte} layout="vertical" margin={{ left: 0, right: 24, top: 4, bottom: 4 }}>
+        <p className="text-xs font-medium text-muted-foreground mb-1">Detalhe por faixa de área (17 classes)</p>
+        <ResponsiveContainer width="100%" height={Math.max(380, DIST.length * 23)}>
+          <BarChart data={DIST} layout="vertical" margin={{ left: 0, right: 28, top: 4, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis type="number" tick={{ fontSize: 10 }} />
-            <YAxis type="category" dataKey="faixa" width={120} tick={{ fontSize: 9 }} />
+            <YAxis type="category" dataKey="faixa" width={104} tick={{ fontSize: 9 }} />
             <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [nf(v), "Estabelecimentos"]} />
-            <Bar dataKey="estabelecimentos" radius={[0, 6, 6, 0]}>
-              {C.porte.map((_, i) => <Cell key={i} fill={COR_PORTE[i]} />)}
+            <Bar dataKey="estab" radius={[0, 5, 5, 0]}>
+              {DIST.map((d, i) => <Cell key={i} fill={porteColor(d.porte)} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[0] }} /> Pequenas (até 10 ha)</span>
+          <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[1] }} /> Médias (10 a 100 ha)</span>
+          <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[2] }} /> Grandes (mais de 100 ha)</span>
+        </div>
         <p className="text-xs text-foreground/80 mt-2 leading-relaxed">
-          A maioria das unidades é de pequeno e médio porte, mas a área se concentra nas grandes: por isso o Gini fica alto
-          mesmo com tantos produtores pequenos.
+          A maioria das unidades é de pequeno e médio porte (a faixa de 20 a 50 ha sozinha tem 592), mas a área se concentra
+          nas grandes: por isso o Gini fica alto mesmo com tantos produtores pequenos.
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Censo Agropecuário 2017 (tabela 6778).</p>
       </div>
