@@ -19,6 +19,7 @@ import {
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import ChuvaSafraPanel from "@/components/agro/ChuvaSafraPanel";
+import TransformacaoAgrariaPanel from "@/components/agro/TransformacaoAgrariaPanel";
 
 /* ── helpers ── */
 function formatNum(v: number | null): string {
@@ -450,6 +451,9 @@ export default function Agro({
                 </div>
               </section>
             )}
+
+            {/* ===== TRANSFORMAÇÃO AGRÁRIA (séries longas IBGE + Censo Agro 2017) ===== */}
+            <TransformacaoAgrariaPanel />
 
             {/* ===== COMPARATIVO COM VIZINHOS ===== */}
             {compBovino.length > 1 && (

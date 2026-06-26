@@ -1,6 +1,7 @@
 import { Trees } from "lucide-react";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import MapBiomasPanel from "@/components/meio-ambiente/MapBiomasPanel";
+import SubstituicaoPastagemSoja from "@/components/meio-ambiente/SubstituicaoPastagemSoja";
 import IndicadoresAmbientaisPanel from "@/components/meio-ambiente/IndicadoresAmbientaisPanel";
 import AnaliseAmbientalIntegrada from "@/components/meio-ambiente/AnaliseAmbientalIntegrada";
 import QueimadasCard from "@/components/meio-ambiente/QueimadasCard";
@@ -141,6 +142,13 @@ export default async function MeioAmbientePage() {
 
       {/* Painel MapBiomas — serie 1985-2024 com gráfico + cards + insights */}
       {rows.length > 0 ? <MapBiomasPanel rows={rows} /> : null}
+
+      {/* Gráfico focado: substituição pastagem -> soja (deriva das linhas MapBiomas) */}
+      {rows.length > 0 ? (
+        <div className="mt-10">
+          <SubstituicaoPastagemSoja rows={rows} />
+        </div>
+      ) : null}
 
       {/* Painel "Indicadores Ambientais" com 5 fontes oficiais. */}
       <div className="mt-10">
