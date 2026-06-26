@@ -20,6 +20,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import ChuvaSafraPanel from "@/components/agro/ChuvaSafraPanel";
 import TransformacaoAgrariaPanel from "@/components/agro/TransformacaoAgrariaPanel";
+import ConcentracaoFundiariaPanel from "@/components/agro/ConcentracaoFundiariaPanel";
+import TerritorioRuralPanel from "@/components/agro/TerritorioRuralPanel";
 
 /* ── helpers ── */
 function formatNum(v: number | null): string {
@@ -454,6 +456,12 @@ export default function Agro({
 
             {/* ===== TRANSFORMAÇÃO AGRÁRIA (séries longas IBGE + Censo Agro 2017) ===== */}
             <TransformacaoAgrariaPanel />
+
+            {/* ===== APROFUNDAMENTO (dossiê 2026): concentração fundiária ===== */}
+            <ConcentracaoFundiariaPanel />
+
+            {/* ===== TERRITÓRIO, COMUNIDADES, PNAE e contexto histórico ===== */}
+            <TerritorioRuralPanel />
 
             {/* ===== COMPARATIVO COM VIZINHOS ===== */}
             {compBovino.length > 1 && (

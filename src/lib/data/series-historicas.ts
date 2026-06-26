@@ -128,3 +128,96 @@ export const ESTRUTURA_FUNDIARIA_2017 = {
   naoFamiliar: { estabelecimentos: 695, areaHa: 189256 },
   terras: { propriaHa: 195217, arrendadaHa: 36352 },
 } as const;
+
+// ───────────────────────────────────────────────────────────────────────────
+// Aprofundamento (Dossiê "Transformação agrária de Piracanjuba", jun/2026).
+// Fontes: IBGE Censo Agro 2017 (tabelas 6753/6754/6778), IBGE PAM 1612 e PPM 74,
+// FNDE (planilhas de aquisição da agricultura familiar), cartografia IBGE (Mapa
+// Municipal Estatístico 2022) e literatura acadêmica (teses UFU/UFSC/PUC-GO).
+// ───────────────────────────────────────────────────────────────────────────
+
+export type CondicaoLegalTerra = { tipo: string; ha: number; pct: number };
+export type PorteEstabelecimento = { faixa: string; estabelecimentos: number };
+
+/** Concentração fundiária aprofundada — Censo Agropecuário 2017 (tabelas 6753/6754/6778). */
+export const CONCENTRACAO_FUNDIARIA_2017 = {
+  // Índice de Gini da terra (0 = igualdade, 1 = concentração máxima), estimado a partir das
+  // classes de tamanho do Censo 2017 (medida municipal usual; tende a subestimar vs. o
+  // Gini nacional de 0,86 calculado com microdados).
+  giniTerra: 0.70,
+  metadeMenorPctArea: 8, // a metade menor dos produtores ocupa apenas 8% da área
+  arrendatarios: 141, // estabelecimentos declarados arrendatários
+  // Condição legal das terras (ha e % da área). 'Em parceria' foi omitido pelo IBGE por sigilo.
+  condicaoLegal: [
+    { tipo: "Próprias", ha: 195217, pct: 83.0 },
+    { tipo: "Arrendadas", ha: 36352, pct: 15.5 },
+    { tipo: "Em comodato", ha: 1994, pct: 0.8 },
+    { tipo: "Concedidas por órgão fundiário", ha: 1586, pct: 0.7 },
+  ] as CondicaoLegalTerra[],
+  // Estabelecimentos por porte (nº de unidades; soma = 2.135).
+  porte: [
+    { faixa: "Pequenas (até 10 ha)", estabelecimentos: 419 },
+    { faixa: "Médias (10 a 100 ha)", estabelecimentos: 1192 },
+    { faixa: "Grandes (mais de 100 ha)", estabelecimentos: 524 },
+  ] as PorteEstabelecimento[],
+} as const;
+
+export type MunicipioValor = { mun: string; valor: number };
+
+/** Piracanjuba no Sul Goiano: soja (área plantada 2024, ha). IBGE/PAM 1612. */
+export const SUL_GOIANO_SOJA_2024: MunicipioValor[] = [
+  { mun: "Goiatuba", valor: 90000 },
+  { mun: "Piracanjuba", valor: 81000 },
+  { mun: "Bom Jesus de Goiás", valor: 64000 },
+  { mun: "Itumbiara", valor: 55000 },
+  { mun: "Morrinhos", valor: 53500 },
+  { mun: "Pontalina", valor: 34000 },
+  { mun: "Joviânia", valor: 23000 },
+];
+
+/** Piracanjuba no Sul Goiano: leite (produção 2023, mil litros). IBGE/PPM 74. */
+export const SUL_GOIANO_LEITE_2023: MunicipioValor[] = [
+  { mun: "Piracanjuba", valor: 83500 },
+  { mun: "Pontalina", valor: 55000 },
+  { mun: "Morrinhos", valor: 52567 },
+  { mun: "Itumbiara", valor: 26300 },
+  { mun: "Goiatuba", valor: 19700 },
+  { mun: "Joviânia", valor: 7500 },
+  { mun: "Bom Jesus de Goiás", valor: 5180 },
+];
+
+export type ComunidadeRural = { nome: string; tipo: string; descricao: string };
+
+/** Comunidades rurais documentadas (cartografia IBGE + estudos acadêmicos). */
+export const COMUNIDADES_RURAIS: ComunidadeRural[] = [
+  {
+    nome: "Boa Esperança",
+    tipo: "Assentamento de reforma agrária",
+    descricao:
+      "Assentamento documentado em estudo acadêmico de etnobotânica (plantas medicinais) e em diagnóstico socioambiental da bacia do Piracanjuba. Tem associação de pequenos produtores.",
+  },
+  {
+    nome: "Vale do Roda Cuia",
+    tipo: "Vale rural com associação própria",
+    descricao:
+      "Região rural com a Associação de Produtores do Vale do Roda Cuia e a cooperativa COAPIL, ativa há mais de 30 anos. A Fazenda Roda Cuia consta na cartografia oficial do IBGE.",
+  },
+  {
+    nome: "Recantilado",
+    tipo: "Localidade/setor rural",
+    descricao:
+      "Localidade rural que aparece na cartografia do IBGE como setor 'Recantilado - Boa Esperança', com o córrego Recantilado marcando divisas de propriedades.",
+  },
+];
+
+/** PNAE: compra da agricultura familiar para a merenda. Lei 11.947/2009 exige no mínimo 30%. */
+export const PNAE_AGRICULTURA_FAMILIAR = {
+  minimoLegalPct: 30,
+  // % do repasse do FNDE efetivamente usado em compra da agricultura familiar (planilhas FNDE).
+  anos: [
+    { ano: 2013, valorAF: 48615.1, valorTotal: 196180.0, pct: 24.8 },
+    { ano: 2016, valorAF: 28584.68, valorTotal: 241946.7, pct: 11.8 },
+  ],
+  // Anos com chamada pública ativa para a agricultura familiar (continuidade institucional).
+  chamadasRecentes: [2019, 2022, 2023, 2025],
+} as const;
