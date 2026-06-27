@@ -62,9 +62,9 @@ export default function ContextoEstadualPanel() {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-            <YAxis yAxisId="area" tick={{ fontSize: 10 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}M`} />
-            <YAxis yAxisId="prod" orientation="right" tick={{ fontSize: 10 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(0)}M`} />
+            <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+            <YAxis yAxisId="area" tick={{ fontSize: 11 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}M`} />
+            <YAxis yAxisId="prod" orientation="right" tick={{ fontSize: 11 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(0)}M`} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
               formatter={(v: number, name: string) =>
@@ -94,9 +94,9 @@ export default function ContextoEstadualPanel() {
         <ResponsiveContainer width="100%" height={290}>
           <ComposedChart data={LEITE_PIRA_VS_GOIAS} margin={{ left: 0, right: 8, top: 6, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-            <YAxis yAxisId="pira" tick={{ fontSize: 10 }} width={44} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}mi`} />
-            <YAxis yAxisId="goias" orientation="right" tick={{ fontSize: 10 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}bi`} />
+            <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+            <YAxis yAxisId="pira" tick={{ fontSize: 11 }} width={44} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}mi`} />
+            <YAxis yAxisId="goias" orientation="right" tick={{ fontSize: 11 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}bi`} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
               formatter={(v: number, name: string) =>
@@ -106,7 +106,7 @@ export default function ContextoEstadualPanel() {
               }
               labelFormatter={(l) => `Ano ${l}`}
             />
-            <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v) => (v === "piraMilL" ? "Piracanjuba" : "Goiás")} />
+            <Legend wrapperStyle={{ fontSize: 12 }} formatter={(v) => (v === "piraMilL" ? "Piracanjuba" : "Goiás")} />
             <Line yAxisId="pira" type="monotone" dataKey="piraMilL" stroke={COR_PIRA} strokeWidth={2.6} dot={{ r: 2.5 }} />
             <Line yAxisId="goias" type="monotone" dataKey="goiasMilL" stroke={COR_GOIAS} strokeWidth={2.6} strokeDasharray="5 4" dot={{ r: 2.5 }} />
           </ComposedChart>

@@ -309,9 +309,9 @@ export default function AnaliseAmbientalIntegrada({
               margin={{ top: 8, right: 10, bottom: 0, left: -10 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="cat" tick={{ fontSize: 11 }} />
+              <XAxis dataKey="cat" tick={{ fontSize: 12 }} />
               <YAxis
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 11 }}
                 tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
                 width={42}
               />

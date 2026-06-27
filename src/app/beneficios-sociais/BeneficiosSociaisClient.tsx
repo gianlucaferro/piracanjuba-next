@@ -362,8 +362,8 @@ function SerieHistoricaSection({ dados }: { dados: BeneficioSocial[] }) {
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="competencia" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={60} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => metrica === "valor_pago" ? `R$ ${(v / 1000).toFixed(0)}k` : v.toLocaleString("pt-BR")} />
+                <XAxis dataKey="competencia" tick={{ fontSize: 11 }} angle={-45} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => metrica === "valor_pago" ? `R$ ${(v / 1000).toFixed(0)}k` : v.toLocaleString("pt-BR")} />
                 <Tooltip
                   formatter={(value: any) => metrica === "valor_pago" ? formatCurrency(value) : formatNumber(value)}
                 />
@@ -660,8 +660,8 @@ function CdeRegionalSection({ cdeData }: { cdeData: CdeSubsidio[] }) {
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `R$ ${v}M`} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `R$ ${v}M`} />
                 <Tooltip formatter={(v: any) => `R$ ${Number(v).toFixed(1)} mi`} />
                 <Legend />
                 <Bar dataKey="Tarifa Social (Baixa Renda)" fill="hsl(45, 80%, 50%)" radius={[4, 4, 0, 0]} />

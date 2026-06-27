@@ -172,8 +172,8 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               margin={{ top: 8, right: 60, bottom: 0, left: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} unit="%" />
-              <YAxis type="category" dataKey="categoria" tick={{ fontSize: 11 }} width={130} />
+              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} unit="%" />
+              <YAxis type="category" dataKey="categoria" tick={{ fontSize: 12 }} width={130} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
@@ -191,7 +191,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   dataKey="valor"
                   position="right"
                   formatter={(v: number) => `${v.toFixed(1)}%`}
-                  style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                  style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                 />
               </Bar>
             </BarChart>
@@ -858,8 +858,8 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={sdd.casos} margin={{ top: 24, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 10 }} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
                 <Bar dataKey="casos_confirmados" name="Casos confirmados" radius={[6, 6, 0, 0]}>
                   {sdd.casos.map((c) => (
@@ -877,7 +877,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   <LabelList
                     dataKey="casos_confirmados"
                     position="top"
-                    style={{ fontSize: 10, fontWeight: 600 }}
+                    style={{ fontSize: 11, fontWeight: 600 }}
                   />
                 </Bar>
               </BarChart>

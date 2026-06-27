@@ -44,8 +44,8 @@ function RankingBar({ rows, cor, unidade, fmtTick }: {
     <ResponsiveContainer width="100%" height={Math.max(170, rows.length * 30)}>
       <BarChart data={rows} layout="vertical" margin={{ left: 0, right: 26, top: 4, bottom: 4 }}>
         <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-        <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={fmtTick} />
-        <YAxis type="category" dataKey="mun" width={108} tick={{ fontSize: 10 }} />
+        <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={fmtTick} />
+        <YAxis type="category" dataKey="mun" width={108} tick={{ fontSize: 11 }} />
         <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [`${nf(v)} ${unidade}`, ""]} />
         <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
           {rows.map((r) => <Cell key={r.mun} fill={r.mun === "Piracanjuba" ? cor : COR_OUTRO} />)}

@@ -85,18 +85,18 @@ export default function ChuvaDengueChart({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
-            <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+            <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
             <YAxis
               yAxisId="chuva"
               orientation="left"
-              tick={{ fontSize: 10, fill: "hsl(199, 89%, 48%)" }}
+              tick={{ fontSize: 11, fill: "hsl(199, 89%, 48%)" }}
               tickFormatter={(v: number) => `${v}mm`}
               width={48}
             />
             <YAxis
               yAxisId="casos"
               orientation="right"
-              tick={{ fontSize: 10, fill: "hsl(0, 84%, 60%)" }}
+              tick={{ fontSize: 11, fill: "hsl(0, 84%, 60%)" }}
               allowDecimals={false}
               width={36}
             />

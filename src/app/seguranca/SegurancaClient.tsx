@@ -263,7 +263,7 @@ function ComparisonChart({ data, ano }: { data: SegurancaIndicador[]; ano: numbe
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-            <XAxis dataKey="municipio" tick={{ fontSize: 11 }} />
+            <XAxis dataKey="municipio" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip
               contentStyle={{

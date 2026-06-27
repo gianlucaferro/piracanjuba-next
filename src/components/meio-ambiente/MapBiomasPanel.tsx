@@ -188,11 +188,11 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                 <XAxis
                   dataKey="ano"
-                  tick={{ fontSize: 10 }}
+                  tick={{ fontSize: 11 }}
                   ticks={[1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024]}
                 />
                 <YAxis
-                  tick={{ fontSize: 10 }}
+                  tick={{ fontSize: 11 }}
                   tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
                   width={42}
                 />
@@ -210,7 +210,7 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
                   labelFormatter={(label) => `Ano ${label}`}
                 />
                 <Legend
-                  wrapperStyle={{ fontSize: 11, paddingTop: 4 }}
+                  wrapperStyle={{ fontSize: 12, paddingTop: 4 }}
                   formatter={(value: string) => {
                     const cat = CATEGORIAS.find((c) => c.key === value);
                     return cat?.label || value;

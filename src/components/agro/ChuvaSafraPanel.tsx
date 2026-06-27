@@ -228,8 +228,8 @@ export default function ChuvaSafraPanel({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={stats.chartData} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
-            <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v}mm`} width={48} />
+            <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${v}mm`} width={48} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",

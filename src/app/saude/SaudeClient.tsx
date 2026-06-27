@@ -754,15 +754,15 @@ function DDAView({ indicadores }: { indicadores: SaudeIndicador[] }) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
+                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip
                   formatter={(value: number) => [value.toLocaleString("pt-BR", { minimumFractionDigits: 1 }), "Internações/100 mil"]}
                   labelFormatter={(label) => `Ano: ${label}`}
                   contentStyle={{ fontSize: 12 }}
                 />
-                <ReferenceLine y={MEDIA_NACIONAL} stroke="hsl(var(--chart-3))" strokeDasharray="5 5" label={{ value: "Média BR", position: "right", fontSize: 9, fill: "hsl(var(--chart-3))" }} />
-                <ReferenceLine y={MEDIA_ESTADUAL} stroke="hsl(var(--chart-4))" strokeDasharray="5 5" label={{ value: "Média GO", position: "right", fontSize: 9, fill: "hsl(var(--chart-4))" }} />
+                <ReferenceLine y={MEDIA_NACIONAL} stroke="hsl(var(--chart-3))" strokeDasharray="5 5" label={{ value: "Média BR", position: "right", fontSize: 11, fill: "hsl(var(--chart-3))" }} />
+                <ReferenceLine y={MEDIA_ESTADUAL} stroke="hsl(var(--chart-4))" strokeDasharray="5 5" label={{ value: "Média GO", position: "right", fontSize: 11, fill: "hsl(var(--chart-4))" }} />
                 <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Piracanjuba" />
               </BarChart>
             </ResponsiveContainer>
@@ -885,8 +885,8 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis dataKey="ano" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
-              <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+              <XAxis dataKey="ano" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
+              <YAxis tick={{ fontSize: 12 }} className="fill-muted-foreground" allowDecimals={false} />
               <Tooltip
                 contentStyle={{ fontSize: 12 }}
                 formatter={(value: number, name: string) => [value, name === "diagnosticos" ? "Diagnósticos" : "Óbitos"]}
@@ -1125,8 +1125,8 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis dataKey="ano" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
-              <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" allowDecimals={false} />
+              <XAxis dataKey="ano" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
+              <YAxis tick={{ fontSize: 12 }} className="fill-muted-foreground" allowDecimals={false} />
               <Tooltip contentStyle={{ fontSize: 12 }} formatter={(value: number) => [value, "Óbitos"]} />
               <Bar dataKey="obitos" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
             </BarChart>

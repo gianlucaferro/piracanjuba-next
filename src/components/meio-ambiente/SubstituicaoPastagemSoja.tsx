@@ -61,15 +61,15 @@ export default function SubstituicaoPastagemSoja({ rows }: { rows: Row[] }) {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis dataKey="ano" tick={{ fontSize: 11 }} ticks={[1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024]} />
-            <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={42} />
+            <XAxis dataKey="ano" tick={{ fontSize: 12 }} ticks={[1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024]} />
+            <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={42} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
               formatter={(v: number, name: string) => [fmt(v), name === "pastagem" ? "Pastagem" : "Soja"]}
               labelFormatter={(l) => `Ano ${l}`}
             />
             <Legend
-              wrapperStyle={{ fontSize: 11 }}
+              wrapperStyle={{ fontSize: 12 }}
               formatter={(value: string) => (value === "pastagem" ? "Pastagem" : "Soja")}
             />
             <Line type="monotone" dataKey="pastagem" stroke={COR_PASTAGEM} strokeWidth={2.8} dot={false} />

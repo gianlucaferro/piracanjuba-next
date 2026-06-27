@@ -107,8 +107,8 @@ export default function SimpleSerieChart({
           {variant === "area" ? (
             <AreaChart data={rows} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="ano" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} width={36} />
+              <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} width={36} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
@@ -131,8 +131,8 @@ export default function SimpleSerieChart({
           ) : (
             <LineChart data={rows} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="ano" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} width={36} />
+              <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} width={36} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",

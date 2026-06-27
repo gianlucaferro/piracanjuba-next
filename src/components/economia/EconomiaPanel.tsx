@@ -232,10 +232,10 @@ export default function EconomiaPanel({
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
               <XAxis
                 type="number"
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 11 }}
                 tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`}
               />
-              <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={140} />
+              <YAxis type="category" dataKey="nome" tick={{ fontSize: 12 }} width={140} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
@@ -255,7 +255,7 @@ export default function EconomiaPanel({
                 <LabelList
                   dataKey="pib_per_capita_texto"
                   position="right"
-                  style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                  style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                 />
               </Bar>
             </BarChart>
@@ -441,11 +441,11 @@ export default function EconomiaPanel({
                 margin={{ top: 8, right: 60, bottom: 0, left: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10 }} domain={[0, "dataMax + 0.5"]} />
+                <XAxis type="number" tick={{ fontSize: 11 }} domain={[0, "dataMax + 0.5"]} />
                 <YAxis
                   type="category"
                   dataKey="setor"
-                  tick={{ fontSize: 11 }}
+                  tick={{ fontSize: 12 }}
                   width={110}
                   tickFormatter={(s: string) => SETOR_LABEL[s] || s}
                 />
@@ -466,7 +466,7 @@ export default function EconomiaPanel({
                   <LabelList
                     dataKey="texto"
                     position="right"
-                    style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                    style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                   />
                 </Bar>
               </BarChart>
@@ -710,11 +710,11 @@ export default function EconomiaPanel({
                 margin={{ top: 8, right: 60, bottom: 0, left: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10 }} />
+                <XAxis type="number" tick={{ fontSize: 11 }} />
                 <YAxis
                   type="category"
                   dataKey="ocupacao"
-                  tick={{ fontSize: 11 }}
+                  tick={{ fontSize: 12 }}
                   width={180}
                 />
                 <Tooltip
@@ -736,7 +736,7 @@ export default function EconomiaPanel({
                   <LabelList
                     dataKey="texto"
                     position="right"
-                    style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                    style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                   />
                 </Bar>
               </BarChart>
@@ -777,10 +777,10 @@ export default function EconomiaPanel({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                 <XAxis
                   dataKey="setor"
-                  tick={{ fontSize: 11 }}
+                  tick={{ fontSize: 12 }}
                   tickFormatter={(s: string) => SETOR_LABEL[s] || s}
                 />
-                <YAxis tick={{ fontSize: 10 }} width={36} />
+                <YAxis tick={{ fontSize: 11 }} width={36} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "hsl(var(--card))",
@@ -791,7 +791,7 @@ export default function EconomiaPanel({
                   formatter={(v: number, name: string) => [`${v} empregos`, name]}
                   labelFormatter={(l: string) => SETOR_LABEL[l] || l}
                 />
-                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} />
                 <Bar
                   dataKey="admissoes"
                   name="Admissões"
@@ -1021,16 +1021,16 @@ export default function EconomiaPanel({
               margin={{ top: 20, right: 16, left: 0, bottom: 8 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="setor_label" tick={{ fontSize: 11 }} />
+              <XAxis dataKey="setor_label" tick={{ fontSize: 12 }} />
               <YAxis
                 yAxisId="left"
                 label={{
                   value: "Estoque RAIS 2023",
                   angle: -90,
                   position: "insideLeft",
-                  fontSize: 10,
+                  fontSize: 11,
                 }}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 11 }}
               />
               <YAxis
                 yAxisId="right"
@@ -1039,12 +1039,12 @@ export default function EconomiaPanel({
                   value: "Saldo CAGED 2025",
                   angle: 90,
                   position: "insideRight",
-                  fontSize: 10,
+                  fontSize: 11,
                 }}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 11 }}
               />
               <Tooltip />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar
                 yAxisId="left"
                 dataKey="estoque_2023"
@@ -1052,7 +1052,7 @@ export default function EconomiaPanel({
                 fill="#a78bfa"
                 radius={[6, 6, 0, 0]}
               >
-                <LabelList dataKey="estoque_2023" position="top" style={{ fontSize: 10 }} />
+                <LabelList dataKey="estoque_2023" position="top" style={{ fontSize: 11 }} />
               </Bar>
               <Line
                 yAxisId="right"

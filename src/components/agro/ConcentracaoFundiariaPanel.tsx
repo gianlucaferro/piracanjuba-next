@@ -101,8 +101,8 @@ export default function ConcentracaoFundiariaPanel() {
         <ResponsiveContainer width="100%" height={Math.max(380, DIST.length * 23)}>
           <BarChart data={DIST} layout="vertical" margin={{ left: 0, right: 28, top: 4, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis type="number" tick={{ fontSize: 10 }} />
-            <YAxis type="category" dataKey="faixa" width={104} tick={{ fontSize: 9 }} />
+            <XAxis type="number" tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="faixa" width={104} tick={{ fontSize: 11 }} />
             <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [nf(v), "Estabelecimentos"]} />
             <Bar dataKey="estab" radius={[0, 5, 5, 0]}>
               {DIST.map((d, i) => <Cell key={i} fill={porteColor(d.porte)} />)}
@@ -131,8 +131,8 @@ export default function ConcentracaoFundiariaPanel() {
         <ResponsiveContainer width="100%" height={Math.max(160, condicao.length * 40)}>
           <BarChart data={condicao} layout="vertical" margin={{ left: 0, right: 28, top: 4, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k ha`} />
-            <YAxis type="category" dataKey="tipo" width={130} tick={{ fontSize: 9 }} />
+            <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k ha`} />
+            <YAxis type="category" dataKey="tipo" width={130} tick={{ fontSize: 11 }} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
               formatter={(v: number) => [`${nf(v)} ha`, "Área"]}

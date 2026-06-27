@@ -113,8 +113,8 @@ export default function ArbovirosesComparativoChart({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis dataKey="label" tick={{ fontSize: 10 }} interval={2} />
-            <YAxis tick={{ fontSize: 10 }} width={32} allowDecimals={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 11 }} interval={2} />
+            <YAxis tick={{ fontSize: 11 }} width={32} allowDecimals={false} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
@@ -124,7 +124,7 @@ export default function ArbovirosesComparativoChart({
               }}
               formatter={(v: number, name: string) => [`${v} casos`, name]}
             />
-            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} iconType="rect" />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="rect" />
             <Bar
               dataKey="dengue"
               name="Dengue"

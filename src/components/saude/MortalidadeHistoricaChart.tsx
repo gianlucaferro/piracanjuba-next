@@ -115,17 +115,17 @@ export default function MortalidadeHistoricaChart({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis dataKey="ano" tick={{ fontSize: 10 }} />
+            <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
             <YAxis
               yAxisId="infantil"
               orientation="left"
-              tick={{ fontSize: 10, fill: "hsl(330, 81%, 60%)" }}
+              tick={{ fontSize: 11, fill: "hsl(330, 81%, 60%)" }}
               width={36}
             />
             <YAxis
               yAxisId="geral"
               orientation="right"
-              tick={{ fontSize: 10, fill: "hsl(215, 20%, 50%)" }}
+              tick={{ fontSize: 11, fill: "hsl(215, 20%, 50%)" }}
               width={42}
             />
             <Tooltip
@@ -141,7 +141,7 @@ export default function MortalidadeHistoricaChart({
               }}
               labelFormatter={(label) => `Ano ${label}`}
             />
-            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} iconType="line" />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="line" />
             <Bar
               yAxisId="infantil"
               dataKey="infantil"
