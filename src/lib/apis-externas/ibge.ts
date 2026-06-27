@@ -3,7 +3,8 @@
 // Docs: https://servicodados.ibge.gov.br/api/docs/
 
 const BASE = "https://servicodados.ibge.gov.br/api";
-export const ID_PIRACANJUBA = 5217005;
+// Código IBGE de Piracanjuba-GO. (5217005 é Piranhas-GO, município errado.)
+export const ID_PIRACANJUBA = 5217104;
 
 async function fetchJson<T>(url: string): Promise<T> {
   const resp = await fetch(url, { headers: { Accept: "application/json" } });
@@ -36,7 +37,7 @@ export const buscarMunicipio = (id = ID_PIRACANJUBA) =>
  *  - IDHM disponível só pelo Atlas Brasil (não IBGE puro)
  *
  * Tabela 6579 (Estimativas de População):
- *   /agregados/6579/periodos/{ano}/variaveis/9324?localidades=N6[5217005]
+ *   /agregados/6579/periodos/{ano}/variaveis/9324?localidades=N6[5217104]
  *
  * Documentação completa de agregados:
  *   https://servicodados.ibge.gov.br/api/docs/agregados

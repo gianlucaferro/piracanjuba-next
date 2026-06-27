@@ -19,6 +19,11 @@ import {
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import ChuvaSafraPanel from "@/components/agro/ChuvaSafraPanel";
+import TransformacaoAgrariaPanel from "@/components/agro/TransformacaoAgrariaPanel";
+import ConcentracaoFundiariaPanel from "@/components/agro/ConcentracaoFundiariaPanel";
+import ContextoEstadualPanel from "@/components/agro/ContextoEstadualPanel";
+import TerritorioRuralPanel from "@/components/agro/TerritorioRuralPanel";
+import MapasTerritorioPanel from "@/components/agro/MapasTerritorioPanel";
 
 /* ── helpers ── */
 function formatNum(v: number | null): string {
@@ -450,6 +455,21 @@ export default function Agro({
                 </div>
               </section>
             )}
+
+            {/* ===== TRANSFORMAÇÃO AGRÁRIA (séries longas IBGE + Censo Agro 2017) ===== */}
+            <TransformacaoAgrariaPanel />
+
+            {/* ===== APROFUNDAMENTO (dossiê 2026): concentração fundiária ===== */}
+            <ConcentracaoFundiariaPanel />
+
+            {/* ===== CONTEXTO ESTADUAL: soja em Goiás + leite Piracanjuba vs Goiás ===== */}
+            <ContextoEstadualPanel />
+
+            {/* ===== TERRITÓRIO, COMUNIDADES, PNAE e contexto histórico ===== */}
+            <TerritorioRuralPanel />
+
+            {/* ===== MAPAS do território (localização IBGE + MapBiomas) ===== */}
+            <MapasTerritorioPanel />
 
             {/* ===== COMPARATIVO COM VIZINHOS ===== */}
             {compBovino.length > 1 && (
