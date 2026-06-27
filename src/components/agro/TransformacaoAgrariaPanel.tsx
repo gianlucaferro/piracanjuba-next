@@ -7,7 +7,7 @@ import {
 } from "recharts";
 import { TrendingUp, Leaf, Scale, Tractor, Info } from "lucide-react";
 import {
-  SOJA_AREA_PIRACANJUBA, SOJA_X_LEITE, ESTRUTURA_FUNDIARIA_2017,
+  SOJA_AREA_PIRACANJUBA, SOJA_X_LEITE, ESTRUTURA_FUNDIARIA_2017, CONCENTRACAO_FUNDIARIA_2017,
 } from "@/lib/data/series-historicas";
 
 const COR_SOJA = "#16a34a";
@@ -60,7 +60,8 @@ export default function TransformacaoAgrariaPanel() {
   ];
   const pctFamEstab = (ef.familiar.estabelecimentos / ef.totalEstabelecimentos) * 100;
   const pctFamArea = (ef.familiar.areaHa / (ef.familiar.areaHa + ef.naoFamiliar.areaHa)) * 100;
-  const pctArrend = (ef.terras.arrendadaHa / (ef.terras.propriaHa + ef.terras.arrendadaHa)) * 100;
+  // % oficial da área arrendada (Censo Agro 2017, tabela 6753) — fonte única, igual ao painel de concentração.
+  const pctArrend = CONCENTRACAO_FUNDIARIA_2017.condicaoLegal.find((c) => c.tipo === "Arrendadas")?.pct ?? 15.5;
 
   return (
     <section className="space-y-6">
@@ -188,7 +189,7 @@ export default function TransformacaoAgrariaPanel() {
             <p className="text-[10px] text-muted-foreground">da área é da agricultura familiar</p>
           </div>
           <div className="rounded-lg bg-background p-2.5 text-center">
-            <p className="text-lg font-bold text-foreground">{pctArrend.toFixed(0)}%</p>
+            <p className="text-lg font-bold text-foreground">{pctArrend.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</p>
             <p className="text-[10px] text-muted-foreground">da área é arrendada</p>
           </div>
         </div>
