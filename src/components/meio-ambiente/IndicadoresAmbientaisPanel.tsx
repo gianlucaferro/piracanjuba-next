@@ -178,13 +178,13 @@ export default function IndicadoresAmbientaisPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-sm">{f.titulo}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-1">
                     {f.descricao}
                   </p>
                 </div>
               </div>
 
-              <div className="text-xs mb-3">
+              <div className="text-sm mb-3">
                 <p className="font-semibold text-foreground/85 mb-1">O que dá pra ver:</p>
                 <ul className="list-disc list-inside space-y-0.5 text-muted-foreground leading-snug pl-1">
                   {f.oqueMostra.map((i) => (
@@ -193,8 +193,8 @@ export default function IndicadoresAmbientaisPanel() {
                 </ul>
               </div>
 
-              <div className="text-xs mb-3 p-2 rounded-md bg-muted/50 border border-border/50">
-                <p className="font-semibold text-foreground/85 mb-0.5 text-[11px]">
+              <div className="text-sm mb-3 p-2 rounded-md bg-muted/50 border border-border/50">
+                <p className="font-semibold text-foreground/85 mb-0.5 text-xs">
                   Como filtrar Piracanjuba:
                 </p>
                 <p className="text-muted-foreground leading-snug">{f.comoAcessar}</p>
@@ -204,13 +204,13 @@ export default function IndicadoresAmbientaisPanel() {
                 href={f.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1.5 mt-auto pt-2 border-t border-border"
+                className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5 mt-auto pt-2 border-t border-border"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 {f.urlLabel}
               </a>
               {f.observacao && (
-                <p className="text-[10px] text-muted-foreground mt-1 italic">
+                <p className="text-xs text-muted-foreground mt-1 italic">
                   {f.observacao}
                 </p>
               )}

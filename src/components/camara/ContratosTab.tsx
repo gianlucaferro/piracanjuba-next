@@ -134,7 +134,7 @@ export default function ContratosTab() {
         <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
           <div className="flex items-center gap-2 mb-1">
             <Building2 className="w-5 h-5 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wide">Maior Fornecedor</span>
+            <span className="text-sm font-semibold text-primary uppercase tracking-wide">Maior Fornecedor</span>
           </div>
           <p className="font-bold text-foreground text-lg">{maiorFornecedor.nome}</p>
           <div className="flex items-center gap-4 mt-1">
@@ -150,13 +150,13 @@ export default function ContratosTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{filtered.length} contratos · Total: {formatCurrency(totalValor)}</p>
+        <p className="text-sm text-muted-foreground">{filtered.length} contratos · Total: {formatCurrency(totalValor)}</p>
         {filtered.length > 0 && (
           <button onClick={() => downloadCSV(
             `contratos-camara-${new Date().toISOString().slice(0, 10)}.csv`,
             ["Número", "Credor", "Objeto", "Valor", "Status", "Início Vigência", "Fim Vigência"],
             filtered.map((c) => [c.numero, c.credor, c.objeto, c.valor, c.status, c.vigencia_inicio, c.vigencia_fim])
-          )} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+          )} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
         )}
@@ -190,16 +190,16 @@ export default function ContratosTab() {
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-foreground text-sm">{c.credor || "Sem fornecedor"}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{c.objeto || "Sem descrição"}</p>
+                <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{c.objeto || "Sem descrição"}</p>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[11px] text-muted-foreground">Nº {c.numero || "—"}</span>
+                  <span className="text-xs text-muted-foreground">Nº {c.numero || "—"}</span>
                   {c.vigencia_inicio && (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       · {new Date(c.vigencia_inicio + "T12:00:00").toLocaleDateString("pt-BR")}
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+                <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                   <Sparkles className="w-3 h-3" /> Clique para resumo IA
                 </p>
               </div>
@@ -207,7 +207,7 @@ export default function ContratosTab() {
                 {c.status && (
                   <Badge
                     variant={c.status === "ativo" ? "default" : "secondary"}
-                    className={`text-[10px] uppercase tracking-wider ${c.status === "ativo" ? "bg-emerald-500/90 hover:bg-emerald-500 text-white border-emerald-500" : ""}`}
+                    className={`text-xs uppercase tracking-wider ${c.status === "ativo" ? "bg-emerald-500/90 hover:bg-emerald-500 text-white border-emerald-500" : ""}`}
                   >
                     {c.status}
                   </Badge>
@@ -216,7 +216,7 @@ export default function ContratosTab() {
                   {formatCurrency(c.valor)}
                 </span>
                 {(() => { const av = getAditivosValor(c.numero, c.credor, c.fonte_url); return av > 0 ? (
-                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
                     c/ aditivos: {formatCurrency((c.valor || 0) + av)}
                   </span>
                 ) : null; })()}
@@ -253,18 +253,18 @@ export default function ContratosTab() {
               )}
             </div>
             {(selectedContrato?.vigencia_inicio || selectedContrato?.vigencia_fim) && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Vigência: {selectedContrato?.vigencia_inicio ? new Date(selectedContrato.vigencia_inicio + "T12:00:00").toLocaleDateString("pt-BR") : "?"} — {selectedContrato?.vigencia_fim ? new Date(selectedContrato.vigencia_fim + "T12:00:00").toLocaleDateString("pt-BR") : "?"}
               </p>
             )}
             {selectedContrato?.fonte_url && (
-              <a href={selectedContrato.fonte_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+              <a href={selectedContrato.fonte_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
                 <ExternalLink className="w-3 h-3" /> Ver fonte
               </a>
             )}
 
             <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
               </p>
               {loadingResumo ? (

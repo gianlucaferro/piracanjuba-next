@@ -130,7 +130,7 @@ export default function HistoriaUpload() {
       </div>
 
       {done && (
-        <div className="flex items-start gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
+        <div className="flex items-start gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400">
           <Check className="w-4 h-4 shrink-0 mt-0.5" />
           <span>Obrigado! Suas fotos foram enviadas e vão passar por uma revisão antes de aparecerem no site.</span>
         </div>
@@ -154,7 +154,7 @@ export default function HistoriaUpload() {
         ) : (
           <ImagePlus className="w-6 h-6 text-muted-foreground" />
         )}
-        <span className="text-xs text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
           {converting
             ? "Preparando as fotos..."
             : items.length >= MAX_FOTOS
@@ -203,7 +203,7 @@ export default function HistoriaUpload() {
         </div>
       )}
 
-      {erro && <p className="text-xs text-destructive">{erro}</p>}
+      {erro && <p className="text-sm text-destructive">{erro}</p>}
 
       {items.length > 0 && (
         <button
@@ -223,7 +223,7 @@ export default function HistoriaUpload() {
         </button>
       )}
 
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         As fotos passam por revisão antes de irem ao ar. Envie apenas imagens que você pode compartilhar.
       </p>
     </div>

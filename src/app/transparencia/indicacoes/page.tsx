@@ -54,19 +54,19 @@ export default async function IndicacoesPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Total</p>
+          <p className="text-xs uppercase text-muted-foreground tracking-wider">Total</p>
           <p className="text-2xl font-extrabold text-violet-700 mt-0.5">{stats.total}</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">2026</p>
+          <p className="text-xs uppercase text-muted-foreground tracking-wider">2026</p>
           <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.ano_2026}</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">2025</p>
+          <p className="text-xs uppercase text-muted-foreground tracking-wider">2025</p>
           <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.ano_2025}</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Última publicação</p>
+          <p className="text-xs uppercase text-muted-foreground tracking-wider">Última publicação</p>
           <p className="text-base font-bold text-foreground mt-0.5">{fmtDate(stats.ultima_data)}</p>
         </div>
       </div>
@@ -77,20 +77,20 @@ export default async function IndicacoesPage() {
           <p className="text-sm font-semibold text-foreground">
             Nenhuma indicação carregada ainda
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Aguardando próxima sincronização semanal.
           </p>
         </div>
       ) : (
         <section className="space-y-2">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Mostrando {indicacoes.length} indicações mais recentes (de {stats.total} totais).
           </p>
           {indicacoes.map((i) => (
             <article key={i.id} className="stat-card hover:border-violet-500/30 transition-colors">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                 <p className="font-semibold text-violet-700 text-sm">{i.numero}</p>
-                <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                <p className="text-xs text-muted-foreground inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {fmtDate(i.data_publicacao)}
                 </p>
@@ -101,7 +101,7 @@ export default async function IndicacoesPage() {
                 </p>
               )}
               {i.autor && (
-                <p className="text-[11px] text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Autor: <strong>{i.autor}</strong>
                 </p>
               )}
@@ -110,7 +110,7 @@ export default async function IndicacoesPage() {
         </section>
       )}
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         <p>
           Dados sincronizados semanalmente do portal de Acesso à Informação da
           Câmara Municipal de Piracanjuba via API estruturada. Atualização

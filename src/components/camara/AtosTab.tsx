@@ -52,7 +52,7 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
         <Input placeholder={`Buscar ${tipoNome.toLowerCase()}...`} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
-      <p className="text-xs text-muted-foreground">{filtered.length} registro(s)</p>
+      <p className="text-sm text-muted-foreground">{filtered.length} registro(s)</p>
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
@@ -70,28 +70,28 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
           const corpo = (
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                {a.numero && <p className="text-xs font-semibold text-primary mb-0.5">Nº {a.numero}</p>}
+                {a.numero && <p className="text-sm font-semibold text-primary mb-0.5">Nº {a.numero}</p>}
                 <p className="text-sm text-foreground line-clamp-3">{a.descricao || "Sem descrição"}</p>
                 {a.data_publicacao && (
-                  <p className="text-[11px] text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {new Date(a.data_publicacao + "T12:00:00").toLocaleDateString("pt-BR")}
                   </p>
                 )}
                 {temResumo ? (
                   <div className="mt-2 rounded-md bg-accent/5 border border-accent/15 p-2">
-                    <p className="text-[10px] font-medium text-accent flex items-center gap-1 mb-0.5">
+                    <p className="text-xs font-medium text-accent flex items-center gap-1 mb-0.5">
                       <Sparkles className="w-3 h-3" /> Resumo IA
                     </p>
                     <p className="text-sm text-foreground/85 leading-relaxed">{a.resumo_ia}</p>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+                  <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                     <Sparkles className="w-3 h-3" /> Clique para resumo IA
                   </p>
                 )}
               </div>
               <div className="flex flex-col items-end shrink-0 gap-1">
-                <Badge variant="secondary" className="text-[10px]">{a.ano}</Badge>
+                <Badge variant="secondary" className="text-xs">{a.ano}</Badge>
                 {a.documento_url && (
                   <a
                     href={a.documento_url}

@@ -55,7 +55,7 @@ export default function ReceitasTab() {
           O que é o duodécimo? Como funciona?
           <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto transition-transform [[open]_&]:rotate-180" aria-hidden="true" />
         </summary>
-        <div className="px-4 pb-4 pt-1 space-y-3 text-xs text-muted-foreground leading-relaxed border-t border-primary/10">
+        <div className="px-4 pb-4 pt-1 space-y-3 text-sm text-muted-foreground leading-relaxed border-t border-primary/10">
           <p>
             <strong className="text-foreground">Duodécimo</strong> quer dizer &quot;a duodécima parte&quot;, ou seja, 1/12.
             É a parcela mensal que a Prefeitura é obrigada a repassar à Câmara para custear o funcionamento do Legislativo.
@@ -77,7 +77,7 @@ export default function ReceitasTab() {
               <li>O que sobra (não executado) ao fim do ano costuma voltar ao caixa da Prefeitura.</li>
             </ul>
           </div>
-          <p className="pt-1 border-t border-primary/10 text-[11px]">
+          <p className="pt-1 border-t border-primary/10 text-xs">
             Os valores abaixo são o orçamento da Câmara (função Legislativa) e sua execução, conforme declarado ao SICONFI / Tesouro Nacional.
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function ReceitasTab() {
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-foreground">Orçamento da Câmara (duodécimo)</p>
         {linhas.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
         )}
@@ -107,15 +107,15 @@ export default function ReceitasTab() {
           {destaque && (
             <div className="grid grid-cols-3 gap-3">
               <div className="stat-card text-center">
-                <p className="text-xs text-muted-foreground">Orçado {destaque.ano}</p>
+                <p className="text-sm text-muted-foreground">Orçado {destaque.ano}</p>
                 <p className="text-lg font-bold text-foreground">{formatCurrency(destaque.dotacao || 0)}</p>
               </div>
               <div className="stat-card text-center">
-                <p className="text-xs text-muted-foreground">Executado</p>
+                <p className="text-sm text-muted-foreground">Executado</p>
                 <p className="text-lg font-bold text-accent">{formatCurrency(destaque.liquidada || 0)}</p>
               </div>
               <div className="stat-card text-center">
-                <p className="text-xs text-muted-foreground">Execução</p>
+                <p className="text-sm text-muted-foreground">Execução</p>
                 <p className="text-lg font-bold text-accent">{pctExec(destaque)}%</p>
               </div>
             </div>
@@ -123,11 +123,11 @@ export default function ReceitasTab() {
 
           {/* Bar chart: orçado vs executado por ano */}
           <div className="stat-card">
-            <p className="text-xs font-medium text-muted-foreground mb-3">Orçado vs Executado por ano</p>
+            <p className="text-sm font-medium text-muted-foreground mb-3">Orçado vs Executado por ano</p>
             <div className="space-y-2">
               {linhas.map((o) => (
                 <div key={o.ano} className="space-y-1">
-                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{o.ano}{o.periodo_referencia && o.periodo_referencia < 6 ? " (parcial)" : ""}</span>
                     <span>{formatCurrency(o.liquidada || 0)} / {formatCurrency(o.dotacao || 0)}</span>
                   </div>
@@ -138,7 +138,7 @@ export default function ReceitasTab() {
                 </div>
               ))}
             </div>
-            <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground">
+            <div className="flex gap-4 mt-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary/30" /> Orçado</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-accent" /> Executado</span>
             </div>
@@ -152,13 +152,13 @@ export default function ReceitasTab() {
                   <p className="font-medium text-foreground text-sm">
                     {o.ano}{o.periodo_referencia && o.periodo_referencia < 6 && <span className="text-muted-foreground font-normal"> · parcial</span>}
                   </p>
-                  <p className="text-xs text-muted-foreground">Execução: {pctExec(o)}%</p>
-                  <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+                  <p className="text-sm text-muted-foreground">Execução: {pctExec(o)}%</p>
+                  <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                     <Sparkles className="w-3 h-3" /> Clique para resumo IA
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground">Orçado: {formatCurrency(o.dotacao || 0)}</p>
+                  <p className="text-sm text-muted-foreground">Orçado: {formatCurrency(o.dotacao || 0)}</p>
                   <p className="text-sm font-semibold text-foreground">{formatCurrency(o.liquidada || 0)}</p>
                 </div>
               </button>
@@ -167,7 +167,7 @@ export default function ReceitasTab() {
 
           {destaque?.fonte_url && (
             <a href={destaque.fonte_url} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+              className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
               <ExternalLink className="w-3 h-3" /> Fonte: {destaque.fonte || "SICONFI / Tesouro Nacional"}
             </a>
           )}

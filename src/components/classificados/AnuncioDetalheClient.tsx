@@ -370,14 +370,14 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
                 </div>
               )}
               <div className="p-2.5">
-                <p className="text-xs font-semibold text-foreground line-clamp-2 leading-tight">
+                <p className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
                   {ad.titulo}
                 </p>
                 <p className="text-sm font-bold text-primary mt-1">
                   {formatPreco(ad.preco, ad.preco_tipo)}
                 </p>
                 {ad.bairro && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-0.5">
                     <MapPin className="w-2.5 h-2.5" /> {ad.bairro}
                   </p>
                 )}
@@ -531,7 +531,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
 
       <div className="mx-auto w-full max-w-2xl px-4 py-6 space-y-5">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1 text-xs text-muted-foreground overflow-x-auto" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-1 text-sm text-muted-foreground overflow-x-auto" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-foreground transition-colors shrink-0">Início</Link>
           <ChevronRightBreadcrumb className="w-3 h-3 shrink-0" />
           <Link href="/compra-e-venda" className="hover:text-foreground transition-colors shrink-0">Compra e Venda</Link>
@@ -630,11 +630,11 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-sm">
                   <CatIcon className="w-3.5 h-3.5 mr-1" /> {catInfo.label}
                 </Badge>
                 {isVendido && (
-                  <Badge className="bg-blue-600 text-white text-xs">VENDIDO</Badge>
+                  <Badge className="bg-blue-600 text-white text-sm">VENDIDO</Badge>
                 )}
               </div>
               <h1 className="text-lg font-bold text-foreground">{item.titulo}</h1>
@@ -656,7 +656,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
           )}
 
           {/* Meta */}
-          <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap pt-2 border-t border-border">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap pt-2 border-t border-border">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
               {new Date(item.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}

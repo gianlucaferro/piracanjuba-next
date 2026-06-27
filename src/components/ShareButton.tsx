@@ -57,7 +57,7 @@ export default function ShareButton({ title, text, url, className = "", variant 
     <div className={`flex items-center gap-1.5 ${className}`}>
       <button
         onClick={handleShare}
-        className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
         aria-label="Compartilhar via WhatsApp"
       >
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#25D366">
@@ -68,7 +68,7 @@ export default function ShareButton({ title, text, url, className = "", variant 
       <span className="text-muted-foreground">·</span>
       <button
         onClick={handleCopy}
-        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         aria-label="Copiar link"
       >
         <Share2 className="w-3 h-3" /> Copiar link

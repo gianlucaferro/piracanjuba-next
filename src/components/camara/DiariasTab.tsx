@@ -66,9 +66,9 @@ export default function DiariasTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{filtered.length} diárias · Total: {formatCurrency(totalValor)}</p>
+        <p className="text-sm text-muted-foreground">{filtered.length} diárias · Total: {formatCurrency(totalValor)}</p>
         {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
         )}
@@ -90,7 +90,7 @@ export default function DiariasTab() {
             <div key={g.nome} className="stat-card flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{g.nome}</p>
-                <p className="text-xs text-muted-foreground">{g.count} diária{g.count !== 1 ? "s" : ""}</p>
+                <p className="text-sm text-muted-foreground">{g.count} diária{g.count !== 1 ? "s" : ""}</p>
               </div>
               <span className="font-semibold text-foreground text-sm">{formatCurrency(g.total)}</span>
             </div>
@@ -105,16 +105,16 @@ export default function DiariasTab() {
               <div className="flex items-start justify-between mb-1">
                 <div>
                   <p className="font-medium text-foreground text-sm">{d.beneficiario || "—"}</p>
-                  {d.cargo && <Badge variant="secondary" className="text-xs mt-0.5">{d.cargo}</Badge>}
+                  {d.cargo && <Badge variant="secondary" className="text-sm mt-0.5">{d.cargo}</Badge>}
                 </div>
                 <span className="font-semibold text-foreground text-sm shrink-0 ml-2">{formatCurrency(d.valor)}</span>
               </div>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
+              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mt-1">
                 {d.destino && <span>📍 {d.destino}</span>}
                 {d.data && <span>· {new Date(d.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
               </div>
-              {d.motivo && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{d.motivo}</p>}
-              <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+              {d.motivo && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{d.motivo}</p>}
+              <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                 <Sparkles className="w-3 h-3" /> Clique para resumo IA
               </p>
             </button>

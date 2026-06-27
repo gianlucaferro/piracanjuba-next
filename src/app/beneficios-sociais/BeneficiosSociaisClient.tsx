@@ -79,7 +79,7 @@ function IndicadorCard({ icon: Icon, label, valor, sufixo, fonte, fonteUrl, cor 
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs text-muted-foreground mb-1">{label}</p>
+            <p className="text-sm text-muted-foreground mb-1">{label}</p>
             <p className="text-2xl font-bold text-foreground">
               {valor ?? "—"}{sufixo && <span className="text-sm font-normal text-muted-foreground ml-1">{sufixo}</span>}
             </p>
@@ -89,7 +89,7 @@ function IndicadorCard({ icon: Icon, label, valor, sufixo, fonte, fonteUrl, cor 
           </div>
         </div>
         {fonte && (
-          <p className="text-[10px] text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Fonte: {fonteUrl ? (
               <a href={fonteUrl} target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
                 {fonte} <ExternalLink className="w-2.5 h-2.5" />
@@ -151,13 +151,13 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">{PROGRAMA_LABELS[p]}</p>
+                    <p className="text-sm text-muted-foreground mb-0.5">{PROGRAMA_LABELS[p]}</p>
                     {d ? (
-                      <Badge variant="secondary" className="text-[9px]">
+                      <Badge variant="secondary" className="text-xs">
                         {formatCompetencia(d.competencia)}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-[9px] text-destructive">
+                      <Badge variant="outline" className="text-xs text-destructive">
                         Sem dados
                       </Badge>
                     )}
@@ -174,7 +174,7 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
                         <span className="text-lg font-bold text-foreground">
                           {formatNumber(d.beneficiarios)}
                         </span>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {d.unidade_medida || "famílias"}
                         </span>
                       </div>
@@ -186,20 +186,20 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
                       </div>
                     </div>
                     {d.fonte_url && (
-                      <p className="text-[10px] text-muted-foreground mt-2">
+                      <p className="text-xs text-muted-foreground mt-2">
                         <a href={d.fonte_url} target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
                           Fonte oficial <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       </p>
                     )}
                     {d.observacoes && (
-                      <p className="text-[10px] text-destructive mt-1 flex items-center gap-1">
+                      <p className="text-xs text-destructive mt-1 flex items-center gap-1">
                         <AlertTriangle className="w-2.5 h-2.5" /> {d.observacoes}
                       </p>
                     )}
                   </>
                 ) : (
-                  <p className="text-xs text-muted-foreground mt-3">
+                  <p className="text-sm text-muted-foreground mt-3">
                     Dados ainda não disponíveis para este programa.
                   </p>
                 )}
@@ -213,13 +213,13 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="text-xs text-muted-foreground mb-0.5">Gás do Povo</p>
+                <p className="text-sm text-muted-foreground mb-0.5">Gás do Povo</p>
                 {gasDoPovoEstimativa ? (
-                  <Badge variant="outline" className="text-[9px] border-orange-500/50 text-orange-600">
+                  <Badge variant="outline" className="text-xs border-orange-500/50 text-orange-600">
                     Estimativa
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-[9px] text-destructive">
+                  <Badge variant="outline" className="text-xs text-destructive">
                     Sem dados
                   </Badge>
                 )}
@@ -236,23 +236,23 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
                     <span className="text-lg font-bold text-foreground">
                       ~{formatNumber(gasDoPovoEstimativa.beneficiarios)}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">famílias</span>
+                    <span className="text-xs text-muted-foreground">famílias</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Gratuidade no botijão de gás (13kg)
                   </p>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                   <Info className="w-2.5 h-2.5" /> Estimativa: ~85% das famílias do Bolsa Família
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   <a href="https://gasdopovo.mds.gov.br/" target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
                     Consultar por CPF <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </p>
               </>
             ) : (
-              <p className="text-xs text-muted-foreground mt-3">
+              <p className="text-sm text-muted-foreground mt-3">
                 Dados ainda não disponíveis.
               </p>
             )}
@@ -265,7 +265,7 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
         <CardContent className="p-4">
           <div className="flex gap-2 items-start">
             <Flame className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
-            <div className="text-xs text-muted-foreground space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <p><strong>Gás do Povo</strong> — Novo programa do Governo Federal (criado em setembro/2025) que substituiu o Auxílio Gás dos Brasileiros.</p>
               <p>O programa oferece <strong>gratuidade na recarga do botijão de gás (13kg)</strong> para famílias inscritas no CadÚnico com renda per capita de até ½ salário mínimo. Atende cerca de 15,5 milhões de famílias em todo o Brasil.</p>
               <p>⚠️ Dados municipais do Gás do Povo ainda não estão disponíveis em bases abertas. A estimativa acima é baseada em ~85% das famílias do Bolsa Família, critério de elegibilidade do programa.</p>
@@ -343,13 +343,13 @@ function SerieHistoricaSection({ dados }: { dados: BeneficioSocial[] }) {
         <div className="flex gap-2">
           <button
             onClick={() => setMetrica("beneficiarios")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${metrica === "beneficiarios" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${metrica === "beneficiarios" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
           >
             Beneficiários
           </button>
           <button
             onClick={() => setMetrica("valor_pago")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${metrica === "valor_pago" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${metrica === "valor_pago" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
           >
             Valores (R$)
           </button>
@@ -384,7 +384,7 @@ function SerieHistoricaSection({ dados }: { dados: BeneficioSocial[] }) {
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">Sem dados históricos disponíveis</p>
           )}
-          <p className="text-[10px] text-muted-foreground mt-2">Fonte: Portal da Transparência do Governo Federal</p>
+          <p className="text-xs text-muted-foreground mt-2">Fonte: Portal da Transparência do Governo Federal</p>
         </CardContent>
       </Card>
     </div>
@@ -432,10 +432,10 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
           Tabela Detalhada
         </h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={exportCSV} className="text-xs">
+          <Button variant="outline" size="sm" onClick={exportCSV} className="text-sm">
             <Download className="w-3 h-3 mr-1" /> Baixar CSV
           </Button>
-          <Button variant="outline" size="sm" onClick={copyLink} className="text-xs">
+          <Button variant="outline" size="sm" onClick={copyLink} className="text-sm">
             <Link2 className="w-3 h-3 mr-1" /> Copiar link
           </Button>
         </div>
@@ -443,7 +443,7 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
 
       <div className="flex gap-2 flex-wrap">
         <Select value={filtroPrograma} onValueChange={setFiltroPrograma}>
-          <SelectTrigger className="w-[200px] h-9 text-xs">
+          <SelectTrigger className="w-[200px] h-9 text-sm">
             <SelectValue placeholder="Filtrar programa" />
           </SelectTrigger>
           <SelectContent>
@@ -460,12 +460,12 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-xs">Programa</TableHead>
-                <TableHead className="text-xs">Competência</TableHead>
-                <TableHead className="text-xs text-right">Beneficiários</TableHead>
-                <TableHead className="text-xs text-right">Valor Pago</TableHead>
-                <TableHead className="text-xs">Fonte</TableHead>
-                <TableHead className="text-xs">Obs.</TableHead>
+                <TableHead className="text-sm">Programa</TableHead>
+                <TableHead className="text-sm">Competência</TableHead>
+                <TableHead className="text-sm text-right">Beneficiários</TableHead>
+                <TableHead className="text-sm text-right">Valor Pago</TableHead>
+                <TableHead className="text-sm">Fonte</TableHead>
+                <TableHead className="text-sm">Obs.</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -478,22 +478,22 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
               ) : (
                 filtrados.slice(0, 100).map(d => (
                   <TableRow key={d.id}>
-                    <TableCell className="text-xs font-medium">{PROGRAMA_LABELS[d.programa] || d.programa}</TableCell>
-                    <TableCell className="text-xs">{formatCompetencia(d.competencia)}</TableCell>
-                    <TableCell className="text-xs text-right">
+                    <TableCell className="text-sm font-medium">{PROGRAMA_LABELS[d.programa] || d.programa}</TableCell>
+                    <TableCell className="text-sm">{formatCompetencia(d.competencia)}</TableCell>
+                    <TableCell className="text-sm text-right">
                       {d.beneficiarios != null ? formatNumber(d.beneficiarios) : <span className="text-muted-foreground">N/D</span>}
                     </TableCell>
-                    <TableCell className="text-xs text-right">
+                    <TableCell className="text-sm text-right">
                       {d.valor_pago != null ? formatCurrency(d.valor_pago) : <span className="text-muted-foreground">N/D</span>}
                     </TableCell>
-                    <TableCell className="text-xs">
+                    <TableCell className="text-sm">
                       {d.fonte_url ? (
                         <a href={d.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5">
                           Fonte <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       ) : d.fonte_nome}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">
+                    <TableCell className="text-sm text-muted-foreground max-w-[150px] truncate">
                       {d.observacoes || "—"}
                     </TableCell>
                   </TableRow>
@@ -504,7 +504,7 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
         </CardContent>
       </Card>
       {filtrados.length > 100 && (
-        <p className="text-xs text-muted-foreground text-center">Mostrando 100 de {filtrados.length} registros. Use o CSV para dados completos.</p>
+        <p className="text-sm text-muted-foreground text-center">Mostrando 100 de {filtrados.length} registros. Use o CSV para dados completos.</p>
       )}
     </div>
   );
@@ -540,7 +540,7 @@ function ContextoSection({ dados }: { dados: BeneficioSocial[] }) {
         </h2>
         <a href={`https://wa.me/?text=${encodeURIComponent(shareText + "\n\nVeja mais em: https://piracanjuba.ai/beneficios-sociais")}`}
           target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline font-medium">
+          className="inline-flex items-center gap-1 text-sm text-[#25D366] hover:underline font-medium">
           <Share2 className="w-3 h-3" /> Compartilhar
         </a>
       </div>
@@ -549,11 +549,11 @@ function ContextoSection({ dados }: { dados: BeneficioSocial[] }) {
       {(totalAnual > 0 || totalAnualAnterior > 0) && (
         <Card className="border-accent/20 bg-gradient-to-r from-accent/5 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Total recebido do governo federal em {totalAnual > 0 ? anoAtual : anoAtual - 1}</p>
+            <p className="text-sm text-muted-foreground">Total recebido do governo federal em {totalAnual > 0 ? anoAtual : anoAtual - 1}</p>
             <p className="text-2xl font-bold text-foreground mt-1">
               {formatCurrency(totalAnual > 0 ? totalAnual : totalAnualAnterior)}
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               Soma de Bolsa Família, BPC, Gás do Povo e outros programas federais que entraram no município.
             </p>
           </CardContent>
@@ -616,7 +616,7 @@ function CdeRegionalSection({ cdeData }: { cdeData: CdeSubsidio[] }) {
         <Lightbulb className="w-4 h-4 text-yellow-500" />
         Referência Regional — Subsídios CDE (ENEL/CELG Goiás)
       </h2>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Dados da Conta de Desenvolvimento Energético (CDE) para a distribuidora ENEL/CELG em Goiás.
         Inclui a <strong>Tarifa Social de Energia Elétrica</strong> (desconto para famílias de baixa renda) e outros subsídios.
         Dados agregados por distribuidora — não há recorte municipal disponível na fonte oficial.
@@ -679,7 +679,7 @@ function CdeRegionalSection({ cdeData }: { cdeData: CdeSubsidio[] }) {
         <CardContent className="p-4">
           <div className="flex gap-2 items-start">
             <Info className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
-            <div className="text-xs text-muted-foreground space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <p><strong>Nota:</strong> Os dados da CDE são agregados por distribuidora (ENEL/CELG — todo o estado de Goiás), não por município. A ANEEL não disponibiliza recorte municipal nesta base.</p>
               <p>A Tarifa Social concede descontos de até 65% na conta de energia para famílias inscritas no CadÚnico com renda ≤ ½ salário mínimo per capita, idosos (65+) do BPC e portadores de deficiência.</p>
               <p>
@@ -707,7 +707,7 @@ function MetodologiaSection() {
         <CardContent className="p-4 space-y-4">
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-1">De onde vêm os dados?</h3>
-            <ul className="text-xs text-muted-foreground space-y-1.5 list-disc pl-4">
+            <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-4">
               <li>
                 <strong>Bolsa Família (Novo Bolsa Família):</strong> Portal da Transparência do Governo Federal —{" "}
                 <a href="https://portaldatransparencia.gov.br" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
@@ -741,14 +741,14 @@ function MetodologiaSection() {
 
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-1">Periodicidade</h3>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Os dados são atualizados automaticamente todo dia 5 de cada mês (ou no primeiro dia útil posterior).
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-1">Limitações</h3>
-            <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-4">
+            <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
               <li>A Tarifa Social de Energia (CDE/ANEEL) só disponibiliza dados por distribuidora, não por município.</li>
               <li>Dados de BPC podem ter atraso de 1-2 meses.</li>
               <li>Mudanças metodológicas nos programas federais podem afetar a comparabilidade histórica.</li>
@@ -756,7 +756,7 @@ function MetodologiaSection() {
           </div>
 
           <div className="pt-2 border-t">
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Dados públicos obtidos exclusivamente de fontes oficiais.
               Este aplicativo não tem vínculo com nenhum órgão governamental.
             </p>
@@ -794,8 +794,8 @@ function ContatosSociaisSection() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">{c.nome}</p>
-                <p className="text-xs text-muted-foreground">{c.desc}</p>
-                <p className="text-xs text-[#25D366]">{c.telefone}</p>
+                <p className="text-sm text-muted-foreground">{c.desc}</p>
+                <p className="text-sm text-[#25D366]">{c.telefone}</p>
               </div>
             </a>
           ))}
@@ -837,22 +837,22 @@ function CalendarioPagamentoSection() {
             Calendário Bolsa Família — {mesAtual}/{anoAtual}
           </h3>
           <a href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline font-medium">
+            className="inline-flex items-center gap-1 text-sm text-[#25D366] hover:underline font-medium">
             <Share2 className="w-3 h-3" /> Compartilhar
           </a>
         </div>
-        <p className="text-xs text-muted-foreground mb-3">
+        <p className="text-sm text-muted-foreground mb-3">
           O depósito é feito conforme o último dígito do NIS (Número de Identificação Social). Datas aproximadas — podem variar.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           {calendario.map((c) => (
             <div key={c.nis} className="rounded-lg bg-muted/50 p-2 text-center">
               <p className="text-lg font-bold text-primary">NIS {c.nis}</p>
-              <p className="text-[10px] text-muted-foreground">{c.periodo}</p>
+              <p className="text-xs text-muted-foreground">{c.periodo}</p>
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Fonte: Calendário oficial do Ministério do Desenvolvimento Social.
           Confira sempre no app Caixa Tem ou ligue 111 (Caixa).
         </p>
@@ -878,24 +878,24 @@ function ComoSeCadastrarSection() {
           <ClipboardList className="w-4 h-4 text-accent" />
           Como se cadastrar nos programas sociais
         </h3>
-        <p className="text-xs text-muted-foreground mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Para receber Bolsa Família, BPC, Tarifa Social e outros benefícios, o primeiro passo é estar inscrito no CadÚnico.
         </p>
         <div className="space-y-3">
           {passos.map((p) => (
             <div key={p.num} className="flex gap-3">
               <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="text-xs font-bold text-primary">{p.num}</span>
+                <span className="text-sm font-bold text-primary">{p.num}</span>
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">{p.titulo}</p>
-                <p className="text-xs text-muted-foreground">{p.desc}</p>
+                <p className="text-sm text-muted-foreground">{p.desc}</p>
               </div>
             </div>
           ))}
         </div>
         <div className="mt-4 p-3 rounded-lg bg-accent/10 border border-accent/20">
-          <p className="text-xs text-foreground">
+          <p className="text-sm text-foreground">
             <strong>Quem tem direito?</strong> Famílias com renda mensal de até R$ 218 por pessoa. Famílias com renda de até meio salário mínimo por pessoa também podem se cadastrar no CadÚnico para acessar outros programas.
           </p>
         </div>

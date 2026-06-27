@@ -35,7 +35,7 @@ export default function DiariasCamaraPanel({ diarias, nomePessoa }: Props) {
             <h3 className="text-base font-semibold text-foreground">
               Diárias e Passagens
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Nenhuma diária registrada pra {nomePessoa} no portal LAI Centi.
             </p>
           </div>
@@ -54,7 +54,7 @@ export default function DiariasCamaraPanel({ diarias, nomePessoa }: Props) {
           <h3 className="text-base font-semibold text-foreground">
             Diárias e Passagens
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             Pagamentos por viagens a trabalho (capacitações, eventos UVB, audiências em Brasília/Goiânia).
           </p>
         </div>
@@ -62,15 +62,15 @@ export default function DiariasCamaraPanel({ diarias, nomePessoa }: Props) {
 
       <div className="grid grid-cols-3 gap-2">
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground">Total recebido</p>
+          <p className="text-xs uppercase text-muted-foreground">Total recebido</p>
           <p className="text-xl font-extrabold text-sky-700 mt-0.5">{fmtBRL(totalValor)}</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground">Viagens</p>
+          <p className="text-xs uppercase text-muted-foreground">Viagens</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{diarias.length}</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground">Dias afastado</p>
+          <p className="text-xs uppercase text-muted-foreground">Dias afastado</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totalDias}</p>
         </div>
       </div>
@@ -85,13 +85,13 @@ export default function DiariasCamaraPanel({ diarias, nomePessoa }: Props) {
               </p>
               <p className="text-sm font-bold text-sky-700">{fmtBRL(d.valor)}</p>
             </div>
-            <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1 mb-1">
+            <p className="text-xs text-muted-foreground inline-flex items-center gap-1 mb-1">
               <Calendar className="w-3 h-3" />
               {fmtDate(d.data_inicio)} → {fmtDate(d.data_fim)}
               {d.quantidade && ` · ${d.quantidade} diária${d.quantidade > 1 ? "s" : ""}`}
             </p>
             {d.descricao && (
-              <p className="text-xs text-foreground/85 leading-relaxed mt-1">
+              <p className="text-sm text-foreground/85 leading-relaxed mt-1">
                 {d.descricao}
               </p>
             )}
@@ -99,7 +99,7 @@ export default function DiariasCamaraPanel({ diarias, nomePessoa }: Props) {
         ))}
       </div>
 
-      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-[11px] text-muted-foreground leading-relaxed">
+      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-xs text-muted-foreground leading-relaxed">
         <p className="font-semibold text-foreground inline-flex items-center gap-1 mb-1">
           <CircleAlert className="w-3.5 h-3.5 text-blue-600" />
           Sobre estes dados

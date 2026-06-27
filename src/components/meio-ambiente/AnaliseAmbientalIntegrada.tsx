@@ -201,14 +201,14 @@ export default function AnaliseAmbientalIntegrada({
               <h3 className="text-base font-semibold text-foreground">
                 Risco de Fogo Atual
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Cruzamento: chuva acumulada últimos 90 dias × média histórica do período.
                 Quanto menor a chuva recente, maior o risco de incêndios na vegetação.
               </p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Risco
             </p>
             <p className={`text-3xl font-extrabold ${riscoFogoStyle.color} mt-0.5`}>
@@ -218,7 +218,7 @@ export default function AnaliseAmbientalIntegrada({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Chuva últimos 90 dias
             </p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">
@@ -226,7 +226,7 @@ export default function AnaliseAmbientalIntegrada({
             </p>
           </div>
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Esperado (média histórica)
             </p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">
@@ -234,7 +234,7 @@ export default function AnaliseAmbientalIntegrada({
             </p>
           </div>
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Razão atual / esperado
             </p>
             <p className={`text-xl font-extrabold ${riscoFogoStyle.color} mt-0.5`}>
@@ -242,7 +242,7 @@ export default function AnaliseAmbientalIntegrada({
             </p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3 italic leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-3 italic leading-relaxed">
           Critérios: ≥85% baixo · 50-85% moderado · &lt;50% alto. Indicador
           baseline — combina com previsão INPE/IBAMA pra avaliação completa.
         </p>
@@ -258,7 +258,7 @@ export default function AnaliseAmbientalIntegrada({
             <h3 className="text-base font-semibold text-foreground">
               Pressão Agrícola sobre o Cerrado
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Quanto do território de Piracanjuba está convertido em
               agropecuária vs vegetação nativa preservada (MapBiomas {ano}).
             </p>
@@ -267,35 +267,35 @@ export default function AnaliseAmbientalIntegrada({
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
           <div className="stat-card border-amber-500/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Agropecuária (agro+pasto+mosaico)
             </p>
             <p className="text-xl font-extrabold text-amber-700 mt-0.5">
               {insights.pctAgro.toFixed(1)}%
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {(insights.areaAgroPecuaria / 1000).toFixed(0)} mil ha
             </p>
           </div>
           <div className="stat-card border-green-500/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Vegetação nativa (floresta+cerrado)
             </p>
             <p className="text-xl font-extrabold text-green-600 mt-0.5">
               {insights.pctNativa.toFixed(1)}%
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {(insights.areaNativa / 1000).toFixed(0)} mil ha
             </p>
           </div>
           <div className="stat-card border-red-500/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" /> Perda nativa 1985-2024
             </p>
             <p className="text-xl font-extrabold text-red-600 mt-0.5">
               -{Math.round(insights.perdaPctNativa)}%
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {(insights.perdaNativa / 1000).toFixed(0)} mil ha perdidos
             </p>
           </div>
@@ -337,7 +337,7 @@ export default function AnaliseAmbientalIntegrada({
           </ResponsiveContainer>
         </div>
 
-        <p className="text-xs text-muted-foreground mt-3 italic leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-3 italic leading-relaxed">
           Cinza = 1985, colorido = 2024. Mostra a transição do Cerrado nativo para
           uso agropecuário em 40 anos.
         </p>
@@ -354,7 +354,7 @@ export default function AnaliseAmbientalIntegrada({
               <h3 className="text-base font-semibold text-foreground">
                 Estimativa de Emissões CO2 da Frota Municipal
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Cálculo aproximado baseado na frota total (SENATRAN) com mix típico
                 Brasil (60% carros, 25% motos, 15% caminhões).
               </p>
@@ -363,38 +363,38 @@ export default function AnaliseAmbientalIntegrada({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="stat-card">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 Frota total
               </p>
               <p className="text-xl font-extrabold text-foreground mt-0.5">
                 {frotaVeiculos?.toLocaleString("pt-BR")}
               </p>
-              <p className="text-[10px] text-muted-foreground">veículos · SENATRAN</p>
+              <p className="text-xs text-muted-foreground">veículos · SENATRAN</p>
             </div>
             <div className="stat-card border-orange-500/30">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 CO2 estimado/ano
               </p>
               <p className="text-xl font-extrabold text-orange-600 mt-0.5">
                 {insights.co2TotalToneladas.toLocaleString("pt-BR")} t
               </p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 ~{(insights.co2TotalToneladas / (frotaVeiculos ?? 1)).toFixed(1)} t/veículo
               </p>
             </div>
             <div className="stat-card border-green-500/30">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
                 <TreesIcon className="w-3 h-3" /> Árvores p/ compensar
               </p>
               <p className="text-xl font-extrabold text-green-600 mt-0.5">
                 {insights.arvoresEquivalentes?.toLocaleString("pt-BR")}
               </p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 ~22 kg CO2/árvore/ano
               </p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-3 italic leading-relaxed">
+          <p className="text-sm text-muted-foreground mt-3 italic leading-relaxed">
             <strong>Nota</strong>: estimativa simplificada usando médias nacionais.
             Não inclui maquinário agrícola, queimadas, ou desmatamento.
             Para cálculo preciso, usar metodologia GHG Protocol municipal.
@@ -412,7 +412,7 @@ export default function AnaliseAmbientalIntegrada({
             <h3 className="text-base font-semibold text-foreground">
               Saúde Hídrica · {ano}
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Como está a chuva acumulada do ano em relação à média histórica do
               município. Indicador-chave de risco de seca, recarga de aquíferos,
               vazão de rios.
@@ -422,7 +422,7 @@ export default function AnaliseAmbientalIntegrada({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Acumulado {ano} YTD
             </p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">
@@ -430,13 +430,13 @@ export default function AnaliseAmbientalIntegrada({
             </p>
           </div>
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Média histórica anual
             </p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">
               {Math.round(chuvaMediaHistAnoCompleto)} mm
             </p>
-            <p className="text-[10px] text-muted-foreground">2018-2025</p>
+            <p className="text-xs text-muted-foreground">2018-2025</p>
           </div>
           <div
             className={`stat-card border ${
@@ -447,7 +447,7 @@ export default function AnaliseAmbientalIntegrada({
                 : "border-red-500/30 bg-red-500/5"
             }`}
           >
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
               <TrendingUp className="w-3 h-3" /> Status hídrico
             </p>
             <p
@@ -461,7 +461,7 @@ export default function AnaliseAmbientalIntegrada({
             >
               {(insights.ratioChuvaAno * 100).toFixed(0)}%
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {insights.ratioChuvaAno >= 0.85
                 ? "normal"
                 : insights.ratioChuvaAno >= 0.5

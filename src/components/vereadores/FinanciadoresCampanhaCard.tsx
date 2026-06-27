@@ -42,7 +42,7 @@ function FinanciadoresView({
           <h3 id="financiadores-heading" className="text-base font-semibold text-foreground">
             {titulo || `Financiadores de campanha ${resumo.ano_eleicao}`}
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             {resumo.total_doacoes} doaç{resumo.total_doacoes > 1 ? "ões" : "ão"} ·{" "}
             <strong className="text-emerald-700">{fmtMoeda(resumo.total_arrecadado)}</strong> arrecadado ·{" "}
             {resumo.doacoes_pj} PJ · {resumo.doacoes_pf} PF
@@ -51,7 +51,7 @@ function FinanciadoresView({
       </header>
 
       {subtitulo && (
-        <p className="text-[11px] text-muted-foreground leading-relaxed inline-flex items-start gap-1.5 rounded-lg border border-border bg-background/40 p-2">
+        <p className="text-xs text-muted-foreground leading-relaxed inline-flex items-start gap-1.5 rounded-lg border border-border bg-background/40 p-2">
           <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
           {subtitulo}
         </p>
@@ -63,7 +63,7 @@ function FinanciadoresView({
           return (
             <div key={d.id} className="flex items-start gap-3 p-3 rounded-lg border border-border bg-background/40">
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                   isPj ? "bg-blue-500/10 text-blue-700" : "bg-amber-500/10 text-amber-700"
                 }`}
               >
@@ -71,7 +71,7 @@ function FinanciadoresView({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground truncate">{d.nome_doador}</p>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     {isPj ? <Building2 className="w-3 h-3" /> : <User className="w-3 h-3" />}
                     {isPj ? "Pessoa Jurídica" : "Pessoa Física"}
@@ -86,7 +86,7 @@ function FinanciadoresView({
         })}
       </div>
 
-      <p className="text-[11px] text-muted-foreground border-t border-border pt-3">
+      <p className="text-xs text-muted-foreground border-t border-border pt-3">
         Fonte:{" "}
         <Link
           href="https://dadosabertos.tse.jus.br/dataset/prestacao-de-contas-eleitorais-2024"

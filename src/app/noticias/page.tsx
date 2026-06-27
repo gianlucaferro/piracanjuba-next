@@ -68,14 +68,14 @@ export default async function NoticiasPage() {
                     />
                   </div>
                 )}
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {n.source || n.origem || "Fonte"}
                   {n.pub_date && ` · ${fmtDate(n.pub_date)}`}
                 </p>
                 <h2 className="text-base font-semibold text-foreground mt-1 line-clamp-3 group-hover:text-primary transition-colors">
                   {n.title}
                 </h2>
-                <p className="text-xs text-primary mt-auto pt-2 inline-flex items-center gap-1">
+                <p className="text-sm text-primary mt-auto pt-2 inline-flex items-center gap-1">
                   Ler matéria <ExternalLink className="w-3 h-3" />
                 </p>
               </a>

@@ -67,19 +67,19 @@ export default async function ContratosCamaraPage() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Total contratos</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Total contratos</p>
               <p className="text-2xl font-extrabold text-orange-700 mt-0.5">{stats.total}</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Em vigor</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Em vigor</p>
               <p className="text-2xl font-extrabold text-emerald-700 mt-0.5">{stats.em_vigor}</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Valor total</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Valor total</p>
               <p className="text-base font-extrabold text-foreground mt-0.5">{fmtBRL(stats.total_valor)}</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Fornecedores</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Fornecedores</p>
               <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.top_fornecedores.length}+</p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default async function ContratosCamaraPage() {
               {stats.por_ano.map((a) => (
                 <div key={a.ano} className="flex items-center gap-3 text-sm">
                   <span className="font-bold text-foreground w-12">{a.ano}</span>
-                  <span className="text-muted-foreground text-xs w-20">{a.qtde} contratos</span>
+                  <span className="text-muted-foreground text-sm w-20">{a.qtde} contratos</span>
                   <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-orange-500"
@@ -100,7 +100,7 @@ export default async function ContratosCamaraPage() {
                       }}
                     />
                   </div>
-                  <span className="font-mono text-xs text-orange-700 w-28 text-right">{fmtBRL(a.soma)}</span>
+                  <span className="font-mono text-sm text-orange-700 w-28 text-right">{fmtBRL(a.soma)}</span>
                 </div>
               ))}
             </div>
@@ -112,7 +112,7 @@ export default async function ContratosCamaraPage() {
               <Building2 className="w-5 h-5 text-orange-600" />
               Top 10 fornecedores
             </h2>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Empresas que mais receberam pagamentos da Câmara (soma de contratos por CNPJ).
             </p>
             <div className="space-y-2">
@@ -121,7 +121,7 @@ export default async function ContratosCamaraPage() {
                   <span className="text-lg font-bold text-orange-600 w-6">{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">{f.nome}</p>
-                    <p className="text-[11px] text-muted-foreground font-mono">{fmtCnpj(f.cnpj)} · {f.qtde} contrato{f.qtde > 1 ? "s" : ""}</p>
+                    <p className="text-xs text-muted-foreground font-mono">{fmtCnpj(f.cnpj)} · {f.qtde} contrato{f.qtde > 1 ? "s" : ""}</p>
                   </div>
                   <p className="text-sm font-bold text-orange-700 whitespace-nowrap">{fmtBRL(f.soma)}</p>
                 </div>
@@ -133,14 +133,14 @@ export default async function ContratosCamaraPage() {
 
       <section className="space-y-2">
         <h2 className="text-lg font-semibold text-foreground">Contratos detalhados</h2>
-        <p className="text-xs text-muted-foreground">Mostrando {contratos.length} contratos mais recentes.</p>
+        <p className="text-sm text-muted-foreground">Mostrando {contratos.length} contratos mais recentes.</p>
         {contratos.map((c) => (
           <article key={c.id} className="stat-card hover:border-orange-500/30 transition-colors">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold text-orange-700">{c.label}</span>
                 {c.situacao && (
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                  <span className={`text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
                     c.situacao.toLowerCase().includes("vigor")
                       ? "bg-emerald-500/15 text-emerald-700"
                       : "bg-slate-500/15 text-slate-700"
@@ -165,17 +165,17 @@ export default async function ContratosCamaraPage() {
             {c.empresa_razao_social &&
               c.empresa_razao_social.trim().toUpperCase() !==
                 c.fornecedor_nome.trim().toUpperCase() && (
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Razão social: <span className="font-medium text-foreground/80">{c.empresa_razao_social}</span>
                 </p>
               )}
-            <p className="text-[11px] text-muted-foreground font-mono mb-1">{fmtCnpj(c.fornecedor_cnpj)}</p>
+            <p className="text-xs text-muted-foreground font-mono mb-1">{fmtCnpj(c.fornecedor_cnpj)}</p>
             {c.objeto && (
-              <p className="text-xs text-foreground/85 leading-relaxed mt-1">
+              <p className="text-sm text-foreground/85 leading-relaxed mt-1">
                 {c.objeto.length > 240 ? c.objeto.slice(0, 240) + "..." : c.objeto}
               </p>
             )}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
               {c.inicio_vigencia && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -206,7 +206,7 @@ export default async function ContratosCamaraPage() {
         ))}
       </section>
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         <p>
           Dados sincronizados mensalmente do portal LAI Centi da Câmara. Filtro
           aplicado: Poder Legislativo (órgão 3).

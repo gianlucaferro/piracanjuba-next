@@ -344,7 +344,7 @@ export default function SobrePage() {
               <h3 className="font-semibold text-foreground text-sm mb-1">
                 Coleta de Lixo
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Datas da coleta comum e seletiva por bairro, com opção de adicionar
                 lembrete no Google Agenda — o morador recebe notificação na véspera.
               </p>
@@ -356,7 +356,7 @@ export default function SobrePage() {
               <h3 className="font-semibold text-foreground text-sm mb-1">
                 Plantão de Farmácias
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Calendário oficial das farmácias 24h da semana atual e das próximas,
                 com telefone, foto e link direto para o Waze.
               </p>
@@ -368,7 +368,7 @@ export default function SobrePage() {
               <h3 className="font-semibold text-foreground text-sm mb-1">
                 Zap PBA
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Diretório gratuito de WhatsApp profissional de comércios, prestadores
                 de serviços e profissionais autônomos de Piracanjuba.
               </p>
@@ -380,7 +380,7 @@ export default function SobrePage() {
               <h3 className="font-semibold text-foreground text-sm mb-1">
                 Compra e Venda PBA
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Marketplace local 100% gratuito para anunciar e negociar imóveis,
                 veículos, eletrônicos, agro e serviços entre moradores.
               </p>
@@ -550,7 +550,7 @@ export default function SobrePage() {
           <WhatsAppIcon className="w-5 h-5" />
           Conversar pelo WhatsApp
         </a>
-        <p className="text-xs text-muted-foreground mt-3">
+        <p className="text-sm text-muted-foreground mt-3">
           (64) 99237-5458 · resposta em até 24h em dias úteis
         </p>
       </section>
@@ -605,7 +605,7 @@ export default function SobrePage() {
         </div>
       </section>
 
-      <p className="text-xs text-muted-foreground text-center mt-8">
+      <p className="text-sm text-muted-foreground text-center mt-8">
         <Brand /> · Mantido por Ferro Labs Tecnologia LTDA · CNPJ 66.034.538/0001-25
       </p>
     </div>

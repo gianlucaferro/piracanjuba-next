@@ -126,22 +126,22 @@ function RGFPessoal({ poder }: { poder: Poder }) {
           <Scale className="w-4 h-4 text-primary shrink-0" /> Despesa com pessoal (Lei de Responsabilidade Fiscal)
         </p>
         {atual.periodo_rgf && (
-          <span className="text-[11px] text-muted-foreground whitespace-nowrap">RGF {atual.periodo_rgf}º quad. · {atual.ano}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">RGF {atual.periodo_rgf}º quad. · {atual.ano}</span>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <p className="text-[11px] text-muted-foreground">Gasto com pessoal</p>
+          <p className="text-xs text-muted-foreground">Gasto com pessoal</p>
           <p className="text-base font-bold text-foreground">{brlCompact(atual.dtp)}</p>
         </div>
         <div>
-          <p className="text-[11px] text-muted-foreground">% da Receita (RCL)</p>
+          <p className="text-xs text-muted-foreground">% da Receita (RCL)</p>
           <p className={`text-base font-bold ${cor}`}>{fmtPct(atual.dtp_pct)}</p>
         </div>
         <div>
-          <p className="text-[11px] text-muted-foreground">Situação</p>
-          <p className={`text-xs font-semibold ${cor} leading-tight pt-0.5`}>{zona}</p>
+          <p className="text-xs text-muted-foreground">Situação</p>
+          <p className={`text-sm font-semibold ${cor} leading-tight pt-0.5`}>{zona}</p>
         </div>
       </div>
 
@@ -152,7 +152,7 @@ function RGFPessoal({ poder }: { poder: Poder }) {
           <div className="absolute inset-y-0 w-0.5 bg-amber-500/70" style={{ left: left(alertaPct) }} title={`Alerta ${fmtPct(alertaPct)}`} />
           <div className="absolute inset-y-0 w-0.5 bg-orange-500/80" style={{ left: left(prudPct) }} title={`Prudencial ${fmtPct(prudPct)}`} />
         </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
           <span>0%</span>
           <span className="text-amber-600">Alerta {fmtPct(alertaPct)}</span>
           <span className="text-orange-600">Prudencial {fmtPct(prudPct)}</span>
@@ -163,7 +163,7 @@ function RGFPessoal({ poder }: { poder: Poder }) {
       {/* Histórico por ano */}
       {linhas.length > 1 && (
         <div className="pt-2 border-t border-border">
-          <p className="text-[11px] text-muted-foreground mb-1.5">Histórico (% da RCL)</p>
+          <p className="text-xs text-muted-foreground mb-1.5">Histórico (% da RCL)</p>
           <div className="space-y-1">
             {linhas.map((l) => {
               const p = l.dtp_pct ?? 0;
@@ -171,11 +171,11 @@ function RGFPessoal({ poder }: { poder: Poder }) {
               const c = over ? "bg-destructive" : prud ? "bg-orange-500" : alerta ? "bg-amber-500" : "bg-accent";
               return (
                 <div key={l.ano} className="flex items-center gap-2">
-                  <span className="text-[11px] text-muted-foreground w-10 shrink-0">{l.ano}</span>
+                  <span className="text-xs text-muted-foreground w-10 shrink-0">{l.ano}</span>
                   <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                     <div className={`h-full ${c} rounded-full`} style={{ width: left(p) }} />
                   </div>
-                  <span className="text-[11px] text-foreground w-14 text-right shrink-0">{fmtPct(l.dtp_pct)}</span>
+                  <span className="text-xs text-foreground w-14 text-right shrink-0">{fmtPct(l.dtp_pct)}</span>
                 </div>
               );
             })}
@@ -184,11 +184,11 @@ function RGFPessoal({ poder }: { poder: Poder }) {
       )}
 
       <div className="flex items-center justify-between gap-2 pt-1">
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           RCL: {brlCompact(atual.rcl)} · limite legal {fmtPct(maxPct)} ({codPoder === "executivo" ? "Executivo" : "Legislativo"})
         </p>
         {atual.fonte_rgf_url && (
-          <a href={atual.fonte_rgf_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline shrink-0">
+          <a href={atual.fonte_rgf_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0">
             <ExternalLink className="w-3 h-3" /> SICONFI
           </a>
         )}
@@ -216,27 +216,27 @@ function RREOExecucao() {
           <Wallet className="w-4 h-4 text-primary shrink-0" /> Execução orçamentária do município
         </p>
         {atual.periodo_rreo && (
-          <span className="text-[11px] text-muted-foreground whitespace-nowrap">RREO {atual.periodo_rreo}º bim. · {atual.ano}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">RREO {atual.periodo_rreo}º bim. · {atual.ano}</span>
         )}
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <p className="text-[11px] text-muted-foreground">Receita prevista</p>
+          <p className="text-xs text-muted-foreground">Receita prevista</p>
           <p className="text-base font-bold text-foreground">{brlCompact(atual.receita_prevista)}</p>
         </div>
         <div>
-          <p className="text-[11px] text-muted-foreground">Receita arrecadada</p>
-          <p className="text-base font-bold text-accent">{brlCompact(atual.receita_realizada)}<span className="text-[11px] font-normal text-muted-foreground">{fmtPct(recPct)}</span></p>
+          <p className="text-xs text-muted-foreground">Receita arrecadada</p>
+          <p className="text-base font-bold text-accent">{brlCompact(atual.receita_realizada)}<span className="text-xs font-normal text-muted-foreground">{fmtPct(recPct)}</span></p>
         </div>
         <div>
-          <p className="text-[11px] text-muted-foreground">Despesa paga</p>
+          <p className="text-xs text-muted-foreground">Despesa paga</p>
           <p className="text-base font-bold text-foreground">{brlCompact(atual.despesa_paga)}</p>
         </div>
       </div>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] text-muted-foreground">Empenhada: {brlCompact(atual.despesa_empenhada)} · Liquidada: {brlCompact(atual.despesa_liquidada)}</p>
+        <p className="text-xs text-muted-foreground">Empenhada: {brlCompact(atual.despesa_empenhada)} · Liquidada: {brlCompact(atual.despesa_liquidada)}</p>
         {atual.fonte_rreo_url && (
-          <a href={atual.fonte_rreo_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline shrink-0">
+          <a href={atual.fonte_rreo_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0">
             <ExternalLink className="w-3 h-3" /> SICONFI
           </a>
         )}
@@ -264,19 +264,19 @@ function OrcamentoCamaraResumo() {
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div className="text-center">
-          <p className="text-[11px] text-muted-foreground">Orçado</p>
+          <p className="text-xs text-muted-foreground">Orçado</p>
           <p className="text-base font-bold text-foreground">{brlCompact(destaque.dotacao)}</p>
         </div>
         <div className="text-center">
-          <p className="text-[11px] text-muted-foreground">Executado</p>
+          <p className="text-xs text-muted-foreground">Executado</p>
           <p className="text-base font-bold text-accent">{brlCompact(destaque.liquidada)}</p>
         </div>
         <div className="text-center">
-          <p className="text-[11px] text-muted-foreground">Execução</p>
+          <p className="text-xs text-muted-foreground">Execução</p>
           <p className="text-base font-bold text-accent">{pct}%</p>
         </div>
       </div>
-      <p className="text-[11px] text-muted-foreground mt-3">Veja a série completa na aba <span className="font-medium text-foreground">Orçamento</span>.</p>
+      <p className="text-xs text-muted-foreground mt-3">Veja a série completa na aba <span className="font-medium text-foreground">Orçamento</span>.</p>
     </div>
   );
 }
@@ -301,7 +301,7 @@ export default function PrestacaoContasTab({ poder }: { poder: Poder }) {
           O que é prestação de contas?
           <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto transition-transform [[open]_&]:rotate-180" aria-hidden="true" />
         </summary>
-        <div className="px-4 pb-4 pt-1 space-y-2 text-xs text-muted-foreground leading-relaxed border-t border-primary/10">
+        <div className="px-4 pb-4 pt-1 space-y-2 text-sm text-muted-foreground leading-relaxed border-t border-primary/10">
           <p>
             Prestar contas é o dever do gestor público de mostrar <strong className="text-foreground">de onde vem e para onde vai o dinheiro público</strong>.
             Começa no <strong className="text-foreground">planejamento</strong> (PPA, LDO e LOA), passa pela <strong className="text-foreground">execução</strong> acompanhada em relatórios (RREO e RGF) e termina nas <strong className="text-foreground">contas anuais</strong>, julgadas pelo Tribunal de Contas dos Municípios (TCM-GO).
@@ -319,7 +319,7 @@ export default function PrestacaoContasTab({ poder }: { poder: Poder }) {
         <section key={g.titulo} className="space-y-2">
           <div>
             <h3 className="text-sm font-semibold text-foreground">{g.titulo}</h3>
-            <p className="text-xs text-muted-foreground">{g.desc}</p>
+            <p className="text-sm text-muted-foreground">{g.desc}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {g.itens.map((item) => {
@@ -333,8 +333,8 @@ export default function PrestacaoContasTab({ poder }: { poder: Poder }) {
                     <p className="text-sm font-medium text-foreground leading-tight">
                       {item.nome}{item.sigla ? <span className="text-muted-foreground font-normal"> ({item.sigla})</span> : null}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{item.desc}</p>
-                    <span className="inline-flex items-center gap-1 text-[11px] text-primary mt-1.5 group-hover:underline">
+                    <p className="text-sm text-muted-foreground mt-0.5 leading-snug">{item.desc}</p>
+                    <span className="inline-flex items-center gap-1 text-xs text-primary mt-1.5 group-hover:underline">
                       <ExternalLink className="w-3 h-3" /> Ver no portal oficial{item.fonte ? ` · ${item.fonte}` : ""}
                     </span>
                   </div>
@@ -345,7 +345,7 @@ export default function PrestacaoContasTab({ poder }: { poder: Poder }) {
         </section>
       ))}
 
-      <p className="text-[11px] text-muted-foreground border-t border-border pt-3">
+      <p className="text-xs text-muted-foreground border-t border-border pt-3">
         Indicadores fiscais: SICONFI / Tesouro Nacional (declarações oficiais {orgao === "Prefeitura" ? "do município" : "da Câmara"}).
         Documentos: portal de transparência {poder === "prefeitura" ? "da Prefeitura" : "da Câmara"} de Piracanjuba. A versão oficial e mais atual está sempre na fonte de origem.
       </p>

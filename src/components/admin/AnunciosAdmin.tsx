@@ -249,13 +249,13 @@ export default function AnunciosAdmin() {
             return (
               <div key={plano} className={`rounded-lg border p-3 space-y-1.5 ${info.border}`}>
                 <div className="flex items-center gap-2">
-                  <Badge className={`text-[10px] ${info.color}`}>{info.label} — {info.price}</Badge>
+                  <Badge className={`text-xs ${info.color}`}>{info.label} — {info.price}</Badge>
                 </div>
-                <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
                   <LayoutTemplate className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                   <span>{info.position}</span>
                 </div>
-                <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
                   <MonitorSmartphone className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                   <span>Imagem recomendada: <strong className="text-foreground">{info.dimensions}</strong></span>
                 </div>
@@ -263,7 +263,7 @@ export default function AnunciosAdmin() {
             );
           })}
         </div>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Formatos aceitos: JPG, PNG, WebP. A imagem será automaticamente comprimida para WebP (max 1200px de largura).
           O badge &quot;Patrocinado&quot; aparece automaticamente no canto inferior direito.
         </p>
@@ -273,9 +273,9 @@ export default function AnunciosAdmin() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span>{anuncios?.length || 0} anúncio(s)</span>
-          <span className="text-[10px]">|</span>
+          <span className="text-xs">|</span>
           <span className="text-accent">{ativos} ativo(s)</span>
-          {destaques > 0 && <span className="text-[10px]">({destaques} destaque, {padroes} padrão)</span>}
+          {destaques > 0 && <span className="text-xs">({destaques} destaque, {padroes} padrão)</span>}
         </div>
         <Button size="sm" onClick={() => setCreating(true)} disabled={creating}>
           <Plus className="w-3.5 h-3.5 mr-1" /> Novo anúncio
@@ -290,7 +290,7 @@ export default function AnunciosAdmin() {
           <Input placeholder="Nome da empresa" value={newNome} onChange={e => setNewNome(e.target.value)} />
 
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5">Plano</p>
+            <p className="text-sm text-muted-foreground mb-1.5">Plano</p>
             <div className="flex gap-2">
               <Button variant={newPlano === "padrao" ? "default" : "outline"} size="sm" onClick={() => setNewPlano("padrao")}>
                 Padrão (R$200/mês)
@@ -303,7 +303,7 @@ export default function AnunciosAdmin() {
 
           {/* Image upload in create form */}
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5">
+            <p className="text-sm text-muted-foreground mb-1.5">
               Banner do anúncio — {PLAN_INFO[newPlano].dimensions}
             </p>
             {newImagePreview ? (
@@ -319,8 +319,8 @@ export default function AnunciosAdmin() {
             ) : (
               <label className="flex flex-col items-center justify-center gap-2 p-6 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer transition-colors bg-muted/20">
                 <ImagePlus className="w-8 h-8 text-muted-foreground/40" />
-                <span className="text-xs text-muted-foreground">Clique para selecionar a imagem do banner</span>
-                <span className="text-[10px] text-muted-foreground/60">JPG, PNG ou WebP</span>
+                <span className="text-sm text-muted-foreground">Clique para selecionar a imagem do banner</span>
+                <span className="text-xs text-muted-foreground/60">JPG, PNG ou WebP</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -356,7 +356,7 @@ export default function AnunciosAdmin() {
               {a.imagem_url ? (
                 <div className="relative rounded-lg overflow-hidden border">
                   <img src={a.imagem_url} alt={a.nome_empresa} className="w-full h-auto" />
-                  <Badge variant="secondary" className="absolute bottom-2 right-2 text-[9px] opacity-70">
+                  <Badge variant="secondary" className="absolute bottom-2 right-2 text-xs opacity-70">
                     Patrocinado
                   </Badge>
                 </div>
@@ -367,8 +367,8 @@ export default function AnunciosAdmin() {
                   ) : (
                     <>
                       <ImagePlus className="w-8 h-8 text-muted-foreground/40" />
-                      <span className="text-xs text-muted-foreground">Clique para enviar o banner</span>
-                      <span className="text-[10px] text-muted-foreground/60">
+                      <span className="text-sm text-muted-foreground">Clique para enviar o banner</span>
+                      <span className="text-xs text-muted-foreground/60">
                         Recomendado: {info.dimensions}
                       </span>
                     </>
@@ -386,16 +386,16 @@ export default function AnunciosAdmin() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-sm font-semibold text-foreground">{a.nome_empresa}</p>
-                  <Badge className={`text-[10px] ${info.color}`}>{info.label} — {info.price}</Badge>
+                  <Badge className={`text-xs ${info.color}`}>{info.label} — {info.price}</Badge>
                   {a.ativo ? (
-                    <Badge variant="outline" className="text-[10px] text-accent border-accent/30">Ativo</Badge>
+                    <Badge variant="outline" className="text-xs text-accent border-accent/30">Ativo</Badge>
                   ) : (
-                    <Badge variant="outline" className="text-[10px] text-destructive border-destructive/30">Inativo</Badge>
+                    <Badge variant="outline" className="text-xs text-destructive border-destructive/30">Inativo</Badge>
                   )}
                 </div>
 
                 {/* Position info */}
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <LayoutTemplate className="w-3 h-3" /> {info.position}
                 </p>
 
@@ -404,13 +404,13 @@ export default function AnunciosAdmin() {
                   <ExternalLink className="w-3 h-3 text-muted-foreground shrink-0" />
                   {editingLink === a.id ? (
                     <div className="flex items-center gap-1 flex-1">
-                      <Input value={editLinkValue} onChange={e => setEditLinkValue(e.target.value)} placeholder="https://..." className="h-7 text-xs flex-1" autoFocus />
+                      <Input value={editLinkValue} onChange={e => setEditLinkValue(e.target.value)} placeholder="https://..." className="h-7 text-sm flex-1" autoFocus />
                       <Button size="sm" variant="default" className="h-7 px-2" onClick={() => handleSaveLink(a.id)}><Save className="w-3 h-3" /></Button>
                       <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setEditingLink(null)}><X className="w-3 h-3" /></Button>
                     </div>
                   ) : (
                     <>
-                      <p className="text-xs text-muted-foreground truncate">{a.link_destino || "Sem link de destino"}</p>
+                      <p className="text-sm text-muted-foreground truncate">{a.link_destino || "Sem link de destino"}</p>
                       <button onClick={() => { setEditingLink(a.id); setEditLinkValue(a.link_destino || ""); }} className="text-primary shrink-0">
                         <Pencil className="w-3 h-3" />
                       </button>
@@ -420,16 +420,16 @@ export default function AnunciosAdmin() {
 
                 {/* WhatsApp */}
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground text-[10px] shrink-0">WA</span>
+                  <span className="text-muted-foreground text-xs shrink-0">WA</span>
                   {editingWhatsapp === a.id ? (
                     <div className="flex items-center gap-1 flex-1">
-                      <Input value={editWhatsappValue} onChange={e => setEditWhatsappValue(e.target.value)} placeholder="64999999999" className="h-7 text-xs flex-1" autoFocus />
+                      <Input value={editWhatsappValue} onChange={e => setEditWhatsappValue(e.target.value)} placeholder="64999999999" className="h-7 text-sm flex-1" autoFocus />
                       <Button size="sm" variant="default" className="h-7 px-2" onClick={() => handleSaveWhatsapp(a.id)}><Save className="w-3 h-3" /></Button>
                       <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setEditingWhatsapp(null)}><X className="w-3 h-3" /></Button>
                     </div>
                   ) : (
                     <>
-                      <p className="text-xs text-muted-foreground truncate">{a.whatsapp || "Sem WhatsApp"}</p>
+                      <p className="text-sm text-muted-foreground truncate">{a.whatsapp || "Sem WhatsApp"}</p>
                       <button onClick={() => { setEditingWhatsapp(a.id); setEditWhatsappValue(a.whatsapp || ""); }} className="text-primary shrink-0">
                         <Pencil className="w-3 h-3" />
                       </button>
@@ -439,26 +439,26 @@ export default function AnunciosAdmin() {
 
                 {/* Stats */}
                 <div className="flex items-center gap-4 pt-1 border-t border-border">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Eye className="w-3.5 h-3.5" />
                     <span><strong className="text-foreground">{a.impressoes.toLocaleString("pt-BR")}</strong> impressões</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <MousePointerClick className="w-3.5 h-3.5" />
                     <span><strong className="text-foreground">{a.cliques.toLocaleString("pt-BR")}</strong> cliques</span>
                   </div>
                   {a.impressoes > 0 && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-sm text-muted-foreground">
                       CTR: <strong className="text-foreground">{((a.cliques / a.impressoes) * 100).toFixed(1)}%</strong>
                     </span>
                   )}
-                  <button onClick={() => resetStats(a.id)} className="text-[10px] text-primary hover:underline ml-auto">
+                  <button onClick={() => resetStats(a.id)} className="text-xs text-primary hover:underline ml-auto">
                     Zerar stats
                   </button>
                 </div>
 
                 {/* Created date */}
-                <p className="text-[10px] text-muted-foreground/60">
+                <p className="text-xs text-muted-foreground/60">
                   Criado em {new Date(a.created_at).toLocaleDateString("pt-BR")}
                 </p>
               </div>
@@ -498,7 +498,7 @@ export default function AnunciosAdmin() {
         <div className="stat-card flex flex-col items-center justify-center py-12 text-center">
           <Image className="w-10 h-10 text-muted-foreground/30 mb-3" />
           <p className="text-sm font-medium text-foreground">Nenhum anúncio cadastrado</p>
-          <p className="text-xs text-muted-foreground mt-1">Clique em &quot;Novo anúncio&quot; para criar o primeiro</p>
+          <p className="text-sm text-muted-foreground mt-1">Clique em &quot;Novo anúncio&quot; para criar o primeiro</p>
         </div>
       )}
 

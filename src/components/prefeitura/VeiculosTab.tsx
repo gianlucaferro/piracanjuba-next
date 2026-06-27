@@ -326,7 +326,7 @@ export default function VeiculosTab() {
         <p className="text-sm">{erro}</p>
         <button
           onClick={carregarVeiculos}
-          className="text-xs underline text-gray-500 hover:text-gray-700"
+          className="text-sm underline text-gray-500 hover:text-gray-700"
         >
           Tentar novamente
         </button>
@@ -339,7 +339,7 @@ export default function VeiculosTab() {
       <div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-400">
         <Truck className="w-10 h-10" />
         <p className="text-sm font-medium">Nenhum veículo encontrado</p>
-        <p className="text-xs text-center max-w-xs">
+        <p className="text-sm text-center max-w-xs">
           Os dados ainda não foram sincronizados. Execute a Edge Function{" "}
           <code className="bg-gray-100 px-1 rounded">sync-frota-veiculos</code> para
           popular esta aba.
@@ -359,7 +359,7 @@ export default function VeiculosTab() {
             Frota Municipal
           </h2>
           {ultimaAtualizacao && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-sm text-gray-400 mt-0.5">
               Atualizado em{" "}
               {new Date(ultimaAtualizacao).toLocaleDateString("pt-BR", {
                 day: "2-digit",
@@ -381,7 +381,7 @@ export default function VeiculosTab() {
         </div>
         <button
           onClick={carregarVeiculos}
-          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Atualizar
@@ -400,7 +400,7 @@ export default function VeiculosTab() {
             key={item.label}
             className={`${item.bg} rounded-xl p-4 border border-gray-100`}
           >
-            <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+            <p className="text-sm text-gray-500 mb-1">{item.label}</p>
             <p className={`text-2xl font-bold ${item.cor}`}>{item.valor}</p>
           </div>
         ))}
@@ -414,7 +414,7 @@ export default function VeiculosTab() {
               <Fuel className="w-5 h-5 text-orange-600" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-medium text-orange-800 uppercase tracking-wide mb-1">
+              <p className="text-sm font-medium text-orange-800 uppercase tracking-wide mb-1">
                 Custo médio de combustível por veículo ({combustivelInfo.anoReferencia})
               </p>
               <p className="text-2xl font-bold text-orange-700">
@@ -424,7 +424,7 @@ export default function VeiculosTab() {
                   maximumFractionDigits: 0,
                 })}
               </p>
-              <p className="text-xs text-orange-600 mt-1.5">
+              <p className="text-sm text-orange-600 mt-1.5">
                 Total contratado:{" "}
                 <span className="font-semibold">
                   {combustivelInfo.totalContratos.toLocaleString("pt-BR", {
@@ -435,7 +435,7 @@ export default function VeiculosTab() {
                 </span>
                 {" ÷ "}{stats.ativos} veículos ativos
               </p>
-              <p className="text-[10px] text-orange-500 mt-1">
+              <p className="text-xs text-orange-500 mt-1">
                 Fornecedor: {combustivelInfo.fornecedor} · Valor contratual (pode diferir do gasto efetivo)
               </p>
             </div>
@@ -445,7 +445,7 @@ export default function VeiculosTab() {
 
       {/* ── Distribuição por categoria ── */}
       <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-        <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">
+        <p className="text-sm font-medium text-gray-500 mb-3 uppercase tracking-wide">
           Por tipo de veículo
         </p>
         <div className="flex flex-wrap gap-2">
@@ -458,7 +458,7 @@ export default function VeiculosTab() {
                   setCategoriaFiltro(cat === categoriaFiltro ? "todas" : cat);
                   setPagina(1);
                 }}
-                className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-colors ${
                   categoriaFiltro === cat
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
@@ -517,7 +517,7 @@ export default function VeiculosTab() {
         {(busca || situacaoFiltro !== "todos" || categoriaFiltro !== "todas" || orgaoFiltro !== "todos") && (
           <button
             onClick={resetFiltros}
-            className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 px-2 py-2"
+            className="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 px-2 py-2"
           >
             <Filter className="w-3.5 h-3.5" />
             Limpar filtros
@@ -526,7 +526,7 @@ export default function VeiculosTab() {
       </div>
 
       {/* ── Contagem resultado ── */}
-      <p className="text-xs text-gray-400">
+      <p className="text-sm text-gray-400">
         {veiculosFiltrados.length} veículo{veiculosFiltrados.length !== 1 ? "s" : ""} encontrado
         {veiculosFiltrados.length !== 1 ? "s" : ""}
         {veiculosFiltrados.length !== veiculos.length && ` de ${veiculos.length} no total`}
@@ -536,7 +536,7 @@ export default function VeiculosTab() {
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+            <tr className="border-b border-gray-100 bg-gray-50 text-sm text-gray-500 uppercase tracking-wide">
               {(
                 [
                   { field: "placa", label: "Placa" },
@@ -610,12 +610,12 @@ export default function VeiculosTab() {
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
                       {v.combustivel || "—"}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs max-w-[160px] truncate">
+                    <td className="px-4 py-3 text-gray-500 text-sm max-w-[160px] truncate">
                       {v.orgao || "—"}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full border font-medium ${sit.bg} ${sit.color}`}
+                        className={`inline-flex items-center gap-1 text-sm px-2 py-1 rounded-full border font-medium ${sit.bg} ${sit.color}`}
                       >
                         {sit.icon}
                         {sit.label}
@@ -631,7 +631,7 @@ export default function VeiculosTab() {
 
       {/* ── Paginação ── */}
       {totalPaginas > 1 && (
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-sm text-gray-500">
           <span>
             Página {pagina} de {totalPaginas}
           </span>
@@ -680,7 +680,7 @@ export default function VeiculosTab() {
       )}
 
       {/* ── Rodapé ── */}
-      <p className="text-xs text-gray-400 text-center pt-2">
+      <p className="text-sm text-gray-400 text-center pt-2">
         Dados públicos extraídos do{" "}
         <a
           href="https://piracanjuba.centi.com.br/transparencia/veiculos"

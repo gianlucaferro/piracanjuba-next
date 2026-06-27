@@ -51,10 +51,10 @@ function EmptyState({ icon: Icon, title, description, fonteUrl }: {
       </div>
       <h3 className="font-semibold text-foreground mb-1">{title}</h3>
       <p className="text-sm text-muted-foreground max-w-md">{description}</p>
-      <p className="text-[10px] text-muted-foreground/60 mt-2">Dados sincronizados automaticamente do portal de transparência</p>
+      <p className="text-xs text-muted-foreground/60 mt-2">Dados sincronizados automaticamente do portal de transparência</p>
       {fonteUrl && (
         <a href={fonteUrl} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2">
+          className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2">
           <ExternalLink className="w-3 h-3" /> Ver fonte oficial
         </a>
       )}
@@ -67,8 +67,8 @@ function ExpiryBadge({ vigenciaFim }: { vigenciaFim: string | null }) {
   const fim = new Date(vigenciaFim + "T23:59:59");
   const hoje = new Date();
   const diasRestantes = Math.ceil((fim.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
-  if (diasRestantes < 0) return <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">Vencido</span>;
-  if (diasRestantes <= 30) return <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warning/15 text-warning">Vence em {diasRestantes}d</span>;
+  if (diasRestantes < 0) return <span className="text-xs px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">Vencido</span>;
+  if (diasRestantes <= 30) return <span className="text-xs px-1.5 py-0.5 rounded-full bg-warning/15 text-warning">Vence em {diasRestantes}d</span>;
   return null;
 }
 
@@ -114,8 +114,8 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
               <Badge variant="secondary" className="mt-1">
                 {a.tipo === "prefeita" ? "Prefeita Municipal" : "Vice-Prefeito"}
               </Badge>
-              {a.partido && <p className="text-xs text-muted-foreground mt-1">{a.partido}</p>}
-              <p className="text-xs text-muted-foreground mt-1">
+              {a.partido && <p className="text-sm text-muted-foreground mt-1">{a.partido}</p>}
+              <p className="text-sm text-muted-foreground mt-1">
                 Mandato {parseInt(a.mandato_inicio)}–{parseInt(a.mandato_fim)}
               </p>
               <div className="mt-2 space-y-1">
@@ -124,13 +124,13 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
                   <span className="text-base font-bold text-foreground">
                     {a.tipo === "prefeita" ? "R$ 19.875,00" : "R$ 9.875,00"}
                   </span>
-                  <span className="text-xs text-muted-foreground">/mês</span>
+                  <span className="text-sm text-muted-foreground">/mês</span>
                 </div>
                 {rem?.bruto && (
                   <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1">
-                    <span className="text-xs text-muted-foreground">Bruto:</span>
+                    <span className="text-sm text-muted-foreground">Bruto:</span>
                     <span className="text-sm font-semibold text-foreground">{formatCurrency(rem.bruto)}</span>
-                    <span className="text-[10px] text-muted-foreground ml-auto">{rem.competencia}</span>
+                    <span className="text-xs text-muted-foreground ml-auto">{rem.competencia}</span>
                   </div>
                 )}
               </div>
@@ -171,7 +171,7 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
           </div>
 
           <a href={a.fonte_url} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+            className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
             <ExternalLink className="w-3 h-3" /> Ver fonte oficial
           </a>
         </div>
@@ -245,14 +245,14 @@ function SecretariasTab() {
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-semibold text-foreground text-sm leading-tight">{s.nome}</h3>
-                {s.secretario_nome && <p className="text-xs text-muted-foreground mt-0.5">{s.secretario_nome}</p>}
+                {s.secretario_nome && <p className="text-sm text-muted-foreground mt-0.5">{s.secretario_nome}</p>}
                 <div className="space-y-1 mt-1.5">
                   <div className="flex items-center gap-1.5">
                     <DollarSign className="w-3.5 h-3.5 text-accent" />
                     <span className="text-sm font-semibold text-foreground">
                       {s.subsidio ? `R$ ${Number(s.subsidio).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—"}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">subsídio</span>
+                    <span className="text-xs text-muted-foreground">subsídio</span>
                   </div>
                   {remuneracoes?.[s.id] && remuneracoes[s.id].bruto !== null && (
                     <div className="flex items-center gap-1.5">
@@ -260,7 +260,7 @@ function SecretariasTab() {
                       <span className="text-sm font-bold text-primary">
                         R$ {Number(remuneracoes[s.id].bruto).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">total ({remuneracoes[s.id].competencia})</span>
+                      <span className="text-xs text-muted-foreground">total ({remuneracoes[s.id].competencia})</span>
                     </div>
                   )}
                 </div>
@@ -268,12 +268,12 @@ function SecretariasTab() {
             </div>
             <div className="flex flex-col gap-1.5">
               {s.email && (
-                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Mail className="w-3.5 h-3.5" /> {s.email}
                 </span>
               )}
               {s.telefone && (
-                <span className="inline-flex items-center gap-1.5 text-xs text-green-600">
+                <span className="inline-flex items-center gap-1.5 text-sm text-green-600">
                   <Phone className="w-3.5 h-3.5" /> {s.telefone}
                 </span>
               )}
@@ -281,12 +281,12 @@ function SecretariasTab() {
             <div className="flex items-center justify-between">
               {s.fonte_url && (
                 <a href={s.fonte_url} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                   onClick={(e) => e.stopPropagation()}>
                   <ExternalLink className="w-3 h-3" /> Ver fonte
                 </a>
               )}
-              <span className="inline-flex items-center gap-1 text-xs text-primary">
+              <span className="inline-flex items-center gap-1 text-sm text-primary">
                 <Sparkles className="w-3 h-3" /> Ver resumo IA
               </span>
             </div>
@@ -430,7 +430,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
           onChange={(e) => handleSearch(e.target.value)} className="pl-9" />
       </div>
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para ver um resumo gerado por IA."}
         </p>
         {totalCount > 0 && (
@@ -453,9 +453,9 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
               className="stat-card card-hover block w-full text-left flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{s.nome}</p>
-                {s.cargo && <p className="text-xs text-muted-foreground">{s.cargo}</p>}
+                {s.cargo && <p className="text-sm text-muted-foreground">{s.cargo}</p>}
               </div>
-              <span className="text-xs text-primary flex items-center gap-1">
+              <span className="text-sm text-primary flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> Ver resumo IA
               </span>
             </button>
@@ -492,13 +492,13 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
 
             {resumoData?.remuneracoes && resumoData.remuneracoes.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">Remuneração recente</p>
+                <p className="text-sm font-medium text-muted-foreground">Remuneração recente</p>
                 {resumoData.remuneracoes.map((r: any) => (
                   <div key={r.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-                    <span className="text-xs text-muted-foreground">{r.competencia}</span>
+                    <span className="text-sm text-muted-foreground">{r.competencia}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground">Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
-                      <span className="text-xs text-muted-foreground">Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
+                      <span className="text-sm text-muted-foreground">Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
+                      <span className="text-sm text-muted-foreground">Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
                     </div>
                   </div>
                 ))}
@@ -506,7 +506,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
             )}
 
             <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
               </p>
               {loadingResumo ? (
@@ -542,8 +542,8 @@ function GastosTab() {
           <div key={d.id} className="stat-card flex items-center justify-between">
             <div>
               <p className="font-medium text-foreground text-sm">{d.favorecido || "Sem favorecido"}</p>
-              {d.descricao && <p className="text-xs text-muted-foreground">{d.descricao}</p>}
-              <p className="text-xs text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>
+              {d.descricao && <p className="text-sm text-muted-foreground">{d.descricao}</p>}
+              <p className="text-sm text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>
               <button
                 onClick={() =>
                   requestSummary(
@@ -553,7 +553,7 @@ function GastosTab() {
                     `Despesa - ${d.favorecido || "Sem favorecido"}`,
                   )
                 }
-                className="text-[11px] text-primary/70 hover:text-primary flex items-center gap-1 mt-1"
+                className="text-xs text-primary/70 hover:text-primary flex items-center gap-1 mt-1"
               >
                 <Sparkles className="w-3 h-3" /> Resumo IA
               </button>
@@ -562,7 +562,7 @@ function GastosTab() {
               <p className="font-bold text-foreground">{formatCurrency(d.valor)}</p>
               {d.fonte_url && (
                 <a href={d.fonte_url} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline flex items-center gap-1 justify-end">
+                  className="text-sm text-primary hover:underline flex items-center gap-1 justify-end">
                   <ExternalLink className="w-3 h-3" /> Fonte
                 </a>
               )}
@@ -821,7 +821,7 @@ function ContratosTab() {
             <option value="todos">Todos os status</option>
             {statuses.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-          <span className="text-xs text-muted-foreground self-center">
+          <span className="text-sm text-muted-foreground self-center">
             {filtered.length} contratos · Total: {formatCurrency(totalValor)}
           </span>
           {filtered.length > 0 && (
@@ -829,7 +829,7 @@ function ContratosTab() {
               `contratos-prefeitura-${new Date().toISOString().slice(0, 10)}.csv`,
               ["Número", "Empresa", "Objeto", "Valor", "Status", "Início", "Fim"],
               filtered.map(c => [c.numero, c.empresa, c.objeto, c.valor, c.status, c.vigencia_inicio, c.vigencia_fim])
-            )} className="inline-flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
+            )} className="inline-flex items-center gap-1 text-sm text-primary hover:underline ml-auto">
               <Download className="w-3.5 h-3.5" /> CSV
             </button>
           )}
@@ -839,7 +839,7 @@ function ContratosTab() {
       {!aditivosReady && aditivos === undefined && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border mb-3">
           <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Estamos carregando também os contratos aditivos, que estarão disponíveis em alguns segundos.
           </p>
         </div>
@@ -853,7 +853,7 @@ function ContratosTab() {
             )}
             <div className="flex items-start justify-between gap-2">
               <div>
-                {c.numero && <p className="text-xs text-muted-foreground">Contrato {c.numero}</p>}
+                {c.numero && <p className="text-sm text-muted-foreground">Contrato {c.numero}</p>}
                 <div className="flex items-start gap-1.5 flex-wrap">
                   <p className="font-medium text-foreground text-sm">{c.empresa || "—"}</p>
                   <SituacaoCadastralBadge
@@ -866,19 +866,19 @@ function ContratosTab() {
                   c.empresa &&
                   c.empresa_razao_social.trim().toUpperCase() !==
                     c.empresa.trim().toUpperCase() && (
-                    <p className="text-[11px] text-muted-foreground/80">
+                    <p className="text-xs text-muted-foreground/80">
                       Razão social: <span className="font-medium">{c.empresa_razao_social}</span>
                     </p>
                   )}
-                <p className="text-xs text-muted-foreground">{c.objeto}</p>
+                <p className="text-sm text-muted-foreground">{c.objeto}</p>
                 {(c.vigencia_inicio || c.vigencia_fim) && (
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {c.vigencia_inicio ? new Date(c.vigencia_inicio + "T12:00:00").toLocaleDateString("pt-BR") : "?"}
                     {c.vigencia_fim ? ` a ${new Date(c.vigencia_fim + "T12:00:00").toLocaleDateString("pt-BR")}` : ""}
                   </p>
                 )}
                 {(() => { const ad = getAditivos(c.numero, c.empresa, c.fonte_url); return ad ? (
-                  <span className="inline-flex items-center gap-1 text-xs mt-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                  <span className="inline-flex items-center gap-1 text-sm mt-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                     <ScrollText className="w-3 h-3" />
                     {ad.count} aditivo(s) · +{formatCurrency(ad.totalValor)}
                   </span>
@@ -887,7 +887,7 @@ function ContratosTab() {
               <div className="text-right flex-shrink-0">
                 <div className="flex flex-col items-end gap-1">
                   {c.status && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}>
+                    <span className={`text-sm px-2 py-0.5 rounded-full ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}>
                       {c.status}
                     </span>
                   )}
@@ -897,13 +897,13 @@ function ContratosTab() {
                   {formatCurrency(c.valor)}
                 </p>
                 {(() => { const ad = getAditivos(c.numero, c.empresa, c.fonte_url); return ad ? (
-                  <p className="text-[10px] text-muted-foreground whitespace-nowrap mt-0.5">
+                  <p className="text-xs text-muted-foreground whitespace-nowrap mt-0.5">
                     c/ aditivos: {formatCurrency((c.valor || 0) + ad.totalValor)}
                   </p>
                 ) : null; })()}
               </div>
             </div>
-            <p className="inline-flex items-center gap-1 text-xs text-primary">
+            <p className="inline-flex items-center gap-1 text-sm text-primary">
               <Sparkles className="w-3 h-3" /> Clique para ver resumo por IA
             </p>
           </button>
@@ -932,7 +932,7 @@ function ContratosTab() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span>Valor: {formatCurrency(selectedContrato?.valor ?? null)}</span>
               {selectedContrato?.vigencia_inicio && (
                 <span>Vigência: {new Date(selectedContrato.vigencia_inicio).toLocaleDateString("pt-BR")}
@@ -944,13 +944,13 @@ function ContratosTab() {
 
             {selectedContrato?.objeto && (
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Objeto</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Objeto</p>
                 <p className="text-sm text-foreground">{selectedContrato.objeto}</p>
               </div>
             )}
 
             <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
               </p>
               {loadingResumo ? (
@@ -964,7 +964,7 @@ function ContratosTab() {
                     <button
                       type="button"
                       onClick={() => fetchResumoContrato(selectedContrato, true)}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                       disabled={loadingResumo}
                     >
                       <Loader2 className="w-3 h-3" /> Tentar novamente
@@ -978,7 +978,7 @@ function ContratosTab() {
 
             {selectedContrato?.fonte_url && (
               <a href={selectedContrato.fonte_url} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                 <ExternalLink className="w-3 h-3" /> Ver no portal de transparência
               </a>
             )}
@@ -1042,13 +1042,13 @@ function LicitacoesTab() {
           <Input placeholder="Buscar licitação..." value={searchLic} onChange={e => setSearchLic(e.target.value)} className="pl-9" aria-label="Buscar licitação" />
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">{filteredLic.length} licitações</p>
+          <p className="text-sm text-muted-foreground">{filteredLic.length} licitações</p>
           {filteredLic.length > 0 && (
             <button onClick={() => downloadCSV(
               `licitacoes-prefeitura-${new Date().toISOString().slice(0, 10)}.csv`,
               ["Número", "Modalidade", "Objeto", "Status", "Data Publicação", "Data Resultado"],
               filteredLic.map(l => [l.numero, l.modalidade, l.objeto, l.status, l.data_publicacao, l.data_resultado])
-            )} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+            )} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
               <Download className="w-3.5 h-3.5" /> CSV
             </button>
           )}
@@ -1062,17 +1062,17 @@ function LicitacoesTab() {
           <div key={l.id} className="stat-card space-y-1 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all" onClick={() => handleClick(l)}>
             <div className="flex items-start justify-between">
               <div>
-                {l.numero && <p className="text-xs text-muted-foreground">{l.numero}</p>}
+                {l.numero && <p className="text-sm text-muted-foreground">{l.numero}</p>}
                 {l.modalidade && (
                   modalidadeTooltip ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span><Badge variant="secondary" className="text-xs cursor-help">{l.modalidade} <Info className="w-3 h-3 inline ml-0.5" /></Badge></span>
+                        <span><Badge variant="secondary" className="text-sm cursor-help">{l.modalidade} <Info className="w-3 h-3 inline ml-0.5" /></Badge></span>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs"><p className="text-xs">{modalidadeTooltip}</p></TooltipContent>
+                      <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>
                     </Tooltip>
                   ) : (
-                    <Badge variant="secondary" className="text-xs">{l.modalidade}</Badge>
+                    <Badge variant="secondary" className="text-sm">{l.modalidade}</Badge>
                   )
                 )}
                 <p className="font-medium text-foreground text-sm mt-1">{l.objeto || "—"}</p>
@@ -1082,12 +1082,12 @@ function LicitacoesTab() {
             <div className="flex items-center justify-between">
               {l.fonte_url && (
                 <a href={l.fonte_url} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                   onClick={(e) => e.stopPropagation()}>
                   <ExternalLink className="w-3 h-3" /> Ver fonte
                 </a>
               )}
-              <span className="inline-flex items-center gap-1 text-xs text-primary">
+              <span className="inline-flex items-center gap-1 text-sm text-primary">
                 <Sparkles className="w-3 h-3" /> Ver resumo IA
               </span>
             </div>
@@ -1105,7 +1105,7 @@ function LicitacoesTab() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               {selectedLicitacao?.modalidade && <span>Modalidade: {selectedLicitacao.modalidade}</span>}
               {selectedLicitacao?.status && <span>Status: {selectedLicitacao.status}</span>}
               {selectedLicitacao?.data_publicacao && (
@@ -1118,13 +1118,13 @@ function LicitacoesTab() {
 
             {selectedLicitacao?.objeto && (
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Objeto</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Objeto</p>
                 <p className="text-sm text-foreground">{selectedLicitacao.objeto}</p>
               </div>
             )}
 
             <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
               </p>
               {loadingResumo ? (
@@ -1138,7 +1138,7 @@ function LicitacoesTab() {
 
             {selectedLicitacao?.fonte_url && (
               <a href={selectedLicitacao.fonte_url} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                 <ExternalLink className="w-3 h-3" /> Ver no portal oficial
               </a>
             )}
@@ -1176,7 +1176,7 @@ function DiariasTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{data.length} diárias · Total: {formatCurrency(totalValor)}</p>
+        <p className="text-sm text-muted-foreground">{data.length} diárias · Total: {formatCurrency(totalValor)}</p>
         <div className="flex gap-1">
           <Button variant={viewMode === "list" ? "default" : "outline"} size="sm" onClick={() => setViewMode("list")}>Lista</Button>
           <Button variant={viewMode === "grouped" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grouped")}>Por servidor</Button>
@@ -1189,7 +1189,7 @@ function DiariasTab() {
             <div key={g.nome} className="stat-card flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{g.nome}</p>
-                <p className="text-xs text-muted-foreground">{g.count} diária{g.count !== 1 ? "s" : ""}</p>
+                <p className="text-sm text-muted-foreground">{g.count} diária{g.count !== 1 ? "s" : ""}</p>
               </div>
               <span className="font-bold text-foreground">{formatCurrency(g.total)}</span>
             </div>
@@ -1201,8 +1201,8 @@ function DiariasTab() {
             <div key={d.id} className="stat-card flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{d.servidor_nome || "—"}</p>
-                <p className="text-xs text-muted-foreground">{d.destino} — {d.motivo}</p>
-                {d.data && <p className="text-xs text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>}
+                <p className="text-sm text-muted-foreground">{d.destino} — {d.motivo}</p>
+                {d.data && <p className="text-sm text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>}
               </div>
               <p className="font-bold text-foreground">{formatCurrency(d.valor)}</p>
             </div>
@@ -1282,19 +1282,19 @@ function ObrasTab() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground">Total de obras</p>
+          <p className="text-sm text-muted-foreground">Total de obras</p>
           <p className="text-xl font-bold text-foreground">{statusCounts.total}</p>
         </div>
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground">Em andamento</p>
+          <p className="text-sm text-muted-foreground">Em andamento</p>
           <p className="text-xl font-bold text-info">{statusCounts.em_andamento}</p>
         </div>
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground">Concluídas</p>
+          <p className="text-sm text-muted-foreground">Concluídas</p>
           <p className="text-xl font-bold text-accent">{statusCounts.concluida}</p>
         </div>
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground">Valor total</p>
+          <p className="text-sm text-muted-foreground">Valor total</p>
           <p className="text-lg font-bold text-foreground">{formatCurrency(totalValorObras)}</p>
         </div>
       </div>
@@ -1310,12 +1310,12 @@ function ObrasTab() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{o.nome}</p>
-                {o.local && <p className="text-xs text-muted-foreground">{o.local}</p>}
-                {o.empresa && <p className="text-xs text-muted-foreground">Empresa: {o.empresa}</p>}
+                {o.local && <p className="text-sm text-muted-foreground">{o.local}</p>}
+                {o.empresa && <p className="text-sm text-muted-foreground">Empresa: {o.empresa}</p>}
               </div>
               <div className="text-right flex-shrink-0">
                 {o.status && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[o.status] || "bg-muted text-muted-foreground"}`}>
+                  <span className={`text-sm px-2 py-0.5 rounded-full ${statusColors[o.status] || "bg-muted text-muted-foreground"}`}>
                     {o.status === "em_andamento" ? "Em andamento" : o.status === "concluida" ? "Concluída" : o.status === "paralisada" ? "Paralisada" : o.status}
                   </span>
                 )}
@@ -1325,12 +1325,12 @@ function ObrasTab() {
             <div className="flex items-center justify-between">
               {o.fonte_url && (
                 <a href={o.fonte_url} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                   onClick={(e) => e.stopPropagation()}>
                   <ExternalLink className="w-3 h-3" /> Ver fonte
                 </a>
               )}
-              <span className="inline-flex items-center gap-1 text-xs text-primary">
+              <span className="inline-flex items-center gap-1 text-sm text-primary">
                 <Sparkles className="w-3 h-3" /> Ver resumo IA
               </span>
             </div>
@@ -1458,17 +1458,17 @@ function AdminPanel() {
       {/* Indicadores */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="stat-card">
-          <p className="text-xs text-muted-foreground mb-1">Última competência carregada</p>
+          <p className="text-sm text-muted-foreground mb-1">Última competência carregada</p>
           <p className="text-lg font-bold text-foreground">
             {lastCompetencia || "Nenhuma"}
           </p>
         </div>
         <div className="stat-card">
-          <p className="text-xs text-muted-foreground mb-1">Próxima atualização mensal</p>
+          <p className="text-sm text-muted-foreground mb-1">Próxima atualização mensal</p>
           <p className="text-sm font-medium text-foreground">Dia 5 do próximo mês, 04:00 BRT</p>
         </div>
         <div className="stat-card">
-          <p className="text-xs text-muted-foreground mb-1">Próxima atualização diária</p>
+          <p className="text-sm text-muted-foreground mb-1">Próxima atualização diária</p>
           <p className="text-sm font-medium text-foreground">Amanhã, 03:30 BRT</p>
         </div>
       </div>
@@ -1498,7 +1498,7 @@ function AdminPanel() {
       {syncMensal.isSuccess && (
         <div className="stat-card bg-accent/5 border-accent/20">
           <p className="text-sm text-accent font-medium">Sync mensal executada com sucesso</p>
-          <pre className="text-xs text-muted-foreground mt-1 overflow-auto max-h-32">
+          <pre className="text-sm text-muted-foreground mt-1 overflow-auto max-h-32">
             {JSON.stringify(syncMensal.data, null, 2)}
           </pre>
         </div>
@@ -1507,7 +1507,7 @@ function AdminPanel() {
       {syncMensal.isError && (
         <div className="stat-card bg-destructive/5 border-destructive/20">
           <p className="text-sm text-destructive font-medium">Erro na sync mensal</p>
-          <p className="text-xs text-muted-foreground">{(syncMensal.error as Error).message}</p>
+          <p className="text-sm text-muted-foreground">{(syncMensal.error as Error).message}</p>
         </div>
       )}
 
@@ -1525,18 +1525,18 @@ function AdminPanel() {
                 {statusIcon(log.status)}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-sm">
                       {log.tipo === "prefeitura_mensal" ? "Mensal" : "Diária"}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">{log.status}</span>
+                    <span className="text-sm text-muted-foreground">{log.status}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-sm text-muted-foreground mt-0.5">
                     Início: {formatDate(log.started_at)} — Fim: {formatDate(log.finished_at)}
                   </p>
                   {log.detalhes && Object.keys(log.detalhes).length > 0 && (
                     <details className="mt-1">
-                      <summary className="text-xs text-primary cursor-pointer">Ver detalhes</summary>
-                      <pre className="text-xs text-muted-foreground mt-1 overflow-auto max-h-24">
+                      <summary className="text-sm text-primary cursor-pointer">Ver detalhes</summary>
+                      <pre className="text-sm text-muted-foreground mt-1 overflow-auto max-h-24">
                         {JSON.stringify(log.detalhes, null, 2)}
                       </pre>
                     </details>
@@ -1548,7 +1548,7 @@ function AdminPanel() {
         )}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Valores conforme portal oficial. Podem existir descontos e verbas específicas.
       </p>
     </div>
@@ -1776,7 +1776,7 @@ function ArtigosSubTab() {
               </>
             )}
           </Button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Fonte: <a href="https://piracanjuba.go.gov.br/downloads/lei_organica_atualizada_2020.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Prefeitura de Piracanjuba — Dezembro de 2020</a>
           </p>
         </div>
@@ -1804,7 +1804,7 @@ function ArtigosSubTab() {
           <SelectContent>
             <SelectItem value="all">Todos os títulos</SelectItem>
             {titulos.map((t) => (
-              <SelectItem key={t} value={t} className="text-xs">
+              <SelectItem key={t} value={t} className="text-sm">
                 {t.length > 50 ? t.slice(0, 50) + "..." : t}
               </SelectItem>
             ))}
@@ -1814,7 +1814,7 @@ function ArtigosSubTab() {
 
       {/* Stats bar */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {filtered.length} artigo{filtered.length !== 1 ? "s" : ""}
           {search ? ` encontrado${filtered.length !== 1 ? "s" : ""} para "${search}"` : ""}
           {selectedTitulo ? ` em ${selectedTitulo.slice(0, 40)}...` : ""}
@@ -1831,18 +1831,18 @@ function ArtigosSubTab() {
         <div className="stat-card space-y-4">
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-foreground">Importação automática via IA</h4>
-            <p className="text-xs text-muted-foreground">Extrai todos os 233 artigos do PDF oficial usando IA (6 lotes sequenciais).</p>
+            <p className="text-sm text-muted-foreground">Extrai todos os 233 artigos do PDF oficial usando IA (6 lotes sequenciais).</p>
             <Button size="sm" onClick={handleAutoImport} disabled={importing}>
               {importing ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
               {importing ? (importProgress || "Processando...") : "Importar Lei Orgânica completa via IA"}
             </Button>
             {importProgress && !importing && (
-              <p className="text-xs text-red-500">{importProgress}</p>
+              <p className="text-sm text-red-500">{importProgress}</p>
             )}
           </div>
           <div className="border-t border-border pt-3 space-y-2">
             <h4 className="text-sm font-semibold text-foreground">Importação manual</h4>
-            <p className="text-xs text-muted-foreground">Cole o texto atualizado da Lei Orgânica:</p>
+            <p className="text-sm text-muted-foreground">Cole o texto atualizado da Lei Orgânica:</p>
             <textarea
               className="w-full h-32 p-3 border border-border rounded-lg bg-background text-sm text-foreground resize-y focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="Cole o texto completo..."
@@ -1871,7 +1871,7 @@ function ArtigosSubTab() {
               <button
                 key={t}
                 onClick={() => setSelectedTitulo(t)}
-                className="text-left text-xs text-primary hover:underline py-1 px-2 rounded hover:bg-primary/5 transition-colors truncate"
+                className="text-left text-sm text-primary hover:underline py-1 px-2 rounded hover:bg-primary/5 transition-colors truncate"
               >
                 {t}
               </button>
@@ -1909,7 +1909,7 @@ function ArtigosSubTab() {
           {Object.entries(capitulos).map(([capitulo, arts]) => (
             <div key={capitulo} className="space-y-2">
               {capitulo !== "__sem_capitulo__" && (
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide pl-2">
+                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide pl-2">
                   {capitulo}
                 </h4>
               )}
@@ -1928,12 +1928,12 @@ function ArtigosSubTab() {
                   >
                     {/* Article header */}
                     <div className="flex items-start gap-3">
-                      <Badge variant="outline" className="flex-shrink-0 mt-0.5 text-xs font-mono">
+                      <Badge variant="outline" className="flex-shrink-0 mt-0.5 text-sm font-mono">
                         Art. {artigo.artigo_numero}
                       </Badge>
                       <div className="flex-1 min-w-0">
                         {artigo.secao && (
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                             {artigo.secao}
                           </p>
                         )}
@@ -1942,14 +1942,14 @@ function ArtigosSubTab() {
                         </p>
                         <div className="flex items-center gap-3 mt-2">
                           <button
-                            className="flex items-center gap-1 text-xs text-primary hover:underline"
+                            className="flex items-center gap-1 text-sm text-primary hover:underline"
                             onClick={() => handleResumo(artigo)}
                           >
                             <Sparkles className="w-3 h-3" />
                             {isExpanded ? "Ocultar explicação" : "Explicar com IA"}
                           </button>
                           {artigo.resumo_ia && (
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                            <Badge variant="secondary" className="text-xs px-1.5 py-0">
                               <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Explicação salva
                             </Badge>
                           )}
@@ -1969,7 +1969,7 @@ function ArtigosSubTab() {
                           <div className="bg-primary/5 rounded-lg p-3 space-y-1.5">
                             <div className="flex items-center gap-1.5">
                               <Sparkles className="w-3.5 h-3.5 text-primary" />
-                              <span className="text-xs font-semibold text-primary">Em linguagem simples</span>
+                              <span className="text-sm font-semibold text-primary">Em linguagem simples</span>
                             </div>
                             <p className="text-sm text-foreground leading-relaxed">{resumo}</p>
                           </div>
@@ -1984,7 +1984,7 @@ function ArtigosSubTab() {
         </div>
       ))}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte:{" "}
         <a href={LEI_ORGANICA_PORTAL_URL} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
@@ -2078,11 +2078,11 @@ function EmendasSubTab() {
         <div className="grid grid-cols-2 gap-3">
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{docs.length}</p>
-            <p className="text-xs text-muted-foreground">Emendas registradas</p>
+            <p className="text-sm text-muted-foreground">Emendas registradas</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{docs.filter((d) => d.resumo_ia).length}</p>
-            <p className="text-xs text-muted-foreground">Com resumo de IA</p>
+            <p className="text-sm text-muted-foreground">Com resumo de IA</p>
           </div>
         </div>
       )}
@@ -2127,21 +2127,21 @@ function EmendasSubTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-semibold text-foreground leading-snug">{doc.descricao}</p>
-                    <Badge variant="outline" className="text-xs flex-shrink-0 whitespace-nowrap">{formatDate(doc.data_publicacao)}</Badge>
+                    <Badge variant="outline" className="text-sm flex-shrink-0 whitespace-nowrap">{formatDate(doc.data_publicacao)}</Badge>
                   </div>
-                  {doc.observacao && <p className="text-xs text-muted-foreground mt-1">{doc.observacao}</p>}
+                  {doc.observacao && <p className="text-sm text-muted-foreground mt-1">{doc.observacao}</p>}
                   <div className="flex items-center gap-2 mt-2">
-                    <button className="flex items-center gap-1 text-xs text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(doc); }}>
+                    <button className="flex items-center gap-1 text-sm text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(doc); }}>
                       <Sparkles className="w-3 h-3" /> {isExpanded ? "Ocultar" : "Resumo IA"}
                     </button>
                     {doc.documento_url && (
                       <a href={doc.documento_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
+                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
                         <Download className="w-3 h-3" /> PDF
                       </a>
                     )}
                     {doc.resumo_ia && (
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">
                         <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Salvo
                       </Badge>
                     )}
@@ -2159,7 +2159,7 @@ function EmendasSubTab() {
                     <div className="bg-primary/5 rounded-lg p-3 space-y-1.5">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-xs font-semibold text-primary">Resumo de IA</span>
+                        <span className="text-sm font-semibold text-primary">Resumo de IA</span>
                       </div>
                       <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{resumo}</p>
                     </div>
@@ -2171,7 +2171,7 @@ function EmendasSubTab() {
         })}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href={LEI_ORGANICA_PORTAL_URL} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
@@ -2269,15 +2269,15 @@ function DecretosTab() {
         <div className="grid grid-cols-3 gap-3">
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{decretos?.length}</p>
-            <p className="text-xs text-muted-foreground">Decretos</p>
+            <p className="text-sm text-muted-foreground">Decretos</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{decretos?.filter((d) => d.resumo_ia).length}</p>
-            <p className="text-xs text-muted-foreground">Com resumo IA</p>
+            <p className="text-sm text-muted-foreground">Com resumo IA</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{filtered.length}</p>
-            <p className="text-xs text-muted-foreground">{search ? "Resultados" : "Total"}</p>
+            <p className="text-sm text-muted-foreground">{search ? "Resultados" : "Total"}</p>
           </div>
         </div>
       )}
@@ -2293,7 +2293,7 @@ function DecretosTab() {
         <div className="stat-card text-center py-8 space-y-3">
           <ScrollText className="w-12 h-12 text-muted-foreground mx-auto" />
           <p className="text-muted-foreground">Nenhum decreto cadastrado.</p>
-          <p className="text-xs text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
+          <p className="text-sm text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
           <Button onClick={handleSync} disabled={syncing}>
             <RefreshCw className={`w-4 h-4 mr-1 ${syncing ? "animate-spin" : ""}`} /> Importar Decretos
           </Button>
@@ -2324,24 +2324,24 @@ function DecretosTab() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-semibold text-foreground">Decreto nº {decreto.numero}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{decreto.ementa}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5 leading-snug">{decreto.ementa}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs flex-shrink-0 whitespace-nowrap">
+                    <Badge variant="outline" className="text-sm flex-shrink-0 whitespace-nowrap">
                       {formatDate(decreto.data_publicacao)}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <button className="flex items-center gap-1 text-xs text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(decreto); }}>
+                    <button className="flex items-center gap-1 text-sm text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(decreto); }}>
                       <Sparkles className="w-3 h-3" /> {isExpanded ? "Ocultar" : "Resumo IA"}
                     </button>
                     {decreto.fonte_url && (
                       <a href={decreto.fonte_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
+                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
                         <ExternalLink className="w-3 h-3" /> Ver original
                       </a>
                     )}
                     {decreto.resumo_ia && (
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">
                         <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Salvo
                       </Badge>
                     )}
@@ -2359,7 +2359,7 @@ function DecretosTab() {
                     <div className="bg-primary/5 rounded-lg p-3 space-y-1.5">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-xs font-semibold text-primary">Resumo de IA</span>
+                        <span className="text-sm font-semibold text-primary">Resumo de IA</span>
                       </div>
                       <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{resumo}</p>
                     </div>
@@ -2383,7 +2383,7 @@ function DecretosTab() {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#decretos" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
@@ -2481,15 +2481,15 @@ function PortariasTab() {
         <div className="grid grid-cols-3 gap-3">
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{portarias?.length}</p>
-            <p className="text-xs text-muted-foreground">Portarias</p>
+            <p className="text-sm text-muted-foreground">Portarias</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{portarias?.filter((p: any) => p.resumo_ia).length}</p>
-            <p className="text-xs text-muted-foreground">Com resumo IA</p>
+            <p className="text-sm text-muted-foreground">Com resumo IA</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{filtered.length}</p>
-            <p className="text-xs text-muted-foreground">{search ? "Resultados" : "Total"}</p>
+            <p className="text-sm text-muted-foreground">{search ? "Resultados" : "Total"}</p>
           </div>
         </div>
       )}
@@ -2505,7 +2505,7 @@ function PortariasTab() {
         <div className="stat-card text-center py-8 space-y-3">
           <FileText className="w-12 h-12 text-muted-foreground mx-auto" />
           <p className="text-muted-foreground">Nenhuma portaria cadastrada.</p>
-          <p className="text-xs text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
+          <p className="text-sm text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
           <Button onClick={handleSync} disabled={syncing}>
             <RefreshCw className={`w-4 h-4 mr-1 ${syncing ? "animate-spin" : ""}`} /> Importar Portarias
           </Button>
@@ -2536,24 +2536,24 @@ function PortariasTab() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-semibold text-foreground">Portaria nº {portaria.numero}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{portaria.ementa}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5 leading-snug">{portaria.ementa}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs flex-shrink-0 whitespace-nowrap">
+                    <Badge variant="outline" className="text-sm flex-shrink-0 whitespace-nowrap">
                       {formatDate(portaria.data_publicacao)}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <button className="flex items-center gap-1 text-xs text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(portaria); }}>
+                    <button className="flex items-center gap-1 text-sm text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(portaria); }}>
                       <Sparkles className="w-3 h-3" /> {isExpanded ? "Ocultar" : "Resumo IA"}
                     </button>
                     {portaria.fonte_url && (
                       <a href={portaria.fonte_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
+                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
                         <ExternalLink className="w-3 h-3" /> Ver original
                       </a>
                     )}
                     {portaria.resumo_ia && (
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">
                         <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Salvo
                       </Badge>
                     )}
@@ -2571,7 +2571,7 @@ function PortariasTab() {
                     <div className="bg-primary/5 rounded-lg p-3 space-y-1.5">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-xs font-semibold text-primary">Resumo de IA</span>
+                        <span className="text-sm font-semibold text-primary">Resumo de IA</span>
                       </div>
                       <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{resumo}</p>
                     </div>
@@ -2595,7 +2595,7 @@ function PortariasTab() {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#portarias" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
@@ -2723,14 +2723,14 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
       {!isLoading && categorias.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           <button
-            className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${categoriaFilter === "todas" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent"}`}
+            className={`px-2.5 py-1 rounded-full text-sm font-medium transition-colors ${categoriaFilter === "todas" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent"}`}
             onClick={() => { setCategoriaFilter("todas"); setPage(0); }}
           >
             Todas
           </button>
           {categorias.map((cat) => (
             <button key={cat}
-              className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${categoriaFilter === cat ? "bg-primary text-primary-foreground" : CATEGORIA_COLORS[cat] || "bg-muted text-muted-foreground"} hover:opacity-80`}
+              className={`px-2.5 py-1 rounded-full text-sm font-medium transition-colors ${categoriaFilter === cat ? "bg-primary text-primary-foreground" : CATEGORIA_COLORS[cat] || "bg-muted text-muted-foreground"} hover:opacity-80`}
               onClick={() => { setCategoriaFilter(categoriaFilter === cat ? "todas" : cat); setPage(0); }}
             >
               {cat} ({(leis || []).filter((l: any) => l.categoria === cat).length})
@@ -2743,15 +2743,15 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
         <div className="grid grid-cols-3 gap-3">
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{leis?.length}</p>
-            <p className="text-xs text-muted-foreground">Leis Municipais</p>
+            <p className="text-sm text-muted-foreground">Leis Municipais</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{leis?.filter((l: any) => l.categoria).length}</p>
-            <p className="text-xs text-muted-foreground">Categorizadas</p>
+            <p className="text-sm text-muted-foreground">Categorizadas</p>
           </div>
           <div className="stat-card text-center">
             <p className="text-2xl font-bold text-primary">{filtered.length}</p>
-            <p className="text-xs text-muted-foreground">Filtradas</p>
+            <p className="text-sm text-muted-foreground">Filtradas</p>
           </div>
         </div>
       )}
@@ -2781,29 +2781,29 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-semibold text-foreground text-sm">Lei nº {lei.numero}</p>
                           {categoria && (
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${CATEGORIA_COLORS[categoria] || "bg-muted text-muted-foreground"}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${CATEGORIA_COLORS[categoria] || "bg-muted text-muted-foreground"}`}>
                               {categoria}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{lei.ementa}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{lei.ementa}</p>
                       </div>
-                      <Badge variant="outline" className="text-xs flex-shrink-0 whitespace-nowrap">
+                      <Badge variant="outline" className="text-sm flex-shrink-0 whitespace-nowrap">
                         {formatDate(lei.data_publicacao)}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
-                      <button className="flex items-center gap-1 text-xs text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(lei); }}>
+                      <button className="flex items-center gap-1 text-sm text-primary hover:underline" onClick={(e) => { e.stopPropagation(); handleResumo(lei); }}>
                         <Sparkles className="w-3 h-3" /> {isExpanded ? "Ocultar" : "Resumo IA"}
                       </button>
                       {lei.fonte_url && (
                         <a href={lei.fonte_url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
+                          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary" onClick={(e) => e.stopPropagation()}>
                           <ExternalLink className="w-3 h-3" /> Ver original
                         </a>
                       )}
                       {lei.resumo_ia && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0">
                           <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Salvo
                         </Badge>
                       )}
@@ -2821,7 +2821,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
                       <div className="bg-primary/5 rounded-lg p-3 space-y-1.5">
                         <div className="flex items-center gap-1.5">
                           <Sparkles className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-xs font-semibold text-primary">Resumo de IA</span>
+                          <span className="text-sm font-semibold text-primary">Resumo de IA</span>
                         </div>
                         <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{resumoText}</p>
                       </div>
@@ -2846,7 +2846,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#leis-municipais" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
@@ -2891,23 +2891,23 @@ function ProcuradoriaTab() {
                     <span className="font-bold text-foreground">
                       {formatCurrency(latestRem.bruto)}
                     </span>
-                    <span className="text-xs text-muted-foreground">bruto ({latestRem.competencia})</span>
+                    <span className="text-sm text-muted-foreground">bruto ({latestRem.competencia})</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-primary" />
                     <span className="font-semibold text-primary">
                       {formatCurrency(latestRem.liquido)}
                     </span>
-                    <span className="text-xs text-muted-foreground">líquido</span>
+                    <span className="text-sm text-muted-foreground">líquido</span>
                   </div>
                 </div>
               )}
 
               {p.remuneracoes && p.remuneracoes.length > 1 && (
                 <div className="space-y-1 pt-2 border-t border-border">
-                  <p className="text-xs font-medium text-muted-foreground">Histórico recente</p>
+                  <p className="text-sm font-medium text-muted-foreground">Histórico recente</p>
                   {p.remuneracoes.slice(1).map((r: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between text-xs">
+                    <div key={idx} className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{r.competencia}</span>
                       <div className="flex gap-3">
                         <span>Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
@@ -2921,7 +2921,7 @@ function ProcuradoriaTab() {
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
@@ -3001,7 +3001,7 @@ function TCMTab() {
               <h4 className="font-semibold text-foreground text-sm mb-0.5">
                 Portal do Cidadão TCM-GO
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Página oficial com canais de transparência ativa do tribunal.
               </p>
             </div>
@@ -3021,7 +3021,7 @@ function TCMTab() {
               <h4 className="font-semibold text-foreground text-sm mb-0.5">
                 Mural Eletrônico
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Editais e licitações fiscalizadas pelo TCM, incluindo Piracanjuba.
               </p>
             </div>
@@ -3041,7 +3041,7 @@ function TCMTab() {
               <h4 className="font-semibold text-foreground text-sm mb-0.5">
                 Transparência Passiva (LAI)
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Solicite formalmente dados específicos sobre Piracanjuba via Lei de Acesso à Informação.
               </p>
             </div>
@@ -3061,7 +3061,7 @@ function TCMTab() {
               <h4 className="font-semibold text-foreground text-sm mb-0.5">
                 Notícias e Decisões
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Notícias do TCM-GO sobre fiscalização e decisões plenárias.
               </p>
             </div>
@@ -3069,7 +3069,7 @@ function TCMTab() {
           </a>
         </div>
 
-        <p className="text-xs text-muted-foreground pt-2 italic">
+        <p className="text-sm text-muted-foreground pt-2 italic">
           🚧 Em desenvolvimento: parser do Diário Oficial Eletrônico do TCM-GO
           para indexar automaticamente menções a Piracanjuba nos PDFs publicados.
         </p>
@@ -3097,21 +3097,21 @@ function TCMTab() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Total</p>
+          <p className="text-sm text-muted-foreground uppercase tracking-wider">Total</p>
           <p className="text-2xl font-extrabold text-foreground mt-1">{total}</p>
-          <p className="text-[10px] text-muted-foreground">apontamentos</p>
+          <p className="text-xs text-muted-foreground">apontamentos</p>
         </div>
         {valorTotal > 0 && (
           <div className="stat-card text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Valor envolvido</p>
+            <p className="text-sm text-muted-foreground uppercase tracking-wider">Valor envolvido</p>
             <p className="text-2xl font-extrabold text-orange-500 mt-1">
               {formatCurrency(valorTotal)}
             </p>
-            <p className="text-[10px] text-muted-foreground">soma dos casos</p>
+            <p className="text-xs text-muted-foreground">soma dos casos</p>
           </div>
         )}
         <div className="stat-card text-center">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Tipos</p>
+          <p className="text-sm text-muted-foreground uppercase tracking-wider">Tipos</p>
           <p className="text-sm font-medium text-foreground mt-1 leading-tight">
             {Object.entries(porTipo)
               .sort((a, b) => b[1] - a[1])
@@ -3143,17 +3143,17 @@ function TCMTab() {
                   {a.ano && <span className="text-muted-foreground font-normal"> · {a.ano}</span>}
                 </h3>
                 {a.ementa ? (
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">{a.ementa}</p>
+                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed line-clamp-2">{a.ementa}</p>
                 ) : null}
               </div>
               {a.valor_envolvido && (
                 <div className="text-right shrink-0">
-                  <p className="text-[10px] text-muted-foreground uppercase">Valor</p>
+                  <p className="text-xs text-muted-foreground uppercase">Valor</p>
                   <p className="font-bold text-orange-500">{formatCurrency(Number(a.valor_envolvido))}</p>
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+            <div className="flex items-center justify-between text-sm text-muted-foreground pt-2 border-t border-border">
               <span>{a.data_publicacao ? new Date(a.data_publicacao).toLocaleDateString("pt-BR") : "Data não informada"}</span>
               <span className="text-primary inline-flex items-center gap-1 font-medium">
                 <Sparkles className="w-3 h-3" /> Ver resumo
@@ -3163,7 +3163,7 @@ function TCMTab() {
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground pt-2">
+      <p className="text-sm text-muted-foreground pt-2">
         Fonte:{" "}
         <a href="https://www.tcm.go.gov.br/" target="_blank" rel="noopener noreferrer"
            className="text-primary hover:underline inline-flex items-center gap-1">
@@ -3199,7 +3199,7 @@ function TCMTab() {
             {/* Resumo IA (cached em DB — sem custo de IA por clique) */}
             {selectedApontamento?.ementa_resumo_ia ? (
               <div className="rounded-lg bg-muted/50 border p-4">
-                <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
                 </p>
                 <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">
@@ -3208,7 +3208,7 @@ function TCMTab() {
               </div>
             ) : selectedApontamento?.ementa ? (
               <div className="rounded-lg bg-muted/50 border p-4">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Ementa original</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Ementa original</p>
                 <p className="text-sm text-foreground leading-relaxed">{selectedApontamento.ementa}</p>
               </div>
             ) : (
@@ -3217,7 +3217,7 @@ function TCMTab() {
 
             {/* Ementa original (sempre que tiver, abaixo do resumo) */}
             {selectedApontamento?.ementa_resumo_ia && selectedApontamento?.ementa && (
-              <details className="text-xs">
+              <details className="text-sm">
                 <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
                   Ver dados originais coletados
                 </summary>
@@ -3230,7 +3230,7 @@ function TCMTab() {
             {/* Valor */}
             {selectedApontamento?.valor_envolvido && (
               <div className="flex items-center justify-between rounded-lg bg-orange-500/5 border border-orange-500/20 p-3">
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Valor envolvido</span>
+                <span className="text-sm text-muted-foreground uppercase tracking-wider">Valor envolvido</span>
                 <span className="font-bold text-orange-500">{formatCurrency(Number(selectedApontamento.valor_envolvido))}</span>
               </div>
             )}
@@ -3333,7 +3333,7 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
             <TabsList className="inline-flex w-max md:w-full md:flex-wrap h-auto gap-1 bg-transparent p-0">
               {tabs.map((t) => (
                 <TabsTrigger key={t.value} value={t.value}
-                  className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0">
+                  className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0">
                   <t.icon className="w-3.5 h-3.5 mr-1.5" />
                   {t.label}
                 </TabsTrigger>

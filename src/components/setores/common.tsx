@@ -34,9 +34,9 @@ export function StatCard({
 
   return (
     <div className="stat-card text-center">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-sm uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className={`text-2xl font-bold mt-1 ${toneClass}`}>{value}</p>
-      {sub && <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>}
+      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -58,7 +58,7 @@ export function TabNav<T extends string>({
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`h-9 shrink-0 rounded-md px-3 text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${
+            className={`h-9 shrink-0 rounded-md px-3 text-sm font-medium transition-colors inline-flex items-center gap-1.5 ${
               active === tab.id
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -93,7 +93,7 @@ export function BarList({
         <div key={`${item.label}-${item.sub || ""}`}>
           <div className="flex items-baseline justify-between gap-3 mb-1">
             <p className="text-sm font-medium text-foreground truncate">{item.label}</p>
-            <p className="text-xs text-muted-foreground shrink-0">
+            <p className="text-sm text-muted-foreground shrink-0">
               {valueLabel ? valueLabel(item.value) : fmtNumber(item.value)}
             </p>
           </div>
@@ -103,7 +103,7 @@ export function BarList({
               style={{ width: `${Math.max((item.value / max) * 100, 4)}%` }}
             />
           </div>
-          {item.sub && <p className="text-[10px] text-muted-foreground mt-1">{item.sub}</p>}
+          {item.sub && <p className="text-xs text-muted-foreground mt-1">{item.sub}</p>}
         </div>
       ))}
     </div>

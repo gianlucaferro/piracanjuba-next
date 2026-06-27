@@ -46,7 +46,7 @@ function EmptyState({ icon: Icon, title, description, fonteUrl }: {
       <p className="text-sm text-muted-foreground max-w-md">{description}</p>
       {fonteUrl && (
         <a href={fonteUrl} target="_blank" rel="noopener noreferrer"
-          className="mt-3 text-xs text-primary hover:underline inline-flex items-center gap-1">
+          className="mt-3 text-sm text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Verificar na fonte
         </a>
       )}
@@ -97,20 +97,20 @@ function SaudeResumo() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       <div className="stat-card text-center">
-        <p className="text-xs text-muted-foreground">Profissionais de saúde</p>
+        <p className="text-sm text-muted-foreground">Profissionais de saúde</p>
         <p className="text-2xl font-bold text-primary">{servidoresSaude.total}</p>
-        {ratio && <p className="text-[10px] text-muted-foreground">1 para cada {ratio} hab.</p>}
+        {ratio && <p className="text-xs text-muted-foreground">1 para cada {ratio} hab.</p>}
       </div>
       <div className="stat-card text-center">
-        <p className="text-xs text-muted-foreground">Estabelecimentos</p>
+        <p className="text-sm text-muted-foreground">Estabelecimentos</p>
         <p className="text-2xl font-bold text-foreground">{totalEstab}</p>
-        <p className="text-[10px] text-muted-foreground">cadastrados no CNES</p>
+        <p className="text-xs text-muted-foreground">cadastrados no CNES</p>
       </div>
       {Object.entries(servidoresSaude.counts).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([cargo, count]) => (
         <div key={cargo} className="stat-card text-center">
-          <p className="text-xs text-muted-foreground">{cargo}</p>
+          <p className="text-sm text-muted-foreground">{cargo}</p>
           <p className="text-2xl font-bold text-foreground">{count}</p>
-          <p className="text-[10px] text-muted-foreground">1:{Math.round(POPULACAO / count)} hab.</p>
+          <p className="text-xs text-muted-foreground">1:{Math.round(POPULACAO / count)} hab.</p>
         </div>
       ))}
     </div>
@@ -215,7 +215,7 @@ function EstabelecimentosTab() {
                   </Badge>
                 )}
               </div>
-              <div className="space-y-1 text-xs text-muted-foreground">
+              <div className="space-y-1 text-sm text-muted-foreground">
                 {est.endereco && (
                   <div className="flex items-center gap-1.5">
                     <MapPin className="w-3 h-3 shrink-0" /> {est.endereco}
@@ -231,7 +231,7 @@ function EstabelecimentosTab() {
                 )}
                 {est.cnes && !est.cnes.startsWith("0000") && (
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[10px]">CNES: {est.cnes}</span>
+                    <span className="font-mono text-xs">CNES: {est.cnes}</span>
                   </div>
                 )}
               </div>
@@ -240,7 +240,7 @@ function EstabelecimentosTab() {
         })}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://cnes.datasus.gov.br/" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> CNES/DATASUS
@@ -363,7 +363,7 @@ function EpidemiologiaTab() {
             <button
               key={y}
               onClick={() => setAno(y)}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
                 ano === y
                   ? "bg-accent text-accent-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -402,7 +402,7 @@ function EpidemiologiaTab() {
         <ArboviroseView indicadores={indicadores} categoria={categoria} ano={ano} diseaseLabels={diseaseLabels} nivelLabel={nivelLabel} />
       ) : null}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href={fonteUrls[categoria]} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> {fonteLabels[categoria]}
@@ -434,7 +434,7 @@ function MeningiteView() {
           <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-foreground">Alerta: Meningite em Goiás</p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Goiás registrou 290 casos de meningite em 2024 e 245 em 2025. A cobertura vacinal
               da Meningocócica ACWY (adolescentes 11-14 anos) está em apenas 70%, bem abaixo
               da meta de 95%. A vacinação é a principal forma de prevenção.
@@ -449,14 +449,14 @@ function MeningiteView() {
           <Activity className="w-4 h-4 text-primary" />
           Casos confirmados em Goiás
         </h3>
-        <p className="text-xs text-muted-foreground mb-3">
+        <p className="text-sm text-muted-foreground mb-3">
           Dados da Secretaria de Estado de Saúde de Goiás (SES-GO). Dados municipais de
           Piracanjuba disponíveis no DATASUS/SINAN (TabNet).
         </p>
         <div className="space-y-2">
           {MENINGITE_GO.map((d) => (
             <div key={d.ano} className="flex items-center gap-3">
-              <span className="text-xs font-medium text-foreground w-12">
+              <span className="text-sm font-medium text-foreground w-12">
                 {d.ano}{d.nota ? "*" : ""}
               </span>
               <div className="flex-1">
@@ -466,21 +466,21 @@ function MeningiteView() {
                       className="h-full bg-orange-500/70 rounded-full flex items-center justify-end pr-2 transition-all"
                       style={{ width: `${Math.max((d.casos / 300) * 100, 10)}%` }}
                     >
-                      <span className="text-[10px] font-bold text-white">{d.casos} casos</span>
+                      <span className="text-xs font-bold text-white">{d.casos} casos</span>
                     </div>
                   </div>
                   {d.obitos !== null && (
-                    <span className="text-xs text-destructive font-medium shrink-0">{d.obitos} óbitos</span>
+                    <span className="text-sm text-destructive font-medium shrink-0">{d.obitos} óbitos</span>
                   )}
                 </div>
               </div>
               {d.letalidade !== "—" && (
-                <span className="text-[10px] text-muted-foreground shrink-0">Let. {d.letalidade}</span>
+                <span className="text-xs text-muted-foreground shrink-0">Let. {d.letalidade}</span>
               )}
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">* Dados parciais (até março de 2026)</p>
+        <p className="text-xs text-muted-foreground mt-2">* Dados parciais (até março de 2026)</p>
       </div>
 
       {/* Cobertura vacinal */}
@@ -497,8 +497,8 @@ function MeningiteView() {
             return (
               <div key={v.nome}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground font-medium">{v.nome}</span>
-                  <span className={`text-xs font-bold ${abaixoMeta ? "text-orange-500" : "text-green-600"}`}>
+                  <span className="text-sm text-foreground font-medium">{v.nome}</span>
+                  <span className={`text-sm font-bold ${abaixoMeta ? "text-orange-500" : "text-green-600"}`}>
                     {v.cobertura.toFixed(1)}%
                   </span>
                 </div>
@@ -514,8 +514,8 @@ function MeningiteView() {
                   />
                 </div>
                 <div className="flex justify-between mt-0.5">
-                  <span className="text-[10px] text-muted-foreground">0%</span>
-                  <span className="text-[10px] text-muted-foreground">Meta: {v.meta}%</span>
+                  <span className="text-xs text-muted-foreground">0%</span>
+                  <span className="text-xs text-muted-foreground">Meta: {v.meta}%</span>
                 </div>
               </div>
             );
@@ -529,7 +529,7 @@ function MeningiteView() {
           <Info className="w-4 h-4 text-primary" />
           Sintomas e prevenção
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-muted-foreground">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
           <div>
             <p className="font-medium text-foreground mb-1.5">Sintomas de alerta:</p>
             <ul className="space-y-1 list-disc list-inside">
@@ -563,7 +563,7 @@ function MeningiteView() {
       </div>
 
       {/* Fontes */}
-      <div className="text-[10px] text-muted-foreground space-y-0.5">
+      <div className="text-xs text-muted-foreground space-y-0.5">
         <p>Fontes dos dados estaduais:</p>
         <p>
           • SES-GO via{" "}
@@ -640,17 +640,17 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{totalCasos}</p>
-          <p className="text-xs text-muted-foreground">Total de casos em {ano}</p>
+          <p className="text-sm text-muted-foreground">Total de casos em {ano}</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{indicadores.length}</p>
-          <p className="text-xs text-muted-foreground">Meses com dados</p>
+          <p className="text-sm text-muted-foreground">Meses com dados</p>
         </div>
         <div className="stat-card text-center col-span-2 md:col-span-1">
           <p className="text-2xl font-bold text-foreground">
             {Math.max(...indicadores.map((i: any) => i.valor || 0))}
           </p>
-          <p className="text-xs text-muted-foreground">Pico mensal</p>
+          <p className="text-sm text-muted-foreground">Pico mensal</p>
         </div>
       </div>
 
@@ -668,13 +668,13 @@ function ArboviroseView({ indicadores, categoria, ano, diseaseLabels, nivelLabel
               const nivel = nivelLabel(ind.valor_texto);
               return (
                 <div key={ind.id} className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground w-8">{MESES[ind.mes || 0]}</span>
+                  <span className="text-sm text-muted-foreground w-8">{MESES[ind.mes || 0]}</span>
                   <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                     <div
                       className="h-full bg-primary/80 rounded-full flex items-center justify-end pr-2 transition-all"
                       style={{ width: `${Math.max(pct, 8)}%` }}
                     >
-                      <span className="text-[10px] font-bold text-primary-foreground">
+                      <span className="text-xs font-bold text-primary-foreground">
                         {ind.valor || 0}
                       </span>
                     </div>
@@ -723,23 +723,23 @@ function DDAView({ indicadores }: { indicadores: SaudeIndicador[] }) {
           <p className="text-2xl font-bold text-foreground">
             {latest?.valor?.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}
           </p>
-          <p className="text-[10px] text-muted-foreground">por 100 mil hab. ({latest?.ano})</p>
+          <p className="text-xs text-muted-foreground">por 100 mil hab. ({latest?.ano})</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{sorted.length}</p>
-          <p className="text-[10px] text-muted-foreground">anos de dados</p>
+          <p className="text-xs text-muted-foreground">anos de dados</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-destructive">
             {pico?.valor?.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}
           </p>
-          <p className="text-[10px] text-muted-foreground">pico ({pico?.ano})</p>
+          <p className="text-xs text-muted-foreground">pico ({pico?.ano})</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-green-600">
             {minimo?.valor?.toLocaleString("pt-BR", { minimumFractionDigits: 1 })}
           </p>
-          <p className="text-[10px] text-muted-foreground">mínimo ({minimo?.ano})</p>
+          <p className="text-xs text-muted-foreground">mínimo ({minimo?.ano})</p>
         </div>
       </div>
 
@@ -767,7 +767,7 @@ function DDAView({ indicadores }: { indicadores: SaudeIndicador[] }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Linhas tracejadas: média nacional (~130) e estadual GO (~220) de referência
           </p>
         </div>
@@ -787,7 +787,7 @@ function DDAView({ indicadores }: { indicadores: SaudeIndicador[] }) {
       </div>
 
       {/* Fonte */}
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         Fonte: <a href={latest?.fonte_url || "https://cidades.ibge.gov.br/brasil/go/piracanjuba/panorama"} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> {latest?.fonte || "IBGE Panorama — Piracanjuba"}
         </a>
@@ -843,21 +843,21 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{totalDiag?.valor || "—"}</p>
-          <p className="text-xs text-muted-foreground">Casos diagnosticados</p>
-          <p className="text-[10px] text-muted-foreground">acumulado 2010–{latestYearDiag?.ano}</p>
+          <p className="text-sm text-muted-foreground">Casos diagnosticados</p>
+          <p className="text-xs text-muted-foreground">acumulado 2010–{latestYearDiag?.ano}</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{totalObitos?.valor || "—"}</p>
-          <p className="text-xs text-muted-foreground">Óbitos registrados</p>
-          <p className="text-[10px] text-muted-foreground">acumulado 2012–{latestYearObitos?.ano}</p>
+          <p className="text-sm text-muted-foreground">Óbitos registrados</p>
+          <p className="text-xs text-muted-foreground">acumulado 2012–{latestYearObitos?.ano}</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{latestYearDiag?.valor || "—"}</p>
-          <p className="text-xs text-muted-foreground">Diagnósticos em {latestYearDiag?.ano}</p>
+          <p className="text-sm text-muted-foreground">Diagnósticos em {latestYearDiag?.ano}</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{diagAnuais.length}</p>
-          <p className="text-xs text-muted-foreground">Anos com dados</p>
+          <p className="text-sm text-muted-foreground">Anos com dados</p>
         </div>
       </div>
 
@@ -916,16 +916,16 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
                   const pct = (count / total) * 100;
                   return (
                     <div key={sexo} className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground w-20 capitalize">{sexo.toLowerCase()}</span>
+                      <span className="text-sm text-muted-foreground w-20 capitalize">{sexo.toLowerCase()}</span>
                       <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                         <div
                           className="h-full bg-primary/70 rounded-full flex items-center justify-end pr-2 transition-all"
                           style={{ width: `${Math.max(pct, 12)}%` }}
                         >
-                          <span className="text-[10px] font-bold text-primary-foreground">{count}</span>
+                          <span className="text-xs font-bold text-primary-foreground">{count}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] text-muted-foreground w-10">{pct.toFixed(0)}%</span>
+                      <span className="text-xs text-muted-foreground w-10">{pct.toFixed(0)}%</span>
                     </div>
                   );
                 })}
@@ -946,13 +946,13 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
                 const pct = (casos / maxVal) * 100;
                 return (
                   <div key={faixa} className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground w-20">{faixa}</span>
+                    <span className="text-sm text-muted-foreground w-20">{faixa}</span>
                     <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                       <div
                         className="h-full bg-accent/70 rounded-full flex items-center justify-end pr-2 transition-all"
                         style={{ width: `${Math.max(pct, 12)}%` }}
                       >
-                        <span className="text-[10px] font-bold text-accent-foreground">{casos}</span>
+                        <span className="text-xs font-bold text-accent-foreground">{casos}</span>
                       </div>
                     </div>
                   </div>
@@ -972,14 +972,14 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
               {gestantesTaxa.map((g) => (
                 <div key={g.id} className="bg-muted/50 rounded-lg p-3 text-center">
                   <p className="text-lg font-bold text-foreground">{g.valor?.toFixed(1)}</p>
-                  <p className="text-[10px] text-muted-foreground">por mil nasc. vivos ({g.ano})</p>
+                  <p className="text-xs text-muted-foreground">por mil nasc. vivos ({g.ano})</p>
                   {g.valor_texto && (
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{g.valor_texto}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{g.valor_texto}</p>
                   )}
                 </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Taxa de detecção de HIV em gestantes por mil nascidos vivos, conforme notificações SINAN.
             </p>
           </div>
@@ -991,13 +991,13 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
             <div className="space-y-1.5">
               {[...gestantesAnuais].reverse().map((g) => (
                 <div key={g.id} className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground w-10">{g.ano}</span>
+                  <span className="text-sm text-muted-foreground w-10">{g.ano}</span>
                   <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
                     <div
                       className="h-full bg-pink-500/60 rounded-full flex items-center justify-end pr-2 transition-all"
                       style={{ width: `${Math.max(((g.valor || 0) / Math.max(...gestantesAnuais.map(x => x.valor || 1))) * 100, 15)}%` }}
                     >
-                      <span className="text-[10px] font-bold text-foreground">{g.valor}</span>
+                      <span className="text-xs font-bold text-foreground">{g.valor}</span>
                     </div>
                   </div>
                 </div>
@@ -1009,7 +1009,7 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
             <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
             <div>
               <p className="text-sm text-foreground font-medium">Nenhum caso registrado</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Não há registros de HIV em gestantes de Piracanjuba no Portal de Dados Abertos de Goiás (SINAN).
                 A taxa de detecção pré-calculada pela SES-GO também não possui dados para o município.
               </p>
@@ -1033,13 +1033,13 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
             const pct = ((ind.valor || 0) / maxVal) * 100;
             return (
               <div key={ind.id} className="flex items-center gap-3">
-                <span className="text-xs text-muted-foreground w-10">{ind.ano}</span>
+                <span className="text-sm text-muted-foreground w-10">{ind.ano}</span>
                 <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                   <div
                     className="h-full bg-primary/70 rounded-full flex items-center justify-end pr-2 transition-all"
                     style={{ width: `${Math.max(pct, 12)}%` }}
                   >
-                    <span className="text-[10px] font-bold text-primary-foreground">{ind.valor}</span>
+                    <span className="text-xs font-bold text-primary-foreground">{ind.valor}</span>
                   </div>
                 </div>
               </div>
@@ -1076,8 +1076,8 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
       {isInfantil && taxaIbge && (
         <div className="stat-card border-l-4 border-primary mb-2">
           <p className="text-2xl font-bold text-foreground">{taxaIbge.valor?.toFixed(2).replace('.', ',')}</p>
-          <p className="text-xs text-muted-foreground">óbitos por mil nascidos vivos ({taxaIbge.ano})</p>
-          <p className="text-[10px] text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground">óbitos por mil nascidos vivos ({taxaIbge.ano})</p>
+          <p className="text-xs text-muted-foreground mt-1">
             Fonte: <a href={taxaIbge.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{taxaIbge.fonte}</a>
           </p>
         </div>
@@ -1086,17 +1086,17 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{totalObitosInd?.valor?.toLocaleString("pt-BR") || "—"}</p>
-          <p className="text-xs text-muted-foreground">Total de óbitos</p>
-          <p className="text-[10px] text-muted-foreground">acumulado {obitosAnuais[0]?.ano}–{latestYear?.ano}</p>
+          <p className="text-sm text-muted-foreground">Total de óbitos</p>
+          <p className="text-xs text-muted-foreground">acumulado {obitosAnuais[0]?.ano}–{latestYear?.ano}</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{latestYear?.valor || "—"}</p>
-          <p className="text-xs text-muted-foreground">Óbitos em {latestYear?.ano}</p>
-          {latestYear?.ano >= currentYear && <p className="text-[10px] text-muted-foreground italic">parcial</p>}
+          <p className="text-sm text-muted-foreground">Óbitos em {latestYear?.ano}</p>
+          {latestYear?.ano >= currentYear && <p className="text-xs text-muted-foreground italic">parcial</p>}
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-foreground">{obitosAnuais.length}</p>
-          <p className="text-xs text-muted-foreground">Anos com dados</p>
+          <p className="text-sm text-muted-foreground">Anos com dados</p>
         </div>
         {obitosAnuais.length >= 3 && (
           <div className="stat-card text-center">
@@ -1108,7 +1108,7 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
               return (
                 <>
                   <p className="text-2xl font-bold text-foreground">{avg.toFixed(0)}</p>
-                  <p className="text-xs text-muted-foreground">Média anual</p>
+                  <p className="text-sm text-muted-foreground">Média anual</p>
                 </>
               );
             })()}
@@ -1149,16 +1149,16 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
                   const pct = (count / total) * 100;
                   return (
                     <div key={sexo} className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground w-20 capitalize">{sexo.toLowerCase()}</span>
+                      <span className="text-sm text-muted-foreground w-20 capitalize">{sexo.toLowerCase()}</span>
                       <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                         <div
                           className="h-full bg-destructive/60 rounded-full flex items-center justify-end pr-2 transition-all"
                           style={{ width: `${Math.max(pct, 12)}%` }}
                         >
-                          <span className="text-[10px] font-bold text-destructive-foreground">{count.toLocaleString("pt-BR")}</span>
+                          <span className="text-xs font-bold text-destructive-foreground">{count.toLocaleString("pt-BR")}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] text-muted-foreground w-10">{pct.toFixed(0)}%</span>
+                      <span className="text-xs text-muted-foreground w-10">{pct.toFixed(0)}%</span>
                     </div>
                   );
                 })}
@@ -1183,13 +1183,13 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
                 };
                 return (
                   <div key={d.id} className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground w-36">{faixaLabels[d.valor_texto || ""] || d.valor_texto}</span>
+                    <span className="text-sm text-muted-foreground w-36">{faixaLabels[d.valor_texto || ""] || d.valor_texto}</span>
                     <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                       <div
                         className="h-full bg-accent/70 rounded-full flex items-center justify-end pr-2 transition-all"
                         style={{ width: `${Math.max(pct, 15)}%` }}
                       >
-                        <span className="text-[10px] font-bold text-accent-foreground">{d.valor}</span>
+                        <span className="text-xs font-bold text-accent-foreground">{d.valor}</span>
                       </div>
                     </div>
                   </div>
@@ -1212,13 +1212,13 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
               const pct = ((d.valor || 0) / maxVal) * 100;
               return (
                 <div key={d.id} className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground w-40 truncate" title={d.valor_texto || ""}>{d.valor_texto}</span>
+                  <span className="text-sm text-muted-foreground w-40 truncate" title={d.valor_texto || ""}>{d.valor_texto}</span>
                   <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
                     <div
                       className="h-full bg-primary/60 rounded-full flex items-center justify-end pr-2 transition-all"
                       style={{ width: `${Math.max(pct, 12)}%` }}
                     >
-                      <span className="text-[10px] font-bold text-primary-foreground">{d.valor?.toLocaleString("pt-BR")}</span>
+                      <span className="text-xs font-bold text-primary-foreground">{d.valor?.toLocaleString("pt-BR")}</span>
                     </div>
                   </div>
                 </div>
@@ -1258,9 +1258,9 @@ function ServidoresSaudeTab() {
         {data.data.map((s: any) => (
           <div key={s.id} className="stat-card space-y-1.5">
             <h4 className="font-semibold text-foreground text-sm">{s.nome}</h4>
-            {s.cargo && <Badge variant="secondary" className="text-[10px]">{s.cargo}</Badge>}
+            {s.cargo && <Badge variant="secondary" className="text-xs">{s.cargo}</Badge>}
             {s.remuneracao && (
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-sm">
                 <DollarSign className="w-3 h-3 text-accent" />
                 <span className="font-semibold">{formatCurrency(s.remuneracao.bruto)}</span>
                 <span className="text-muted-foreground">({s.remuneracao.competencia})</span>
@@ -1275,24 +1275,24 @@ function ServidoresSaudeTab() {
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="px-3 py-1 text-xs rounded bg-secondary text-secondary-foreground disabled:opacity-50"
+            className="px-3 py-1 text-sm rounded bg-secondary text-secondary-foreground disabled:opacity-50"
           >
             Anterior
           </button>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-sm text-muted-foreground">
             Página {page + 1} de {Math.ceil(data.count / 30)}
           </span>
           <button
             onClick={() => setPage(p => p + 1)}
             disabled={(page + 1) * 30 >= data.count}
-            className="px-3 py-1 text-xs rounded bg-secondary text-secondary-foreground disabled:opacity-50"
+            className="px-3 py-1 text-sm rounded bg-secondary text-secondary-foreground disabled:opacity-50"
           >
             Próxima
           </button>
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
@@ -1322,7 +1322,7 @@ function DespesasSaudeTab() {
           <button
             key={y}
             onClick={() => setAno(y)}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
               ano === y
                 ? "bg-accent text-accent-foreground"
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1342,11 +1342,11 @@ function DespesasSaudeTab() {
           <div className="grid grid-cols-2 gap-3">
             <div className="stat-card text-center">
               <p className="text-xl font-bold text-foreground">{formatCurrency(totalDespesas)}</p>
-              <p className="text-xs text-muted-foreground">Total de despesas em {ano}</p>
+              <p className="text-sm text-muted-foreground">Total de despesas em {ano}</p>
             </div>
             <div className="stat-card text-center">
               <p className="text-xl font-bold text-foreground">{despesas.length}</p>
-              <p className="text-xs text-muted-foreground">Registros</p>
+              <p className="text-sm text-muted-foreground">Registros</p>
             </div>
           </div>
 
@@ -1356,10 +1356,10 @@ function DespesasSaudeTab() {
               {despesas.slice(0, 50).map((d: any) => (
                 <div key={d.id} className="flex items-start justify-between gap-2 py-2 border-b border-border last:border-0">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-foreground truncate">{d.descricao || "Sem descrição"}</p>
-                    <p className="text-[10px] text-muted-foreground">{d.favorecido} • {d.data}</p>
+                    <p className="text-sm text-foreground truncate">{d.descricao || "Sem descrição"}</p>
+                    <p className="text-xs text-muted-foreground">{d.favorecido} • {d.data}</p>
                   </div>
-                  <span className="text-xs font-semibold text-foreground whitespace-nowrap">
+                  <span className="text-sm font-semibold text-foreground whitespace-nowrap">
                     {formatCurrency(d.valor)}
                   </span>
                 </div>
@@ -1369,7 +1369,7 @@ function DespesasSaudeTab() {
         </>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
@@ -1413,7 +1413,7 @@ export default function Saude() {
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
+                  className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
                 >
                   <tab.icon className="w-3.5 h-3.5 mr-1.5" />
                   {tab.label}

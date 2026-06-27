@@ -70,7 +70,7 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
           <Activity className="w-4 h-4 text-purple-500" />
           COVID-19 em Piracanjuba · 2020-{new Date().getFullYear()}
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Internações por SRAG, internações por COVID-19 e óbitos por COVID-19, dados mensais.
           Captura as ondas pandêmicas locais e a queda atual com vacinação consolidada.
         </p>
@@ -79,27 +79,27 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div className="stat-card border-purple-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Internações COVID</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Internações COVID</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totals.internacoes}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">total acumulado</p>
+          <p className="text-xs text-muted-foreground mt-0.5">total acumulado</p>
         </div>
         <div className="stat-card border-red-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
             <Skull className="w-3 h-3" /> Óbitos COVID
           </p>
           <p className="text-xl font-extrabold text-red-600 mt-0.5">{totals.obitos}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">total acumulado</p>
+          <p className="text-xs text-muted-foreground mt-0.5">total acumulado</p>
         </div>
         <div className="stat-card">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">SRAG</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">SRAG</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totals.srag}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">síndrome resp. aguda grave</p>
+          <p className="text-xs text-muted-foreground mt-0.5">síndrome resp. aguda grave</p>
         </div>
         {totals.pico_internacoes.v > 0 && (
           <div className="stat-card border-amber-500/30 bg-amber-500/5">
-            <p className="text-[10px] uppercase tracking-wider opacity-80">Pico</p>
+            <p className="text-xs uppercase tracking-wider opacity-80">Pico</p>
             <p className="text-xl font-extrabold mt-0.5">{totals.pico_internacoes.v}</p>
-            <p className="text-[10px] opacity-80 mt-0.5">
+            <p className="text-xs opacity-80 mt-0.5">
               internações em {MESES_CURTOS[totals.pico_internacoes.mes - 1]}/{totals.pico_internacoes.ano}
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Eixo esquerdo (roxo): internações. Eixo direito (vermelho): óbitos. Fonte:{" "}
         <a
           href="https://opendatasus.saude.gov.br/dataset/srag-2021-e-2022"

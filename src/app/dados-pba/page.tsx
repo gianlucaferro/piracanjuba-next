@@ -153,7 +153,7 @@ export default function DadosPBAPage() {
                 <Icon className={`w-6 h-6 ${c.iconColor}`} />
               </div>
               <h2 className="text-base font-semibold text-foreground">{c.titulo}</h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {c.descricao}
               </p>
             </Link>
@@ -161,7 +161,7 @@ export default function DadosPBAPage() {
         })}
       </div>
 
-      <p className="text-xs text-muted-foreground italic mt-8 text-center">
+      <p className="text-sm text-muted-foreground italic mt-8 text-center">
         Iniciativa cidadã independente — sem vínculo com a Prefeitura, Câmara ou qualquer órgão público.
         Cada dado tem link direto para a fonte oficial de origem.
       </p>

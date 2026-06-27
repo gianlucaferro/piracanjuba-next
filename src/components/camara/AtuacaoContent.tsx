@@ -333,10 +333,10 @@ function AtuacaoParlamentarPage() {
 
         {/* Stats bar */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <Badge variant="outline" className="text-xs">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
-          {items.length > 0 && totalPages > 1 && <Badge variant="secondary" className="text-xs">Página {page + 1} de {totalPages}</Badge>}
+          <Badge variant="outline" className="text-sm">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
+          {items.length > 0 && totalPages > 1 && <Badge variant="secondary" className="text-sm">Página {page + 1} de {totalPages}</Badge>}
           {totalCount > 0 && (
-            <button onClick={handleExportCSV} className="ml-auto inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+            <button onClick={handleExportCSV} className="ml-auto inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
               <Download className="w-3.5 h-3.5" /> Exportar CSV
             </button>
           )}
@@ -360,16 +360,16 @@ function AtuacaoParlamentarPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground flex items-center gap-2">
-                        <Badge variant="outline" className="text-[10px] font-normal flex-shrink-0">{item.tipo}</Badge>
+                        <Badge variant="outline" className="text-xs font-normal flex-shrink-0">{item.tipo}</Badge>
                         nº {item.numero}/{item.ano}
                         <Sparkles className="w-3.5 h-3.5 text-accent flex-shrink-0" />
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.descricao}</p>
-                      <p className="text-[11px] text-muted-foreground/70 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{item.descricao}</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">
                         {item.autor_vereador_id ? vereadorMap.get(item.autor_vereador_id) || item.autor_texto : item.autor_texto}
                       </p>
                     </div>
-                    <span className="text-[10px] text-muted-foreground whitespace-nowrap mt-0.5">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap mt-0.5">
                       {new Date(item.data + "T12:00:00").toLocaleDateString("pt-BR")}
                     </span>
                   </div>
@@ -398,11 +398,11 @@ function AtuacaoParlamentarPage() {
               <DialogTitle className="text-base">{selectedItem?.tipo} nº {selectedItem?.numero}/{selectedItem?.ano}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {selectedItem?.autor_texto} · {selectedItem && new Date(selectedItem.data + "T12:00:00").toLocaleDateString("pt-BR")}
               </p>
               <div className="rounded-lg bg-muted/50 border p-4">
-                <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
                 </p>
                 {loadingResumo ? (
@@ -415,11 +415,11 @@ function AtuacaoParlamentarPage() {
               </div>
               {selectedItem?.descricao && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1">Descrição original</p>
-                  <p className="text-xs text-muted-foreground">{selectedItem.descricao}</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Descrição original</p>
+                  <p className="text-sm text-muted-foreground">{selectedItem.descricao}</p>
                 </div>
               )}
-              <a href={selectedItem?.fonte_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+              <a href={selectedItem?.fonte_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                 <ExternalLink className="w-3 h-3" /> Ver no portal oficial
               </a>
             </div>
@@ -474,14 +474,14 @@ function ProjetoUnifiedCard({ item, vereadorMap, vereadorSlugMap }: {
             </Badge>
           )}
         </div>
-        <span className="text-xs text-muted-foreground whitespace-nowrap">
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
           {new Date(item.data + "T12:00:00").toLocaleDateString("pt-BR")}
         </span>
       </div>
 
       <p className="mt-2 text-sm text-foreground leading-relaxed">{item.ementa}</p>
 
-      <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
+      <div className="mt-3 flex items-center gap-2 flex-wrap text-sm text-muted-foreground">
         {item.origem && <><span>Origem: {item.origem}</span><span>•</span></>}
         <span>
           Autor:{" "}
@@ -496,14 +496,14 @@ function ProjetoUnifiedCard({ item, vereadorMap, vereadorSlugMap }: {
       {item.tags && item.tags.length > 0 && (
         <div className="mt-2 flex gap-1.5 flex-wrap">
           {item.tags.map((tag) => (
-            <span key={tag} className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-[11px]">{tag}</span>
+            <span key={tag} className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs">{tag}</span>
           ))}
         </div>
       )}
 
       <div className="mt-3 flex items-center gap-2">
         <a href={item.fonte_url} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+          className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ExternalLink className="w-3 h-3" /> Ver fonte
         </a>
       </div>

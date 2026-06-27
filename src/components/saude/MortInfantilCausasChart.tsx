@@ -45,7 +45,7 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
           <Baby className="w-4 h-4 text-pink-500" />
           Mortalidade Infantil — causas (CID-10)
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Por que crianças menores de 1 ano morrem em Piracanjuba? Causas agrupadas pelo
           capítulo da CID-10. Identificar predominância de "afecções perinatais" e
           "malformações congênitas" indica fragilidade do pré-natal e parto.
@@ -54,15 +54,15 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="stat-card">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total óbitos infantis analisados</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Total óbitos infantis analisados</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{total}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">crianças &lt;1 ano</p>
+          <p className="text-xs text-muted-foreground mt-0.5">crianças &lt;1 ano</p>
         </div>
         {top1 && (
           <div className="stat-card border-pink-500/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Causa principal</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Causa principal</p>
             <p className="text-base font-bold text-foreground mt-0.5">{top1.causa}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               {top1.total} óbitos · {((top1.total / total) * 100).toFixed(1)}% do total
             </p>
           </div>
@@ -99,7 +99,7 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Fonte:{" "}
         <a
           href="http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sim/cnv/inf10GO.def"

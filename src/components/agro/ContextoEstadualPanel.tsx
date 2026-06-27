@@ -22,7 +22,7 @@ function SubHeader({ title, icon: Icon, description }: { title: string; icon: ty
         <Icon className="w-4 h-4 text-primary" />
         {title}
       </h3>
-      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 }
@@ -41,7 +41,7 @@ export default function ContextoEstadualPanel() {
           </div>
           Piracanjuba dentro de Goiás
         </h2>
-        <p className="text-xs text-muted-foreground mt-1 ml-10">
+        <p className="text-sm text-muted-foreground mt-1 ml-10">
           O município é parte de um movimento estadual: a soja que explodiu em Goiás e a bacia leiteira que se reconfigurou.
         </p>
       </div>
@@ -76,12 +76,12 @@ export default function ContextoEstadualPanel() {
             <Line yAxisId="prod" type="monotone" dataKey="producaoT" stroke={COR_PROD} strokeWidth={2.4} strokeDasharray="5 4" dot={{ r: 2 }} />
           </ComposedChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           A produção de soja em Goiás saltou de <strong>{nf(sojaIni.producaoT)} t</strong> (1975) para{" "}
           <strong>{nf(sojaFim.producaoT)} t</strong> (2024), um aumento de mais de <strong>{multProd.toFixed(0)} vezes</strong>.
           Piracanjuba é uma peça desse tabuleiro, no eixo da microrregião Meia Ponte.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Produção Agrícola Municipal (tabela 1612), série compatível com a CONAB.</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Produção Agrícola Municipal (tabela 1612), série compatível com a CONAB.</p>
       </div>
 
       {/* 2. Leite Piracanjuba vs Goiás */}
@@ -111,12 +111,12 @@ export default function ContextoEstadualPanel() {
             <Line yAxisId="goias" type="monotone" dataKey="goiasMilL" stroke={COR_GOIAS} strokeWidth={2.6} strokeDasharray="5 4" dot={{ r: 2.5 }} />
           </ComposedChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           Piracanjuba subiu até o pico de <strong>154,8 milhões de litros em 2014</strong> e depois recuou para{" "}
           <strong>83,5 milhões em 2023</strong>, enquanto Goiás mais que dobrou a produção desde 1990. O recuo local coincide
           com o avanço da soja sobre as terras de pastagem.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Pesquisa da Pecuária Municipal (tabela 74).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Pesquisa da Pecuária Municipal (tabela 74).</p>
       </div>
     </section>
   );

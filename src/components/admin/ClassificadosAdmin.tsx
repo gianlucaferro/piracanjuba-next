@@ -169,28 +169,28 @@ function AdminEditForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Título</p>
+          <p className="text-sm text-muted-foreground mb-1">Título</p>
           <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
         </div>
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Bairro</p>
+          <p className="text-sm text-muted-foreground mb-1">Bairro</p>
           <Input value={bairro} onChange={(e) => setBairro(e.target.value)} placeholder="Ex: Centro" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Nome do anunciante</p>
+          <p className="text-sm text-muted-foreground mb-1">Nome do anunciante</p>
           <Input value={nome} onChange={(e) => setNome(e.target.value)} />
         </div>
         <div>
-          <p className="text-xs text-muted-foreground mb-1">WhatsApp</p>
+          <p className="text-sm text-muted-foreground mb-1">WhatsApp</p>
           <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
         </div>
       </div>
 
       <div>
-        <p className="text-xs text-muted-foreground mb-1">Descrição</p>
+        <p className="text-sm text-muted-foreground mb-1">Descrição</p>
         <textarea
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
@@ -199,13 +199,13 @@ function AdminEditForm({
       </div>
 
       <div>
-        <p className="text-xs text-muted-foreground mb-1">Categoria</p>
+        <p className="text-sm text-muted-foreground mb-1">Categoria</p>
         <div className="flex flex-wrap gap-1">
           {CATEGORIAS.map((cat) => (
             <button
               key={cat.value}
               onClick={() => setCategoria(cat.value)}
-              className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-colors border ${
+              className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
                 categoria === cat.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -219,13 +219,13 @@ function AdminEditForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Tipo de preço</p>
+          <p className="text-sm text-muted-foreground mb-1">Tipo de preço</p>
           <div className="flex gap-1">
             {PRECO_TIPOS.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setPrecoTipo(t.value)}
-                className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors border ${
+                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
                   precoTipo === t.value
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -238,7 +238,7 @@ function AdminEditForm({
         </div>
         {precoTipo !== "gratuito" && (
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Preço</p>
+            <p className="text-sm text-muted-foreground mb-1">Preço</p>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">R$</span>
               <Input
@@ -256,7 +256,7 @@ function AdminEditForm({
 
       {/* Fotos */}
       <div>
-        <p className="text-xs text-muted-foreground mb-1">Fotos ({fotos.length})</p>
+        <p className="text-sm text-muted-foreground mb-1">Fotos ({fotos.length})</p>
         <div className="flex gap-2 flex-wrap">
           {fotos.map((url, i) => (
             <div key={i} className="relative w-20 h-16 rounded-lg overflow-hidden border">
@@ -370,28 +370,28 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
       <div className="grid grid-cols-5 gap-2 text-center">
         <div className="stat-card py-2">
           <p className="text-lg font-bold text-foreground">{items.length}</p>
-          <p className="text-[10px] text-muted-foreground">Total</p>
+          <p className="text-xs text-muted-foreground">Total</p>
         </div>
         <div className="stat-card py-2">
           <p className="text-lg font-bold text-green-600">{ativos.length}</p>
-          <p className="text-[10px] text-muted-foreground">Ativos</p>
+          <p className="text-xs text-muted-foreground">Ativos</p>
         </div>
         <div className="stat-card py-2">
           <p className="text-lg font-bold text-blue-500">{vendidos.length}</p>
-          <p className="text-[10px] text-muted-foreground">Vendidos</p>
+          <p className="text-xs text-muted-foreground">Vendidos</p>
         </div>
         <div className="stat-card py-2">
           <p className="text-lg font-bold text-foreground">{totalViews}</p>
-          <p className="text-[10px] text-muted-foreground">Views</p>
+          <p className="text-xs text-muted-foreground">Views</p>
         </div>
         <div className="stat-card py-2">
           <p className="text-lg font-bold text-[#25D366]">{totalWaClicks}</p>
-          <p className="text-[10px] text-muted-foreground">WhatsApp</p>
+          <p className="text-xs text-muted-foreground">WhatsApp</p>
         </div>
       </div>
 
       {denunciados.length > 0 && (
-        <div className="bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-1.5 text-xs text-destructive font-medium">
+        <div className="bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-1.5 text-sm text-destructive font-medium">
           ⚠️ {denunciados.length} anúncio(s) com denúncias pendentes
         </div>
       )}
@@ -422,15 +422,15 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{item.titulo}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     {item.nome} · {item.denuncias} denúncia(s)
                   </p>
                 </div>
                 <div className="flex gap-1 shrink-0">
-                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateStatus(item.id, "ativo")}>
+                  <Button size="sm" variant="outline" className="h-7 text-sm" onClick={() => updateStatus(item.id, "ativo")}>
                     <CheckCircle2 className="w-3 h-3 mr-0.5" /> Restaurar
                   </Button>
-                  <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={() => updateStatus(item.id, "removido")}>
+                  <Button size="sm" variant="destructive" className="h-7 text-sm" onClick={() => updateStatus(item.id, "removido")}>
                     <XCircle className="w-3 h-3 mr-0.5" /> Remover
                   </Button>
                 </div>
@@ -461,19 +461,19 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-semibold text-foreground truncate">{item.titulo}</p>
-                    <Badge className={`text-[10px] font-semibold ${STATUS_COLORS[item.status] || "bg-muted"}`}>
+                    <Badge className={`text-xs font-semibold ${STATUS_COLORS[item.status] || "bg-muted"}`}>
                       {STATUS_LABEL[item.status] || item.status}
                     </Badge>
                     {item.denuncias > 0 && (
-                      <Badge variant="destructive" className="text-[10px]">
+                      <Badge variant="destructive" className="text-xs">
                         <Flag className="w-2.5 h-2.5 mr-0.5" /> {item.denuncias}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-sm text-muted-foreground mt-0.5">
                     {item.nome} · {item.whatsapp} · {item.categoria}{item.bairro ? ` · ${item.bairro}` : ""}
                   </p>
-                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-0.5">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                     <span className="flex items-center gap-0.5">
                       <Eye className="w-3 h-3" /> {item.visualizacoes}
                     </span>
@@ -491,7 +491,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
               <div className="flex items-center gap-0 border-t bg-muted/30">
                 <button
                   onClick={() => setEditingId(editingId === item.id ? null : item.id)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium transition-colors ${
                     editingId === item.id
                       ? "bg-primary/10 text-primary"
                       : "text-foreground hover:bg-primary/10 hover:text-primary"
@@ -504,7 +504,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
                   <>
                     <button
                       onClick={() => updateStatus(item.id, "removido")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-colors"
                     >
                       <XCircle className="w-3.5 h-3.5" /> Remover
                     </button>
@@ -515,7 +515,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
                   <>
                     <button
                       onClick={() => updateStatus(item.id, "ativo")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-green-600 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-green-600 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" /> Reativar
                     </button>
@@ -524,7 +524,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
                 )}
                 <button
                   onClick={() => handleDelete(item)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Excluir
                 </button>

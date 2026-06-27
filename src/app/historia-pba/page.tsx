@@ -172,7 +172,7 @@ export default function HistoriaPBAPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventoJsonLd) }} />
 
-      <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">História <span className="text-[#25D366]">PBA</span></p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-primary mb-2">História <span className="text-[#25D366]">PBA</span></p>
       <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight">
         A história de Piracanjuba
       </h1>
@@ -284,7 +284,7 @@ export default function HistoriaPBAPage() {
             <Flower2 className="w-5 h-5 text-fuchsia-600" aria-hidden />
           </div>
           <div className="min-w-0">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-wide text-fuchsia-700 dark:text-fuchsia-400 bg-fuchsia-500/10 rounded-full px-2 py-0.5 mb-2">
+            <span className="inline-block text-xs font-semibold uppercase tracking-wide text-fuchsia-700 dark:text-fuchsia-400 bg-fuchsia-500/10 rounded-full px-2 py-0.5 mb-2">
               Capital Goiana das Orquídeas
             </span>
             <h2 id="orquideas" className="text-xl md:text-2xl font-bold text-foreground mb-2">A Capital das Orquídeas</h2>
@@ -472,8 +472,8 @@ export default function HistoriaPBAPage() {
               <div className="min-w-0">
                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                   <h3 className="text-base md:text-lg font-bold text-foreground">{p.nome}</h3>
-                  <span className="text-xs font-medium text-rose-600 dark:text-rose-400">{p.papel}</span>
-                  {p.periodo && <span className="text-xs text-muted-foreground">· {p.periodo}</span>}
+                  <span className="text-sm font-medium text-rose-600 dark:text-rose-400">{p.papel}</span>
+                  {p.periodo && <span className="text-sm text-muted-foreground">· {p.periodo}</span>}
                 </div>
                 <p className="text-sm md:text-base text-foreground/85 leading-relaxed mt-1">{p.bio}</p>
               </div>
@@ -601,7 +601,7 @@ export default function HistoriaPBAPage() {
         </div>
       </section>
 
-      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+      <p className="text-sm text-muted-foreground flex items-center gap-1.5">
         <Info className="w-3.5 h-3.5 shrink-0" aria-hidden />
         Página informativa e cultural, sem vínculo com órgão público.
       </p>

@@ -72,7 +72,7 @@ function AnuncioCard({ anuncio }: { anuncio: Anuncio }) {
       ) : (
         <div className={`stat-card ${isDestaque ? "border-primary/20 bg-primary/5" : ""}`}>
           <p className="text-sm font-medium text-foreground">{anuncio.nome_empresa}</p>
-          <span className="inline-block text-[9px] mt-1 px-2 py-0.5 rounded bg-muted text-muted-foreground">
+          <span className="inline-block text-xs mt-1 px-2 py-0.5 rounded bg-muted text-muted-foreground">
             Patrocinado
           </span>
         </div>

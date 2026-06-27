@@ -48,7 +48,7 @@ export default async function BolsaFamiliaCard() {
           <h3 id="bolsa-familia-heading" className="text-base font-bold text-foreground">
             Bolsa Família em Piracanjuba
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             Pagamentos do programa de transferência de renda no município nos
             últimos 12 meses. Fonte: Portal da Transparência Federal (CGU).
           </p>
@@ -58,7 +58,7 @@ export default async function BolsaFamiliaCard() {
       {/* KPIs do último mês */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="rounded-xl bg-background border border-border p-3">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
             Mês mais recente
           </p>
           <p className="text-base md:text-lg font-extrabold text-foreground leading-tight mt-0.5">
@@ -66,7 +66,7 @@ export default async function BolsaFamiliaCard() {
           </p>
         </div>
         <div className="rounded-xl bg-background border border-border p-3">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
             Valor pago
           </p>
           <p className="text-base md:text-lg font-extrabold text-rose-700 leading-tight mt-0.5">
@@ -74,7 +74,7 @@ export default async function BolsaFamiliaCard() {
           </p>
         </div>
         <div className="rounded-xl bg-background border border-border p-3 col-span-2 md:col-span-1">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
             Famílias beneficiadas
           </p>
           <p className="text-base md:text-lg font-extrabold text-foreground leading-tight mt-0.5">
@@ -85,7 +85,7 @@ export default async function BolsaFamiliaCard() {
 
       {/* Mini gráfico de barras */}
       <div className="rounded-xl bg-background border border-border p-3">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
           Evolução mensal (R$)
         </p>
         <div className="flex items-end gap-1 h-20" aria-hidden>
@@ -108,7 +108,7 @@ export default async function BolsaFamiliaCard() {
             );
           })}
         </div>
-        <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
           <span>{MESES[meses[0].mes - 1]}/{meses[0].ano}</span>
           <span>{MESES[ultimo.mes - 1]}/{ultimo.ano}</span>
         </div>
@@ -116,12 +116,12 @@ export default async function BolsaFamiliaCard() {
 
       {/* Resumo + variação */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Total dos últimos {meses.length} meses:{" "}
           <strong className="text-foreground">{fmtMoeda(totalAno)}</strong>
         </p>
         {Math.abs(variacao) > 1 && (
-          <p className={`inline-flex items-center gap-1 text-xs font-semibold ${
+          <p className={`inline-flex items-center gap-1 text-sm font-semibold ${
             variacao > 0 ? "text-emerald-700" : "text-amber-700"
           }`}>
             <TrendingUp
@@ -132,7 +132,7 @@ export default async function BolsaFamiliaCard() {
         )}
       </div>
 
-      <p className="text-[11px] text-muted-foreground border-t border-border pt-3">
+      <p className="text-xs text-muted-foreground border-t border-border pt-3">
         Fonte:{" "}
         <Link
           href="https://portaldatransparencia.gov.br/programas-e-acoes/bolsa-familia"

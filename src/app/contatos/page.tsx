@@ -129,7 +129,7 @@ export default function ContatosUteisPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{item.nome}</p>
-                    <p className="text-xs text-muted-foreground">{item.display}</p>
+                    <p className="text-sm text-muted-foreground">{item.display}</p>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </a>

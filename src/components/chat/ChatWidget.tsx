@@ -233,7 +233,7 @@ export default function ChatWidget() {
             <Sparkles className="w-5 h-5" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold leading-tight">Assistente Piracanjuba.ai</p>
-              <p className="text-[11px] text-white/80 leading-tight">Pergunte sobre os dados públicos</p>
+              <p className="text-xs text-white/80 leading-tight">Pergunte sobre os dados públicos</p>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Fechar" className="p-1 rounded-md hover:bg-white/20 transition-colors">
               <X className="w-5 h-5" />
@@ -252,7 +252,7 @@ export default function ChatWidget() {
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground hover:border-[#25D366] hover:text-[#1da851] transition-colors"
+                      className="rounded-full border border-border bg-card px-2.5 py-1 text-sm text-foreground hover:border-[#25D366] hover:text-[#1da851] transition-colors"
                     >
                       {s}
                     </button>
@@ -285,7 +285,7 @@ export default function ChatWidget() {
             ))}
 
             {error && (
-              <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+              <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                 <span>{error}</span>
               </div>
@@ -323,7 +323,7 @@ export default function ChatWidget() {
                 {streaming ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowUp className="w-4 h-4" />}
               </button>
             </div>
-            <p className="mt-1.5 text-[10px] text-muted-foreground text-center">
+            <p className="mt-1.5 text-xs text-muted-foreground text-center">
               Respostas geradas por IA a partir de dados públicos. Podem conter erros, confira na fonte oficial.
             </p>
           </div>

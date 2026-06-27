@@ -32,7 +32,7 @@ function SubHeader({ title, icon: Icon, description }: { title: string; icon: ty
         <Icon className="w-4 h-4 text-primary" />
         {title}
       </h3>
-      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 }
@@ -70,7 +70,7 @@ export default function TerritorioRuralPanel() {
           </div>
           Território, comunidades e políticas
         </h2>
-        <p className="text-xs text-muted-foreground mt-1 ml-10">
+        <p className="text-sm text-muted-foreground mt-1 ml-10">
           Onde Piracanjuba se posiciona no Sul Goiano, suas comunidades rurais e a compra pública da agricultura familiar.
         </p>
       </div>
@@ -84,15 +84,15 @@ export default function TerritorioRuralPanel() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1">Soja: área plantada (ha), 2024</p>
+            <p className="text-sm font-medium text-muted-foreground mb-1">Soja: área plantada (ha), 2024</p>
             <RankingBar rows={soja} cor={COR_SOJA} unidade="ha" fmtTick={(v) => `${(v / 1000).toFixed(0)}k`} />
           </div>
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1">Leite: produção (mil litros), 2023</p>
+            <p className="text-sm font-medium text-muted-foreground mb-1">Leite: produção (mil litros), 2023</p>
             <RankingBar rows={leite} cor={COR_LEITE} unidade="mil L" fmtTick={(v) => `${(v / 1000).toFixed(0)}mi`} />
           </div>
         </div>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
           <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
           <span>
             Perfil produtivo duplo: Piracanjuba é <strong>{rankSoja}º em área de soja</strong> e{" "}
@@ -100,7 +100,7 @@ export default function TerritorioRuralPanel() {
             a fronteira de grãos com a maior bacia leiteira da região.
           </span>
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — PAM (tabela 1612, soja 2024) e PPM (tabela 74, leite 2023).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — PAM (tabela 1612, soja 2024) e PPM (tabela 74, leite 2023).</p>
       </div>
 
       {/* 2. Comunidades rurais */}
@@ -114,12 +114,12 @@ export default function TerritorioRuralPanel() {
           {COMUNIDADES_RURAIS.map((c) => (
             <div key={c.nome} className="rounded-lg bg-background border p-3">
               <p className="text-sm font-semibold text-foreground">{c.nome}</p>
-              <p className="text-[10px] font-medium text-primary mt-0.5">{c.tipo}</p>
-              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{c.descricao}</p>
+              <p className="text-xs font-medium text-primary mt-0.5">{c.tipo}</p>
+              <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{c.descricao}</p>
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Fonte: IBGE — Mapa Municipal Estatístico (Censo 2022) e estudos acadêmicos sobre a bacia do Piracanjuba.
         </p>
       </div>
@@ -135,22 +135,22 @@ export default function TerritorioRuralPanel() {
           {PNAE.anos.map((a) => (
             <div key={a.ano} className="rounded-lg bg-background border p-3 text-center">
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{a.pct.toLocaleString("pt-BR")}%</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">comprado da agricultura familiar em {a.ano}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">{brl(a.valorAF)} de {brl(a.valorTotal)}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">comprado da agricultura familiar em {a.ano}</p>
+              <p className="text-xs text-muted-foreground mt-1">{brl(a.valorAF)} de {brl(a.valorTotal)}</p>
             </div>
           ))}
           <div className="rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-3 text-center flex flex-col justify-center">
             <p className="text-2xl font-bold text-foreground">{PNAE.minimoLegalPct}%</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">é o mínimo exigido por lei</p>
+            <p className="text-xs text-muted-foreground mt-0.5">é o mínimo exigido por lei</p>
           </div>
         </div>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           Nos anos com planilhas consolidadas do FNDE, Piracanjuba ficou <strong>abaixo do mínimo legal de 30%</strong>:
           24,8% em 2013 e 11,8% em 2016. Ainda assim, há continuidade institucional: a Prefeitura abriu chamadas públicas
           para a agricultura familiar em {PNAE.chamadasRecentes.join(", ")}, sempre citando a Feira do Produtor como ponto
           de entrega. O percentual efetivamente executado nos anos recentes não foi localizado nas bases públicas consultadas.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Fonte: FNDE — planilhas de aquisição da agricultura familiar (2013, 2016); editais de chamada pública da Prefeitura de Piracanjuba.
         </p>
       </div>
@@ -162,7 +162,7 @@ export default function TerritorioRuralPanel() {
           icon={History}
           description="O contexto histórico por trás da transformação do campo de Piracanjuba."
         />
-        <div className="space-y-2.5 text-xs text-foreground/80 leading-relaxed">
+        <div className="space-y-2.5 text-sm text-foreground/80 leading-relaxed">
           <p>
             A soja era praticamente inexistente em Goiás em 1970. A expansão veio de programas federais de ocupação do
             Cerrado: o <strong>POLOCENTRO</strong> (1975) e o <strong>PRODECER</strong> (idealizado em 1974, implementado a
@@ -179,7 +179,7 @@ export default function TerritorioRuralPanel() {
             conservadora, que elevou a produção sem mudar a estrutura de posse e acelerou o êxodo rural.
           </p>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Fonte: literatura acadêmica sobre a modernização agrícola em Goiás (teses UFU/UFSC) e Embrapa.
         </p>
       </div>

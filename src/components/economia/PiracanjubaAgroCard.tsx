@@ -18,7 +18,7 @@ export default async function PiracanjubaAgroCard() {
         <h3 id="agro-heading" className="text-base md:text-lg font-bold text-foreground">
           Piracanjuba na agricultura
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="text-sm text-muted-foreground mt-0.5">
           Pesquisa Pecuária Municipal (IBGE/SIDRA) — última safra disponível
         </p>
       </header>
@@ -28,14 +28,14 @@ export default async function PiracanjubaAgroCard() {
           <div className="rounded-xl bg-background border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <Beef className="w-5 h-5 text-amber-700" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Rebanho bovino
               </p>
             </div>
             <p className="text-2xl md:text-3xl font-extrabold text-foreground leading-none">
               {fmtNumero(dados.bovinos.cabecas)}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               cabeças de gado · referência {dados.bovinos.ano}
             </p>
           </div>
@@ -45,21 +45,21 @@ export default async function PiracanjubaAgroCard() {
           <div className="rounded-xl bg-background border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <Droplet className="w-5 h-5 text-blue-600" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Produção de leite
               </p>
             </div>
             <p className="text-2xl md:text-3xl font-extrabold text-foreground leading-none">
               {fmtNumero(dados.leite.milLitros * 1000)}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               litros/ano · referência {dados.leite.ano}
             </p>
           </div>
         )}
       </div>
 
-      <p className="text-[11px] text-muted-foreground mt-4">
+      <p className="text-xs text-muted-foreground mt-4">
         Fonte: IBGE — Pesquisa Pecuária Municipal (PPM) via SIDRA. Atualização
         anual com defasagem de 1–2 anos.
       </p>

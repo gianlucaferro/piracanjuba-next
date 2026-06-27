@@ -44,9 +44,9 @@ export default function LicitacoesTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{filtered.length} licitações encontradas</p>
+        <p className="text-sm text-muted-foreground">{filtered.length} licitações encontradas</p>
         {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
         )}
@@ -69,9 +69,9 @@ export default function LicitacoesTab() {
             <button key={l.id} onClick={() => handleClick(l)} className="stat-card card-hover block w-full text-left">
               <div className="flex items-start justify-between mb-1">
                 <p className="font-medium text-foreground text-sm">{l.objeto || "Sem descrição"}</p>
-                {l.situacao && <Badge variant="outline" className="text-xs shrink-0 ml-2">{l.situacao}</Badge>}
+                {l.situacao && <Badge variant="outline" className="text-sm shrink-0 ml-2">{l.situacao}</Badge>}
               </div>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground items-center">
+              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
                 {l.numero && <span>Nº {l.numero}</span>}
                 {l.modalidade && (
                   modalidadeTooltip ? (
@@ -79,7 +79,7 @@ export default function LicitacoesTab() {
                       <TooltipTrigger asChild>
                         <span className="inline-flex items-center gap-0.5 cursor-help">· {l.modalidade} <Info className="w-3 h-3" /></span>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs"><p className="text-xs">{modalidadeTooltip}</p></TooltipContent>
+                      <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>
                     </Tooltip>
                   ) : (
                     <span>· {l.modalidade}</span>
@@ -88,7 +88,7 @@ export default function LicitacoesTab() {
                 {l.data_abertura && <span>· {new Date(l.data_abertura + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
                 {l.valor_estimado && <span>· {formatCurrency(l.valor_estimado)}</span>}
               </div>
-              <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+              <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                 <Sparkles className="w-3 h-3" /> Clique para resumo IA
               </p>
             </button>

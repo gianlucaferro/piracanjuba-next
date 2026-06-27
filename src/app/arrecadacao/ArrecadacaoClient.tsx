@@ -188,7 +188,7 @@ function CardsResumo({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipal[];
       <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
         <BarChart3 className="w-4 h-4 text-primary" />
         Resumo — {anoSelecionado}
-        <span className="text-[10px] font-normal text-muted-foreground ml-1 flex items-center gap-0.5">
+        <span className="text-xs font-normal text-muted-foreground ml-1 flex items-center gap-0.5">
           <Sparkles className="w-3 h-3" /> Clique no card para resumo IA
         </span>
       </h2>
@@ -207,12 +207,12 @@ function CardsResumo({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipal[];
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="text-xs text-muted-foreground mb-1">{c.label}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{c.label}</p>
                     <p className="text-xl font-bold text-foreground">
                       {c.valor > 0 ? formatCompact(c.valor) : <span className="text-muted-foreground text-sm">Não disponível</span>}
                     </p>
                     {v && c.valor > 0 && (
-                      <div className={`flex items-center gap-1 mt-1 text-xs ${v.pct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      <div className={`flex items-center gap-1 mt-1 text-sm ${v.pct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                         {v.pct >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                         <span>{v.label} vs {anoSelecionado - 1}</span>
                       </div>
@@ -230,16 +230,16 @@ function CardsResumo({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipal[];
                 {isExpanded && (
                   <div className="mt-3 pt-3 border-t border-border">
                     {isLoading ? (
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
                         <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
                         <span>Gerando resumo com IA...</span>
                       </div>
                     ) : resumos[c.label] ? (
                       <div className="space-y-1.5">
-                        <p className="text-[10px] font-medium text-primary flex items-center gap-1">
+                        <p className="text-xs font-medium text-primary flex items-center gap-1">
                           <Sparkles className="w-3 h-3" /> Resumo IA
                         </p>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           {resumos[c.label]}
                         </p>
                       </div>
@@ -248,7 +248,7 @@ function CardsResumo({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipal[];
                 )}
 
                 {fonte?.fonte_url && (
-                  <p className="text-[10px] text-muted-foreground mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     <a href={fonte.fonte_url} target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
                       Fonte oficial <ExternalLink className="w-2.5 h-2.5" />
                     </a>
@@ -310,19 +310,19 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setVisao("total")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${visao === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${visao === "total" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
           >
             Receita Total
           </button>
           <button
             onClick={() => setVisao("anual")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${visao === "anual" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${visao === "anual" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
           >
             Própria vs IPVA
           </button>
           <button
             onClick={() => setVisao("categorias")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${visao === "categorias" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${visao === "categorias" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
           >
             Por Categoria
           </button>
@@ -379,7 +379,7 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">Sem dados disponíveis para gráficos</p>
           )}
-          <p className="text-[10px] text-muted-foreground mt-2">Fonte: Tesouro Nacional - SICONFI</p>
+          <p className="text-xs text-muted-foreground mt-2">Fonte: Tesouro Nacional - SICONFI</p>
         </CardContent>
       </Card>
     </div>
@@ -430,10 +430,10 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
           Tabela Detalhada
         </h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={exportCSV} className="text-xs">
+          <Button variant="outline" size="sm" onClick={exportCSV} className="text-sm">
             <Download className="w-3 h-3 mr-1" /> Baixar CSV
           </Button>
-          <Button variant="outline" size="sm" onClick={copyLink} className="text-xs">
+          <Button variant="outline" size="sm" onClick={copyLink} className="text-sm">
             <Link2 className="w-3 h-3 mr-1" /> Copiar link
           </Button>
         </div>
@@ -441,7 +441,7 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
 
       <div className="flex gap-2 flex-wrap">
         <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-          <SelectTrigger className="w-[180px] h-9 text-xs">
+          <SelectTrigger className="w-[180px] h-9 text-sm">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -452,7 +452,7 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
           </SelectContent>
         </Select>
         <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
-          <SelectTrigger className="w-[180px] h-9 text-xs">
+          <SelectTrigger className="w-[180px] h-9 text-sm">
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
           <SelectContent>
@@ -469,13 +469,13 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-xs">Categoria</TableHead>
-                <TableHead className="text-xs">Subcategoria</TableHead>
-                <TableHead className="text-xs">Período</TableHead>
-                <TableHead className="text-xs text-right">Valor (R$)</TableHead>
-                <TableHead className="text-xs">Tipo</TableHead>
-                <TableHead className="text-xs">Fonte</TableHead>
-                <TableHead className="text-xs">Obs.</TableHead>
+                <TableHead className="text-sm">Categoria</TableHead>
+                <TableHead className="text-sm">Subcategoria</TableHead>
+                <TableHead className="text-sm">Período</TableHead>
+                <TableHead className="text-sm text-right">Valor (R$)</TableHead>
+                <TableHead className="text-sm">Tipo</TableHead>
+                <TableHead className="text-sm">Fonte</TableHead>
+                <TableHead className="text-sm">Obs.</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -488,25 +488,25 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
               ) : (
                 filtrados.slice(0, 100).map(d => (
                   <TableRow key={d.id}>
-                    <TableCell className="text-xs font-medium">{CATEGORIA_LABELS[d.categoria] || d.categoria}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{d.subcategoria || "—"}</TableCell>
-                    <TableCell className="text-xs">{d.ano}</TableCell>
-                    <TableCell className="text-xs text-right font-medium">
+                    <TableCell className="text-sm font-medium">{CATEGORIA_LABELS[d.categoria] || d.categoria}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{d.subcategoria || "—"}</TableCell>
+                    <TableCell className="text-sm">{d.ano}</TableCell>
+                    <TableCell className="text-sm text-right font-medium">
                       {d.valor != null ? formatCurrency(d.valor) : <span className="text-muted-foreground">N/D</span>}
                     </TableCell>
-                    <TableCell className="text-xs">
-                      <Badge variant="secondary" className="text-[9px]">
+                    <TableCell className="text-sm">
+                      <Badge variant="secondary" className="text-xs">
                         {d.tipo === "receita_propria" ? "Própria" : d.tipo === "repasse_ipva" ? "IPVA" : "Repasse"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs">
+                    <TableCell className="text-sm">
                       {d.fonte_url ? (
                         <a href={d.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5">
                           Fonte <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       ) : d.fonte_nome}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">
+                    <TableCell className="text-sm text-muted-foreground max-w-[150px] truncate">
                       {d.observacoes || "—"}
                     </TableCell>
                   </TableRow>
@@ -517,7 +517,7 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
         </CardContent>
       </Card>
       {filtrados.length > 100 && (
-        <p className="text-xs text-muted-foreground text-center">Mostrando 100 de {filtrados.length} registros. Use o CSV para dados completos.</p>
+        <p className="text-sm text-muted-foreground text-center">Mostrando 100 de {filtrados.length} registros. Use o CSV para dados completos.</p>
       )}
     </div>
   );
@@ -545,7 +545,7 @@ function SecaoIPVA({ dados }: { dados: ArrecadacaoMunicipal[] }) {
 
       <Card>
         <CardContent className="p-4 space-y-4">
-          <div className="bg-secondary/50 rounded-lg p-3 text-xs text-muted-foreground space-y-2">
+          <div className="bg-secondary/50 rounded-lg p-3 text-sm text-muted-foreground space-y-2">
             <p className="font-medium text-foreground flex items-center gap-1">
               <Info className="w-3.5 h-3.5 text-primary" /> O que é a cota-parte do IPVA?
             </p>
@@ -581,17 +581,17 @@ function SecaoIPVA({ dados }: { dados: ArrecadacaoMunicipal[] }) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-xs">Ano</TableHead>
-                  <TableHead className="text-xs text-right">Valor Repassado</TableHead>
-                  <TableHead className="text-xs">Fonte</TableHead>
+                  <TableHead className="text-sm">Ano</TableHead>
+                  <TableHead className="text-sm text-right">Valor Repassado</TableHead>
+                  <TableHead className="text-sm">Fonte</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {ipvaData.map(d => (
                   <TableRow key={d.id}>
-                    <TableCell className="text-xs font-medium">{d.ano}</TableCell>
-                    <TableCell className="text-xs text-right font-medium">{formatCurrency(d.valor)}</TableCell>
-                    <TableCell className="text-xs">
+                    <TableCell className="text-sm font-medium">{d.ano}</TableCell>
+                    <TableCell className="text-sm text-right font-medium">{formatCurrency(d.valor)}</TableCell>
+                    <TableCell className="text-sm">
                       {d.fonte_url ? (
                         <a href={d.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5">
                           Fonte oficial <ExternalLink className="w-2.5 h-2.5" />
@@ -604,7 +604,7 @@ function SecaoIPVA({ dados }: { dados: ArrecadacaoMunicipal[] }) {
             </Table>
           )}
 
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Fonte principal: <a href="https://goias.gov.br/economia/repasse-aos-municipios/" target="_blank" rel="noopener noreferrer" className="hover:underline">
               Secretaria da Economia de Goiás — Repasse aos Municípios <ExternalLink className="w-2.5 h-2.5 inline" />
             </a>
@@ -639,27 +639,27 @@ function IndicadoresPerCapita({ dados }: { dados: ArrecadacaoMunicipal[] }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">Arrecadação própria per capita</p>
+            <p className="text-sm text-muted-foreground mb-1">Arrecadação própria per capita</p>
             <p className="text-2xl font-bold text-foreground">{perCapita ? formatCurrency(perCapita) : "N/D"}</p>
-            <p className="text-[10px] text-muted-foreground mt-1">/habitante</p>
+            <p className="text-xs text-muted-foreground mt-1">/habitante</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">IPTU per capita</p>
+            <p className="text-sm text-muted-foreground mb-1">IPTU per capita</p>
             <p className="text-2xl font-bold text-foreground">{iptuPc ? formatCurrency(iptuPc) : "N/D"}</p>
-            <p className="text-[10px] text-muted-foreground mt-1">/habitante</p>
+            <p className="text-xs text-muted-foreground mt-1">/habitante</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">ISS per capita</p>
+            <p className="text-sm text-muted-foreground mb-1">ISS per capita</p>
             <p className="text-2xl font-bold text-foreground">{issPc ? formatCurrency(issPc) : "N/D"}</p>
-            <p className="text-[10px] text-muted-foreground mt-1">/habitante</p>
+            <p className="text-xs text-muted-foreground mt-1">/habitante</p>
           </CardContent>
         </Card>
       </div>
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         Fórmula: valor arrecadado ÷ população ({formatNumber(POPULACAO_IBGE)} hab. — IBGE Estimativa 2025). 
         <a href="https://ftp.ibge.gov.br/Estimativas_de_Populacao/Estimativas_2025/estimativa_dou_2025.pdf" target="_blank" rel="noopener noreferrer" className="hover:underline ml-1">
           Fonte IBGE <ExternalLink className="w-2.5 h-2.5 inline" />
@@ -722,7 +722,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
         </h2>
         {anos.length > 1 && (
           <Select value={String(anoAtivo)} onValueChange={v => setAnoComp(Number(v))}>
-            <SelectTrigger className="w-[100px] h-8 text-xs">
+            <SelectTrigger className="w-[100px] h-8 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -740,19 +740,19 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
           <CardContent className="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Piracanjuba — Per capita</p>
+                <p className="text-sm text-muted-foreground mb-1">Piracanjuba — Per capita</p>
                 <p className="text-2xl font-bold text-foreground">
                   {totalAno.piracanjuba_per_capita ? formatCurrency(totalAno.piracanjuba_per_capita) : "N/D"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Média GO (mesmo porte)</p>
+                <p className="text-sm text-muted-foreground mb-1">Média GO (mesmo porte)</p>
                 <p className="text-2xl font-bold text-foreground">
                   {totalAno.media_go_per_capita ? formatCurrency(totalAno.media_go_per_capita) : "N/D"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Diferença</p>
+                <p className="text-sm text-muted-foreground mb-1">Diferença</p>
                 {totalAno.piracanjuba_per_capita && totalAno.media_go_per_capita ? (() => {
                   const diff = ((totalAno.piracanjuba_per_capita - totalAno.media_go_per_capita) / totalAno.media_go_per_capita) * 100;
                   return (
@@ -772,7 +772,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
       {chartData.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Arrecadação per capita por tributo — {anoAtivo}
             </CardTitle>
           </CardHeader>
@@ -796,7 +796,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
       {evolucaoData.length > 1 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Evolução da arrecadação própria per capita
             </CardTitle>
           </CardHeader>
@@ -817,8 +817,8 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
       )}
 
       {/* Methodology note */}
-      <div className="bg-secondary/50 rounded-lg p-3 text-[10px] text-muted-foreground space-y-1">
-        <p className="font-medium text-foreground text-xs flex items-center gap-1">
+      <div className="bg-secondary/50 rounded-lg p-3 text-xs text-muted-foreground space-y-1">
+        <p className="font-medium text-foreground text-sm flex items-center gap-1">
           <Info className="w-3 h-3 text-primary" /> Metodologia do comparativo
         </p>
         <p>
@@ -848,7 +848,7 @@ function MetodologiaSection() {
         Metodologia e Transparência
       </h2>
       <Card>
-        <CardContent className="p-4 text-xs text-muted-foreground space-y-3">
+        <CardContent className="p-4 text-sm text-muted-foreground space-y-3">
           <div>
             <p className="font-medium text-foreground mb-1">Fontes oficiais utilizadas</p>
             <ul className="space-y-1 list-disc list-inside">
@@ -943,7 +943,7 @@ export default function Arrecadacao() {
             <div className="flex items-center gap-2">
               {anos.length > 0 && (
                 <Select value={String(anoAtivo)} onValueChange={v => setAnoSelecionado(Number(v))}>
-                  <SelectTrigger className="w-[120px] h-9 text-xs">
+                  <SelectTrigger className="w-[120px] h-9 text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -954,7 +954,7 @@ export default function Arrecadacao() {
                 </Select>
               )}
               {ultimaAtualizacao && (
-                <Badge variant="outline" className="text-[9px]">
+                <Badge variant="outline" className="text-xs">
                   <Calendar className="w-2.5 h-2.5 mr-1" />
                   Atualizado: {ultimaAtualizacao}
                 </Badge>
@@ -975,7 +975,7 @@ export default function Arrecadacao() {
             <CardContent className="p-6 text-center">
               <AlertTriangle className="w-8 h-8 text-destructive mx-auto mb-2" />
               <p className="text-sm text-destructive">Erro ao carregar dados de arrecadação</p>
-              <p className="text-xs text-muted-foreground mt-1">Tente novamente mais tarde</p>
+              <p className="text-sm text-muted-foreground mt-1">Tente novamente mais tarde</p>
             </CardContent>
           </Card>
         )}
@@ -985,7 +985,7 @@ export default function Arrecadacao() {
             <CardContent className="p-8 text-center">
               <HelpCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm font-medium text-foreground">Dados de arrecadação ainda não disponíveis</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Os dados serão carregados automaticamente a partir do Tesouro Nacional (SICONFI).
               </p>
             </CardContent>

@@ -89,12 +89,12 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           <h3 className="font-semibold text-foreground truncate">{v.nome}</h3>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             {v.cargo_mesa && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-sm">
                 {v.cargo_mesa}
               </Badge>
             )}
             {v.partido && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-sm">
                 {v.partido}
               </Badge>
             )}
@@ -106,15 +106,15 @@ export default function VereadorCard({ v }: { v: Vereador }) {
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-md bg-muted p-2">
           <p className="text-lg font-bold text-foreground">{projectCounts.apresentados}</p>
-          <p className="text-[11px] text-muted-foreground">Projetos de Lei</p>
+          <p className="text-xs text-muted-foreground">Projetos de Lei</p>
         </div>
         <div className="rounded-md bg-success/10 p-2">
           <p className="text-lg font-bold text-success">{projectCounts.aprovados}</p>
-          <p className="text-[11px] text-muted-foreground">Aprovados</p>
+          <p className="text-xs text-muted-foreground">Aprovados</p>
         </div>
         <div className="rounded-md bg-destructive/10 p-2">
           <p className="text-lg font-bold text-destructive">{projectCounts.recusados}</p>
-          <p className="text-[11px] text-muted-foreground">Recusados</p>
+          <p className="text-xs text-muted-foreground">Recusados</p>
         </div>
       </div>
 
@@ -122,15 +122,15 @@ export default function VereadorCard({ v }: { v: Vereador }) {
       <div className="mt-2 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-md bg-primary/10 p-2">
           <p className="text-lg font-bold text-primary">{atuacaoCounts.indicacoes}</p>
-          <p className="text-[11px] text-muted-foreground">Indicações</p>
+          <p className="text-xs text-muted-foreground">Indicações</p>
         </div>
         <div className="rounded-md bg-accent/10 p-2">
           <p className="text-lg font-bold text-accent">{atuacaoCounts.requerimentos}</p>
-          <p className="text-[11px] text-muted-foreground">Requerimentos</p>
+          <p className="text-xs text-muted-foreground">Requerimentos</p>
         </div>
         <div className="rounded-md bg-muted p-2">
           <p className="text-lg font-bold text-muted-foreground">{atuacaoCounts.mocoes}</p>
-          <p className="text-[11px] text-muted-foreground">Moções</p>
+          <p className="text-xs text-muted-foreground">Moções</p>
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           <DollarSign className="w-4 h-4 text-accent flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground">{formatCurrency(salario)}</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Subsídio mensal {remuneracao?.competencia ? `(${remuneracao.competencia})` : ""}
             </p>
           </div>
@@ -154,16 +154,16 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground">
               {formatCurrency(custoTotalAnual)}
-              <span className="text-[10px] font-normal text-muted-foreground">/ano</span>
+              <span className="text-xs font-normal text-muted-foreground">/ano</span>
             </p>
             <Tooltip>
               <TooltipTrigger asChild>
-                <p className="text-[10px] text-muted-foreground inline-flex items-center gap-0.5 cursor-help">
+                <p className="text-xs text-muted-foreground inline-flex items-center gap-0.5 cursor-help">
                   Custo total para o contribuinte <Info className="w-3 h-3" />
                 </p>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
-                <p className="text-xs">
+                <p className="text-sm">
                   Subsídio anual ({formatCurrency(salario! * 12)})
                   {diariasTotal > 0 ? ` + Diárias (${formatCurrency(diariasTotal)})` : ""}
                   {rateioCamara > 0 ? ` + Rateio do custo da Câmara por vereador (${formatCurrency(rateioCamara)}) — inclui assessores, funcionários e estrutura` : ""}
@@ -180,7 +180,7 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           <Vote className="w-4 h-4 text-muted-foreground flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground">{v.votos_eleicao.toLocaleString("pt-BR")} votos</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Eleição {v.ano_eleicao || 2024}
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           <HandCoins className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground">{formatCurrency(totalDoacoes)}</p>
-            <p className="text-[10px] text-muted-foreground">Doações de campanha 2024 · ver doadores</p>
+            <p className="text-xs text-muted-foreground">Doações de campanha 2024 · ver doadores</p>
           </div>
           <ArrowRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
         </button>

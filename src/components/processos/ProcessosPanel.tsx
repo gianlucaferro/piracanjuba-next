@@ -131,7 +131,7 @@ export default function ProcessosPanel({
             <h3 className="text-base font-semibold text-foreground">
               Processos Judiciais
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Nenhum processo público encontrado para {nomePessoa} via
               Escavador.
               {ultimaAtualizacao && (
@@ -158,7 +158,7 @@ export default function ProcessosPanel({
           <h3 className="text-base font-semibold text-foreground">
             Processos Judiciais
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             {processos.length} processo{processos.length > 1 ? "s" : ""} público
             {processos.length > 1 ? "s" : ""} de {nomePessoa}
             {totalAtivos > 0 && (
@@ -192,13 +192,13 @@ export default function ProcessosPanel({
               <div key={s.tipo} className="stat-card p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <Icon className={`w-4 h-4 ${TIPO_COR[s.tipo] || "text-slate-500"}`} />
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {TIPO_LABEL[s.tipo] || s.tipo}
                   </p>
                 </div>
                 <p className="text-xl font-extrabold text-foreground">{s.total}</p>
                 {s.ativos > 0 && (
-                  <p className="text-[10px] text-amber-700 font-semibold">
+                  <p className="text-xs text-amber-700 font-semibold">
                     {s.ativos} ativo{s.ativos > 1 ? "s" : ""}
                   </p>
                 )}
@@ -229,28 +229,28 @@ export default function ProcessosPanel({
               {/* Header: tipo, polo, status, num movs */}
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span
-                  className={`inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider ${cor}`}
+                  className={`inline-flex items-center gap-1 text-xs uppercase font-bold tracking-wider ${cor}`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {p.tipo_categoria ? TIPO_LABEL[p.tipo_categoria] : "—"}
                 </span>
                 {p.polo && (
-                  <span className="text-[10px] uppercase font-semibold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
+                  <span className="text-xs uppercase font-semibold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
                     {p.polo}
                   </span>
                 )}
                 <span
-                  className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${statusCor}`}
+                  className={`text-xs uppercase font-semibold px-1.5 py-0.5 rounded ${statusCor}`}
                 >
                   {statusTxt}
                 </span>
                 {p.tem_sentenca && (
-                  <span className="inline-flex items-center gap-1 text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700">
+                  <span className="inline-flex items-center gap-1 text-xs uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700">
                     <Gavel className="w-3 h-3" /> Sentença
                   </span>
                 )}
                 {p.quantidade_movimentacoes !== null && p.quantidade_movimentacoes > 0 && (
-                  <span className="inline-flex items-center gap-1 text-[10px] uppercase font-semibold text-muted-foreground">
+                  <span className="inline-flex items-center gap-1 text-xs uppercase font-semibold text-muted-foreground">
                     <Activity className="w-3 h-3" />
                     {p.quantidade_movimentacoes} mov.
                     {p.quantidade_movimentacoes >= 50 ? "+" : ""}
@@ -267,7 +267,7 @@ export default function ProcessosPanel({
 
               {/* Classe + assunto */}
               {p.classe && (
-                <p className="text-xs text-muted-foreground mb-2">
+                <p className="text-sm text-muted-foreground mb-2">
                   {p.classe}
                   {p.assunto && p.assunto !== p.classe && ` · ${p.assunto}`}
                 </p>
@@ -276,7 +276,7 @@ export default function ProcessosPanel({
               {/* RESUMO IA — destaque principal */}
               {p.resumo_ia && (
                 <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
-                  <p className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-primary mb-1.5">
+                  <p className="inline-flex items-center gap-1.5 text-xs uppercase font-bold tracking-wider text-primary mb-1.5">
                     <Sparkles className="w-3 h-3" />
                     Resumo do processo
                   </p>
@@ -289,7 +289,7 @@ export default function ProcessosPanel({
               {/* SENTENÇA — se houver */}
               {p.tem_sentenca && sentencaTrim && (
                 <div className="mt-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-                  <p className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-blue-700 mb-1.5">
+                  <p className="inline-flex items-center gap-1.5 text-xs uppercase font-bold tracking-wider text-blue-700 mb-1.5">
                     <Gavel className="w-3 h-3" />
                     Decisão/Sentença
                   </p>
@@ -301,7 +301,7 @@ export default function ProcessosPanel({
 
               {/* Movimentação recente */}
               {p.movimentacao_recente && (
-                <p className="mt-2 text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                <p className="mt-2 text-xs text-muted-foreground inline-flex items-center gap-1">
                   <Activity className="w-3 h-3" />
                   <span className="font-semibold">Última atividade:</span>{" "}
                   {p.movimentacao_recente}
@@ -309,7 +309,7 @@ export default function ProcessosPanel({
               )}
 
               {/* Meta: tribunal + datas */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
                 {p.tribunal && (
                   <span>
                     🏛️ {p.tribunal}
@@ -340,7 +340,7 @@ export default function ProcessosPanel({
 
 function Disclaimer({ ultimaAtualizacao }: { ultimaAtualizacao?: string | null }) {
   return (
-    <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-[11px] text-muted-foreground leading-relaxed">
+    <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-xs text-muted-foreground leading-relaxed">
       <p className="font-semibold text-foreground inline-flex items-center gap-1 mb-1">
         <CircleAlert className="w-3.5 h-3.5 text-blue-600" />
         Sobre estes dados

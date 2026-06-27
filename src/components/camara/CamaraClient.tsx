@@ -123,7 +123,7 @@ function ServidoresCamaraTab() {
           onChange={(e) => handleSearch(e.target.value)} className="pl-9" aria-label="Buscar servidor da Câmara" />
       </div>
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para ver um resumo gerado por IA."}
         </p>
         {totalCount > 0 && (
@@ -142,7 +142,7 @@ function ServidoresCamaraTab() {
             Os dados serão sincronizados automaticamente do portal de transparência legislativo.
           </p>
           <a href="https://camarapiracanjuba.centi.com.br/servidor/remuneracao" target="_blank" rel="noopener noreferrer"
-            className="text-xs text-primary hover:underline mt-2 inline-block">
+            className="text-sm text-primary hover:underline mt-2 inline-block">
             Ver fonte original →
           </a>
         </div>
@@ -154,9 +154,9 @@ function ServidoresCamaraTab() {
               className="stat-card card-hover block w-full text-left flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{s.nome}</p>
-                {s.cargo && <p className="text-xs text-muted-foreground">{s.cargo}</p>}
+                {s.cargo && <p className="text-sm text-muted-foreground">{s.cargo}</p>}
               </div>
-              <span className="text-xs text-primary flex items-center gap-1">
+              <span className="text-sm text-primary flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> Ver resumo IA
               </span>
             </button>
@@ -193,13 +193,13 @@ function ServidoresCamaraTab() {
 
             {resumoData?.remuneracoes && resumoData.remuneracoes.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">Remuneração recente</p>
+                <p className="text-sm font-medium text-muted-foreground">Remuneração recente</p>
                 {resumoData.remuneracoes.map((r: any) => (
                   <div key={r.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-                    <span className="text-xs text-muted-foreground">{r.competencia}</span>
+                    <span className="text-sm text-muted-foreground">{r.competencia}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground">Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
-                      <span className="text-xs text-muted-foreground">Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
+                      <span className="text-sm text-muted-foreground">Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
+                      <span className="text-sm text-muted-foreground">Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
                     </div>
                   </div>
                 ))}
@@ -207,7 +207,7 @@ function ServidoresCamaraTab() {
             )}
 
             <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
               </p>
               {loadingResumo ? (
@@ -240,7 +240,7 @@ function TransmissaoTab() {
           A transmissão ao vivo visa oferecer maior transparência e comodidade aos cidadãos que não podem comparecer presencialmente ao plenário.
         </p>
         <a href="https://piracanjuba.go.leg.br/sessoes/" target="_blank" rel="noopener noreferrer"
-          className="text-xs text-primary hover:underline mt-3 inline-block">
+          className="text-sm text-primary hover:underline mt-3 inline-block">
           Ver página oficial →
         </a>
       </div>
@@ -283,7 +283,7 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
+                    className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
                   >
                     <Icon className="w-3.5 h-3.5 mr-1.5" />
                     {tab.label}

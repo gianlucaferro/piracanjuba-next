@@ -103,7 +103,7 @@ export default function RankingChart({
     return (
       <button
         onClick={() => onToggle(true)}
-        className="text-xs text-primary hover:underline mb-4 flex items-center gap-1"
+        className="text-sm text-primary hover:underline mb-4 flex items-center gap-1"
       >
         <Trophy className="w-3.5 h-3.5" /> Mostrar ranking
       </button>
@@ -118,11 +118,11 @@ export default function RankingChart({
         <h2 id="heading-ranking" className="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
           <Trophy className="w-5 h-5 text-accent" /> Ranking de atuação por vereador
         </h2>
-        <button onClick={() => onToggle(false)} className="text-xs text-muted-foreground hover:text-foreground">
+        <button onClick={() => onToggle(false)} className="text-sm text-muted-foreground hover:text-foreground">
           Ocultar
         </button>
       </div>
-      <div className="text-xs text-muted-foreground mb-5 rounded-lg bg-muted/40 border border-border p-2.5 leading-relaxed flex gap-2">
+      <div className="text-sm text-muted-foreground mb-5 rounded-lg bg-muted/40 border border-border p-2.5 leading-relaxed flex gap-2">
         <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
         <span>
           <strong className="text-foreground">Índice ponderado por relevância da proposição.</strong>{" "}
@@ -184,7 +184,7 @@ export default function RankingChart({
                       <div key={k} className={`h-full ${s.cls} transition-all duration-500`} style={{ width: `${(s.val / maxScore) * 100}%` }} />
                     ))}
                   </div>
-                  <div className="flex flex-wrap gap-3 mt-1 text-[10px] text-muted-foreground">
+                  <div className="flex flex-wrap gap-3 mt-1 text-xs text-muted-foreground">
                     {v.projetosLei > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" aria-hidden="true" />{v.projetosLei} proj. de lei</span>}
                     {v.projetosOutros > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" aria-hidden="true" />{v.projetosOutros} resol./decreto</span>}
                     {v.requerimentos > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-accent inline-block" aria-hidden="true" />{v.requerimentos} req.</span>}

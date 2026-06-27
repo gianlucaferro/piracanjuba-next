@@ -34,7 +34,7 @@ function StatCard({
     <div className="stat-card text-center">
       <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
       <p className="text-2xl font-bold text-foreground">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -99,7 +99,7 @@ export default function AnunciePage() {
               <h3 className="text-xl font-bold text-foreground">
                 R$ 200<span className="text-sm font-normal text-muted-foreground">/mês</span>
               </h3>
-              <p className="text-xs text-muted-foreground mt-1">Apenas R$ 6,60 por dia</p>
+              <p className="text-sm text-muted-foreground mt-1">Apenas R$ 6,60 por dia</p>
             </div>
             <div className="space-y-2">
               {[
@@ -133,7 +133,7 @@ export default function AnunciePage() {
               <h3 className="text-xl font-bold text-foreground">
                 R$ 400<span className="text-sm font-normal text-muted-foreground">/mês</span>
               </h3>
-              <p className="text-xs text-muted-foreground mt-1">Apenas R$ 13,30 por dia</p>
+              <p className="text-sm text-muted-foreground mt-1">Apenas R$ 13,30 por dia</p>
             </div>
             <div className="space-y-2">
               {[
@@ -177,8 +177,8 @@ export default function AnunciePage() {
               }`}
             >
               <span className="text-foreground">{m.meio}</span>
-              <span className="text-muted-foreground text-xs">{m.preco}</span>
-              <span className="text-xs text-muted-foreground hidden sm:block">
+              <span className="text-muted-foreground text-sm">{m.preco}</span>
+              <span className="text-sm text-muted-foreground hidden sm:block">
                 {m.alcance}
               </span>
             </div>
@@ -202,7 +202,7 @@ export default function AnunciePage() {
           <WhatsAppIcon className="w-5 h-5" />
           Falar no WhatsApp
         </a>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           WhatsApp: (64) 99237-5458 · Gianluca Ferro
         </p>
       </div>

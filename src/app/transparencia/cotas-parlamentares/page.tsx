@@ -50,7 +50,7 @@ export default async function CotasParlamentaresPage() {
           <p className="text-sm font-semibold text-foreground">
             Declaração não encontrada
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Aguardando próxima sincronização com o portal Centi.
           </p>
         </div>
@@ -116,28 +116,28 @@ export default async function CotasParlamentaresPage() {
                   Piracanjuba (esta Câmara)
                 </td>
                 <td className="px-2 py-2 text-muted-foreground">Não há</td>
-                <td className="px-2 py-2 text-xs text-muted-foreground">
+                <td className="px-2 py-2 text-sm text-muted-foreground">
                   Declaração oficial 2026
                 </td>
               </tr>
               <tr className="border-b border-border/50">
                 <td className="px-2 py-2 text-foreground">Câmara de Goiânia</td>
                 <td className="px-2 py-2 text-muted-foreground">~R$ 25.000/mês</td>
-                <td className="px-2 py-2 text-xs text-muted-foreground">
+                <td className="px-2 py-2 text-sm text-muted-foreground">
                   Resolução 32/2021
                 </td>
               </tr>
               <tr className="border-b border-border/50">
                 <td className="px-2 py-2 text-foreground">Câmara dos Deputados</td>
                 <td className="px-2 py-2 text-muted-foreground">~R$ 45.000/mês</td>
-                <td className="px-2 py-2 text-xs text-muted-foreground">
+                <td className="px-2 py-2 text-sm text-muted-foreground">
                   Cota Atividade Parlamentar (CEAP)
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p className="text-[11px] text-muted-foreground italic">
+        <p className="text-xs text-muted-foreground italic">
           Valores aproximados pra contexto. A ausência em Piracanjuba pode ser
           vista como economia ao contribuinte municipal — em um vereador de
           Goiânia, a cota anual chega a R$ 300.000.
@@ -149,7 +149,7 @@ export default async function CotasParlamentaresPage() {
         <h2 className="text-lg font-semibold text-foreground">
           Vereadores do mandato 2025-2028
         </h2>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Todos recebem apenas o subsídio mensal. Veja remuneração detalhada
           clicando em cada perfil.
         </p>
@@ -158,7 +158,7 @@ export default async function CotasParlamentaresPage() {
             <Link
               key={v.id}
               href={`/vereadores/${v.slug}`}
-              className="text-xs text-foreground hover:text-primary border border-border rounded-md px-3 py-2 inline-flex items-center gap-1 transition-colors"
+              className="text-sm text-foreground hover:text-primary border border-border rounded-md px-3 py-2 inline-flex items-center gap-1 transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
               {v.nome.split(" ").slice(0, 2).join(" ")}
@@ -167,7 +167,7 @@ export default async function CotasParlamentaresPage() {
         </div>
       </section>
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         <p>
           Dados extraídos automaticamente do portal LAI Centi da Câmara de
           Piracanjuba. Última verificação: {new Date().toLocaleDateString("pt-BR")}.

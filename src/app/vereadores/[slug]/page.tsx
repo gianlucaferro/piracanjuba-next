@@ -145,7 +145,7 @@ export default async function VereadorPage({
             )}
           </p>
           {vereador.votos_eleicao && (
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {vereador.votos_eleicao.toLocaleString("pt-BR")} votos ({vereador.ano_eleicao})
             </p>
           )}
@@ -183,28 +183,28 @@ export default async function VereadorPage({
       {/* Stats em destaque */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">
             Subsídio último mês
           </p>
           <p className="text-xl font-bold text-foreground mt-1">
             {fmtBRL(Number(ultimaRemuneracao?.bruto || 0))}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {ultimaRemuneracao?.competencia || "—"}
           </p>
         </div>
         <div className="stat-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Custo total</p>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Custo total</p>
           <p className="text-xl font-bold text-foreground mt-1">{fmtBRL(custoTotal)}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Soma de {remuneracoes.length} competências
           </p>
         </div>
         {/* Card Presença removido — dados estavam equivocados */}
         <div className="stat-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Atuação</p>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Atuação</p>
           <p className="text-xl font-bold text-foreground mt-1">{atuacoes.length}+</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Indicações, requerimentos
           </p>
         </div>
@@ -212,11 +212,11 @@ export default async function VereadorPage({
           href="#processos-judiciais"
           className="stat-card hover:border-amber-500/40 transition-colors"
         >
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Processos</p>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Processos</p>
           <p className="text-xl font-bold text-foreground mt-1">
             {processos.length}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {(() => {
               if (processos.length === 0) return "Nenhum registro público";
               const crim = processos.filter((p) => p.tipo_categoria === "criminal").length;
@@ -235,7 +235,7 @@ export default async function VereadorPage({
         <section className="stat-card flex items-center gap-3">
           <Calendar className="w-5 h-5 text-primary shrink-0" />
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Mandato</p>
+            <p className="text-sm uppercase tracking-wider text-muted-foreground">Mandato</p>
             <p className="text-sm text-foreground">
               {fmtDate(vereador.inicio_mandato)} — {fmtDate(vereador.fim_mandato)}
             </p>
@@ -255,7 +255,7 @@ export default async function VereadorPage({
               <article key={p.id} className="stat-card">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       <span className="font-semibold text-foreground capitalize">{p.tipo}</span>
                       {p.numero ? ` nº ${p.numero}` : ""}
                       {p.ano ? ` · ${p.ano}` : ""}
@@ -275,7 +275,7 @@ export default async function VereadorPage({
                       href={p.fonte_visualizar_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0"
+                      className="text-sm text-primary hover:underline flex items-center gap-1 shrink-0"
                     >
                       Ver fonte <ExternalLink className="w-3 h-3" />
                     </a>
@@ -297,7 +297,7 @@ export default async function VereadorPage({
           <div className="space-y-2">
             {atuacoes.map((a) => (
               <article key={a.id} className="stat-card">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground capitalize">{a.tipo}</span>
                   {a.numero ? ` nº ${a.numero}` : ""} {a.ano ? `· ${a.ano}` : ""}
                 </p>
@@ -347,7 +347,7 @@ export default async function VereadorPage({
         <section className="stat-card border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent space-y-3">
           <h3 className="text-base font-semibold inline-flex items-center gap-2">
             Moções e Requerimentos
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="text-sm font-normal text-muted-foreground">
               ({mocoes.length} moç{mocoes.length === 1 ? "ão" : "ões"} · {requerimentos.length} requerimento{requerimentos.length === 1 ? "" : "s"})
             </span>
           </h3>
@@ -355,15 +355,15 @@ export default async function VereadorPage({
             {[...mocoes.slice(0, 5), ...requerimentos.slice(0, 5)].map((a) => (
               <div key={a.id} className="p-2 rounded-lg border border-border bg-background/40">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                  <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded ${
                     a.tipo === "MOCAO" ? "bg-amber-500/15 text-amber-700" : "bg-blue-500/15 text-blue-700"
                   }`}>
                     {a.tipo === "MOCAO" ? "Moção" : "Requerimento"}
                   </span>
-                  <span className="text-xs text-foreground font-mono">{a.numero}</span>
+                  <span className="text-sm text-foreground font-mono">{a.numero}</span>
                 </div>
                 {a.ementa && (
-                  <p className="text-xs text-foreground/85 leading-relaxed mt-1">
+                  <p className="text-sm text-foreground/85 leading-relaxed mt-1">
                     {a.ementa.length > 200 ? a.ementa.slice(0, 200) + "..." : a.ementa}
                   </p>
                 )}
@@ -434,7 +434,7 @@ export default async function VereadorPage({
       )}
 
       {vereador.fonte_url && (
-        <p className="text-xs text-muted-foreground pt-6 border-t border-border">
+        <p className="text-sm text-muted-foreground pt-6 border-t border-border">
           Fonte oficial:{" "}
           <a
             href={vereador.fonte_url}

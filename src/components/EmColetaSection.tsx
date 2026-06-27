@@ -67,12 +67,12 @@ export default function EmColetaSection({
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {indicadores.map((i) => (
               <div key={i.rotulo} className="stat-card">
-                <p className="text-xs text-muted-foreground">{i.rotulo}</p>
+                <p className="text-sm text-muted-foreground">{i.rotulo}</p>
                 <p className="text-xl font-bold text-foreground mt-1">
                   {i.valor || "—"}
                 </p>
                 {i.fonte && (
-                  <p className="text-[10px] text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {i.fonteUrl ? (
                       <a
                         href={i.fonteUrl}
@@ -130,7 +130,7 @@ export default function EmColetaSection({
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-foreground text-sm mb-0.5">{f.nome}</h4>
                 {f.descricao && (
-                  <p className="text-xs text-muted-foreground leading-relaxed">{f.descricao}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.descricao}</p>
                 )}
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />

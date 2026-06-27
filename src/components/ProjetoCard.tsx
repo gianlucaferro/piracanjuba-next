@@ -33,7 +33,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
             {statusLabels[p.status]}
           </Badge>
         </div>
-        <span className="text-xs text-muted-foreground whitespace-nowrap">
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
           {new Date(p.data).toLocaleDateString("pt-BR")}
         </span>
       </div>
@@ -41,12 +41,12 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
       <p className="mt-2 text-sm text-foreground leading-relaxed">{p.ementa}</p>
 
       {p.resumo_simples && (
-        <p className="mt-1.5 text-xs text-muted-foreground italic leading-relaxed">
+        <p className="mt-1.5 text-sm text-muted-foreground italic leading-relaxed">
           🤖 {p.resumo_simples}
         </p>
       )}
 
-      <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
+      <div className="mt-3 flex items-center gap-2 flex-wrap text-sm text-muted-foreground">
         <span>Origem: {p.origem}</span>
         <span>•</span>
         <span>
@@ -64,7 +64,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
       {p.tags && p.tags.length > 0 && (
         <div className="mt-2 flex gap-1.5 flex-wrap">
           {p.tags.map((tag) => (
-            <span key={tag} className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-[11px]">
+            <span key={tag} className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs">
               {tag}
             </span>
           ))}
@@ -77,7 +77,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
             href={p.fonte_visualizar_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
             aria-label="Ver fonte oficial"
           >
             <ExternalLink className="w-3 h-3" /> Ver fonte
@@ -88,7 +88,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
             url={`${window.location.origin}/atuacao-parlamentar`}
           />
         </div>
-        <span className="text-[10px] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           Atualizado {new Date(p.updated_at).toLocaleDateString("pt-BR")}
         </span>
       </div>

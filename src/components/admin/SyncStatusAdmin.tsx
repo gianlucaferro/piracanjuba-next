@@ -381,15 +381,15 @@ export default function SyncStatusAdmin() {
       <div className="grid grid-cols-3 gap-2">
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-emerald-600">{totals.ok}</p>
-          <p className="text-xs text-muted-foreground">OK</p>
+          <p className="text-sm text-muted-foreground">OK</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-amber-600">{totals.warning}</p>
-          <p className="text-xs text-muted-foreground">Atenção</p>
+          <p className="text-sm text-muted-foreground">Atenção</p>
         </div>
         <div className="stat-card text-center">
           <p className="text-2xl font-bold text-muted-foreground">{totals.empty}</p>
-          <p className="text-xs text-muted-foreground">Vazias</p>
+          <p className="text-sm text-muted-foreground">Vazias</p>
         </div>
       </div>
 
@@ -411,7 +411,7 @@ export default function SyncStatusAdmin() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-semibold text-foreground">{row.label}</p>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                   <Database className="w-3 h-3" />
                   {row.fonte}
                 </p>
@@ -420,15 +420,15 @@ export default function SyncStatusAdmin() {
             </div>
             <div className="grid grid-cols-3 gap-2 mt-4 text-sm">
               <div>
-                <p className="text-xs text-muted-foreground">Registros</p>
+                <p className="text-sm text-muted-foreground">Registros</p>
                 <p className="font-semibold text-foreground">{row.records.toLocaleString("pt-BR")}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{row.note || "Período"}</p>
+                <p className="text-sm text-muted-foreground">{row.note || "Período"}</p>
                 <p className="font-semibold text-foreground">{row.period || "-"}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Atualizado em</p>
+                <p className="text-sm text-muted-foreground">Atualizado em</p>
                 <p className="font-semibold text-foreground">{formatDate(row.latestAt)}</p>
               </div>
             </div>
@@ -447,7 +447,7 @@ export default function SyncStatusAdmin() {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="font-medium text-foreground">{log.tipo}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {formatDate(log.started_at)} até {formatDate(log.finished_at)}
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export default function SyncStatusAdmin() {
                   </Badge>
                 </div>
                 {detailText(log.detalhes) && (
-                  <p className="text-xs text-muted-foreground mt-2">{detailText(log.detalhes)}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{detailText(log.detalhes)}</p>
                 )}
               </div>
             ))}

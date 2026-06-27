@@ -150,15 +150,15 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Icon className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider opacity-80">
+                  <span className="text-sm uppercase tracking-wider opacity-80">
                     {m.label}
                   </span>
                 </div>
                 <p className="text-xl font-extrabold">{fmt(m.v24)}</p>
-                <p className="text-[11px] opacity-80 mt-0.5">
+                <p className="text-xs opacity-80 mt-0.5">
                   Era {fmt(m.v85)} em 1985
                 </p>
-                <p className="text-xs font-semibold mt-1.5 inline-flex items-center gap-1">
+                <p className="text-sm font-semibold mt-1.5 inline-flex items-center gap-1">
                   {isPositive ? (
                     <TrendingUp className="w-3.5 h-3.5" />
                   ) : (
@@ -177,7 +177,7 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
         <h3 className="text-base font-semibold text-foreground mb-1">
           Evolução do uso do solo — 40 anos
         </h3>
-        <p className="text-xs text-muted-foreground mb-3">
+        <p className="text-sm text-muted-foreground mb-3">
           Cada cor representa uma categoria de uso. Empilhado mostra como{" "}
           <strong>1 categoria avança e outra recua</strong> ao longo dos anos.
         </p>
@@ -248,7 +248,7 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
                 const pct = m.pct_total;
                 return (
                   <div key={m.key} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-sm">
                       <span className="font-medium text-foreground inline-flex items-center gap-1.5">
                         <span
                           className="w-3 h-3 rounded-sm shrink-0"
@@ -323,7 +323,7 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
         </ul>
       </section>
 
-      <p className="text-[10px] text-muted-foreground italic leading-relaxed">
+      <p className="text-xs text-muted-foreground italic leading-relaxed">
         Fonte: MapBiomas Coleção 10.1 (lançada fev/2026), reanálise anual de imagens Landsat
         com classificação por inteligência artificial. 14 classes de cobertura do MapBiomas
         agrupadas em 8 categorias para visualização. Atualização anual conforme nova coleção.

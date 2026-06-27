@@ -67,12 +67,12 @@ export default async function QueimadasCard() {
               Risco de Fogo — Piracanjuba
             </h3>
             {isCriticoOuAlto && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-500/15 px-2 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-orange-700 bg-orange-500/15 px-2 py-0.5 rounded">
                 <AlertTriangle className="w-3 h-3" /> Alerta
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Índice local baseado em temperatura, vento, chuva e evaporação.
           </p>
         </div>
@@ -82,16 +82,16 @@ export default async function QueimadasCard() {
       <div className={`rounded-xl ${cfg.bg} border ${cfg.border} p-4 space-y-3`}>
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Nível de risco hoje
             </p>
             <p className={`text-3xl font-extrabold ${cfg.cor} leading-none mt-1`}>
               {cfg.label}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">{cfg.desc}</p>
+            <p className="text-sm text-muted-foreground mt-1">{cfg.desc}</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Score
             </p>
             <p className={`text-2xl font-extrabold ${cfg.cor} leading-none`}>
@@ -115,13 +115,13 @@ export default async function QueimadasCard() {
         <div className="rounded-xl bg-background border border-border p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Droplets className="w-3.5 h-3.5 text-blue-600" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Chuva hoje
             </p>
           </div>
           <p className="text-lg font-extrabold text-foreground">{fmtNum(dados.hoje.chuva_mm)} mm</p>
           {dados.dias_sem_chuva > 0 && (
-            <p className="text-[10px] text-amber-700 font-semibold mt-0.5">
+            <p className="text-xs text-amber-700 font-semibold mt-0.5">
               {dados.dias_sem_chuva}d sem chuva
             </p>
           )}
@@ -130,12 +130,12 @@ export default async function QueimadasCard() {
         <div className="rounded-xl bg-background border border-border p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Thermometer className="w-3.5 h-3.5 text-orange-600" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Temp. máx.
             </p>
           </div>
           <p className="text-lg font-extrabold text-foreground">{fmtNum(dados.hoje.temp_max, 0)}°C</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Evap: {fmtNum(dados.hoje.evap)} mm
           </p>
         </div>
@@ -143,7 +143,7 @@ export default async function QueimadasCard() {
         <div className="rounded-xl bg-background border border-border p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Wind className="w-3.5 h-3.5 text-slate-600" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Vento máx.
             </p>
           </div>
@@ -153,18 +153,18 @@ export default async function QueimadasCard() {
         <div className="rounded-xl bg-background border border-border p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Droplets className="w-3.5 h-3.5 text-blue-400" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Média 30d
             </p>
           </div>
           <p className="text-lg font-extrabold text-foreground">{fmtNum(dados.media_chuva_30d)} mm/d</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">chuva/dia</p>
+          <p className="text-xs text-muted-foreground mt-0.5">chuva/dia</p>
         </div>
       </div>
 
       {/* Sparkline de precipitação — 14 dias */}
       <div className="rounded-xl bg-background border border-border p-3">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
           Precipitação — últimos 14 dias (mm)
         </p>
         <div className="flex items-end gap-0.5 h-12" aria-hidden>
@@ -185,13 +185,13 @@ export default async function QueimadasCard() {
             );
           })}
         </div>
-        <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
           <span>{ultimos14[0]?.data.slice(5)}</span>
           <span>hoje</span>
         </div>
       </div>
 
-      <p className="text-[11px] text-muted-foreground border-t border-border/50 pt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <p className="text-xs text-muted-foreground border-t border-border/50 pt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
         <span>Fonte: Open-Meteo (ERA5/GFS) · Índice baseado em metodologia FWI (Fire Weather Index).</span>
         <Link
           href="https://terrabrasilis.dpi.inpe.br/queimadas/portal/"

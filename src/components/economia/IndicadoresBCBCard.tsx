@@ -49,7 +49,7 @@ export default async function IndicadoresBCBCard() {
           <h3 id="bcb-heading" className="text-base font-bold text-foreground">
             Indicadores Econômicos
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Banco Central do Brasil — dados oficiais atualizados
           </p>
         </div>
@@ -62,14 +62,14 @@ export default async function IndicadoresBCBCard() {
           <div className="rounded-xl bg-background border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <Percent className="w-3.5 h-3.5 text-blue-600" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 SELIC/mês
               </p>
             </div>
             <p className="text-xl font-extrabold text-foreground leading-none">
               {fmtPct(dados.selic_acumulada_mes.valor)}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {fmtData(dados.selic_acumulada_mes.data)}
             </p>
           </div>
@@ -80,14 +80,14 @@ export default async function IndicadoresBCBCard() {
           <div className="rounded-xl bg-background border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <Percent className="w-3.5 h-3.5 text-indigo-600" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 SELIC/dia
               </p>
             </div>
             <p className="text-xl font-extrabold text-foreground leading-none">
               {fmtPct(dados.selic_diaria.valor, 4)}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {fmtData(dados.selic_diaria.data)}
             </p>
           </div>
@@ -98,7 +98,7 @@ export default async function IndicadoresBCBCard() {
           <div className="rounded-xl bg-background border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 IPCA/mês
               </p>
             </div>
@@ -106,11 +106,11 @@ export default async function IndicadoresBCBCard() {
               {fmtPct(dados.ipca_mensal.valor)}
             </p>
             {dados.ipca_acumulado_12m !== null && (
-              <p className="text-[10px] text-amber-700 font-semibold mt-0.5">
+              <p className="text-xs text-amber-700 font-semibold mt-0.5">
                 {fmtPct(dados.ipca_acumulado_12m, 2)} em 12m
               </p>
             )}
-            <p className="text-[10px] text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {fmtData(dados.ipca_mensal.data)}
             </p>
           </div>
@@ -121,14 +121,14 @@ export default async function IndicadoresBCBCard() {
           <div className="rounded-xl bg-background border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 USD/BRL
               </p>
             </div>
             <p className="text-xl font-extrabold text-foreground leading-none">
               {fmtBRL(dados.usd_brl.cotacao_venda)}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               PTAX {fmtData(dados.usd_brl.data)}
             </p>
           </div>
@@ -138,7 +138,7 @@ export default async function IndicadoresBCBCard() {
       {/* Sparkline IPCA */}
       {dados.historico_ipca.length > 0 && (
         <div className="rounded-xl bg-background border border-border p-3">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
             IPCA — variação mensal (12 meses)
           </p>
           <div className="flex items-end gap-0.5 h-10" aria-hidden>
@@ -159,14 +159,14 @@ export default async function IndicadoresBCBCard() {
               );
             })}
           </div>
-          <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>{dados.historico_ipca[0]?.data.slice(3)}</span>
             <span>atual</span>
           </div>
         </div>
       )}
 
-      <p className="text-[11px] text-muted-foreground border-t border-border/50 pt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <p className="text-xs text-muted-foreground border-t border-border/50 pt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
         <span>Fonte: Banco Central do Brasil (BCB) — séries temporais SGS.</span>
         <Link
           href="https://www.bcb.gov.br/controleinflacao/taxaselic"

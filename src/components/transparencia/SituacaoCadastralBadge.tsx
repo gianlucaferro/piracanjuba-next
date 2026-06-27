@@ -63,7 +63,7 @@ export default function SituacaoCadastralBadge({
 
   const Icon = style.icon;
   const iconSize = size === "sm" ? "w-3 h-3" : "w-3.5 h-3.5";
-  const padding = size === "sm" ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-0.5 text-xs";
+  const padding = size === "sm" ? "px-1.5 py-0.5 text-xs" : "px-2 py-0.5 text-sm";
 
   return (
     <span

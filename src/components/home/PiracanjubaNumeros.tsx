@@ -48,11 +48,11 @@ export default async function PiracanjubaNumeros() {
           >
             Piracanjuba em números
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Dados oficiais do IBGE — atualizados anualmente
           </p>
         </div>
-        <span className="hidden md:inline-flex text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+        <span className="hidden md:inline-flex text-xs uppercase tracking-wider text-muted-foreground font-semibold">
           Fonte: IBGE
         </span>
       </header>
@@ -95,7 +95,7 @@ export default async function PiracanjubaNumeros() {
         )}
       </div>
 
-      <p className="text-[11px] text-muted-foreground mt-4">
+      <p className="text-xs text-muted-foreground mt-4">
         {dados.fonte}.
       </p>
     </section>
@@ -117,14 +117,14 @@ function CardNumero({
     <div className="rounded-xl bg-muted/40 border border-border/60 p-3">
       <div className="flex items-center gap-1.5 mb-1">
         {icon}
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
           {label}
         </p>
       </div>
       <p className="text-base md:text-lg font-extrabold text-foreground leading-tight">
         {valor}
       </p>
-      <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>
+      <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
     </div>
   );
 }

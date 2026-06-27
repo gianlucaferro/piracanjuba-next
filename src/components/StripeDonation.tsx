@@ -120,7 +120,7 @@ export default function StripeDonation() {
         </Button>
       </div>
 
-      <p className="text-[11px] text-muted-foreground text-center">
+      <p className="text-xs text-muted-foreground text-center">
         {mode === "subscription"
           ? "💳 Pagamento recorrente via cartão. Cancele quando quiser."
           : "💳 Pagamento único via cartão de crédito ou débito."}

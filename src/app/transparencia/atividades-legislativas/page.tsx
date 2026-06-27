@@ -44,12 +44,12 @@ export default async function AtividadesLegislativasPage() {
       {/* Stats principais */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card">
-          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Total</p>
+          <p className="text-xs uppercase text-muted-foreground tracking-wider">Total</p>
           <p className="text-2xl font-extrabold text-emerald-700 mt-0.5">{stats.total}</p>
         </div>
         {stats.por_tipo.slice(0, 3).map((t) => (
           <div key={t.tipo} className="stat-card">
-            <p className="text-[10px] uppercase text-muted-foreground tracking-wider leading-tight">
+            <p className="text-xs uppercase text-muted-foreground tracking-wider leading-tight">
               {t.tipo.replace("Projeto de Lei do ", "PL ").replace("Projeto de ", "")}
             </p>
             <p className="text-2xl font-extrabold text-foreground mt-0.5">{t.quantidade}</p>
@@ -67,7 +67,7 @@ export default async function AtividadesLegislativasPage() {
               return (
                 <div key={t.tipo} className="flex items-center gap-2 text-sm">
                   <span className="flex-1 text-foreground">{t.tipo}</span>
-                  <span className="text-muted-foreground text-xs">{pct}%</span>
+                  <span className="text-muted-foreground text-sm">{pct}%</span>
                   <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-emerald-500"
@@ -86,7 +86,7 @@ export default async function AtividadesLegislativasPage() {
       {stats.por_autor.length > 0 && (
         <section className="stat-card space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Top autores (vereadores)</h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Exclui atos do Poder Executivo. Quando ato tem múltiplos autores,
             todos contam.
           </p>
@@ -108,7 +108,7 @@ export default async function AtividadesLegislativasPage() {
         variant="full"
       />
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         <p>
           Última publicação registrada: {stats.ultima_publicacao
             ? new Date(stats.ultima_publicacao).toLocaleDateString("pt-BR")

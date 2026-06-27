@@ -90,7 +90,7 @@ export default async function AlertaContratosSancao() {
           >
             Cruzamento cívico: contratos × CEIS/CNEP
           </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-1">
             Sistema automatizado que cruza{" "}
             <strong>contratos da Câmara de Piracanjuba</strong> com o{" "}
             <strong>Cadastro Nacional de Empresas Inidôneas (CEIS)</strong> e o{" "}
@@ -117,7 +117,7 @@ export default async function AlertaContratosSancao() {
                 <p className={`text-sm font-bold ${cfg.iconColor}`}>
                   {cfg.label} ({itens.length})
                 </p>
-                <p className="text-xs text-muted-foreground">{cfg.desc}</p>
+                <p className="text-sm text-muted-foreground">{cfg.desc}</p>
               </div>
             </div>
 
@@ -132,12 +132,12 @@ export default async function AlertaContratosSancao() {
                       {c.fornecedor_nome}
                     </p>
                     <span
-                      className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${cfg.badgeBg} shrink-0`}
+                      className={`text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded ${cfg.badgeBg} shrink-0`}
                     >
                       {c.cadastro}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     <span className="font-mono">{c.fornecedor_cnpj_limpo}</span>
                     {c.numero && c.ano && (
                       <>
@@ -158,11 +158,11 @@ export default async function AlertaContratosSancao() {
                     )}
                   </p>
                   {c.objeto && (
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                       {c.objeto}
                     </p>
                   )}
-                  <div className="mt-2 text-[11px] grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
+                  <div className="mt-2 text-xs grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
                     <p className="text-muted-foreground">
                       <strong>Contrato:</strong>{" "}
                       {c.inicio_vigencia ? fmtData(c.inicio_vigencia) : fmtData(c.data_firmatura)}
@@ -175,7 +175,7 @@ export default async function AlertaContratosSancao() {
                     </p>
                   </div>
                   {(c.tipo_sancao || c.orgao_sancionador) && (
-                    <p className={`text-[11px] mt-1 ${cfg.iconColor}`}>
+                    <p className={`text-xs mt-1 ${cfg.iconColor}`}>
                       <strong>{c.tipo_sancao ?? "Sanção"}</strong>
                       {c.orgao_sancionador && ` · ${c.orgao_sancionador}`}
                     </p>
@@ -187,7 +187,7 @@ export default async function AlertaContratosSancao() {
         );
       })}
 
-      <p className="text-[11px] text-muted-foreground border-t border-border pt-3">
+      <p className="text-xs text-muted-foreground border-t border-border pt-3">
         Fontes:{" "}
         <Link
           href="https://portaldatransparencia.gov.br/sancoes/ceis"

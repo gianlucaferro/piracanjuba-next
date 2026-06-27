@@ -89,7 +89,7 @@ export default function SubscriptionForm() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Assinar"}
           </Button>
         </div>
-        <label className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
+        <label className="flex items-start gap-2 text-sm text-muted-foreground cursor-pointer">
           <input
             type="checkbox"
             checked={consent}

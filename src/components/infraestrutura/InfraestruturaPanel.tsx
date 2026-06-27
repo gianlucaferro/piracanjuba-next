@@ -86,7 +86,7 @@ function StatusBadge({
       ? "text-amber-700 bg-amber-500/10 border-amber-500/30"
       : "text-red-700 bg-red-500/10 border-red-500/30";
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${color}`}>
+    <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${color}`}>
       {label}
     </span>
   );
@@ -210,7 +210,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <h3 className="text-base font-semibold text-foreground">
                 Água Tratada · {aguaCob.ano}
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Cobertura de abastecimento de água tratada por SANEAGO.
                 Estado GO: 88,4% · Brasil: 83,1%.
               </p>
@@ -219,37 +219,37 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="stat-card border-sky-500/30">
-              <p className="text-[10px] uppercase text-muted-foreground">Cobertura</p>
+              <p className="text-xs uppercase text-muted-foreground">Cobertura</p>
               <p className="text-2xl font-extrabold text-sky-600 mt-0.5">
                 {formatPct(aguaCob.valor)}
               </p>
-              <p className="text-[10px] text-muted-foreground">{aguaPopAtend?.valor_texto}</p>
+              <p className="text-xs text-muted-foreground">{aguaPopAtend?.valor_texto}</p>
             </div>
             {aguaPopNao && (
               <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">⚠️ Sem água</p>
+                <p className="text-xs uppercase text-muted-foreground">⚠️ Sem água</p>
                 <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
                   {aguaPopNao.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground">não atendidos</p>
+                <p className="text-xs text-muted-foreground">não atendidos</p>
               </div>
             )}
             {aguaUrbana && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Urbana</p>
+                <p className="text-xs uppercase text-muted-foreground">Urbana</p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {formatPct(aguaUrbana.valor)}
                 </p>
-                <p className="text-[10px] text-muted-foreground">cobertura zona urbana</p>
+                <p className="text-xs text-muted-foreground">cobertura zona urbana</p>
               </div>
             )}
             {aguaConsumo && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Consumo</p>
+                <p className="text-xs uppercase text-muted-foreground">Consumo</p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {aguaConsumo.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground">per capita</p>
+                <p className="text-xs text-muted-foreground">per capita</p>
               </div>
             )}
           </div>
@@ -267,7 +267,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <h3 className="text-base font-semibold text-foreground">
                 Esgotamento Sanitário · {esgotoCob.ano}
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Apenas 69% da população tem coleta de esgoto pela rede pública.
                 Demais usam fossas, lançam direto em cursos d'água ou solo.
               </p>
@@ -276,14 +276,14 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="stat-card border-cyan-500/30">
-              <p className="text-[10px] uppercase text-muted-foreground">Cobertura</p>
+              <p className="text-xs uppercase text-muted-foreground">Cobertura</p>
               <p className="text-2xl font-extrabold text-cyan-600 mt-0.5">
                 {formatPct(esgotoCob.valor)}
               </p>
             </div>
             {esgotoPopNao && (
               <div className="stat-card border-red-500/30 bg-red-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">⚠️ Sem coleta</p>
+                <p className="text-xs uppercase text-muted-foreground">⚠️ Sem coleta</p>
                 <p className="text-2xl font-extrabold text-red-700 mt-0.5">
                   {esgotoPopNao.valor_texto}
                 </p>
@@ -291,7 +291,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             )}
             {esgotoColeta && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Índice coleta</p>
+                <p className="text-xs uppercase text-muted-foreground">Índice coleta</p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {formatPct(esgotoColeta.valor)}
                 </p>
@@ -299,7 +299,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             )}
             {esgotoTrat && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Índice tratamento</p>
+                <p className="text-xs uppercase text-muted-foreground">Índice tratamento</p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {formatPct(esgotoTrat.valor)}
                 </p>
@@ -308,7 +308,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
           </div>
           {esgotoSemTrat && (
             <div className="stat-card border-red-500/30 bg-red-500/5 mt-3">
-              <p className="text-xs font-semibold text-red-700 inline-flex items-center gap-1.5">
+              <p className="text-sm font-semibold text-red-700 inline-flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4" /> ALERTA AMBIENTAL
               </p>
               <p className="text-sm text-foreground mt-1">
@@ -332,7 +332,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <h3 className="text-base font-semibold text-foreground">
                 Coleta de Lixo · {lixoCob.ano}
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Coleta operada pela Secretaria Municipal de Agricultura. Cobertura
                 muito baixa na zona rural — apenas 3,4%.
               </p>
@@ -341,15 +341,15 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="stat-card border-emerald-500/30">
-              <p className="text-[10px] uppercase text-muted-foreground">Cobertura geral</p>
+              <p className="text-xs uppercase text-muted-foreground">Cobertura geral</p>
               <p className="text-2xl font-extrabold text-emerald-600 mt-0.5">
                 {formatPct(lixoCob.valor)}
               </p>
-              <p className="text-[10px] text-muted-foreground">{lixoPopAtend?.valor_texto}</p>
+              <p className="text-xs text-muted-foreground">{lixoPopAtend?.valor_texto}</p>
             </div>
             {lixoUrbana && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Urbana</p>
+                <p className="text-xs uppercase text-muted-foreground">Urbana</p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {formatPct(lixoUrbana.valor)}
                 </p>
@@ -357,11 +357,11 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             )}
             {lixoRural && (
               <div className="stat-card border-red-500/30 bg-red-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">⚠️ Rural</p>
+                <p className="text-xs uppercase text-muted-foreground">⚠️ Rural</p>
                 <p className="text-2xl font-extrabold text-red-700 mt-0.5">
                   {formatPct(lixoRural.valor)}
                 </p>
-                <p className="text-[10px] text-muted-foreground">quase zero</p>
+                <p className="text-xs text-muted-foreground">quase zero</p>
               </div>
             )}
           </div>
@@ -375,7 +375,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             </div>
           )}
           {lixoCobranca && (
-            <p className="text-xs text-muted-foreground italic mt-3">
+            <p className="text-sm text-muted-foreground italic mt-3">
               💰 Taxa de coleta: <strong>{lixoCobranca.valor_texto}</strong> —{" "}
               {lixoCobranca.observacao}
             </p>
@@ -394,7 +394,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <h3 className="text-base font-semibold text-foreground">
                 Energia Elétrica · Equatorial Goiás · {tarifa.ano}
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Tarifa B1 residencial em vigor desde 22/10/2025 (Resolução ANEEL 3.544/2025).
                 Reajuste anual de {reajuste?.valor_texto} aprovado.
               </p>
@@ -402,23 +402,23 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="stat-card border-yellow-500/30">
-              <p className="text-[10px] uppercase text-muted-foreground">Tarifa B1 residencial</p>
+              <p className="text-xs uppercase text-muted-foreground">Tarifa B1 residencial</p>
               <p className="text-xl font-extrabold text-yellow-700 mt-0.5">
                 {tarifa.valor_texto}
               </p>
             </div>
             {baixaRendaAlta && (
               <div className="stat-card border-green-500/30 bg-green-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">Baixa renda &gt;80kWh</p>
+                <p className="text-xs uppercase text-muted-foreground">Baixa renda &gt;80kWh</p>
                 <p className="text-xl font-extrabold text-green-700 mt-0.5">
                   {baixaRendaAlta.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground">isento até 80 kWh</p>
+                <p className="text-xs text-muted-foreground">isento até 80 kWh</p>
               </div>
             )}
             {reajuste && (
               <div className="stat-card border-red-500/30 bg-red-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">Reajuste 2025</p>
+                <p className="text-xs uppercase text-muted-foreground">Reajuste 2025</p>
                 <p className="text-xl font-extrabold text-red-700 mt-0.5">
                   {reajuste.valor_texto}
                 </p>
@@ -426,11 +426,11 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             )}
             {consumoMedio && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Consumo médio GO</p>
+                <p className="text-xs uppercase text-muted-foreground">Consumo médio GO</p>
                 <p className="text-xl font-extrabold text-foreground mt-0.5">
                   {consumoMedio.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground">residencial · nov/25</p>
+                <p className="text-xs text-muted-foreground">residencial · nov/25</p>
               </div>
             )}
           </div>
@@ -448,54 +448,54 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <h3 className="text-base font-semibold text-foreground">
                 Telecomunicações · {cob4G.ano}
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Cobertura móvel e fibra óptica em Piracanjuba.
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="stat-card border-green-500/30 bg-green-500/5">
-              <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+              <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" /> 4G urbana
               </p>
               <p className="text-2xl font-extrabold text-green-600 mt-0.5">
                 {cob4G.valor_texto}
               </p>
-              <p className="text-[10px] text-muted-foreground">{op4G?.valor_texto}</p>
+              <p className="text-xs text-muted-foreground">{op4G?.valor_texto}</p>
             </div>
             {cob5G && (
               <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                   <AlertTriangle className="w-3 h-3" /> 5G NSA
                 </p>
                 <p className="text-base font-bold text-amber-700 mt-0.5 leading-tight">
                   {op5GNSA?.valor_texto || cob5G.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-snug">
+                <p className="text-xs text-muted-foreground leading-snug">
                   {op5GNSA?.observacao || cob5G.observacao}
                 </p>
               </div>
             )}
             {cob5GSA && (
               <div className="stat-card border-red-500/30 bg-red-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                   <XCircle className="w-3 h-3" /> 5G+ Standalone
                 </p>
                 <p className="text-2xl font-extrabold text-red-600 mt-0.5">
                   {cob5GSA.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-snug">
+                <p className="text-xs text-muted-foreground leading-snug">
                   {cob5GSA.observacao}
                 </p>
               </div>
             )}
             {fibra && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">Fibra óptica</p>
+                <p className="text-xs uppercase text-muted-foreground">Fibra óptica</p>
                 <p className="text-base font-bold text-foreground mt-0.5">
                   {fibra.valor_texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-snug">{fibra.observacao}</p>
+                <p className="text-xs text-muted-foreground leading-snug">{fibra.observacao}</p>
               </div>
             )}
           </div>
@@ -521,7 +521,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <h3 className="text-base font-semibold text-foreground">
               Drenagem, Pavimentação, Iluminação
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Infraestrutura urbana viária e drenagem (SNIS) + dados que dependem de Lei
               de Acesso à Informação à Prefeitura (não publicados em portal).
             </p>
@@ -530,35 +530,35 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {drenVias && (
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground">Vias pavimentadas</p>
+              <p className="text-xs uppercase text-muted-foreground">Vias pavimentadas</p>
               <p className="text-2xl font-extrabold text-foreground mt-0.5">
                 {formatPct(drenVias.valor)}
               </p>
-              <p className="text-[10px] text-muted-foreground">malha urbana</p>
+              <p className="text-xs text-muted-foreground">malha urbana</p>
             </div>
           )}
           {drenRedes && (
             <div className="stat-card border-amber-500/30 bg-amber-500/5">
-              <p className="text-[10px] uppercase text-muted-foreground">⚠️ Redes pluviais</p>
+              <p className="text-xs uppercase text-muted-foreground">⚠️ Redes pluviais</p>
               <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
                 {formatPct(drenRedes.valor)}
               </p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 galerias subterrâneas — risco de alagamento
               </p>
             </div>
           )}
           {drenRisco && (
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground">Risco inundação</p>
+              <p className="text-xs uppercase text-muted-foreground">Risco inundação</p>
               <p className="text-2xl font-extrabold text-foreground mt-0.5">
                 {drenRisco.valor_texto}
               </p>
-              <p className="text-[10px] text-muted-foreground">domicílios identificados</p>
+              <p className="text-xs text-muted-foreground">domicílios identificados</p>
             </div>
           )}
         </div>
-        <p className="text-xs text-muted-foreground italic mt-3">
+        <p className="text-sm text-muted-foreground italic mt-3">
           📋 Dados pendentes (LAI à Prefeitura): pontos totais de iluminação pública,
           LEDs instalados, km exatos asfaltados por bairro, pontos de Wi-Fi gratuito.
         </p>
@@ -578,7 +578,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <h3 className="text-base font-semibold text-foreground">
                   Energia · Qualidade do fornecimento (DEC/FEC)
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                   Histórico Equatorial Goiás — limite regulatório ANEEL: 12,58h/ano.
                 </p>
               </div>
@@ -586,40 +586,40 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {eq.dec2022 && (
                 <div className="stat-card border-red-500/30 bg-red-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">DEC GO 2022</p>
+                  <p className="text-xs uppercase text-muted-foreground">DEC GO 2022</p>
                   <p className="text-2xl font-extrabold text-red-700 mt-0.5">
                     {eq.dec2022.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     49% acima do limite ANEEL · ranking último lugar
                   </p>
                 </div>
               )}
               {eq.decReducao && (
                 <div className="stat-card border-green-500/30 bg-green-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Redução DEC 2022→2024</p>
+                  <p className="text-xs uppercase text-muted-foreground">Redução DEC 2022→2024</p>
                   <p className="text-2xl font-extrabold text-green-700 mt-0.5">
                     {eq.decReducao.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     R$ 3,6 bi investidos até 3T2024
                   </p>
                 </div>
               )}
               {eq.fecReducao && (
                 <div className="stat-card border-green-500/30 bg-green-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Redução FEC</p>
+                  <p className="text-xs uppercase text-muted-foreground">Redução FEC</p>
                   <p className="text-2xl font-extrabold text-green-700 mt-0.5">
                     {eq.fecReducao.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Frequência de interrupções menor índice da concessão
                   </p>
                 </div>
               )}
             </div>
             {eq.reclamacoesBairro && (
-              <p className="text-[10px] text-muted-foreground italic mt-3">
+              <p className="text-xs text-muted-foreground italic mt-3">
                 ⚠️ {eq.reclamacoesBairro.observacao}{" "}
                 {eq.reclamacoesBairro.fonte_url && (
                   <a
@@ -651,7 +651,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <h3 className="text-base font-semibold text-foreground">
                   ANATEL · Reclamações 2025 + Wi-Fi público
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                   Reclamações nacionais por operadora · cobertura por bairro via app
                   Anatel Qualidade · status do programa estadual de Wi-Fi.
                 </p>
@@ -660,7 +660,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {td.reclamacoesTim && (
                 <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                  <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                     <TrendingDown className="w-3 h-3" /> Reclamações nacionais 2025
                   </p>
                   <p className="text-base font-bold text-amber-700 mt-0.5">
@@ -671,7 +671,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                       Claro {td.reclamacoesClaro.valor_texto}
                     </p>
                   )}
-                  <p className="text-[10px] text-muted-foreground leading-snug mt-1">
+                  <p className="text-xs text-muted-foreground leading-snug mt-1">
                     +46,5% em cobrança (TIM). Dado nacional ANATEL — granularidade
                     municipal via app.
                   </p>
@@ -679,13 +679,13 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               )}
               {td.wifiEstado && (
                 <div className="stat-card border-red-500/30 bg-red-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                  <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                     <XCircle className="w-3 h-3" /> Wi-Fi público estadual
                   </p>
                   <p className="text-base font-bold text-red-700 mt-0.5">
                     {td.wifiEstado.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug mt-1">
+                  <p className="text-xs text-muted-foreground leading-snug mt-1">
                     {td.wifiEstado.observacao}
                   </p>
                 </div>
@@ -696,7 +696,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 href={td.seloAnatel.fonte_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] text-cyan-700 underline hover:text-cyan-900 mt-3"
+                className="inline-flex items-center gap-1 text-xs text-cyan-700 underline hover:text-cyan-900 mt-3"
               >
                 Selos de Qualidade ANATEL por município (Vivo/Claro/TIM){" "}
                 <ExternalLink className="w-3 h-3" />
@@ -720,7 +720,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <h3 className="text-base font-semibold text-foreground">
                   IBGE · Saneamento e urbanização (domiciliar)
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                   Indicadores IBGE por domicílio — comparação com municípios goianos.
                 </p>
               </div>
@@ -728,44 +728,44 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {sd.esgotoAdequado && (
                 <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Esgoto adequado</p>
+                  <p className="text-xs uppercase text-muted-foreground">Esgoto adequado</p>
                   <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
                     {sd.esgotoAdequado.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Posição 86 de 246 cidades GO
                   </p>
                 </div>
               )}
               {sd.urbanizacaoAdequada && (
                 <div className="stat-card border-red-500/30 bg-red-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Urbanização adequada</p>
+                  <p className="text-xs uppercase text-muted-foreground">Urbanização adequada</p>
                   <p className="text-2xl font-extrabold text-red-700 mt-0.5">
                     {sd.urbanizacaoAdequada.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Bueiro+calçada+pavim+meio-fio
                   </p>
                 </div>
               )}
               {sd.arborizacao && (
                 <div className="stat-card border-green-500/30 bg-green-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Arborização urbana</p>
+                  <p className="text-xs uppercase text-muted-foreground">Arborização urbana</p>
                   <p className="text-2xl font-extrabold text-green-700 mt-0.5">
                     {sd.arborizacao.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Ranking 116/246 GO
                   </p>
                 </div>
               )}
               {sd.imoveisUrbanos && (
                 <div className="stat-card">
-                  <p className="text-[10px] uppercase text-muted-foreground">Imóveis urbanos</p>
+                  <p className="text-xs uppercase text-muted-foreground">Imóveis urbanos</p>
                   <p className="text-2xl font-extrabold text-foreground mt-0.5">
                     {sd.imoveisUrbanos.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Base do levantamento LIRAa
                   </p>
                 </div>
@@ -789,7 +789,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <h3 className="text-base font-semibold text-foreground">
                   Iluminação LED + Pavimentação por bairro
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                   Detalhamento granular requer Lei de Acesso à Informação à Prefeitura.
                 </p>
               </div>
@@ -797,33 +797,33 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {ip.pontosLED && (
                 <div className="stat-card border-yellow-500/30 bg-yellow-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground">Pontos LED instalados</p>
+                  <p className="text-xs uppercase text-muted-foreground">Pontos LED instalados</p>
                   <p className="text-base font-bold text-yellow-700 mt-0.5">
                     {ip.pontosLED.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     {ip.pontosLED.observacao}
                   </p>
                 </div>
               )}
               {ip.manutencaoPendente && (
                 <div className="stat-card">
-                  <p className="text-[10px] uppercase text-muted-foreground">Manutenção pendente</p>
+                  <p className="text-xs uppercase text-muted-foreground">Manutenção pendente</p>
                   <p className="text-base font-bold text-foreground mt-0.5">
                     {ip.manutencaoPendente.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     {ip.manutencaoPendente.observacao}
                   </p>
                 </div>
               )}
               {ip.kmPorBairro && (
                 <div className="stat-card">
-                  <p className="text-[10px] uppercase text-muted-foreground">Pavimentação por bairro</p>
+                  <p className="text-xs uppercase text-muted-foreground">Pavimentação por bairro</p>
                   <p className="text-base font-bold text-foreground mt-0.5">
                     {ip.kmPorBairro.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     {ip.kmPorBairro.observacao}
                   </p>
                 </div>
@@ -847,7 +847,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <h3 className="text-base font-semibold text-foreground">
                   Cruzamento · Saneamento × Dengue (2018-2024)
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                   Série histórica de casos confirmados de dengue + LIRAa + criadouros
                   predominantes. Plano de Contingência da Vigilância em Saúde Piracanjuba.
                 </p>
@@ -887,37 +887,37 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
               {sdd.liraaE2 && (
                 <div className="stat-card border-red-500/30 bg-red-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                  <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                     <Skull className="w-3 h-3" /> LIRAa Estrato 2
                   </p>
                   <p className="text-base font-bold text-red-700 mt-0.5">
                     {sdd.liraaE2.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     {sdd.liraaE2.observacao}
                   </p>
                 </div>
               )}
               {sdd.liraaE1 && (
                 <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                  <p className="text-[10px] uppercase text-muted-foreground inline-flex items-center gap-1">
+                  <p className="text-xs uppercase text-muted-foreground inline-flex items-center gap-1">
                     <AlertTriangle className="w-3 h-3" /> LIRAa Estrato 1
                   </p>
                   <p className="text-base font-bold text-amber-700 mt-0.5">
                     {sdd.liraaE1.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     {sdd.liraaE1.observacao}
                   </p>
                 </div>
               )}
               {sdd.iip && (
                 <div className="stat-card">
-                  <p className="text-[10px] uppercase text-muted-foreground">IIP municipal Jan/2024</p>
+                  <p className="text-xs uppercase text-muted-foreground">IIP municipal Jan/2024</p>
                   <p className="text-2xl font-extrabold text-foreground mt-0.5">
                     {sdd.iip.valor_texto}
                   </p>
-                  <p className="text-[10px] text-muted-foreground leading-snug">
+                  <p className="text-xs text-muted-foreground leading-snug">
                     Pico em meses chuvosos (nov-abr)
                   </p>
                 </div>
@@ -929,7 +929,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               <p className="text-sm font-semibold text-foreground mb-2">
                 💡 Conclusão epidemiológica
               </p>
-              <p className="text-xs text-foreground/85 leading-relaxed">
+              <p className="text-sm text-foreground/85 leading-relaxed">
                 Em <strong>2022</strong>, Piracanjuba registrou{" "}
                 <strong className="text-red-700">946 casos</strong> notificados de dengue
                 (400 confirmados) — pico epidêmico 10× maior que 2020. A Vigilância em
@@ -967,7 +967,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   : "border-red-500/30 bg-red-500/5"
               }`}
             >
-              <p className="text-[10px] uppercase text-muted-foreground">Plano Municipal</p>
+              <p className="text-xs uppercase text-muted-foreground">Plano Municipal</p>
               <p
                 className={`text-base font-bold mt-0.5 ${
                   planoMun.valor === 1 ? "text-green-700" : "text-red-700"
@@ -985,7 +985,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   : "border-red-500/30 bg-red-500/5"
               }`}
             >
-              <p className="text-[10px] uppercase text-muted-foreground">Política Municipal</p>
+              <p className="text-xs uppercase text-muted-foreground">Política Municipal</p>
               <p
                 className={`text-base font-bold mt-0.5 ${
                   polMun.valor === 1 ? "text-green-700" : "text-red-700"
@@ -1003,7 +1003,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   : "border-red-500/30 bg-red-500/5"
               }`}
             >
-              <p className="text-[10px] uppercase text-muted-foreground">Conselho Municipal</p>
+              <p className="text-xs uppercase text-muted-foreground">Conselho Municipal</p>
               <p
                 className={`text-base font-bold mt-0.5 ${
                   conselho.valor === 1 ? "text-green-700" : "text-red-700"
@@ -1021,7 +1021,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   : "border-red-500/30 bg-red-500/5"
               }`}
             >
-              <p className="text-[10px] uppercase text-muted-foreground">Fundo Municipal</p>
+              <p className="text-xs uppercase text-muted-foreground">Fundo Municipal</p>
               <p
                 className={`text-base font-bold mt-0.5 ${
                   fundoMun.valor === 1 ? "text-green-700" : "text-red-700"
@@ -1034,7 +1034,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
         </div>
       </section>
 
-      <p className="text-[10px] text-muted-foreground italic mt-6 text-center">
+      <p className="text-xs text-muted-foreground italic mt-6 text-center">
         Atualização mensal automática via cron <code>sync-infraestrutura-mensal</code> · primeira
         segunda do mês 07:00 UTC. Snapshots SNIS 2023 (Instituto Água e Saneamento), ANEEL 2025
         (Resolução 3.544), ANATEL Painel Cobertura Móvel.

@@ -194,8 +194,8 @@ export default function FarmaciaFotosAdmin() {
                   {!isEditing && (
                     <div className="flex items-center gap-1">
                       <Phone className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{currentPhone}</span>
-                      <span className="text-[9px] text-muted-foreground/50">({phoneSource})</span>
+                      <span className="text-sm text-muted-foreground">{currentPhone}</span>
+                      <span className="text-xs text-muted-foreground/50">({phoneSource})</span>
                     </div>
                   )}
                 </div>
@@ -233,7 +233,7 @@ export default function FarmaciaFotosAdmin() {
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
                     placeholder="(64) 99999-9999"
-                    className="h-8 text-xs flex-1"
+                    className="h-8 text-sm flex-1"
                     autoFocus
                   />
                   <Button size="sm" variant="default" onClick={() => handleSavePhone(nome)} className="h-8">
@@ -244,7 +244,7 @@ export default function FarmaciaFotosAdmin() {
                   </Button>
                 </div>
               ) : (
-                <Button variant="ghost" size="sm" onClick={() => handleEditPhone(nome)} className="w-full justify-start text-xs text-muted-foreground h-7">
+                <Button variant="ghost" size="sm" onClick={() => handleEditPhone(nome)} className="w-full justify-start text-sm text-muted-foreground h-7">
                   <Pencil className="w-3 h-3 mr-1" /> Editar telefone
                 </Button>
               )}

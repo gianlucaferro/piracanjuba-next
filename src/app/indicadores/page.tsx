@@ -35,11 +35,11 @@ function StatCard({
 }) {
   return (
     <div className="stat-card">
-      <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="text-sm text-muted-foreground uppercase tracking-wider">{label}</p>
       <p className="text-2xl font-extrabold text-foreground mt-1">{value}</p>
-      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+      {sub && <p className="text-sm text-muted-foreground mt-0.5">{sub}</p>}
       {fonte && (
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Fonte:{" "}
           {fonteUrl ? (
             <a
@@ -243,7 +243,7 @@ export default async function IndicadoresPage() {
         </div>
       </section>
 
-      <p className="text-xs text-muted-foreground italic mt-8">
+      <p className="text-sm text-muted-foreground italic mt-8">
         Os indicadores acima são consolidados via{" "}
         <a
           href={`${SITE_URL}/sobre`}

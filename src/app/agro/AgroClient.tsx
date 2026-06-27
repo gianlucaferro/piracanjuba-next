@@ -41,7 +41,7 @@ function SectionHeader({ title, icon: Icon, description }: { title: string; icon
         </div>
         {title}
       </h2>
-      {description && <p className="text-xs text-muted-foreground mt-1 ml-10">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mt-1 ml-10">{description}</p>}
     </div>
   );
 }
@@ -53,10 +53,10 @@ function StatCard({ label, value, sub, icon: Icon, accent }: {
     <div className="stat-card flex flex-col gap-1">
       <div className="flex items-center gap-2">
         {Icon && <Icon className={`w-4 h-4 ${accent || "text-primary"}`} />}
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="text-sm text-muted-foreground">{label}</span>
       </div>
       <span className="text-lg font-bold text-foreground">{value}</span>
-      {sub && <span className="text-[10px] text-muted-foreground">{sub}</span>}
+      {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
     </div>
   );
 }
@@ -185,10 +185,10 @@ export default function Agro({
             Panorama produtivo de Piracanjuba-GO — Dados IBGE ({ano})
           </p>
           <div className="flex flex-wrap gap-2 mt-3">
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-sm">
               <MapPin className="w-3 h-3 mr-1" /> Piracanjuba, GO
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-sm">
               <BarChart3 className="w-3 h-3 mr-1" /> IBGE PPM/PAM {ano}
             </Badge>
           </div>
@@ -215,7 +215,7 @@ export default function Agro({
             <p className="text-sm font-semibold text-foreground inline-flex items-center gap-1.5">
               🌱 Como o solo de Piracanjuba mudou em 40 anos?
             </p>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+            <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
               Pastagem caiu 52%, agricultura subiu 4.049% (1985→2024). Veja a transição
               completa via MapBiomas — floresta, cerrado, soja, cana, área urbana.
             </p>
@@ -270,14 +270,14 @@ export default function Agro({
                           <p className="text-3xl font-bold text-green-700 dark:text-green-400 mt-1">
                             R$ {(pibAgro / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} milhões
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             Pecuária: R$ {(valorPecuaria / 1000).toFixed(0)} mi · Lavouras: R$ {(valorLavouras / 1000).toFixed(0)} mi · Leite: R$ {(leiteVal / 1000).toFixed(0)} mi · IBGE {ano}
                           </p>
                         </div>
                       </div>
                       <a href={`https://wa.me/?text=${encodeURIComponent(shareText + "\n\nVeja mais em: https://piracanjuba.ai/agro")}`}
                         target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline font-medium shrink-0">
+                        className="inline-flex items-center gap-1 text-sm text-[#25D366] hover:underline font-medium shrink-0">
                         <Share2 className="w-3 h-3" /> Compartilhar
                       </a>
                     </div>
@@ -288,7 +288,7 @@ export default function Agro({
                         <div className="rounded-lg bg-background p-2.5 text-center">
                           <Trophy className={`w-4 h-4 mx-auto mb-1 ${posicaoBovino <= 3 ? "text-yellow-500" : "text-muted-foreground"}`} />
                           <p className="text-lg font-bold text-foreground">{posicaoBovino}º</p>
-                          <p className="text-[10px] text-muted-foreground">Ranking bovino regional</p>
+                          <p className="text-xs text-muted-foreground">Ranking bovino regional</p>
                         </div>
                       )}
                       {lavourasProducao.length > 0 && lavourasProducao[0].area > 0 && (
@@ -297,7 +297,7 @@ export default function Agro({
                           <p className="text-lg font-bold text-foreground">
                             {(lavourasProducao[0].producao / lavourasProducao[0].area).toFixed(1)}
                           </p>
-                          <p className="text-[10px] text-muted-foreground">ton/ha {lavourasProducao[0].nome}</p>
+                          <p className="text-xs text-muted-foreground">ton/ha {lavourasProducao[0].nome}</p>
                         </div>
                       )}
                       {vacasOrdenhadas?.valor && leite?.valor && (
@@ -306,7 +306,7 @@ export default function Agro({
                           <p className="text-lg font-bold text-foreground">
                             {((leite.valor / vacasOrdenhadas.valor) * 1000).toFixed(0)}
                           </p>
-                          <p className="text-[10px] text-muted-foreground">litros/vaca/ano</p>
+                          <p className="text-xs text-muted-foreground">litros/vaca/ano</p>
                         </div>
                       )}
                       {lavourasProducao.length > 0 && (
@@ -315,7 +315,7 @@ export default function Agro({
                           <p className="text-lg font-bold text-foreground">
                             {lavourasProducao.reduce((s, l) => s + l.area, 0).toLocaleString("pt-BR")}
                           </p>
-                          <p className="text-[10px] text-muted-foreground">hectares plantados</p>
+                          <p className="text-xs text-muted-foreground">hectares plantados</p>
                         </div>
                       )}
                     </div>
@@ -335,11 +335,11 @@ export default function Agro({
                       <div key={l.chave} className="stat-card">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: l.cor }} />
-                          <span className="text-xs text-muted-foreground">{l.nome}</span>
+                          <span className="text-sm text-muted-foreground">{l.nome}</span>
                         </div>
                         <p className="text-xl font-bold text-foreground">{produtividade.toFixed(1)}</p>
-                        <p className="text-[10px] text-muted-foreground">ton/hectare</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{formatNum(l.area)} ha plantados</p>
+                        <p className="text-xs text-muted-foreground">ton/hectare</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{formatNum(l.area)} ha plantados</p>
                       </div>
                     );
                   })}
@@ -364,15 +364,15 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Pecuária Municipal ({ano})</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Pecuária Municipal ({ano})</p>
                 </div>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {rebanhos.map(r => (
                   <div key={r.chave} className="stat-card flex flex-col gap-0.5">
-                    <span className="text-xs text-muted-foreground">{r.nome}</span>
+                    <span className="text-sm text-muted-foreground">{r.nome}</span>
                     <span className="text-base font-bold text-foreground">{r.texto}</span>
-                    <span className="text-[10px] text-muted-foreground">cabeças</span>
+                    <span className="text-xs text-muted-foreground">cabeças</span>
                   </div>
                 ))}
               </div>
@@ -407,12 +407,12 @@ export default function Agro({
                     const pct = ((last - first) / first * 100).toFixed(1);
                     const grew = last >= first;
                     return (
-                      <p className={`text-xs mt-2 font-medium ${grew ? "text-green-600" : "text-red-600"}`}>
+                      <p className={`text-sm mt-2 font-medium ${grew ? "text-green-600" : "text-red-600"}`}>
                         {grew ? "↑" : "↓"} {grew ? "+" : ""}{pct}% no período ({formatNum(first)} → {formatNum(last)} cabeças)
                       </p>
                     );
                   })()}
-                  <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Pesquisa Pecuária Municipal</p>
+                  <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Pesquisa Pecuária Municipal</p>
                 </div>
               </section>
             )}
@@ -446,12 +446,12 @@ export default function Agro({
                     const pct = ((last - first) / first * 100).toFixed(1);
                     const grew = last >= first;
                     return (
-                      <p className={`text-xs mt-2 font-medium ${grew ? "text-green-600" : "text-red-600"}`}>
+                      <p className={`text-sm mt-2 font-medium ${grew ? "text-green-600" : "text-red-600"}`}>
                         {grew ? "↑" : "↓"} {grew ? "+" : ""}{pct}% no período ({(first / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} → {(last / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mi litros)
                       </p>
                     );
                   })()}
-                  <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — PPM (vacas ordenhadas × produtividade média 2.500 L/vaca/ano)</p>
+                  <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — PPM (vacas ordenhadas × produtividade média 2.500 L/vaca/ano)</p>
                 </div>
               </section>
             )}
@@ -490,7 +490,7 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — PPM ({ano})</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — PPM ({ano})</p>
                 </div>
               </section>
             )}
@@ -513,7 +513,7 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — PPM ({ano})</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — PPM ({ano})</p>
                 </div>
               </section>
             )}
@@ -524,7 +524,7 @@ export default function Agro({
                 <SectionHeader title="Abate Bovino — Goiás (Trimestral)" icon={Beef} description="Pesquisa Trimestral do Abate — dados estaduais mais recentes, incluindo 2025" />
                 {tem2025 && (
                   <div className="mb-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-                    <p className="text-xs text-primary font-medium">🆕 Dados de 2025 disponíveis! Os dados trimestrais estaduais (Goiás) são publicados antes da PPM municipal anual.</p>
+                    <p className="text-sm text-primary font-medium">🆕 Dados de 2025 disponíveis! Os dados trimestrais estaduais (Goiás) são publicados antes da PPM municipal anual.</p>
                   </div>
                 )}
                 <div className="stat-card">
@@ -542,7 +542,7 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Trimestral do Abate de Animais (tabela 1092). Barras coloridas = 2025.</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Trimestral do Abate de Animais (tabela 1092). Barras coloridas = 2025.</p>
                 </div>
               </section>
             )}
@@ -565,7 +565,7 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Trimestral do Leite (tabela 1086). Barras coloridas = 2025.</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — Pesquisa Trimestral do Leite (tabela 1086). Barras coloridas = 2025.</p>
                 </div>
               </section>
             )}
@@ -576,24 +576,24 @@ export default function Agro({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {leite && (
                   <div className="stat-card border-l-4 border-l-sky-500">
-                    <span className="text-xs text-muted-foreground">Produção de leite {isLeiteEstimado ? "(estimativa)" : ""}</span>
+                    <span className="text-sm text-muted-foreground">Produção de leite {isLeiteEstimado ? "(estimativa)" : ""}</span>
                     <p className="text-2xl font-bold text-foreground mt-1">{leite.valor_texto}</p>
-                    <p className="text-[10px] text-muted-foreground">{leite.unidade} • {leite.ano_referencia}</p>
-                    {isLeiteEstimado && <p className="text-[10px] text-amber-600 mt-1">Estimativa baseada em vacas ordenhadas × produtividade média GO</p>}
+                    <p className="text-xs text-muted-foreground">{leite.unidade} • {leite.ano_referencia}</p>
+                    {isLeiteEstimado && <p className="text-xs text-amber-600 mt-1">Estimativa baseada em vacas ordenhadas × produtividade média GO</p>}
                   </div>
                 )}
                 {leiteValor && (
                   <div className="stat-card border-l-4 border-l-emerald-500">
-                    <span className="text-xs text-muted-foreground">Valor da produção de leite</span>
+                    <span className="text-sm text-muted-foreground">Valor da produção de leite</span>
                     <p className="text-2xl font-bold text-foreground mt-1">{leiteValor.valor_texto}</p>
-                    <p className="text-[10px] text-muted-foreground">{leiteValor.unidade} • {leiteValor.ano_referencia}</p>
+                    <p className="text-xs text-muted-foreground">{leiteValor.unidade} • {leiteValor.ano_referencia}</p>
                   </div>
                 )}
                 {vacasOrdenhadas && (
                   <div className="stat-card border-l-4 border-l-amber-500">
-                    <span className="text-xs text-muted-foreground">Vacas ordenhadas</span>
+                    <span className="text-sm text-muted-foreground">Vacas ordenhadas</span>
                     <p className="text-2xl font-bold text-foreground mt-1">{vacasOrdenhadas.valor_texto}</p>
-                    <p className="text-[10px] text-muted-foreground">{vacasOrdenhadas.unidade} • {vacasOrdenhadas.ano_referencia}</p>
+                    <p className="text-xs text-muted-foreground">{vacasOrdenhadas.unidade} • {vacasOrdenhadas.ano_referencia}</p>
                   </div>
                 )}
               </div>
@@ -607,7 +607,7 @@ export default function Agro({
                   <p className="text-lg font-bold text-sky-700 dark:text-sky-400">
                     {((leite.valor / vacasOrdenhadas.valor) * 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} litros/vaca/ano
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Calculado: {leite.valor_texto} ÷ {vacasOrdenhadas.valor_texto} vacas
                   </p>
                 </div>
@@ -619,22 +619,22 @@ export default function Agro({
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {ovos && (
                       <div className="stat-card">
-                        <span className="text-xs text-muted-foreground">Produção de ovos</span>
+                        <span className="text-sm text-muted-foreground">Produção de ovos</span>
                         <p className="text-base font-bold text-foreground mt-1">{ovos.valor_texto}</p>
-                        <p className="text-[10px] text-muted-foreground">{ovos.unidade}</p>
+                        <p className="text-xs text-muted-foreground">{ovos.unidade}</p>
                       </div>
                     )}
                     {ovosValor && (
                       <div className="stat-card">
-                        <span className="text-xs text-muted-foreground">Valor ovos</span>
+                        <span className="text-sm text-muted-foreground">Valor ovos</span>
                         <p className="text-base font-bold text-foreground mt-1">{ovosValor.valor_texto}</p>
                       </div>
                     )}
                     {mel && (
                       <div className="stat-card">
-                        <span className="text-xs text-muted-foreground">Produção de mel</span>
+                        <span className="text-sm text-muted-foreground">Produção de mel</span>
                         <p className="text-base font-bold text-foreground mt-1">{mel.valor_texto}</p>
-                        <p className="text-[10px] text-muted-foreground">{mel.unidade}</p>
+                        <p className="text-xs text-muted-foreground">{mel.unidade}</p>
                       </div>
                     )}
                   </div>
@@ -659,7 +659,7 @@ export default function Agro({
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-muted-foreground mt-2">Fonte: IBGE — Produção Agrícola Municipal ({ano})</p>
+                  <p className="text-xs text-muted-foreground mt-2">Fonte: IBGE — Produção Agrícola Municipal ({ano})</p>
                 </div>
               )}
 
@@ -684,7 +684,7 @@ export default function Agro({
                 <h3 className="text-sm font-semibold text-foreground mb-3">Detalhamento por cultura</h3>
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b text-muted-foreground text-xs">
+                    <tr className="border-b text-muted-foreground text-sm">
                       <th className="text-left py-2 pr-4">Cultura</th>
                       <th className="text-right py-2 px-2">Produção</th>
                       <th className="text-right py-2 px-2">Área</th>
@@ -716,7 +716,7 @@ export default function Agro({
                   <p className="text-lg font-bold text-green-700 dark:text-green-400 mt-1">
                     R$ {(valorTotalLavouras / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} milhões
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Soma do valor bruto de todas as culturas listadas</p>
+                  <p className="text-xs text-muted-foreground">Soma do valor bruto de todas as culturas listadas</p>
                 </div>
               )}
             </section>
@@ -724,7 +724,7 @@ export default function Agro({
             {/* Fontes */}
             <section className="stat-card bg-muted/30">
               <h3 className="text-sm font-semibold text-foreground mb-2">Fontes oficiais</h3>
-              <div className="space-y-2 text-xs text-muted-foreground">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
                   Os dados desta página são obtidos automaticamente via API SIDRA do IBGE (Pesquisa Pecuária Municipal — PPM
                   e Produção Agrícola Municipal — PAM), referentes ao ano de <strong>{ano}</strong>.

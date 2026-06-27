@@ -47,15 +47,15 @@ export default async function FolhaCamaraPage() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Competência atual</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Competência atual</p>
               <p className="text-base font-bold text-foreground mt-0.5">{stats.ultima_referencia}</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Servidores na folha</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Servidores na folha</p>
               <p className="text-2xl font-extrabold text-blue-700 mt-0.5">{stats.total_servidores_ultima}</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Cargos diferentes</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Cargos diferentes</p>
               <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.por_cargo.length}</p>
             </div>
           </div>
@@ -95,11 +95,11 @@ export default async function FolhaCamaraPage() {
             {folha.map((f) => (
               <tr key={f.id} className="border-b border-border/50 last:border-0">
                 <td className="px-3 py-2 text-foreground">{f.nome}</td>
-                <td className="px-3 py-2 text-muted-foreground text-xs">{f.cargo}</td>
-                <td className="px-3 py-2 text-muted-foreground text-xs">{f.lotacao ?? "—"}</td>
-                <td className="px-3 py-2 text-muted-foreground text-xs">{fmtDate(f.data_admissao)}</td>
+                <td className="px-3 py-2 text-muted-foreground text-sm">{f.cargo}</td>
+                <td className="px-3 py-2 text-muted-foreground text-sm">{f.lotacao ?? "—"}</td>
+                <td className="px-3 py-2 text-muted-foreground text-sm">{fmtDate(f.data_admissao)}</td>
                 <td className="px-3 py-2">
-                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${f.situacao === "ATIVO" ? "bg-emerald-500/15 text-emerald-700" : "bg-slate-500/15 text-slate-700"}`}>
+                  <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded ${f.situacao === "ATIVO" ? "bg-emerald-500/15 text-emerald-700" : "bg-slate-500/15 text-slate-700"}`}>
                     {f.situacao ?? "—"}
                   </span>
                 </td>
@@ -109,7 +109,7 @@ export default async function FolhaCamaraPage() {
         </table>
       </section>
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         Dados sincronizados mensalmente do portal LAI Centi.
       </footer>
     </div>

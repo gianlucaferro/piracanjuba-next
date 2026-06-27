@@ -58,7 +58,7 @@ function IndicadorCard({ icon: Icon, label, valor, sufixo, fonte, fonteUrl, cor 
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs text-muted-foreground mb-1">{label}</p>
+            <p className="text-sm text-muted-foreground mb-1">{label}</p>
             <p className="text-2xl font-bold text-foreground">
               {valor ?? "—"}{sufixo && <span className="text-sm font-normal text-muted-foreground ml-1">{sufixo}</span>}
             </p>
@@ -68,7 +68,7 @@ function IndicadorCard({ icon: Icon, label, valor, sufixo, fonte, fonteUrl, cor 
           </div>
         </div>
         {fonte && (
-          <p className="text-[10px] text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Fonte: {fonteUrl ? (
               <a href={fonteUrl} target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
                 {fonte} <ExternalLink className="w-2.5 h-2.5" />
@@ -128,7 +128,7 @@ function VisaoGeralTab({ indicadores, matriculas, escolas }: { indicadores: Educ
                 <Progress value={((item.val ?? 0) / (total?.valor ?? 1)) * 100} className="h-2" />
               </div>
             ))}
-            <p className="text-[10px] text-muted-foreground">Fonte: Censo Escolar/INEP • {total?.ano_referencia}</p>
+            <p className="text-xs text-muted-foreground">Fonte: Censo Escolar/INEP • {total?.ano_referencia}</p>
           </CardContent>
         </Card>
 
@@ -187,8 +187,8 @@ function VisaoGeralTab({ indicadores, matriculas, escolas }: { indicadores: Educ
                   <Card key={e.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className="font-semibold text-xs leading-tight text-foreground flex-1">{e.nome}</h4>
-                        <Badge variant="secondary" className={`text-[9px] shrink-0 ${redeColors[e.rede] || ""}`}>
+                        <h4 className="font-semibold text-sm leading-tight text-foreground flex-1">{e.nome}</h4>
+                        <Badge variant="secondary" className={`text-xs shrink-0 ${redeColors[e.rede] || ""}`}>
                           {e.rede.charAt(0).toUpperCase() + e.rede.slice(1)}
                         </Badge>
                       </div>
@@ -196,24 +196,24 @@ function VisaoGeralTab({ indicadores, matriculas, escolas }: { indicadores: Educ
                         {e.ideb_ai && (
                           <div className="text-center">
                             <p className={`text-xl font-bold ${idebColor}`}>{Number(e.ideb_ai).toFixed(1)}</p>
-                            <p className="text-[9px] text-muted-foreground">Anos Iniciais</p>
+                            <p className="text-xs text-muted-foreground">Anos Iniciais</p>
                           </div>
                         )}
                         {e.ideb_af && (
                           <div className="text-center">
                             <p className={`text-xl font-bold ${idebColor}`}>{Number(e.ideb_af).toFixed(1)}</p>
-                            <p className="text-[9px] text-muted-foreground">Anos Finais</p>
+                            <p className="text-xs text-muted-foreground">Anos Finais</p>
                           </div>
                         )}
                         {e.ideb_em && (
                           <div className="text-center">
                             <p className={`text-xl font-bold ${idebColor}`}>{Number(e.ideb_em).toFixed(1)}</p>
-                            <p className="text-[9px] text-muted-foreground">Ensino Médio</p>
+                            <p className="text-xs text-muted-foreground">Ensino Médio</p>
                           </div>
                         )}
                       </div>
                       {e.matriculas_total > 0 && (
-                        <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+                        <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                           <Users className="w-3 h-3" />
                           {e.matriculas_total.toLocaleString("pt-BR")} matrículas
                         </p>
@@ -243,16 +243,16 @@ function VisaoGeralTab({ indicadores, matriculas, escolas }: { indicadores: Educ
                   <Card key={e.id} className="hover:shadow-md transition-shadow opacity-80">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className="font-semibold text-xs leading-tight text-foreground flex-1">{e.nome}</h4>
-                        <Badge variant="secondary" className={`text-[9px] shrink-0 ${redeColors[e.rede] || ""}`}>
+                        <h4 className="font-semibold text-sm leading-tight text-foreground flex-1">{e.nome}</h4>
+                        <Badge variant="secondary" className={`text-xs shrink-0 ${redeColors[e.rede] || ""}`}>
                           {e.rede.charAt(0).toUpperCase() + e.rede.slice(1)}
                         </Badge>
                       </div>
-                      <Badge variant="outline" className={`text-[9px] ${badgeClass}`}>
+                      <Badge variant="outline" className={`text-xs ${badgeClass}`}>
                         {badgeLabel}
                       </Badge>
                       {e.matriculas_total > 0 && (
-                        <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+                        <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                           <Users className="w-3 h-3" />
                           {e.matriculas_total.toLocaleString("pt-BR")} matrículas
                         </p>
@@ -262,7 +262,7 @@ function VisaoGeralTab({ indicadores, matriculas, escolas }: { indicadores: Educ
                 );
               })}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">Fonte: IDEB/INEP 2023 via QEdu</p>
+          <p className="text-xs text-muted-foreground mt-2">Fonte: IDEB/INEP 2023 via QEdu</p>
         </div>
       )}
     </div>
@@ -331,7 +331,7 @@ function IdebTab({ idebData }: { idebData: EducacaoIdeb[] }) {
               </LineChart>
             </ResponsiveContainer>
           ) : <p className="text-sm text-muted-foreground text-center py-8">Sem dados disponíveis</p>}
-          <p className="text-[10px] text-muted-foreground mt-2">Fonte: IDEB/INEP • 2007–2023</p>
+          <p className="text-xs text-muted-foreground mt-2">Fonte: IDEB/INEP • 2007–2023</p>
         </CardContent>
       </Card>
     </div>
@@ -375,7 +375,7 @@ function InfraestruturaTab({ indicadores }: { indicadores: EducacaoIndicador[] }
           );
         })}
       </div>
-      <p className="text-[10px] text-muted-foreground">Fonte: Censo Escolar/INEP • 2025</p>
+      <p className="text-xs text-muted-foreground">Fonte: Censo Escolar/INEP • 2025</p>
     </div>
   );
 }
@@ -425,7 +425,7 @@ function MatriculasTab({ matriculas }: { matriculas: any[] }) {
                 <Bar dataKey="quantidade" fill="hsl(220, 60%, 25%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground mt-2">Fonte: Censo Escolar/INEP • {latestYear}</p>
+            <p className="text-xs text-muted-foreground mt-2">Fonte: Censo Escolar/INEP • {latestYear}</p>
           </CardContent>
         </Card>
       ) : <p className="text-sm text-muted-foreground text-center py-8">Sem dados de matrículas</p>}
@@ -452,7 +452,7 @@ function MatriculasTab({ matriculas }: { matriculas: any[] }) {
               const pct = ((last - first) / first * 100).toFixed(1);
               const growing = last >= first;
               return (
-                <p className={`text-xs mt-2 font-medium ${growing ? "text-accent" : "text-destructive"}`}>
+                <p className={`text-sm mt-2 font-medium ${growing ? "text-accent" : "text-destructive"}`}>
                   {growing ? "↑" : "↓"} {growing ? "Crescimento" : "Redução"} de {Math.abs(Number(pct))}% no período ({trendData[0].ano}–{trendData[trendData.length - 1].ano})
                 </p>
               );
@@ -466,7 +466,7 @@ function MatriculasTab({ matriculas }: { matriculas: any[] }) {
           {latestData.map((m: any) => (
             <Card key={m.etapa}>
               <CardContent className="p-4 text-center">
-                <p className="text-xs text-muted-foreground">{ETAPA_LABELS[m.etapa] || m.etapa}</p>
+                <p className="text-sm text-muted-foreground">{ETAPA_LABELS[m.etapa] || m.etapa}</p>
                 <p className="text-xl font-bold text-foreground mt-1">{m.quantidade.toLocaleString("pt-BR")}</p>
               </CardContent>
             </Card>
@@ -512,7 +512,7 @@ function InvestimentoPorAluno({ totalAlunos }: { totalAlunos: number }) {
             <p className="text-2xl font-bold text-foreground mt-1">
               R$ {porAlunoMes.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<span className="text-sm font-normal text-muted-foreground">/mês</span>
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               R$ {porAluno.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}/ano · {totalAlunos.toLocaleString("pt-BR")} alunos matriculados · Fonte: SICONFI + Censo Escolar
             </p>
           </div>
@@ -546,7 +546,7 @@ function ProgramasTab({ programas }: { programas: any[] }) {
                       <Badge className={esferaColors[esf] || "bg-secondary"}>{esf.charAt(0).toUpperCase() + esf.slice(1)}</Badge>
                       <div className="flex-1">
                         <h4 className="font-semibold text-sm">{p.nome}</h4>
-                        {p.descricao && <p className="text-xs text-muted-foreground mt-1">{p.descricao}</p>}
+                        {p.descricao && <p className="text-sm text-muted-foreground mt-1">{p.descricao}</p>}
                       </div>
                       {p.fonte_url && (
                         <a href={p.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
@@ -596,7 +596,7 @@ function EscolasTab({ escolas }: { escolas: any[] }) {
         <div className="flex gap-1">
           {[null, "municipal", "estadual", "privada"].map((r) => (
             <button key={r ?? "all"} onClick={() => setFiltroRede(r)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filtroRede === r ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filtroRede === r ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
               {r ? r.charAt(0).toUpperCase() + r.slice(1) : "Todas"}
             </button>
           ))}
@@ -636,24 +636,24 @@ function EscolasTab({ escolas }: { escolas: any[] }) {
                   <div>
                     <h4 className="font-semibold text-sm">{e.nome}</h4>
                     {e.diretor_nome && (
-                      <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
                         <Users className="w-3 h-3" /> Dir.: {e.diretor_nome}
                       </p>
                     )}
                     <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                      <Badge variant="outline" className="text-[10px]">{e.rede}</Badge>
+                      <Badge variant="outline" className="text-xs">{e.rede}</Badge>
                       {(() => {
                         const ideb = e.ideb_ai || e.ideb_af || e.ideb_em;
                         if (!ideb) return null;
                         const v = Number(ideb);
                         const label = v >= 6 ? "Excelente" : v >= 5 ? "Bom" : v >= 4 ? "Regular" : "Abaixo da meta";
                         const color = v >= 6 ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" : v >= 5 ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" : v >= 4 ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300" : "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
-                        return <Badge className={`text-[10px] ${color}`}>{label}</Badge>;
+                        return <Badge className={`text-xs ${color}`}>{label}</Badge>;
                       })()}
-                      {e.ideb_ai && <Badge variant="secondary" className="text-[10px]">AI: {Number(e.ideb_ai).toFixed(1)}</Badge>}
-                      {e.ideb_af && <Badge variant="secondary" className="text-[10px]">AF: {Number(e.ideb_af).toFixed(1)}</Badge>}
-                      {e.ideb_em && <Badge variant="secondary" className="text-[10px]">EM: {Number(e.ideb_em).toFixed(1)}</Badge>}
-                      {e.matriculas_total > 0 && <span className="text-[10px] text-muted-foreground">{e.matriculas_total} alunos</span>}
+                      {e.ideb_ai && <Badge variant="secondary" className="text-xs">AI: {Number(e.ideb_ai).toFixed(1)}</Badge>}
+                      {e.ideb_af && <Badge variant="secondary" className="text-xs">AF: {Number(e.ideb_af).toFixed(1)}</Badge>}
+                      {e.ideb_em && <Badge variant="secondary" className="text-xs">EM: {Number(e.ideb_em).toFixed(1)}</Badge>}
+                      {e.matriculas_total > 0 && <span className="text-xs text-muted-foreground">{e.matriculas_total} alunos</span>}
                     </div>
                   </div>
                   {e.fonte_url && (
@@ -664,7 +664,7 @@ function EscolasTab({ escolas }: { escolas: any[] }) {
                 </div>
                 {/* Contato e endereço */}
                 {(e.endereco || e.telefone) && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                     {e.endereco && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {e.endereco}</span>}
                     {e.telefone && (
                       <a href={`tel:${e.telefone}`} className="flex items-center gap-1 text-primary hover:underline" onClick={(ev) => ev.stopPropagation()}>
@@ -676,12 +676,12 @@ function EscolasTab({ escolas }: { escolas: any[] }) {
                 {/* Infraestrutura */}
                 {(e.tem_biblioteca !== null || e.tem_lab_informatica !== null || e.tem_quadra !== null || e.tem_internet !== null || e.tem_alimentacao !== null) && (
                   <div className="flex flex-wrap gap-1.5">
-                    {e.tem_biblioteca != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_biblioteca ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>📚 Biblioteca</span>}
-                    {e.tem_lab_informatica != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_lab_informatica ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>💻 Lab Info</span>}
-                    {e.tem_lab_ciencias != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_lab_ciencias ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🔬 Lab Ciências</span>}
-                    {e.tem_quadra != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_quadra ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🏃 Quadra</span>}
-                    {e.tem_internet != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_internet ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>📶 Internet</span>}
-                    {e.tem_alimentacao != null && <span className={`text-[10px] px-1.5 py-0.5 rounded ${e.tem_alimentacao ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🍽️ Alimentação</span>}
+                    {e.tem_biblioteca != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_biblioteca ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>📚 Biblioteca</span>}
+                    {e.tem_lab_informatica != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_lab_informatica ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>💻 Lab Info</span>}
+                    {e.tem_lab_ciencias != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_lab_ciencias ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🔬 Lab Ciências</span>}
+                    {e.tem_quadra != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_quadra ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🏃 Quadra</span>}
+                    {e.tem_internet != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_internet ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>📶 Internet</span>}
+                    {e.tem_alimentacao != null && <span className={`text-xs px-1.5 py-0.5 rounded ${e.tem_alimentacao ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground line-through"}`}>🍽️ Alimentação</span>}
                   </div>
                 )}
               </CardContent>
@@ -807,11 +807,11 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="text-lg font-bold text-foreground">{inst.nome}</h3>
-                          {inst.sigla && <Badge variant="secondary" className="text-xs font-semibold">{inst.sigla}</Badge>}
-                          <Badge variant="outline" className="text-[10px]">{inst.tipo === "privada" ? "Privada" : "Pública"}</Badge>
+                          {inst.sigla && <Badge variant="secondary" className="text-sm font-semibold">{inst.sigla}</Badge>}
+                          <Badge variant="outline" className="text-xs">{inst.tipo === "privada" ? "Privada" : "Pública"}</Badge>
                         </div>
                         {inst.fundacao_ano && (
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             Fundada em {inst.fundacao_ano} • {inst.alunos_formados ? `${inst.alunos_formados.toLocaleString("pt-BR")}+ alunos formados` : ""}
                           </p>
                         )}
@@ -832,13 +832,13 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                       )}
 
                       {inst.docentes_mestres_doutores_pct && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {inst.docentes_mestres_doutores_pct}% do corpo docente com mestrado ou doutorado
                         </p>
                       )}
 
                       {/* Contato */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                         {inst.endereco && (
                           <div className="flex items-start gap-1.5">
                             <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
@@ -869,9 +869,9 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                       {/* Programas de financiamento */}
                       {inst.programas_financiamento.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
-                          <span className="text-[10px] text-muted-foreground mr-1">Financiamento:</span>
+                          <span className="text-xs text-muted-foreground mr-1">Financiamento:</span>
                           {inst.programas_financiamento.map((p) => (
-                            <Badge key={p} variant="outline" className="text-[10px]">{p}</Badge>
+                            <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
                           ))}
                         </div>
                       )}
@@ -885,7 +885,7 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                         </a>
                       )}
                       {inst.fonte_url && (
-                        <a href={inst.fonte_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                        <a href={inst.fonte_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                           e-MEC <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
@@ -897,11 +897,11 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
               {/* Filtros de modalidade */}
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-foreground">Cursos de Graduação</span>
-                <span className="text-xs text-muted-foreground">({presenciais} presenciais, {ead} EAD)</span>
+                <span className="text-sm text-muted-foreground">({presenciais} presenciais, {ead} EAD)</span>
                 <div className="flex gap-1 ml-auto">
                   {[null, "presencial", "ead"].map((m) => (
                     <button key={m ?? "all"} onClick={() => setFiltroModalidade(m)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filtroModalidade === m ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filtroModalidade === m ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
                       {m === "presencial" ? "Presencial" : m === "ead" ? "EAD" : "Todos"}
                     </button>
                   ))}
@@ -923,15 +923,15 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                       </div>
 
                       <div className="flex flex-wrap gap-1.5">
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-xs">
                           {GRAU_LABELS[curso.grau] || curso.grau}
                         </Badge>
-                        <Badge variant={curso.modalidade === "ead" ? "default" : "secondary"} className="text-[10px]">
+                        <Badge variant={curso.modalidade === "ead" ? "default" : "secondary"} className="text-xs">
                           {curso.modalidade === "ead" ? "EAD" : "Presencial"}
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
                         {curso.periodo && (
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" /> {curso.periodo.charAt(0).toUpperCase() + curso.periodo.slice(1)}
@@ -946,13 +946,13 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
 
                       {curso.conceito_mec && (
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-muted-foreground">MEC:</span>
+                          <span className="text-xs text-muted-foreground">MEC:</span>
                           <div className="flex gap-0.5">
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star key={s} className={`w-3 h-3 ${s <= curso.conceito_mec! ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground/30"}`} />
                             ))}
                           </div>
-                          <span className="text-xs font-bold text-foreground">{curso.conceito_mec}</span>
+                          <span className="text-sm font-bold text-foreground">{curso.conceito_mec}</span>
                         </div>
                       )}
                     </CardContent>
@@ -960,7 +960,7 @@ function EnsinoSuperiorTab({ ies, cursos }: { ies: EnsinoSuperiorIes[]; cursos: 
                 ))}
               </div>
 
-              <p className="text-[10px] text-muted-foreground">Fonte: e-MEC/MEC • Site institucional FAP</p>
+              <p className="text-xs text-muted-foreground">Fonte: e-MEC/MEC • Site institucional FAP</p>
             </div>
           );
         })
@@ -999,7 +999,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
             <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-foreground">Programa Pé-de-Meia</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Incentivo financeiro-educacional do Governo Federal para estudantes do ensino médio público inscritos no CadÚnico.
                 O aluno recebe depósitos mensais por frequência e bônus anuais por aprovação e participação no ENEM.
               </p>
@@ -1014,7 +1014,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
           <CardContent className="p-3">
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-amber-700 dark:text-amber-300">Dados incompletos.</span>{" "}
                 Os valores de {anoSel} capturaram apenas as parcelas iniciais (matrícula). O valor total do ano (frequência + aprovação + ENEM) 
                 será atualizado após re-sincronização com o Portal da Transparência. O programa prevê até R$ 3.000/aluno/ano para quem cumpre todos os requisitos.
@@ -1027,7 +1027,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
           <CardContent className="p-3">
             <div className="flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-green-700 dark:text-green-300">Dados oficiais.</span>{" "}
                 Total de beneficiários e valor global conforme o Portal da Transparência ({anoSel}). 
                 A distribuição por série é estimada proporcionalmente com base no Censo Escolar/INEP.
@@ -1048,7 +1048,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
             <button key={a} onClick={() => setAnoSel(a)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${anoSel === a ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}>
               {a}
-              {aIncompleto && <span className="ml-1 text-[9px] opacity-70">incompleto</span>}
+              {aIncompleto && <span className="ml-1 text-xs opacity-70">incompleto</span>}
             </button>
           );
         })}
@@ -1077,7 +1077,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
                 <Bar dataKey="beneficiarios" name="Beneficiários" fill="hsl(220, 60%, 25%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground mt-2">Fonte: Portal da Transparência / MEC • {anoSel}</p>
+            <p className="text-xs text-muted-foreground mt-2">Fonte: Portal da Transparência / MEC • {anoSel}</p>
           </CardContent>
         </Card>
       )}
@@ -1087,9 +1087,9 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
         {anoData.filter((d) => d.serie).sort((a, b) => (a.serie || "").localeCompare(b.serie || "")).map((d) => (
           <Card key={d.id}>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground mb-1">{d.serie} do Ensino Médio</p>
+              <p className="text-sm text-muted-foreground mb-1">{d.serie} do Ensino Médio</p>
               <p className="text-xl font-bold text-foreground">{(d.beneficiarios || 0).toLocaleString("pt-BR")}</p>
-              <p className="text-[10px] text-muted-foreground">alunos beneficiados</p>
+              <p className="text-xs text-muted-foreground">alunos beneficiados</p>
               {d.valor_total && (
                 <p className="text-sm font-semibold text-primary mt-2">
                   R$ {d.valor_total >= 1_000_000 ? `${(d.valor_total / 1_000_000).toFixed(2).replace(".", ",")} mi` : `${(d.valor_total / 1000).toFixed(0)} mil`}
@@ -1106,7 +1106,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
           <CardTitle className="text-sm font-semibold">Como Funciona o Pé-de-Meia</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             {[
               { label: "Incentivo Matrícula", valor: "R$ 200", desc: "Pago no ato da matrícula" },
               { label: "Incentivo Frequência", valor: "R$ 200/mês", desc: "80% de frequência mínima" },
@@ -1122,13 +1122,13 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-3">
+          <p className="text-xs text-muted-foreground mt-3">
             Fonte: <a href="https://www.gov.br/mec/pt-br/pe-de-meia" target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">MEC — Programa Pé-de-Meia <ExternalLink className="w-2.5 h-2.5" /></a>
           </p>
         </CardContent>
       </Card>
 
-      <p className="text-[10px] text-muted-foreground italic">
+      <p className="text-xs text-muted-foreground italic">
         ⚠️ Dados estimados com base nas matrículas do ensino médio público de Piracanjuba e na cobertura nacional do programa. Valores oficiais por município podem ser consultados no Portal da Transparência.
       </p>
     </div>
@@ -1179,7 +1179,7 @@ export default function Educacao() {
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
+                  className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
                 >
                   <tab.icon className="w-3.5 h-3.5 mr-1.5" />
                   {tab.label}

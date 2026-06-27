@@ -27,7 +27,7 @@ export default function PageInConstruction({
         <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
           {description}
         </p>
-        <p className="text-xs text-muted-foreground mt-4">
+        <p className="text-sm text-muted-foreground mt-4">
           Esta seção está sendo migrada para a nova versão da plataforma.
           <br />
           Os dados estarão disponíveis em breve.

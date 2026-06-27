@@ -89,14 +89,14 @@ export default function HistoriaFotosAdmin() {
           <button
             key={s}
             onClick={() => setFiltro(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+            className={`rounded-full px-3 py-1 text-sm font-medium border transition-colors ${
               filtro === s ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:text-foreground"
             }`}
           >
             {statusLabel[s]} ({cont(s)})
           </button>
         ))}
-        <button onClick={() => carregar()} className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+        <button onClick={() => carregar()} className="ml-auto inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <RotateCcw className="w-3.5 h-3.5" /> Atualizar
         </button>
       </div>
@@ -119,27 +119,27 @@ export default function HistoriaFotosAdmin() {
               <Badge className={f.status === "aprovada" ? "bg-emerald-600 text-white" : f.status === "rejeitada" ? "bg-red-600 text-white" : "bg-amber-500 text-white"}>
                 {f.status}
               </Badge>
-              <span className="text-[10px] text-muted-foreground">{fmt(f.created_at)}</span>
+              <span className="text-xs text-muted-foreground">{fmt(f.created_at)}</span>
             </div>
-            {f.descricao && <p className="text-xs text-foreground/90">{f.descricao}</p>}
-            {f.autor_nome && <p className="text-[10px] text-muted-foreground">Enviado por: {f.autor_nome}</p>}
+            {f.descricao && <p className="text-sm text-foreground/90">{f.descricao}</p>}
+            {f.autor_nome && <p className="text-xs text-muted-foreground">Enviado por: {f.autor_nome}</p>}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
               {f.status !== "aprovada" && (
-                <Button size="sm" className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" disabled={busy === f.id} onClick={() => acao(f.id, "set_status", "aprovada")}>
+                <Button size="sm" className="h-7 text-sm bg-emerald-600 hover:bg-emerald-700 text-white" disabled={busy === f.id} onClick={() => acao(f.id, "set_status", "aprovada")}>
                   <Check className="w-3.5 h-3.5 mr-1" /> Aprovar
                 </Button>
               )}
               {f.status !== "rejeitada" && (
-                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={busy === f.id} onClick={() => acao(f.id, "set_status", "rejeitada")}>
+                <Button size="sm" variant="outline" className="h-7 text-sm" disabled={busy === f.id} onClick={() => acao(f.id, "set_status", "rejeitada")}>
                   <X className="w-3.5 h-3.5 mr-1" /> Rejeitar
                 </Button>
               )}
               {f.url && (
-                <a href={f.url} download target="_blank" rel="noopener noreferrer" className="inline-flex items-center h-7 px-2 text-xs rounded-md border border-border hover:bg-secondary">
+                <a href={f.url} download target="_blank" rel="noopener noreferrer" className="inline-flex items-center h-7 px-2 text-sm rounded-md border border-border hover:bg-secondary">
                   <Download className="w-3.5 h-3.5 mr-1" /> Baixar
                 </a>
               )}
-              <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive ml-auto" disabled={busy === f.id} onClick={() => acao(f.id, "delete")}>
+              <Button size="sm" variant="ghost" className="h-7 text-sm text-destructive ml-auto" disabled={busy === f.id} onClick={() => acao(f.id, "delete")}>
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
             </div>
