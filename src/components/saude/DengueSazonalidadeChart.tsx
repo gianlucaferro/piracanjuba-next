@@ -98,8 +98,8 @@ export default function DengueSazonalidadeChart({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 10 }} width={36} allowDecimals={false} />
+            <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 11 }} width={36} allowDecimals={false} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
@@ -113,7 +113,7 @@ export default function DengueSazonalidadeChart({
               }}
             />
             <Legend
-              wrapperStyle={{ fontSize: 11, paddingTop: 4 }}
+              wrapperStyle={{ fontSize: 12, paddingTop: 4 }}
               iconType="line"
               formatter={(value: string) => value.replace("ano_", "")}
             />

@@ -73,8 +73,8 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={rows} layout="vertical" margin={{ top: 8, right: 50, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
-            <XAxis type="number" tick={{ fontSize: 10 }} />
-            <YAxis type="category" dataKey="causa" tick={{ fontSize: 11 }} width={200} interval={0} />
+            <XAxis type="number" tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="causa" tick={{ fontSize: 12 }} width={200} interval={0} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
@@ -91,7 +91,7 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
               <LabelList
                 dataKey="total"
                 position="right"
-                style={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
+                style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                 formatter={(v: number) => `${v}`}
               />
             </Bar>

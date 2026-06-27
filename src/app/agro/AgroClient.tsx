@@ -396,7 +396,7 @@ export default function Agro({
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
-                      <YAxis tickFormatter={v => `${(v/1000).toFixed(0)}mil`} tick={{ fontSize: 11 }} />
+                      <YAxis tickFormatter={v => `${(v/1000).toFixed(0)}mil`} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [formatNum(v) + " cabeças", "Efetivo"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Area type="monotone" dataKey="valor" stroke="#8b4513" strokeWidth={2} fill="url(#gradBovino)" />
                     </AreaChart>
@@ -435,7 +435,7 @@ export default function Agro({
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
-                      <YAxis tickFormatter={v => `${(v/1000).toFixed(0)}mi`} tick={{ fontSize: 11 }} />
+                      <YAxis tickFormatter={v => `${(v/1000).toFixed(0)}mi`} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [`${(v / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mi litros`, "Produção estimada"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Area type="monotone" dataKey="valor" stroke="#0ea5e9" strokeWidth={2} fill="url(#gradLeite)" />
                     </AreaChart>
@@ -481,7 +481,7 @@ export default function Agro({
                     <BarChart data={compBovino} layout="vertical" margin={{ left: 0, right: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis type="number" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}mil` : String(v)} />
-                      <YAxis type="category" dataKey="nome" width={120} tick={{ fontSize: 11 }} />
+                      <YAxis type="category" dataKey="nome" width={120} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [formatNum(v) + " cabeças", "Efetivo"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
                         {compBovino.map((m, i) => (
@@ -504,7 +504,7 @@ export default function Agro({
                     <BarChart data={compLeite} layout="vertical" margin={{ left: 0, right: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis type="number" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}mil` : String(v)} />
-                      <YAxis type="category" dataKey="nome" width={120} tick={{ fontSize: 11 }} />
+                      <YAxis type="category" dataKey="nome" width={120} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [formatNum(v) + " vacas", "Ordenhadas"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
                         {compLeite.map(m => (
@@ -532,8 +532,8 @@ export default function Agro({
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={abateTrimestral} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis dataKey="trimestre" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={50} />
-                      <YAxis tickFormatter={v => `${(v / 1000000).toFixed(1)}mi`} tick={{ fontSize: 11 }} />
+                      <XAxis dataKey="trimestre" tick={{ fontSize: 11 }} angle={-30} textAnchor="end" height={50} />
+                      <YAxis tickFormatter={v => `${(v / 1000000).toFixed(1)}mi`} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [`${(v / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil cabeças`, "Abate"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Bar dataKey="valor" radius={[6, 6, 0, 0]}>
                         {abateTrimestral.map((d, i) => (
@@ -555,8 +555,8 @@ export default function Agro({
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={leiteTrimestral} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis dataKey="trimestre" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={50} />
-                      <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}mi`} tick={{ fontSize: 11 }} />
+                      <XAxis dataKey="trimestre" tick={{ fontSize: 11 }} angle={-30} textAnchor="end" height={50} />
+                      <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}mi`} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [`${(v / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil litros`, "Leite"]} contentStyle={{ borderRadius: 8, fontSize: 12 }} />
                       <Bar dataKey="valor" radius={[6, 6, 0, 0]}>
                         {leiteTrimestral.map((d, i) => (

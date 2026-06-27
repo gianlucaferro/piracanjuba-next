@@ -419,7 +419,7 @@ function MatriculasTab({ matriculas }: { matriculas: any[] }) {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="etapa" tick={{ fontSize: 11 }} angle={-20} textAnchor="end" height={60} />
+                <XAxis dataKey="etapa" tick={{ fontSize: 12 }} angle={-20} textAnchor="end" height={60} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Bar dataKey="quantidade" fill="hsl(220, 60%, 25%)" radius={[4, 4, 0, 0]} />
@@ -440,8 +440,8 @@ function MatriculasTab({ matriculas }: { matriculas: any[] }) {
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={trendData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Line type="monotone" dataKey="total" stroke="hsl(220, 60%, 25%)" strokeWidth={2} dot={{ r: 3 }} name="Total de matrículas" />
               </LineChart>

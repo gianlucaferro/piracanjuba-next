@@ -113,19 +113,19 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 11 }}
               interval={5}
             />
             <YAxis
               yAxisId="internacoes"
               orientation="left"
-              tick={{ fontSize: 10, fill: "hsl(262, 83%, 58%)" }}
+              tick={{ fontSize: 11, fill: "hsl(262, 83%, 58%)" }}
               width={36}
             />
             <YAxis
               yAxisId="obitos"
               orientation="right"
-              tick={{ fontSize: 10, fill: "hsl(0, 84%, 60%)" }}
+              tick={{ fontSize: 11, fill: "hsl(0, 84%, 60%)" }}
               width={32}
             />
             <Tooltip
@@ -139,7 +139,7 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
                 return [value, name];
               }}
             />
-            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} iconType="line" />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="line" />
             <Bar
               yAxisId="internacoes"
               dataKey="srag"

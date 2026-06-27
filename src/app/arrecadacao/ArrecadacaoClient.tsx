@@ -335,8 +335,8 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
             <ResponsiveContainer width="100%" height={320}>
               <ComposedChart data={chartTotal}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
                 <Tooltip formatter={(v: any) => formatCurrency(v)} />
                 <Legend />
                 <Bar dataKey="Receita Própria" stackId="total" fill="hsl(220, 60%, 50%)" radius={[0, 0, 0, 0]} />
@@ -348,8 +348,8 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={chartAnual}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
                 <Tooltip formatter={(v: any) => formatCurrency(v)} />
                 <Legend />
                 <Bar dataKey="Receita Própria" fill="hsl(220, 60%, 50%)" radius={[4, 4, 0, 0]} />
@@ -567,8 +567,8 @@ function SecaoIPVA({ dados }: { dados: ArrecadacaoMunicipal[] }) {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${(v / 1_000).toFixed(0)}k`} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000).toFixed(0)}k`} />
                 <Tooltip formatter={(v: any) => formatCurrency(v)} />
                 <Bar dataKey="valor" fill="hsl(152, 55%, 45%)" radius={[4, 4, 0, 0]} name="Cota-parte IPVA" />
               </BarChart>
@@ -780,10 +780,10 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData} layout="vertical" margin={{ left: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={70} />
+                <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={70} />
                 <Tooltip formatter={(v: any) => formatCurrency(v)} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="Piracanjuba" fill="hsl(220, 60%, 50%)" radius={[0, 4, 4, 0]} />
                 <Bar dataKey="Média GO (mesmo porte)" fill="hsl(25, 80%, 55%)" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -804,10 +804,10 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={evolucaoData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
+                <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
                 <Tooltip formatter={(v: any) => formatCurrency(v)} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Line type="monotone" dataKey="Piracanjuba" stroke="hsl(220, 60%, 50%)" strokeWidth={2} dot={{ r: 4 }} />
                 <Line type="monotone" dataKey="Média GO" stroke="hsl(25, 80%, 55%)" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} />
               </LineChart>

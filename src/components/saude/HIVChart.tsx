@@ -85,8 +85,8 @@ export default function HIVChart({
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={anuais} margin={{ top: 8, right: 10, bottom: 0, left: -10 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="ano" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} width={32} />
+              <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} width={32} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
@@ -115,8 +115,8 @@ export default function HIVChart({
             <p className="text-sm font-medium text-muted-foreground mb-1">Por faixa etária</p>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={porFaixa} layout="vertical" margin={{ top: 8, right: 30, bottom: 0, left: 0 }}>
-                <XAxis type="number" tick={{ fontSize: 9 }} />
-                <YAxis type="category" dataKey="faixa" tick={{ fontSize: 10 }} width={70} interval={0} />
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="faixa" tick={{ fontSize: 11 }} width={70} interval={0} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "hsl(var(--card))",
