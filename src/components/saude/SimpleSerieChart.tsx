@@ -64,22 +64,22 @@ export default function SimpleSerieChart({
           <Icon className={`w-4 h-4 ${iconColor}`} />
           {titulo}
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           {descricao}
         </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
         <div className="stat-card">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total no período</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Total no período</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{Math.round(total)}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{unidade}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{unidade}</p>
         </div>
         {ultimo && (
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Último ano</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Último ano</p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">{ultimo.valor}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{ultimo.ano}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{ultimo.ano}</p>
           </div>
         )}
         {diff !== null && (
@@ -90,12 +90,12 @@ export default function SimpleSerieChart({
                 : "border-amber-500/30 bg-amber-500/5 text-amber-700"
             }`}
           >
-            <p className="text-[10px] uppercase tracking-wider opacity-80">Variação</p>
+            <p className="text-xs uppercase tracking-wider opacity-80">Variação</p>
             <p className="text-xl font-extrabold mt-0.5">
               {diff >= 0 ? "+" : ""}
               {diff.toFixed(0)}%
             </p>
-            <p className="text-[10px] opacity-80 mt-0.5">
+            <p className="text-xs opacity-80 mt-0.5">
               {primeiro?.ano} ({primeiro?.valor}) → {ultimo?.ano} ({ultimo?.valor})
             </p>
           </div>
@@ -157,7 +157,7 @@ export default function SimpleSerieChart({
       </div>
 
       {fonteUrl && (
-        <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+        <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
           Fonte:{" "}
           <a
             href={fonteUrl}

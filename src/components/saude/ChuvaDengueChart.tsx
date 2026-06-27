@@ -60,7 +60,7 @@ export default function ChuvaDengueChart({
             <CloudRain className="w-4 h-4 text-sky-500" />
             Chuvas × Casos de Dengue · {ano}
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Correlação mensal entre precipitação acumulada (mm) e casos confirmados de dengue.
             Períodos de muita chuva costumam preceder picos de dengue em 2 a 6 semanas.
           </p>
@@ -69,12 +69,12 @@ export default function ChuvaDengueChart({
 
       {/* Stats compactos */}
       <div className="flex flex-wrap gap-3 mb-4 mt-3">
-        <div className="inline-flex items-center gap-2 text-xs">
+        <div className="inline-flex items-center gap-2 text-sm">
           <span className="w-3 h-3 rounded-full bg-sky-500" aria-hidden />
           <span className="text-muted-foreground">Total chuva no ano:</span>
           <span className="font-semibold text-foreground">{Math.round(totalChuva)} mm</span>
         </div>
-        <div className="inline-flex items-center gap-2 text-xs">
+        <div className="inline-flex items-center gap-2 text-sm">
           <span className="w-3 h-3 rounded-full bg-red-500" aria-hidden />
           <span className="text-muted-foreground">Total casos no ano:</span>
           <span className="font-semibold text-foreground">{totalCasos}</span>
@@ -142,7 +142,7 @@ export default function ChuvaDengueChart({
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Eixo esquerdo (azul): chuva mensal acumulada em mm. Eixo direito (vermelho): casos
         confirmados de dengue. Fontes: Open-Meteo (precipitação histórica, sync semanal) +
         InfoDengue/Ministério da Saúde (casos).

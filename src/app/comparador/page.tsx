@@ -134,45 +134,45 @@ export default async function ComparadorPage() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">População</p>
+            <p className="text-sm text-muted-foreground uppercase">População</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.populacao}</p>
-            <p className="text-[10px] text-muted-foreground">IBGE est. {pira.populacaoAno}</p>
+            <p className="text-xs text-muted-foreground">IBGE est. {pira.populacaoAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">PIB per capita</p>
+            <p className="text-sm text-muted-foreground uppercase">PIB per capita</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.pibPerCapita}</p>
-            <p className="text-[10px] text-muted-foreground">IBGE {pira.pibPerCapitaAno}</p>
+            <p className="text-xs text-muted-foreground">IBGE {pira.pibPerCapitaAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">IDHM</p>
+            <p className="text-sm text-muted-foreground uppercase">IDHM</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.idhm}</p>
-            <p className="text-[10px] text-muted-foreground">PNUD {pira.idhmAno}</p>
+            <p className="text-xs text-muted-foreground">PNUD {pira.idhmAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">IDEB Iniciais</p>
+            <p className="text-sm text-muted-foreground uppercase">IDEB Iniciais</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.ideb}</p>
-            <p className="text-[10px] text-muted-foreground">INEP {pira.idebAno}</p>
+            <p className="text-xs text-muted-foreground">INEP {pira.idebAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">Salário médio</p>
+            <p className="text-sm text-muted-foreground uppercase">Salário médio</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.salario}</p>
-            <p className="text-[10px] text-muted-foreground">IBGE {pira.salarioAno}</p>
+            <p className="text-xs text-muted-foreground">IBGE {pira.salarioAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">Saneamento</p>
+            <p className="text-sm text-muted-foreground uppercase">Saneamento</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.saneamento}</p>
-            <p className="text-[10px] text-muted-foreground">IBGE {pira.saneamentoAno}</p>
+            <p className="text-xs text-muted-foreground">IBGE {pira.saneamentoAno}</p>
           </div>
           <div className="stat-card">
-            <p className="text-xs text-muted-foreground uppercase">Frota</p>
+            <p className="text-sm text-muted-foreground uppercase">Frota</p>
             <p className="text-xl font-extrabold text-foreground mt-1">{pira.frota}</p>
-            <p className="text-[10px] text-muted-foreground">SENATRAN {pira.frotaAno}</p>
+            <p className="text-xs text-muted-foreground">SENATRAN {pira.frotaAno}</p>
           </div>
           <Link
             href="/indicadores"
             className="stat-card card-hover flex flex-col items-center justify-center text-center group"
           >
-            <p className="text-xs text-primary font-medium">Ver todos os indicadores</p>
+            <p className="text-sm text-primary font-medium">Ver todos os indicadores</p>
             <ArrowRight className="w-4 h-4 text-primary mt-1 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -203,17 +203,17 @@ export default async function ComparadorPage() {
                 <h3 className="font-semibold text-foreground text-base">
                   {m.nome}
                   {m.destaque && (
-                    <span className="ml-1.5 text-[10px] font-normal text-primary uppercase tracking-wider">
+                    <span className="ml-1.5 text-xs font-normal text-primary uppercase tracking-wider">
                       Foco
                     </span>
                   )}
                 </h3>
                 <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-1.5">
                 {m.descricao}
               </p>
-              <p className="text-[10px] text-muted-foreground mt-2 italic">
+              <p className="text-xs text-muted-foreground mt-2 italic">
                 IBGE: {m.ibge} · {m.destaque ? "Dados completos no Piracanjuba.ai" : "Ver no IBGE Cidades"}
               </p>
             </a>
@@ -263,7 +263,7 @@ export default async function ComparadorPage() {
         </ul>
       </section>
 
-      <p className="text-xs text-muted-foreground italic mt-6 text-center">
+      <p className="text-sm text-muted-foreground italic mt-6 text-center">
         Iniciativa cidadã independente. Cada dado linka para sua fonte oficial primária.
       </p>
     </div>

@@ -57,7 +57,7 @@ export default function AtividadesLegislativasPanel({
           <h3 className="text-base font-semibold text-foreground">
             Atividades Legislativas
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             Projetos de Lei (Legislativo + Executivo), Decretos, Resoluções e
             Emendas com autoria e situação.{" "}
             {totalGeral && (
@@ -80,7 +80,7 @@ export default function AtividadesLegislativasPanel({
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tipoConfig.bg} ${tipoConfig.text}`}>
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${tipoConfig.bg} ${tipoConfig.text}`}>
                     <Icon className="w-3 h-3" />
                     {a.modulo_nome ?? a.ato_tipo}
                   </span>
@@ -90,11 +90,11 @@ export default function AtividadesLegislativasPanel({
                 </div>
                 <div className="flex items-center gap-2">
                   {a.situacao && (
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${situacaoCor}`}>
+                    <span className={`text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${situacaoCor}`}>
                       {a.situacao}
                     </span>
                   )}
-                  <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground inline-flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {fmtDate(a.data_publicacao)}
                   </p>
@@ -108,7 +108,7 @@ export default function AtividadesLegislativasPanel({
                 </p>
               )}
               {(a.autores?.length ?? 0) > 0 && (
-                <p className="text-[11px] text-muted-foreground mt-1 inline-flex items-start gap-1">
+                <p className="text-xs text-muted-foreground mt-1 inline-flex items-start gap-1">
                   <Users className="w-3 h-3 mt-0.5 shrink-0" />
                   <span>
                     <strong>Autor{a.autores.length > 1 ? "es" : ""}:</strong>{" "}
@@ -126,7 +126,7 @@ export default function AtividadesLegislativasPanel({
       {variant === "compact" && totalGeral && atividades.length < totalGeral && (
         <Link
           href="/transparencia/atividades-legislativas"
-          className="block text-center text-xs text-emerald-700 hover:underline pt-2 border-t border-border"
+          className="block text-center text-sm text-emerald-700 hover:underline pt-2 border-t border-border"
         >
           Ver todas as {totalGeral} atividades →
         </Link>

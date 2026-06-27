@@ -62,13 +62,13 @@ function KpiCard({
           <p className="text-3xl font-extrabold leading-none" style={{ color: cor }}>
             {pct(poder.indice)}
           </p>
-          <p className="text-xs mt-1">
+          <p className="text-sm mt-1">
             Nível: <span className="font-semibold" style={{ color: cor }}>{poder.nivel}</span>
           </p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-foreground leading-none">{poder.posicao}º</p>
-          <p className="text-xs text-muted-foreground mt-1">de {poder.total} em Goiás</p>
+          <p className="text-sm text-muted-foreground mt-1">de {poder.total} em Goiás</p>
         </div>
       </div>
     </div>
@@ -88,7 +88,7 @@ export default function NotaPBAPage() {
     <div className="container py-8 max-w-3xl">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }} />
 
-      <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">
+      <p className="text-sm font-semibold uppercase tracking-wide text-primary mb-2">
         Nota <span className="text-[#25D366]">PBA</span>
       </p>
       <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight">
@@ -138,12 +138,12 @@ export default function NotaPBAPage() {
             })}
             <line x1={piraPos - 0.5} y1="0" x2={piraPos - 0.5} y2={H} stroke="#dc2626" strokeWidth="0.5" opacity="0.85" />
           </svg>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-[11px] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-[#16a34a]" /> 75% = faixa de selo</span>
             <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-slate-600" /> média de Goiás: {pct1(ctx.mediaExec)}</span>
             <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 bg-[#dc2626] rounded-sm" /> Piracanjuba: {piraPos}º · {pct1(exec.indice)}</span>
           </div>
-          <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+          <div className="flex justify-between mt-1 text-xs text-muted-foreground">
             <span>← mais transparentes</span>
             <span>menos transparentes →</span>
           </div>
@@ -161,13 +161,13 @@ export default function NotaPBAPage() {
           {ctx.niveisExec.map((n) => {
             const isP = n.nivel === exec.nivel;
             return (
-              <div key={n.nivel} className="flex items-center gap-2 text-xs">
+              <div key={n.nivel} className="flex items-center gap-2 text-sm">
                 <span className="w-24 shrink-0 text-right text-muted-foreground">{n.nivel}</span>
                 <div className="flex-1 h-4 rounded bg-muted/60 overflow-hidden">
                   <div className="h-full rounded" style={{ width: `${(n.count / maxCount) * 100}%`, background: nivelColor[n.nivel] || "#9ca3af" }} />
                 </div>
                 <span className="w-7 text-right text-foreground tabular-nums">{n.count}</span>
-                {isP && <span className="text-amber-600 font-semibold whitespace-nowrap text-[11px]">← Piracanjuba</span>}
+                {isP && <span className="text-amber-600 font-semibold whitespace-nowrap text-xs">← Piracanjuba</span>}
               </div>
             );
           })}
@@ -250,7 +250,7 @@ export default function NotaPBAPage() {
           <div className="overflow-auto max-h-[600px]">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="sticky top-0 z-10 bg-card text-[11px] uppercase tracking-wide text-muted-foreground border-b border-border">
+                <tr className="sticky top-0 z-10 bg-card text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
                   <th className="text-left font-semibold px-3 py-2 w-14">#</th>
                   <th className="text-left font-semibold px-3 py-2">Município</th>
                   <th className="text-left font-semibold px-3 py-2">Nível</th>
@@ -270,13 +270,13 @@ export default function NotaPBAPage() {
                       <td className={`px-3 py-1.5 ${isP ? "font-bold text-red-600 dark:text-red-400" : "text-foreground"}`}>
                         {r.mun}
                         {isP && (
-                          <span className="ml-2 inline-flex items-center rounded-full bg-red-600 text-white text-[10px] font-semibold px-2 py-0.5 align-middle">
+                          <span className="ml-2 inline-flex items-center rounded-full bg-red-600 text-white text-xs font-semibold px-2 py-0.5 align-middle">
                             ◄ Piracanjuba
                           </span>
                         )}
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className="inline-flex items-center gap-1.5 text-xs text-foreground whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 text-sm text-foreground whitespace-nowrap">
                           <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: nivelColor[r.niv] || "#9ca3af" }} />
                           {r.niv}
                         </span>
@@ -302,7 +302,7 @@ export default function NotaPBAPage() {
           <ExternalLink className="w-4 h-4" /> Fonte oficial: Radar da Transparência (ATRICON)
         </a>
       </div>
-      <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Dados do PNTP {N.ano} (arquivo oficial <code>dados_pntp_2025.zip</code> → <code>avaliacoes_pntp_2025.xlsx</code>).
         A posição no ranking foi calculada por ordenação dos índices oficiais dos {exec.total} municípios de Goiás.
         O PNTP divulga o índice e o nível; a posição é uma leitura do Piracanjuba.ai a partir desses números.

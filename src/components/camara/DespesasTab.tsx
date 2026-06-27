@@ -81,9 +81,9 @@ export default function DespesasTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{filtered.length} despesas · Total: {formatCurrency(totalValor)}</p>
+        <p className="text-sm text-muted-foreground">{filtered.length} despesas · Total: {formatCurrency(totalValor)}</p>
         {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
             <Download className="w-3.5 h-3.5" /> CSV
           </button>
         )}
@@ -92,14 +92,14 @@ export default function DespesasTab() {
       {/* Monthly chart */}
       {!isLoading && (despesas || []).length > 0 && (
         <div className="stat-card">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Despesas por mês — {ano}</p>
+          <p className="text-sm font-medium text-muted-foreground mb-2">Despesas por mês — {ano}</p>
           <div className="flex items-end gap-1 h-20">
             {monthlyData.map((m) => (
               <div key={m.mes} className="flex-1 flex flex-col items-center gap-1">
                 <div className="w-full bg-primary/20 rounded-t" style={{ height: `${Math.max(m.pct, 2)}%` }}>
                   <div className="w-full h-full bg-primary rounded-t transition-all duration-500" style={{ height: `${m.pct}%` }} />
                 </div>
-                <span className="text-[9px] text-muted-foreground">{m.mes}</span>
+                <span className="text-xs text-muted-foreground">{m.mes}</span>
               </div>
             ))}
           </div>
@@ -124,11 +124,11 @@ export default function DespesasTab() {
               <div className="flex items-start justify-between mb-1">
                 <div>
                   <p className="font-medium text-foreground text-sm">{d.credor || "Sem credor"}</p>
-                  {d.descricao && <p className="text-xs text-muted-foreground line-clamp-2">{d.descricao}</p>}
+                  {d.descricao && <p className="text-sm text-muted-foreground line-clamp-2">{d.descricao}</p>}
                 </div>
                 <span className="font-semibold text-foreground text-sm shrink-0 ml-2">{formatCurrency(d.valor)}</span>
               </div>
-              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground items-center">
+              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
                 {d.data_pagamento && <span>{new Date(d.data_pagamento + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
                 {d.elemento && (
                   elementoTooltip ? (
@@ -136,14 +136,14 @@ export default function DespesasTab() {
                       <TooltipTrigger asChild>
                         <span className="inline-flex items-center gap-0.5 cursor-help">· {d.elemento} <Info className="w-3 h-3" /></span>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs"><p className="text-xs">{elementoTooltip}</p></TooltipContent>
+                      <TooltipContent className="max-w-xs"><p className="text-sm">{elementoTooltip}</p></TooltipContent>
                     </Tooltip>
                   ) : (
                     <span>· {d.elemento}</span>
                   )
                 )}
               </div>
-              <p className="text-[11px] text-primary/70 flex items-center gap-1 mt-1">
+              <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
                 <Sparkles className="w-3 h-3" /> Clique para resumo IA
               </p>
             </button>

@@ -15,7 +15,7 @@ function ShareWhatsApp({ text }: { text: string }) {
       href={`https://wa.me/?text=${encodeURIComponent(text + "\n\nVeja mais em: https://piracanjuba.ai/prefeitura")}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline font-medium"
+      className="inline-flex items-center gap-1 text-sm text-[#25D366] hover:underline font-medium"
     >
       <Share2 className="w-3 h-3" /> Compartilhar
     </a>
@@ -268,10 +268,10 @@ export default function PrefeituraDestaques() {
                 <p className="text-2xl font-bold text-foreground mt-1">
                   {formatCurrency(custoPerCapitaMensal)}<span className="text-sm font-normal text-muted-foreground">/mês por habitante</span>
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Equivale a {formatCurrency(custoPerCapitaAnual)} por ano. Cálculo: despesa total empenhada pela Prefeitura dividida pelos {POPULACAO.toLocaleString("pt-BR")} habitantes do município.
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Fonte: DCA/SICONFI (Tesouro Nacional) · Inclui todas as secretarias e órgãos do Executivo.
                 </p>
               </div>
@@ -299,35 +299,35 @@ export default function PrefeituraDestaques() {
           <div className="space-y-1.5">
             {topSalarios.items.map((s) => (
               <div key={s.posicao} className="flex items-center gap-2 text-sm">
-                <span className={`w-5 text-right font-bold text-xs ${
+                <span className={`w-5 text-right font-bold text-sm ${
                   s.posicao === 1 ? "text-yellow-500" : s.posicao === 2 ? "text-gray-400" : s.posicao === 3 ? "text-amber-600" : "text-muted-foreground"
                 }`}>{s.posicao}º</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
-                    <p className="text-xs font-medium text-foreground truncate">{s.nome}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{s.nome}</p>
                     {s.tipo_folha && s.tipo_folha !== "NORMAL" ? (
-                      <span className="shrink-0 text-[9px] px-1 py-0.5 rounded bg-destructive/15 text-destructive font-semibold">{s.tipo_folha}</span>
+                      <span className="shrink-0 text-xs px-1 py-0.5 rounded bg-destructive/15 text-destructive font-semibold">{s.tipo_folha}</span>
                     ) : s.atipico ? (
-                      <span className="shrink-0 text-[9px] px-1 py-0.5 rounded bg-warning/15 text-warning font-semibold">Atípico</span>
+                      <span className="shrink-0 text-xs px-1 py-0.5 rounded bg-warning/15 text-warning font-semibold">Atípico</span>
                     ) : null}
                   </div>
-                  {s.cargo && <p className="text-[10px] text-muted-foreground truncate">{s.cargo}</p>}
+                  {s.cargo && <p className="text-xs text-muted-foreground truncate">{s.cargo}</p>}
                 </div>
-                <span className="text-xs font-bold text-foreground shrink-0">{formatCurrency(s.bruto)}</span>
+                <span className="text-sm font-bold text-foreground shrink-0">{formatCurrency(s.bruto)}</span>
               </div>
             ))}
           </div>
           {temAtipico && (
             <div className="mt-3 rounded-lg bg-warning/10 border border-warning/20 p-3">
-              <p className="text-xs text-warning font-semibold flex items-center gap-1.5 mb-1">
+              <p className="text-sm text-warning font-semibold flex items-center gap-1.5 mb-1">
                 ⚠️ Atenção
               </p>
-              <p className="text-xs text-foreground leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 Valores marcados como <strong>"Atípico"</strong> ou <strong>"RESCISÃO"</strong> incluem rescisões contratuais, retroativos, férias acumuladas ou verbas indenizatórias — <strong>não representam o salário mensal regular</strong> do servidor.
               </p>
             </div>
           )}
-          <p className="text-[10px] text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Valores brutos do mês. Inclui folha normal e rescisões. Fonte: Portal de Transparência.
           </p>
         </div>
@@ -348,7 +348,7 @@ export default function PrefeituraDestaques() {
             </h3>
             <ShareWhatsApp text={`Para onde vai o dinheiro público em Piracanjuba?\n\n${top8.slice(0, 5).map((f) => `• ${f.name}: ${((f.valor / total) * 100).toFixed(1)}%`).join("\n")}\n\nTotal: ${formatCurrency(total)}`} />
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground mb-3">
             Distribuição das despesas empenhadas por área de atuação do governo municipal.
           </p>
           {/* Visual bar chart */}
@@ -357,7 +357,7 @@ export default function PrefeituraDestaques() {
               const pct = (f.valor / total) * 100;
               return (
                 <div key={f.code} className="space-y-0.5">
-                  <div className="flex justify-between text-xs">
+                  <div className="flex justify-between text-sm">
                     <span className="text-foreground font-medium">{f.name}</span>
                     <span className="text-muted-foreground">{formatCurrency(f.valor)} ({pct.toFixed(1)}%)</span>
                   </div>
@@ -368,13 +368,13 @@ export default function PrefeituraDestaques() {
               );
             })}
             {outrosValor > 0 && (
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Outros</span>
                 <span>{formatCurrency(outrosValor)} ({((outrosValor / total) * 100).toFixed(1)}%)</span>
               </div>
             )}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">Fonte: DCA/SICONFI — Tesouro Nacional.</p>
+          <p className="text-xs text-muted-foreground mt-2">Fonte: DCA/SICONFI — Tesouro Nacional.</p>
         </div>
         );
       })()}
@@ -391,27 +391,27 @@ export default function PrefeituraDestaques() {
             </h3>
             <ShareWhatsApp text={`Folha de pagamento de Piracanjuba (${mesRef}):\n\n• Prefeitura: ${formatCurrency(folhaTotal.prefeitura.total)} (${folhaTotal.prefeitura.count} servidores)\n• Câmara: ${formatCurrency(folhaTotal.camara.total)} (${folhaTotal.camara.count} servidores)\n• Total: ${formatCurrency(folhaTotal.geral.total)} (${folhaTotal.geral.count} servidores)`} />
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground mb-3">
             Quanto o município gasta com salários em {mesRef}. Valores brutos (antes dos descontos).
           </p>
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-lg bg-primary/5 p-3 text-center">
-              <p className="text-[10px] text-muted-foreground">Prefeitura</p>
+              <p className="text-xs text-muted-foreground">Prefeitura</p>
               <p className="text-base font-bold text-primary">{formatCurrency(folhaTotal.prefeitura.total)}</p>
-              <p className="text-[10px] text-muted-foreground">{folhaTotal.prefeitura.count} servidores</p>
+              <p className="text-xs text-muted-foreground">{folhaTotal.prefeitura.count} servidores</p>
             </div>
             <div className="rounded-lg bg-accent/5 p-3 text-center">
-              <p className="text-[10px] text-muted-foreground">Câmara</p>
+              <p className="text-xs text-muted-foreground">Câmara</p>
               <p className="text-base font-bold text-accent">{formatCurrency(folhaTotal.camara.total)}</p>
-              <p className="text-[10px] text-muted-foreground">{folhaTotal.camara.count} servidores</p>
+              <p className="text-xs text-muted-foreground">{folhaTotal.camara.count} servidores</p>
             </div>
             <div className="rounded-lg bg-muted p-3 text-center">
-              <p className="text-[10px] text-muted-foreground">Total</p>
+              <p className="text-xs text-muted-foreground">Total</p>
               <p className="text-base font-bold text-foreground">{formatCurrency(folhaTotal.geral.total)}</p>
-              <p className="text-[10px] text-muted-foreground">{folhaTotal.geral.count} servidores</p>
+              <p className="text-xs text-muted-foreground">{folhaTotal.geral.count} servidores</p>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">Competência: {mesRef}. Fonte: Portal de Transparência.</p>
+          <p className="text-xs text-muted-foreground mt-2">Competência: {mesRef}. Fonte: Portal de Transparência.</p>
         </div>
         );
       })()}
@@ -428,24 +428,24 @@ export default function PrefeituraDestaques() {
             </h3>
             <ShareWhatsApp text={`As 5 empresas que mais recebem dinheiro da Prefeitura de Piracanjuba:\n\n${topFornecedores.map((f, i) => `${i + 1}. ${f.nome} — ${formatCurrency(f.valor)} (${f.count} contratos)`).join("\n")}`} />
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground mb-3">
             Ranking das empresas com maior valor total em contratos ativos e encerrados com a Prefeitura.
           </p>
           <div className="space-y-2">
             {topFornecedores.map((f, i) => (
               <div key={f.nome} className="flex items-center gap-2">
-                <span className={`w-5 text-right font-bold text-xs ${
+                <span className={`w-5 text-right font-bold text-sm ${
                   i === 0 ? "text-yellow-500" : i === 1 ? "text-gray-400" : i === 2 ? "text-amber-600" : "text-muted-foreground"
                 }`}>{i + 1}º</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">{f.nome}</p>
-                  <p className="text-[10px] text-muted-foreground">{f.count} contrato{f.count !== 1 ? "s" : ""}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{f.nome}</p>
+                  <p className="text-xs text-muted-foreground">{f.count} contrato{f.count !== 1 ? "s" : ""}</p>
                 </div>
-                <span className="text-xs font-bold text-foreground shrink-0">{formatCurrency(f.valor)}</span>
+                <span className="text-sm font-bold text-foreground shrink-0">{formatCurrency(f.valor)}</span>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">Soma de todos os contratos. Fonte: Portal de Transparência.</p>
+          <p className="text-xs text-muted-foreground mt-2">Soma de todos os contratos. Fonte: Portal de Transparência.</p>
         </div>
         );
       })()}
@@ -463,19 +463,19 @@ export default function PrefeituraDestaques() {
             </h3>
             <ShareWhatsApp text={`Piracanjuba arrecada ${formatCurrency(comparativo.piracanjuba_per_capita)} per capita em receita própria (${comparativo.ano}), ${pctDiff}% ${acima ? "acima" : "abaixo"} da média de ${comparativo.municipios_amostra} cidades goianas de porte similar (${formatCurrency(comparativo.media_go_per_capita)}).`} />
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground mb-3">
             Quanto o município arrecada por habitante com impostos próprios (IPTU, ISS, taxas), comparado com a média de {comparativo.municipios_amostra} cidades goianas de porte similar. Ano referência: {comparativo.ano}.
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-lg bg-primary/5 p-3 text-center">
-              <p className="text-[10px] text-muted-foreground">Piracanjuba</p>
+              <p className="text-xs text-muted-foreground">Piracanjuba</p>
               <p className="text-lg font-bold text-primary">{formatCurrency(comparativo.piracanjuba_per_capita)}</p>
-              <p className="text-[10px] text-muted-foreground">por habitante/ano</p>
+              <p className="text-xs text-muted-foreground">por habitante/ano</p>
             </div>
             <div className="rounded-lg bg-muted p-3 text-center">
-              <p className="text-[10px] text-muted-foreground">Média GO ({comparativo.municipios_amostra} cidades)</p>
+              <p className="text-xs text-muted-foreground">Média GO ({comparativo.municipios_amostra} cidades)</p>
               <p className="text-lg font-bold text-foreground">{formatCurrency(comparativo.media_go_per_capita)}</p>
-              <p className="text-[10px] text-muted-foreground">por habitante</p>
+              <p className="text-xs text-muted-foreground">por habitante</p>
             </div>
           </div>
           <div className="mt-3">
@@ -483,7 +483,7 @@ export default function PrefeituraDestaques() {
               <div className="absolute h-full bg-primary/30 rounded-full" style={{ width: "100%" }} />
               <div className="absolute h-full bg-primary rounded-full" style={{ width: `${Math.min((comparativo.piracanjuba_per_capita / Math.max(comparativo.piracanjuba_per_capita, comparativo.media_go_per_capita)) * 100, 100)}%` }} />
             </div>
-            <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+            <div className="flex justify-between mt-1 text-xs text-muted-foreground">
               <span>Piracanjuba: {formatCurrency(comparativo.piracanjuba_per_capita)}</span>
               <span>Média: {formatCurrency(comparativo.media_go_per_capita)}</span>
             </div>
@@ -494,12 +494,12 @@ export default function PrefeituraDestaques() {
               <span className="text-2xl md:text-3xl">{pctDiff}%</span>
               {" "}{acima ? "a mais" : "a menos"}
             </p>
-            <p className="text-xs md:text-sm text-muted-foreground mt-1">
+            <p className="text-sm md:text-sm text-muted-foreground mt-1">
               que a média das {comparativo.municipios_amostra} cidades goianas comparáveis
             </p>
           </div>
           {comparativo.municipios_nomes && (
-            <p className="text-[10px] text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               Cidades comparadas: {(comparativo.municipios_nomes as string[]).slice(0, 5).join(", ")}
               {(comparativo.municipios_nomes as string[]).length > 5 ? ` e mais ${(comparativo.municipios_nomes as string[]).length - 5}` : ""}.
               Fonte: SICONFI/DCA — Tesouro Nacional.

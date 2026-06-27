@@ -58,11 +58,11 @@ export default function ClimaClient({
               <Sun className="w-12 h-12 text-amber-500" />
             )}
             <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Hoje em Piracanjuba</p>
+              <p className="text-sm uppercase tracking-wider text-muted-foreground">Hoje em Piracanjuba</p>
               <p className="text-4xl font-extrabold text-foreground">
                 {Math.round(Number(ultimoDia?.temperatura_media ?? 0))}°C
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Mín {Math.round(Number(ultimoDia?.temperatura_min ?? 0))}° · Máx{" "}
                 {Math.round(Number(ultimoDia?.temperatura_max ?? 0))}°
               </p>
@@ -90,7 +90,7 @@ export default function ClimaClient({
             </div>
           </div>
         </div>
-        <p className="text-[11px] text-muted-foreground mt-3">
+        <p className="text-xs text-muted-foreground mt-3">
           Fonte: Open-Meteo. Atualizado diariamente.
         </p>
       </section>
@@ -99,28 +99,28 @@ export default function ClimaClient({
       {resumo && (
         <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="stat-card text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Chuva no mês</p>
+            <p className="text-sm text-muted-foreground uppercase tracking-wider">Chuva no mês</p>
             <p className="text-2xl font-extrabold text-sky-500 mt-1">{resumo.acumulado_mm} mm</p>
-            <p className="text-[10px] text-muted-foreground">{resumo.dias_com_chuva} dias com chuva</p>
+            <p className="text-xs text-muted-foreground">{resumo.dias_com_chuva} dias com chuva</p>
           </div>
           <div className="stat-card text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Temp. média</p>
+            <p className="text-sm text-muted-foreground uppercase tracking-wider">Temp. média</p>
             <p className="text-2xl font-extrabold text-emerald-500 mt-1">{resumo.temperatura_media}°C</p>
-            <p className="text-[10px] text-muted-foreground">no mês</p>
+            <p className="text-xs text-muted-foreground">no mês</p>
           </div>
           <div className="stat-card text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Máxima</p>
+            <p className="text-sm text-muted-foreground uppercase tracking-wider">Máxima</p>
             <p className="text-2xl font-extrabold text-orange-500 mt-1">
               {Math.round(resumo.temperatura_max_absoluta)}°C
             </p>
-            <p className="text-[10px] text-muted-foreground">no mês</p>
+            <p className="text-xs text-muted-foreground">no mês</p>
           </div>
           <div className="stat-card text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Mínima</p>
+            <p className="text-sm text-muted-foreground uppercase tracking-wider">Mínima</p>
             <p className="text-2xl font-extrabold text-sky-600 mt-1">
               {Math.round(resumo.temperatura_min_absoluta)}°C
             </p>
-            <p className="text-[10px] text-muted-foreground">no mês</p>
+            <p className="text-xs text-muted-foreground">no mês</p>
           </div>
         </section>
       )}
@@ -178,7 +178,7 @@ export default function ClimaClient({
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-sm text-muted-foreground mt-2">
           🟧 Máxima · 🟢 Média · 🟦 Mínima
         </p>
       </section>

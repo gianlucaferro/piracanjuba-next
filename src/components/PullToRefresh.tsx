@@ -67,12 +67,12 @@ export default function PullToRefresh({ onRefresh, children }: PullToRefreshProp
             style={{ transform: refreshing ? undefined : `rotate(${progress * 180}deg)` }}
           />
           {!refreshing && pullDistance > 20 && (
-            <span className="ml-2 text-xs text-muted-foreground">
+            <span className="ml-2 text-sm text-muted-foreground">
               {progress >= 1 ? "Solte para atualizar" : "Puxe para atualizar"}
             </span>
           )}
           {refreshing && (
-            <span className="ml-2 text-xs text-primary">Atualizando...</span>
+            <span className="ml-2 text-sm text-primary">Atualizando...</span>
           )}
         </div>
       )}

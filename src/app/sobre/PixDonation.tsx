@@ -36,11 +36,11 @@ export default function PixDonation() {
         </div>
       </div>
       <div className="bg-card border rounded-lg p-4">
-        <p className="text-xs font-semibold text-muted-foreground mb-2">
+        <p className="text-sm font-semibold text-muted-foreground mb-2">
           Chave Pix (aleatória)
         </p>
         <div className="flex items-center gap-2">
-          <code className="flex-1 text-xs font-mono font-bold text-foreground bg-muted px-3 py-2 rounded-md select-all break-all">
+          <code className="flex-1 text-sm font-mono font-bold text-foreground bg-muted px-3 py-2 rounded-md select-all break-all">
             {PIX_KEY}
           </code>
           <button
@@ -61,9 +61,9 @@ export default function PixDonation() {
             )}
           </button>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">Gianluca Ferro · Nubank</p>
+        <p className="text-sm text-muted-foreground mt-2">Gianluca Ferro · Nubank</p>
       </div>
-      <p className="text-[11px] text-muted-foreground text-center">
+      <p className="text-xs text-muted-foreground text-center">
         💚 Qualquer contribuição, por menor que seja, ajuda a manter o projeto no ar.
       </p>
     </div>

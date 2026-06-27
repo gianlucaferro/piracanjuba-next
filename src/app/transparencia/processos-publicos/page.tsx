@@ -69,7 +69,7 @@ export default async function ProcessosPublicosIndex() {
           Atualização automática trimestral via API do Escavador (integrada ao
           Datajud/CNJ e demais bases públicas de tribunais brasileiros).
         </p>
-        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-2">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2">
           <span className="inline-flex items-center gap-1">
             <Users className="w-4 h-4" />
             <strong className="text-foreground">{pessoas.length}</strong>{" "}
@@ -83,7 +83,7 @@ export default async function ProcessosPublicosIndex() {
       </header>
 
       {/* Base legal */}
-      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4 text-xs text-muted-foreground leading-relaxed">
+      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4 text-sm text-muted-foreground leading-relaxed">
         <p className="font-semibold text-foreground inline-flex items-center gap-1 mb-2">
           <AlertTriangle className="w-3.5 h-3.5 text-blue-600" />
           Base legal e filtros aplicados
@@ -113,7 +113,7 @@ export default async function ProcessosPublicosIndex() {
       </div>
 
       {/* Termo de Uso */}
-      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 text-xs text-muted-foreground leading-relaxed">
+      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-muted-foreground leading-relaxed">
         <p className="font-semibold text-foreground inline-flex items-center gap-1 mb-2">
           <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
           Termo de Uso e Aviso Legal
@@ -163,7 +163,7 @@ export default async function ProcessosPublicosIndex() {
           <p className="text-sm font-semibold text-foreground">
             Nenhuma pessoa pública cadastrada ainda
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Em breve: vereadores, prefeito, vice e secretários.
           </p>
         </div>
@@ -187,7 +187,7 @@ export default async function ProcessosPublicosIndex() {
         </div>
       )}
 
-      <footer className="text-xs text-muted-foreground border-t border-border pt-4">
+      <footer className="text-sm text-muted-foreground border-t border-border pt-4">
         <p>
           Fonte:{" "}
           <a
@@ -237,7 +237,7 @@ function PessoaCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-bold">
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-bold">
               {pessoa.nome
                 .split(" ")
                 .map((n) => n[0])
@@ -252,13 +252,13 @@ function PessoaCard({
             {pessoa.nome_publico || pessoa.nome}
           </p>
           {pessoa.cargo_detalhe && (
-            <p className="text-[11px] text-muted-foreground truncate">
+            <p className="text-xs text-muted-foreground truncate">
               {pessoa.cargo_detalhe}
             </p>
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between text-xs pt-1">
+      <div className="flex items-center justify-between text-sm pt-1">
         <span
           className={`font-semibold ${
             pessoa.total_processos > 0

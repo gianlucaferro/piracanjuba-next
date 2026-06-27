@@ -199,7 +199,7 @@ export default function EconomiaPanel({
         <p className="text-sm text-muted-foreground leading-relaxed">
           PIB municipal e comparativo regional, composição setorial, dinâmica de empregos
           (CAGED), salários por setor (RAIS), empresas ativas e MEIs. Atualização mensal
-          via cron <code className="text-[10px] bg-muted px-1 rounded">sync-economia-mensal</code>.
+          via cron <code className="text-xs bg-muted px-1 rounded">sync-economia-mensal</code>.
         </p>
       </header>
 
@@ -213,7 +213,7 @@ export default function EconomiaPanel({
             <h3 className="text-base font-semibold text-foreground">
               PIB · Piracanjuba × Vizinhos · 2021
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+            <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
               Comparativo do PIB total e per capita. Piracanjuba está em{" "}
               <strong className="text-foreground">#{posPiracanjuba} de {pibComparativo.length}</strong>{" "}
               em PIB per capita entre os vizinhos diretos. Média Goiás:{" "}
@@ -270,14 +270,14 @@ export default function EconomiaPanel({
                 c.destaque ? "border-emerald-500/40 bg-emerald-500/5" : ""
               }`}
             >
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{c.nome}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{c.nome}</p>
               <p className="text-base font-bold text-foreground mt-0.5">{c.pib_total_texto}</p>
-              <p className="text-[10px] text-muted-foreground">{c.pib_per_capita_texto}/hab</p>
+              <p className="text-xs text-muted-foreground">{c.pib_per_capita_texto}/hab</p>
             </div>
           ))}
         </div>
 
-        <p className="text-[10px] text-muted-foreground mt-3 italic">
+        <p className="text-xs text-muted-foreground mt-3 italic">
           Fonte:{" "}
           <a
             href="https://goias.gov.br/imb/wp-content/uploads/sites/29/2024/01/Boletim_012_2023_produto_interno_bruto_dos_municipios_goianos_consolidado_2021.pdf"
@@ -301,7 +301,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Composição Setorial do PIB · 2021
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Piracanjuba é{" "}
                 <strong>polo agropecuário</strong> — quase 54% do Valor Adicionado Bruto
                 vem do agro. Bem acima da média de Goiás (~10% agro estadual).
@@ -352,7 +352,7 @@ export default function EconomiaPanel({
                     <p className="text-2xl font-extrabold" style={{ color: d.cor }}>
                       {d.pct.toFixed(1)}%
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       VAB: {fmtMilhoes(d.value)}
                     </p>
                   </div>
@@ -374,7 +374,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 CAGED · Saldo de Empregos Formais
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Saldo líquido (admissões − desligamentos) por ano. Indicador-chave
                 da dinâmica do mercado de trabalho local.
               </p>
@@ -392,7 +392,7 @@ export default function EconomiaPanel({
                     : ""
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {c.ano}
                 </p>
                 <p
@@ -407,11 +407,11 @@ export default function EconomiaPanel({
                   {c.saldo > 0 ? "+" : ""}
                   {c.saldo}
                 </p>
-                <p className="text-[10px] text-muted-foreground">empregos líquidos</p>
+                <p className="text-xs text-muted-foreground">empregos líquidos</p>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground italic">
+          <p className="text-xs text-muted-foreground italic">
             Fonte: Novo CAGED — Ministério do Trabalho (Power BI público).
           </p>
         </section>
@@ -428,7 +428,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Salário Médio por Setor · RAIS 2023
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Remuneração mensal média formal em salários mínimos (SM = R$ 1.412 em 2024).
               </p>
             </div>
@@ -472,7 +472,7 @@ export default function EconomiaPanel({
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-[10px] text-muted-foreground italic mt-2">
+          <p className="text-xs text-muted-foreground italic mt-2">
             Fonte: PDET/MTE RAIS 2023. Indústria e Serviços pagam mais que agropecuária —
             mas Piracanjuba tem maior parte dos empregos no agro.
           </p>
@@ -490,7 +490,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Empresas Ativas + MEIs
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Cadastros ativos na Receita Federal. CNPJs incluem todas as empresas;
                 MEIs são empreendedores individuais com receita até R$ 81 mil/ano.
               </p>
@@ -500,32 +500,32 @@ export default function EconomiaPanel({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {empresasMEIs.empresas && (
               <div className="stat-card border-slate-500/30">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
                   <Building2 className="w-3 h-3" /> CNPJs Ativos
                 </p>
                 <p className="text-3xl font-extrabold text-foreground mt-0.5">
                   {empresasMEIs.empresas.texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground italic mt-1">
+                <p className="text-xs text-muted-foreground italic mt-1">
                   {empresasMEIs.empresas.observacao}
                 </p>
               </div>
             )}
             {empresasMEIs.meis && (
               <div className="stat-card border-emerald-500/30 bg-emerald-500/5">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
                   <Users className="w-3 h-3" /> MEIs Ativos
                 </p>
                 <p className="text-3xl font-extrabold text-emerald-600 mt-0.5">
                   {empresasMEIs.meis.texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground italic mt-1">
+                <p className="text-xs text-muted-foreground italic mt-1">
                   {empresasMEIs.meis.observacao}
                 </p>
               </div>
             )}
           </div>
-          <p className="text-[10px] text-muted-foreground italic mt-3">
+          <p className="text-xs text-muted-foreground italic mt-3">
             Fonte:{" "}
             <a
               href="https://solucoes.receita.fazenda.gov.br/Servicos/cnpjreva/cnpjreva_solicitacao.asp"
@@ -559,7 +559,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Cruzamento · Safra × Empregos
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Em economias agropecuárias como Piracanjuba (53,5% do PIB do agro), a
                 quantidade de chuva impacta diretamente os empregos rurais. Anos de
                 seca prolongada tipicamente reduzem admissões na agropecuária.
@@ -568,20 +568,20 @@ export default function EconomiaPanel({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
             <div className="stat-card border-sky-500/30">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 Chuva acumulada {new Date().getFullYear()}
               </p>
               <p className="text-2xl font-extrabold text-sky-600 mt-0.5">
                 {Math.round(chuvaTotal)} mm
               </p>
-              <p className="text-[10px] text-muted-foreground">YTD</p>
+              <p className="text-xs text-muted-foreground">YTD</p>
             </div>
             <div
               className={`stat-card ${
                 cagedAtual.saldo > 0 ? "border-green-500/30 bg-green-500/5" : "border-red-500/30 bg-red-500/5"
               }`}
             >
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 Saldo CAGED {cagedAtual.ano}
               </p>
               <p
@@ -592,10 +592,10 @@ export default function EconomiaPanel({
                 {cagedAtual.saldo > 0 ? "+" : ""}
                 {cagedAtual.saldo}
               </p>
-              <p className="text-[10px] text-muted-foreground">empregos líquidos</p>
+              <p className="text-xs text-muted-foreground">empregos líquidos</p>
             </div>
             <div className="stat-card">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 Status
               </p>
               <p className="text-base font-bold text-foreground mt-1">
@@ -607,7 +607,7 @@ export default function EconomiaPanel({
               </p>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground italic">
+          <p className="text-xs text-muted-foreground italic">
             Hipótese a validar com mais anos: chuva 30% abaixo da média pode
             reduzir saldo CAGED agropecuário em ~15-20%. Cruzamento mais robusto
             quando tivermos CAGED por setor mensal — em desenvolvimento.
@@ -626,7 +626,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Top Empregadores de Piracanjuba
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Maiores empresas do município por receita e empregos diretos.
                 <strong> O Grupo Piracanjuba (laticínios) é o maior empregador</strong>,
                 com cerca de 3.200 funcionários — quase 80% do total de empregos
@@ -650,7 +650,7 @@ export default function EconomiaPanel({
                     <p className="text-sm font-semibold text-foreground">{e.nome}</p>
                     {e.texto && (
                       <span
-                        className={`text-xs font-bold ${
+                        className={`text-sm font-bold ${
                           e.funcionarios ? "text-blue-600" : "text-muted-foreground"
                         }`}
                       >
@@ -659,7 +659,7 @@ export default function EconomiaPanel({
                     )}
                   </div>
                   {e.cnae && (
-                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                    <p className="text-xs text-muted-foreground leading-snug mt-0.5">
                       {e.cnae}
                     </p>
                   )}
@@ -669,7 +669,7 @@ export default function EconomiaPanel({
                     href={e.fonte_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline shrink-0 inline-flex items-center gap-1"
+                    className="text-sm text-primary hover:underline shrink-0 inline-flex items-center gap-1"
                   >
                     <ExternalLink className="w-3 h-3" />
                   </a>
@@ -677,7 +677,7 @@ export default function EconomiaPanel({
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground italic mt-3">
+          <p className="text-xs text-muted-foreground italic mt-3">
             Fontes: Grupo Piracanjuba (institucional) · Econodata (top 5 por receita).
             Funcionários só estão indicados quando há dado público confirmado.
           </p>
@@ -695,7 +695,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Top Ocupações Profissionais (CBO)
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 As 3 maiores categorias de empregos formais em Piracanjuba pela
                 Classificação Brasileira de Ocupações (CBO). Reflete o perfil
                 produtivo: agro + serviços de logística (motoristas).
@@ -742,7 +742,7 @@ export default function EconomiaPanel({
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-[10px] text-muted-foreground italic mt-2">
+          <p className="text-xs text-muted-foreground italic mt-2">
             Fonte: PDET/MTE RAIS 2023 via Caravela.info. As 3 maiores categorias
             confirmadas; demais (top 10 completo) disponível no portal PDET com
             login.
@@ -761,7 +761,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 CAGED 2025 por Setor
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Distribuição estimada das admissões/desligamentos 2025 YTD por setor,
                 aplicada do total real (1.100/996) usando proporção do PIB setorial
                 (Piracanjuba 2021: 53,5% agro, 38,5% serviços, 8% indústria).
@@ -817,7 +817,7 @@ export default function EconomiaPanel({
                     : "border-red-500/30 bg-red-500/5"
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   Saldo {SETOR_LABEL[s.setor]}
                 </p>
                 <p
@@ -831,7 +831,7 @@ export default function EconomiaPanel({
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground italic mt-3">
+          <p className="text-xs text-muted-foreground italic mt-3">
             ⚠️ <strong>Estimativa</strong>: distribuição derivada do total real CAGED
             via proporção do PIB. Pra valores exatos por setor, acessar Power BI
             CAGED/MTE filtrando município. Quando MTE expor REST público, sync
@@ -851,7 +851,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 CNPJs ativos por bairro
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Distribuição geográfica das {cnpjsBairro.total.texto} empresas
                 ativas em Piracanjuba.
               </p>
@@ -860,38 +860,38 @@ export default function EconomiaPanel({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
             <div className="stat-card border-blue-500/30 bg-blue-500/5">
-              <p className="text-[10px] uppercase text-muted-foreground">
+              <p className="text-xs uppercase text-muted-foreground">
                 Total município
               </p>
               <p className="text-2xl font-extrabold text-blue-700 mt-0.5">
                 {cnpjsBairro.total.texto}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-snug">
+              <p className="text-xs text-muted-foreground leading-snug">
                 CNPJs ativos
               </p>
             </div>
             {cnpjsBairro.centro && (
               <div className="stat-card border-amber-500/30 bg-amber-500/5">
-                <p className="text-[10px] uppercase text-muted-foreground">
+                <p className="text-xs uppercase text-muted-foreground">
                   Centro
                 </p>
                 <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
                   {cnpjsBairro.centro.texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-snug">
+                <p className="text-xs text-muted-foreground leading-snug">
                   ~{((cnpjsBairro.centro.valor / cnpjsBairro.total.valor) * 100).toFixed(0)}% dos CNPJs concentrados no Centro
                 </p>
               </div>
             )}
             {cnpjsBairro.demais && (
               <div className="stat-card">
-                <p className="text-[10px] uppercase text-muted-foreground">
+                <p className="text-xs uppercase text-muted-foreground">
                   Demais bairros
                 </p>
                 <p className="text-2xl font-extrabold text-foreground mt-0.5">
                   {cnpjsBairro.demais.texto}
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-snug">
+                <p className="text-xs text-muted-foreground leading-snug">
                   Vila São José, Setor Aeroporto, Jd. Europa, Setor Sul, etc.
                 </p>
               </div>
@@ -923,7 +923,7 @@ export default function EconomiaPanel({
             </ResponsiveContainer>
           )}
 
-          <p className="text-[10px] text-muted-foreground italic mt-3">
+          <p className="text-xs text-muted-foreground italic mt-3">
             ⚠️ Apenas Centro tem breakdown público. Distribuição completa por
             bairro requer parser do CSV mensal da Receita Federal (~6 GB).{" "}
             {cnpjsBairro.total.fonte_url && (
@@ -951,7 +951,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Top CNAEs — Atividades econômicas
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Atividades econômicas mais comuns entre os CNPJs ativos do
                 município (CNAE 4 dígitos).
               </p>
@@ -977,12 +977,12 @@ export default function EconomiaPanel({
                     <p className="text-sm font-semibold text-foreground leading-tight">
                       {c.atividade}
                     </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {c.cnae_codigo}
                       {c.empresas !== null && ` · ${c.empresas} empresas top`}
                     </p>
                     {c.observacao && (
-                      <p className="text-[10px] text-muted-foreground/80 leading-snug mt-1">
+                      <p className="text-xs text-muted-foreground/80 leading-snug mt-1">
                         {c.observacao}
                       </p>
                     )}
@@ -1005,7 +1005,7 @@ export default function EconomiaPanel({
               <h3 className="text-base font-semibold text-foreground">
                 Cruzamento RAIS × CAGED — Quem mais contrata?
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Estoque RAIS 2023 (empregos formais por setor) cruzado com saldo
                 CAGED 2025 — mostra crescimento proporcional de cada setor.
               </p>
@@ -1071,14 +1071,14 @@ export default function EconomiaPanel({
                 key={c.setor}
                 className="stat-card border-purple-500/20"
               >
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {SETOR_LABEL[c.setor]}
                 </p>
                 <p className="text-base font-bold text-foreground mt-0.5">
                   {c.estoque_texto}
                 </p>
                 <p
-                  className={`text-xs font-semibold mt-1 ${
+                  className={`text-sm font-semibold mt-1 ${
                     c.saldo_2025 > 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
@@ -1090,7 +1090,7 @@ export default function EconomiaPanel({
             ))}
           </div>
 
-          <p className="text-[10px] text-muted-foreground italic mt-3">
+          <p className="text-xs text-muted-foreground italic mt-3">
             Setor com maior <strong>variação relativa</strong>:{" "}
             <strong>
               {SETOR_LABEL[
@@ -1116,7 +1116,7 @@ export default function EconomiaPanel({
               <p className="text-sm font-semibold text-foreground">
                 CAGED mensal detalhado por CNAE — em coleta
               </p>
-              <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+              <p className="text-sm text-muted-foreground leading-relaxed mt-1">
                 {cagedCnaeStatus.observacao ||
                   "Detalhamento por CNAE 4 dígitos (ex: CNAE 4781-4 vestuário, CNAE 4399-1/03 alvenaria) requer parser direto do Power BI MTE — agendado pra implementação futura via cron mensal."}
               </p>
@@ -1125,7 +1125,7 @@ export default function EconomiaPanel({
                   href={cagedCnaeStatus.fonte_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-slate-700 underline hover:text-slate-900 mt-2"
+                  className="inline-flex items-center gap-1 text-sm text-slate-700 underline hover:text-slate-900 mt-2"
                 >
                   Acessar Power BI MTE Novo CAGED <ExternalLink className="w-3 h-3" />
                 </a>
@@ -1135,7 +1135,7 @@ export default function EconomiaPanel({
         </section>
       )}
 
-      <p className="text-[10px] text-muted-foreground italic mt-6 text-center">
+      <p className="text-xs text-muted-foreground italic mt-6 text-center">
         Atualização mensal automática via cron <code>sync-economia-mensal</code> · primeira
         segunda do mês 06:00 UTC. Snapshots iniciais baseados em IMB-GO Boletim 012/2023
         (PIB 2021), Caravela.info (CAGED 2024-2025 + top ocupações), PDET/MTE RAIS 2023,

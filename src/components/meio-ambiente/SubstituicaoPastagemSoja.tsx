@@ -76,13 +76,13 @@ export default function SubstituicaoPastagemSoja({ rows }: { rows: Row[] }) {
             <Line type="monotone" dataKey="soja" stroke={COR_SOJA} strokeWidth={2.8} dot={false} />
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           A pastagem mapeada caiu de <strong>{fmt(pastIni.pastagem)}</strong> ({pastIni.ano}) para{" "}
           <strong>{fmt(pastFim.pastagem)}</strong> (2024), enquanto a soja saltou de{" "}
           <strong>{fmt(sojaIni.soja)}</strong> (1985) para <strong>{fmt(sojaFim.soja)}</strong>. As duas curvas
           quase se cruzam: o gado cede espaço para os grãos, a marca da modernização agrícola do Cerrado.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: MapBiomas Coleção 10.1 (classes Pastagem e Soja).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: MapBiomas Coleção 10.1 (classes Pastagem e Soja).</p>
       </div>
     </section>
   );

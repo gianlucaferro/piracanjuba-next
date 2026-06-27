@@ -172,12 +172,12 @@ export default function DataSUSTab() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-sm">{s.titulo}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-1">
                     {s.descricao}
                   </p>
                 </div>
               </div>
-              <div className="text-xs text-foreground/85 mb-3 flex-1">
+              <div className="text-sm text-foreground/85 mb-3 flex-1">
                 <p className="font-semibold mb-1.5">Indicadores possíveis:</p>
                 <ul className="list-disc list-inside space-y-0.5 text-muted-foreground leading-snug pl-1">
                   {s.indicadoresPossiveis.map((i) => (
@@ -189,7 +189,7 @@ export default function DataSUSTab() {
                 href={s.linkTabNet}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1.5 mt-auto pt-2 border-t border-border"
+                className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5 mt-auto pt-2 border-t border-border"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 {s.linkDescricao}
@@ -223,7 +223,7 @@ export default function DataSUSTab() {
       </section>
 
       {/* Disclaimer */}
-      <p className="text-[10px] text-muted-foreground italic leading-relaxed">
+      <p className="text-xs text-muted-foreground italic leading-relaxed">
         Fonte: Ministério da Saúde / DATASUS. As bases acima são públicas e gratuitas, com
         atualização mensal (SIH/SINASC/SIM) ou diária (e-SUS APS, CNES). O Piracanjuba.ai está
         construindo integração automática via{" "}

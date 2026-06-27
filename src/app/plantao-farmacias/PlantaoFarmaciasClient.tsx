@@ -107,7 +107,7 @@ export default function PlantaoFarmaciasClient({
 
                     <div className="flex items-center gap-2">
                       {isCurrent && (
-                        <span className="inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+                        <span className="inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-sm font-semibold text-primary-foreground">
                           Semana atual
                         </span>
                       )}
@@ -115,7 +115,7 @@ export default function PlantaoFarmaciasClient({
                         href={getShareWhatsAppLink(semana, nextSemana)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-xs font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20"
+                        className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-sm font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20"
                         title="Compartilhar no WhatsApp"
                       >
                         <Share2 className="h-3 w-3" /> Compartilhar

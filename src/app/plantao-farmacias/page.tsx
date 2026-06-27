@@ -103,7 +103,7 @@ export default async function PlantaoFarmaciasPage() {
 
         <PlantaoFarmaciasClient fotosMeta={fotosMeta} />
 
-        <p className="pt-4 pb-8 text-center text-xs text-muted-foreground">
+        <p className="pt-4 pb-8 text-center text-sm text-muted-foreground">
           Fonte: Escala de Plantão das Farmácias - Piracanjuba / GO - 2026/2027
         </p>
       </div>

@@ -59,7 +59,7 @@ export default function MortesPorCausaChart({ rows }: { rows: Row[] }) {
           <Heart className="w-4 h-4 text-red-500" />
           Por que morrem em Piracanjuba — causas CID-10
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Total de óbitos agrupados por capítulo da Classificação Internacional de Doenças
           (CID-10). Quanto maior a barra, mais frequente é aquela causa de morte. Crucial pra
           identificar onde a saúde pública pode atuar (preveniveis vs envelhecimento natural).
@@ -69,17 +69,17 @@ export default function MortesPorCausaChart({ rows }: { rows: Row[] }) {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
         <div className="stat-card border-red-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total de óbitos analisados</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Total de óbitos analisados</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{total.toLocaleString("pt-BR")}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             agrupados por capítulo CID-10
           </p>
         </div>
         {top1 && (
           <div className="stat-card border-red-500/30">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Causa principal</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Causa principal</p>
             <p className="text-base font-bold text-foreground mt-0.5">{top1.causa}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               {top1.total} óbitos · {((top1.total / total) * 100).toFixed(1)}% do total
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function MortesPorCausaChart({ rows }: { rows: Row[] }) {
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Fonte:{" "}
         <a
           href="http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sim/cnv/obt10GO.def"

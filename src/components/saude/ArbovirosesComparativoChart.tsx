@@ -78,7 +78,7 @@ export default function ArbovirosesComparativoChart({
           <Bug className="w-4 h-4 text-red-500" />
           Arboviroses · Dengue × Chikungunya × Zika
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           As 3 arboviroses transmitidas pelo mesmo mosquito (Aedes aegypti) em Piracanjuba.
           Acompanhar juntas ajuda a identificar surtos e priorizar combate ao mosquito —
           a mesma campanha de prevenção combate as três doenças.
@@ -87,23 +87,23 @@ export default function ArbovirosesComparativoChart({
 
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="stat-card border-red-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Dengue</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Dengue</p>
           <p className="text-xl font-extrabold text-red-600 mt-0.5">{totals.dengue}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {((totals.dengue / totalGeral) * 100).toFixed(0)}% do total
           </p>
         </div>
         <div className="stat-card border-orange-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Chikungunya</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Chikungunya</p>
           <p className="text-xl font-extrabold text-orange-600 mt-0.5">{totals.chikungunya}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {((totals.chikungunya / totalGeral) * 100).toFixed(0)}% do total
           </p>
         </div>
         <div className="stat-card border-amber-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Zika</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Zika</p>
           <p className="text-xl font-extrabold text-amber-600 mt-0.5">{totals.zika}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {((totals.zika / totalGeral) * 100).toFixed(0)}% do total
           </p>
         </div>
@@ -151,7 +151,7 @@ export default function ArbovirosesComparativoChart({
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Casos confirmados, agregação mensal. Fonte:{" "}
         <a
           href="https://info.dengue.mat.br/"

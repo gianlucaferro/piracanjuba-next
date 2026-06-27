@@ -244,7 +244,7 @@ export default function PrivacidadePage() {
           </p>
         </section>
 
-        <p className="text-xs text-muted-foreground text-center pt-8 mt-8 border-t border-border">
+        <p className="text-sm text-muted-foreground text-center pt-8 mt-8 border-t border-border">
           Voltar para a página{" "}
           <Link href="/sobre" className="text-primary hover:underline">
             Sobre o <Brand />

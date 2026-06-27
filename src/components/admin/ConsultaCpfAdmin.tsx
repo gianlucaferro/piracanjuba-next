@@ -83,7 +83,7 @@ function statusBadge(status: LogEntry["status"]) {
     limite_atingido: { color: "bg-amber-600", label: "Limite" },
   } as const;
   const cfg = map[status];
-  return <Badge className={`${cfg.color} text-white text-[10px]`}>{cfg.label}</Badge>;
+  return <Badge className={`${cfg.color} text-white text-xs`}>{cfg.label}</Badge>;
 }
 
 export default function ConsultaCpfAdmin() {
@@ -167,7 +167,7 @@ export default function ConsultaCpfAdmin() {
   return (
     <div className="space-y-4">
       {/* Aviso LGPD */}
-      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs">
+      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
         <div className="flex gap-2 items-start">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <div>
@@ -189,7 +189,7 @@ export default function ConsultaCpfAdmin() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <Label htmlFor="cpf-input" className="text-xs">CPF</Label>
+            <Label htmlFor="cpf-input" className="text-sm">CPF</Label>
             <Input
               id="cpf-input"
               placeholder="000.000.000-00"
@@ -202,7 +202,7 @@ export default function ConsultaCpfAdmin() {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="justificativa-input" className="text-xs">
+            <Label htmlFor="justificativa-input" className="text-sm">
               Justificativa <span className="text-red-600">*</span>
             </Label>
             <Textarea
@@ -212,7 +212,7 @@ export default function ConsultaCpfAdmin() {
               onChange={(e) => setJustificativa(e.target.value)}
               disabled={loading}
               rows={2}
-              className="text-xs"
+              className="text-sm"
             />
           </div>
         </div>
@@ -241,20 +241,20 @@ export default function ConsultaCpfAdmin() {
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-600" />
             <h4 className="text-sm font-semibold">Resultado</h4>
-            <Badge variant="outline" className="text-[10px] ml-auto">
+            <Badge variant="outline" className="text-xs ml-auto">
               <Clock className="w-3 h-3 mr-1" /> {result.duracao_ms}ms
             </Badge>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Nome
               </p>
               <p className="text-base font-bold text-foreground mt-0.5">{result.name}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Sexo
               </p>
               <p className="text-base font-bold text-foreground mt-0.5">
@@ -262,7 +262,7 @@ export default function ConsultaCpfAdmin() {
               </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
                 <Calendar className="w-3 h-3" /> Nascimento
               </p>
               <p className="text-base font-bold text-foreground mt-0.5">
@@ -272,10 +272,10 @@ export default function ConsultaCpfAdmin() {
           </div>
 
           <div className="flex items-center gap-2 pt-2 border-t border-border/40">
-            <p className="text-xs text-muted-foreground flex-1">
+            <p className="text-sm text-muted-foreground flex-1">
               CPF: <span className="font-mono">{formatCpfMask(result.cpf)}</span>
             </p>
-            <Button size="sm" variant="outline" onClick={copiarNome} className="h-7 text-xs">
+            <Button size="sm" variant="outline" onClick={copiarNome} className="h-7 text-sm">
               <Copy className="w-3 h-3 mr-1" /> Copiar nome
             </Button>
           </div>
@@ -291,14 +291,14 @@ export default function ConsultaCpfAdmin() {
         </div>
 
         {log.length === 0 && !logLoading && (
-          <p className="text-xs text-muted-foreground text-center py-4">
+          <p className="text-sm text-muted-foreground text-center py-4">
             Nenhuma consulta registrada ainda.
           </p>
         )}
 
         {log.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-sm">
               <thead className="text-left text-muted-foreground border-b border-border/50">
                 <tr>
                   <th className="py-1.5 pr-2 font-medium">Data</th>
@@ -312,10 +312,10 @@ export default function ConsultaCpfAdmin() {
               <tbody>
                 {log.map((row) => (
                   <tr key={row.id} className="border-b border-border/30 last:border-0">
-                    <td className="py-1.5 pr-2 font-mono text-[11px] text-muted-foreground">
+                    <td className="py-1.5 pr-2 font-mono text-xs text-muted-foreground">
                       {formatDateTimePT(row.consultado_em)}
                     </td>
-                    <td className="py-1.5 pr-2 font-mono text-[11px]">{row.cpf_mascarado}</td>
+                    <td className="py-1.5 pr-2 font-mono text-xs">{row.cpf_mascarado}</td>
                     <td className="py-1.5 pr-2 max-w-[200px] truncate">{row.nome_retornado ?? "—"}</td>
                     <td className="py-1.5 pr-2 max-w-[200px] truncate text-muted-foreground">
                       {row.justificativa}

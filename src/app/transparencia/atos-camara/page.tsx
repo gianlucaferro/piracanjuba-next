@@ -43,15 +43,15 @@ export default async function AtosCamaraPage() {
       {stats && (
         <div className="grid grid-cols-3 gap-3">
           <div className="stat-card">
-            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Total atos</p>
+            <p className="text-xs uppercase text-muted-foreground tracking-wider">Total atos</p>
             <p className="text-2xl font-extrabold text-amber-700 mt-0.5">{stats.total}</p>
           </div>
           <div className="stat-card">
-            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Moções</p>
+            <p className="text-xs uppercase text-muted-foreground tracking-wider">Moções</p>
             <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.por_tipo.find((t) => t.tipo === "MOCAO")?.quantidade ?? 0}</p>
           </div>
           <div className="stat-card">
-            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Requerimentos</p>
+            <p className="text-xs uppercase text-muted-foreground tracking-wider">Requerimentos</p>
             <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.por_tipo.find((t) => t.tipo === "REQUERIMENTO")?.quantidade ?? 0}</p>
           </div>
         </div>
@@ -67,10 +67,10 @@ export default async function AtosCamaraPage() {
             <article key={m.id} className="p-3 rounded-lg border border-border bg-background/40">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                 <p className="font-semibold text-amber-700 text-sm">{m.numero}</p>
-                <p className="text-[11px] text-muted-foreground">{fmtDate(m.data_publicacao)}</p>
+                <p className="text-xs text-muted-foreground">{fmtDate(m.data_publicacao)}</p>
               </div>
               {m.ementa && (
-                <p className="text-xs text-foreground/85 leading-relaxed">{m.ementa}</p>
+                <p className="text-sm text-foreground/85 leading-relaxed">{m.ementa}</p>
               )}
             </article>
           ))}
@@ -87,10 +87,10 @@ export default async function AtosCamaraPage() {
             <article key={r.id} className="p-3 rounded-lg border border-border bg-background/40">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                 <p className="font-semibold text-blue-700 text-sm">{r.numero}</p>
-                <p className="text-[11px] text-muted-foreground">{fmtDate(r.data_publicacao)}</p>
+                <p className="text-xs text-muted-foreground">{fmtDate(r.data_publicacao)}</p>
               </div>
               {r.ementa && (
-                <p className="text-xs text-foreground/85 leading-relaxed">{r.ementa}</p>
+                <p className="text-sm text-foreground/85 leading-relaxed">{r.ementa}</p>
               )}
             </article>
           ))}

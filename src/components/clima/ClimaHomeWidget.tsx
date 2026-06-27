@@ -43,21 +43,21 @@ export default async function ClimaHomeWidget() {
         <Icon className={`w-6 h-6 ${tempColor}`} aria-hidden />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Clima em Piracanjuba</p>
+        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Clima em Piracanjuba</p>
         <p className="text-base font-semibold text-foreground inline-flex items-baseline gap-2">
           <span className={tempColor}>{Math.round(tempMed)}°C</span>
-          <span className="text-xs text-muted-foreground font-normal">
+          <span className="text-sm text-muted-foreground font-normal">
             {Math.round(tempMin)}°/{Math.round(tempMax)}°
           </span>
         </p>
-        <p className="text-xs text-muted-foreground inline-flex items-center gap-2 mt-0.5">
+        <p className="text-sm text-muted-foreground inline-flex items-center gap-2 mt-0.5">
           <span className="inline-flex items-center gap-1">
             <CloudRain className="w-3 h-3" /> {chuva.toFixed(1)} mm
           </span>
           <span className="inline-flex items-center gap-1">
             <Droplets className="w-3 h-3" /> {Math.round(umid)}%
           </span>
-          <span className="text-[10px]">· {formatData(dia.data)}</span>
+          <span className="text-xs">· {formatData(dia.data)}</span>
         </p>
       </div>
       <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-sky-500 transition-colors" />

@@ -482,7 +482,7 @@ function LoginPrompt({
 
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-border" />
-        <span className="text-xs text-muted-foreground">ou com email</span>
+        <span className="text-sm text-muted-foreground">ou com email</span>
         <div className="flex-1 h-px bg-border" />
       </div>
 
@@ -525,7 +525,7 @@ function LoginPrompt({
               >
                 Não tem conta? <span className="font-bold text-primary">Criar conta grátis</span>
               </Button>
-              <button onClick={() => setMode("reset")} className="text-xs text-muted-foreground hover:underline text-center">
+              <button onClick={() => setMode("reset")} className="text-sm text-muted-foreground hover:underline text-center">
                 Esqueci minha senha
               </button>
             </>
@@ -542,7 +542,7 @@ function LoginPrompt({
         <>
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">ou sem conta</span>
+            <span className="text-sm text-muted-foreground">ou sem conta</span>
             <div className="flex-1 h-px bg-border" />
           </div>
           <div className="text-center">
@@ -669,7 +669,7 @@ function GerenciarComCodigo({ onClose }: { onClose: () => void }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground">{item.titulo}</p>
               <p className="text-sm font-bold text-primary">{formatPreco(item.preco, item.preco_tipo)}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Status: {item.status} · {item.visualizacoes} views
               </p>
             </div>
@@ -722,7 +722,7 @@ function GerenciarComCodigo({ onClose }: { onClose: () => void }) {
 
           <button
             onClick={() => { setItem(null); setCodigo(""); setEditing(false); }}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
             ← Buscar outro código
           </button>
@@ -1078,7 +1078,7 @@ function NovoAnuncioForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <Input placeholder="Seu nome *" value={nome} onChange={(e) => { setNome(e.target.value); setFieldErrors((p) => ({ ...p, nome: "" })); }} className={fieldErrors.nome ? "border-destructive" : ""} />
-            {fieldErrors.nome && <p className="text-xs text-destructive mt-1">{fieldErrors.nome}</p>}
+            {fieldErrors.nome && <p className="text-sm text-destructive mt-1">{fieldErrors.nome}</p>}
           </div>
           <div>
             <Input
@@ -1088,7 +1088,7 @@ function NovoAnuncioForm({
               inputMode="tel"
               className={fieldErrors.whatsapp ? "border-destructive" : ""}
             />
-            {fieldErrors.whatsapp && <p className="text-xs text-destructive mt-1">{fieldErrors.whatsapp}</p>}
+            {fieldErrors.whatsapp && <p className="text-sm text-destructive mt-1">{fieldErrors.whatsapp}</p>}
           </div>
         </div>
       </div>
@@ -1096,7 +1096,7 @@ function NovoAnuncioForm({
       <div>
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm text-muted-foreground">Título do anúncio <span className="text-destructive">*</span></p>
-          <span className={`text-xs tabular-nums ${titulo.length >= 80 ? "text-orange-500 font-medium" : "text-muted-foreground"}`}>
+          <span className={`text-sm tabular-nums ${titulo.length >= 80 ? "text-orange-500 font-medium" : "text-muted-foreground"}`}>
             {titulo.length}/90
           </span>
         </div>
@@ -1107,7 +1107,7 @@ function NovoAnuncioForm({
           maxLength={90}
           className={fieldErrors.titulo ? "border-destructive" : ""}
         />
-        {fieldErrors.titulo && <p className="text-xs text-destructive mt-1">{fieldErrors.titulo}</p>}
+        {fieldErrors.titulo && <p className="text-sm text-destructive mt-1">{fieldErrors.titulo}</p>}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1135,7 +1135,7 @@ function NovoAnuncioForm({
             <button
               key={cat.value}
               onClick={() => { setCategoria(cat.value); setCatManual(true); }}
-              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 categoria === cat.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -1154,7 +1154,7 @@ function NovoAnuncioForm({
             <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">Consultar placa do veículo</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-primary">Opcional</span> — não será exibida no anúncio. Serve apenas para preencher os dados do veículo automaticamente.
               </p>
             </div>
@@ -1190,7 +1190,7 @@ function NovoAnuncioForm({
             maxLength={6000}
             className={`w-full rounded-lg border bg-background px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 min-h-[180px] sm:min-h-[140px] resize-y ${recording ? "border-red-400 ring-2 ring-red-200" : ""}`}
           />
-          <p className="text-xs text-muted-foreground text-right mt-0.5">{descricao.length}/6.000</p>
+          <p className="text-sm text-muted-foreground text-right mt-0.5">{descricao.length}/6.000</p>
           <button
             type="button"
             onClick={toggleMic}
@@ -1220,7 +1220,7 @@ function NovoAnuncioForm({
             size="sm"
             onClick={optimizeWithAI}
             disabled={optimizing}
-            className="gap-1.5 text-xs"
+            className="gap-1.5 text-sm"
           >
             {optimizing ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1240,7 +1240,7 @@ function NovoAnuncioForm({
               <button
                 key={t.value}
                 onClick={() => setPrecoTipo(t.value)}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                className={`px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                   precoTipo === t.value
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -1264,7 +1264,7 @@ function NovoAnuncioForm({
                 className={`pl-10 ${fieldErrors.preco ? "border-destructive" : ""}`}
               />
             </div>
-            {fieldErrors.preco && <p className="text-xs text-destructive mt-1">{fieldErrors.preco}</p>}
+            {fieldErrors.preco && <p className="text-sm text-destructive mt-1">{fieldErrors.preco}</p>}
           </div>
         )}
       </div>
@@ -1297,11 +1297,11 @@ function NovoAnuncioForm({
             >
               <img src={f.preview} alt="" className="w-full h-full object-cover" />
               {i === 0 && (
-                <span className="absolute bottom-0 left-0 right-0 bg-primary/80 text-primary-foreground text-[9px] text-center py-0.5 font-medium">
+                <span className="absolute bottom-0 left-0 right-0 bg-primary/80 text-primary-foreground text-xs text-center py-0.5 font-medium">
                   Capa
                 </span>
               )}
-              <div className="absolute top-0 left-0 bg-background/70 text-[9px] font-bold text-foreground px-1.5 py-0.5 rounded-br">
+              <div className="absolute top-0 left-0 bg-background/70 text-xs font-bold text-foreground px-1.5 py-0.5 rounded-br">
                 {i + 1}
               </div>
               <button
@@ -1333,7 +1333,7 @@ function NovoAnuncioForm({
           {fotos.length < MAX_FOTOS && (
             <label className="w-24 h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer flex flex-col items-center justify-center gap-1 transition-colors">
               <ImagePlus className="w-5 h-5 text-muted-foreground/40" />
-              <span className="text-[9px] text-muted-foreground">Adicionar</span>
+              <span className="text-xs text-muted-foreground">Adicionar</span>
               <input
                 ref={fileRef}
                 type="file"
@@ -1352,20 +1352,20 @@ function NovoAnuncioForm({
             </label>
           )}
         </div>
-        {fotos.length > 1 && <p className="text-xs text-muted-foreground mt-1.5">Arraste as fotos para reorganizar. A primeira foto será a capa do anúncio.</p>}
-        {fieldErrors.fotos && <p className="text-xs text-destructive mt-1">{fieldErrors.fotos}</p>}
+        {fotos.length > 1 && <p className="text-sm text-muted-foreground mt-1.5">Arraste as fotos para reorganizar. A primeira foto será a capa do anúncio.</p>}
+        {fieldErrors.fotos && <p className="text-sm text-destructive mt-1">{fieldErrors.fotos}</p>}
       </div>
 
       {/* Preview */}
       {showPreview && (
         <div className="border rounded-xl overflow-hidden bg-muted/30">
-          <p className="text-xs font-semibold text-muted-foreground px-3 pt-2 pb-1">Preview do anúncio:</p>
+          <p className="text-sm font-semibold text-muted-foreground px-3 pt-2 pb-1">Preview do anúncio:</p>
           <div className="max-w-sm mx-auto p-2">
             <div className="stat-card overflow-hidden">
               {fotos.length > 0 && (
                 <div className="relative -mx-4 -mt-4 md:-mx-5 md:-mt-5 mb-3">
                   <img src={fotos[0].preview} alt="" className="w-full aspect-square object-cover" />
-                  <Badge variant="secondary" className="absolute top-2 left-2 text-xs">
+                  <Badge variant="secondary" className="absolute top-2 left-2 text-sm">
                     {getCatLabel(categoria)}
                   </Badge>
                 </div>
@@ -1418,7 +1418,7 @@ function NovoAnuncioForm({
         </Button>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Ao publicar, seu anúncio ficará visível por 30 dias. Anúncios com denúncias serão
         encaminhados para análise do administrador.
       </p>
@@ -1582,14 +1582,14 @@ function MeusAnuncioItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-bold text-foreground truncate">{item.titulo}</p>
-            <Badge className={`text-xs shrink-0 font-semibold ${STATUS_COLOR[item.status] || "bg-muted"}`}>
+            <Badge className={`text-sm shrink-0 font-semibold ${STATUS_COLOR[item.status] || "bg-muted"}`}>
               {STATUS_LABEL[item.status] || item.status}
             </Badge>
           </div>
           {item.preco ? (
             <p className="text-base font-bold text-primary mt-0.5">{formatPreco(item.preco, item.preco_tipo)}</p>
           ) : null}
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1 flex-wrap">
+          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1 flex-wrap">
             <span className="flex items-center gap-0.5">
               <Eye className="w-3 h-3" /> {item.visualizacoes}
             </span>
@@ -1606,7 +1606,7 @@ function MeusAnuncioItem({
         <div className="flex items-center gap-0 border-t bg-muted/30">
           <button
             onClick={() => { setEditing(true); setExpanded(true); }}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
           >
             <Pencil className="w-3.5 h-3.5" /> Editar
           </button>
@@ -1615,7 +1615,7 @@ function MeusAnuncioItem({
             <>
               <button
                 onClick={marcarVendido}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" /> Vendido
               </button>
@@ -1626,7 +1626,7 @@ function MeusAnuncioItem({
             <>
               <button
                 onClick={reativar}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-green-600 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-green-600 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors"
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Reativar
               </button>
@@ -1635,7 +1635,7 @@ function MeusAnuncioItem({
           )}
           <button
             onClick={excluir}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" /> Excluir
           </button>
@@ -1666,7 +1666,7 @@ function MeusAnuncioItem({
                   <button
                     key={cat.value}
                     onClick={() => setCategoria(cat.value)}
-                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium transition-colors border ${
                       categoria === cat.value
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -1697,7 +1697,7 @@ function MeusAnuncioItem({
                   <button
                     key={t.value}
                     onClick={() => setPrecoTipo(t.value)}
-                    className={`px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                    className={`px-2 py-1 rounded-md text-sm font-medium transition-colors border ${
                       precoTipo === t.value
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -1929,11 +1929,11 @@ function AnuncioCard({
             )}
             {isVendido && (
               <div className="absolute inset-0 bg-background/40 flex items-center justify-center">
-                <Badge className="bg-blue-600 text-white text-[10px] px-2 py-0.5 font-bold">VENDIDO</Badge>
+                <Badge className="bg-blue-600 text-white text-xs px-2 py-0.5 font-bold">VENDIDO</Badge>
               </div>
             )}
             {item.fotos.length > 1 && (
-              <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">
+              <div className="absolute bottom-1 right-1 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded-full">
                 {item.fotos.length} fotos
               </div>
             )}
@@ -1961,8 +1961,8 @@ function AnuncioCard({
               {formatPreco(item.preco, item.preco_tipo)}
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1.5 flex-wrap">
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1.5 flex-wrap">
+            <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4">
               <CatIcon className="w-2.5 h-2.5 mr-0.5" /> {getCatLabel(item.categoria)}
             </Badge>
             {item.bairro && (
@@ -2030,7 +2030,7 @@ function AnuncioCard({
               </div>
             </>
           )}
-          <Badge variant="secondary" className="absolute top-2 left-2 text-xs">
+          <Badge variant="secondary" className="absolute top-2 left-2 text-sm">
             <CatIcon className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
           </Badge>
           <button
@@ -2043,7 +2043,7 @@ function AnuncioCard({
         </div>
       ) : (
         <div className="flex items-center justify-between mb-2">
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-sm">
             <CatIcon className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
           </Badge>
           <button onClick={onToggleFav} className="p-1">
@@ -2065,12 +2065,12 @@ function AnuncioCard({
           {formatPreco(item.preco, item.preco_tipo)}
         </p>
         {item.descricao && (
-          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed line-clamp-2">{item.descricao}</p>
+          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed line-clamp-2">{item.descricao}</p>
         )}
       </Link>
 
       {/* Meta */}
-      <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground flex-wrap">
+      <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground flex-wrap">
         <span className="flex items-center gap-0.5">
           <Clock className="w-3 h-3" /> {timeAgo(item.created_at)}
         </span>
@@ -2095,7 +2095,7 @@ function AnuncioCard({
       {/* Actions */}
       <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border">
         {isVendido ? (
-          <p className="flex-1 text-xs text-blue-600 font-medium text-center">Vendido</p>
+          <p className="flex-1 text-sm text-blue-600 font-medium text-center">Vendido</p>
         ) : (
           <a
             href={`https://wa.me/55${item.whatsapp}?text=${encodeURIComponent(
@@ -2112,7 +2112,7 @@ function AnuncioCard({
                 .then(() => {});
             }}
           >
-            <Button size="sm" className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs h-8">
+            <Button size="sm" className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white text-sm h-8">
               <WhatsAppIcon className="w-3.5 h-3.5 mr-1" /> WhatsApp
             </Button>
           </a>
@@ -2432,12 +2432,12 @@ export default function CompraEVendaPBA() {
                     <p className="text-sm font-medium text-foreground truncate">
                       {user.user_metadata?.full_name || user.email?.split("@")[0] || "Usuário"}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                     {!userProfilePhoto && (
                       <button
                         type="button"
                         onClick={() => profileBarInputRef.current?.click()}
-                        className="text-[10px] text-primary hover:underline mt-0.5"
+                        className="text-xs text-primary hover:underline mt-0.5"
                       >
                         📷 Adicionar foto de perfil
                       </button>
@@ -2507,7 +2507,7 @@ export default function CompraEVendaPBA() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 text-xs gap-1"
+                className="h-8 text-sm gap-1"
                 onClick={() => setShowMeus(false)}
               >
                 <X className="w-3.5 h-3.5" /> Fechar
@@ -2575,7 +2575,7 @@ export default function CompraEVendaPBA() {
               setCatFiltro("todos");
               setVisibleCount(PAGE_SIZE);
             }}
-            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border shrink-0 ${
+            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors border shrink-0 ${
               catFiltro === "todos"
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -2590,7 +2590,7 @@ export default function CompraEVendaPBA() {
                 setCatFiltro(cat.value);
                 setVisibleCount(PAGE_SIZE);
               }}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border shrink-0 ${
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors border shrink-0 ${
                 catFiltro === cat.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -2608,7 +2608,7 @@ export default function CompraEVendaPBA() {
               <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <button
                 onClick={() => setBairroFiltro("todos")}
-                className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors border shrink-0 ${
+                className={`px-2.5 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors border shrink-0 ${
                   bairroFiltro === "todos"
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -2620,7 +2620,7 @@ export default function CompraEVendaPBA() {
                 <button
                   key={b}
                   onClick={() => setBairroFiltro(b)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors border shrink-0 ${
+                  className={`px-2.5 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors border shrink-0 ${
                     bairroFiltro === b
                       ? "bg-primary text-primary-foreground border-primary"
                       : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -2639,7 +2639,7 @@ export default function CompraEVendaPBA() {
               <button
                 key={o.value}
                 onClick={() => setOrdenacao(o.value)}
-                className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors border shrink-0 ${
+                className={`px-2.5 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors border shrink-0 ${
                   ordenacao === o.value
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/50"
@@ -2706,7 +2706,7 @@ export default function CompraEVendaPBA() {
                 ? "Nenhum anúncio encontrado"
                 : "Nenhum anúncio publicado ainda"}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {busca || catFiltro !== "todos"
                 ? "Tente outros filtros ou termos de busca"
                 : "Seja o primeiro a publicar um anúncio!"}
@@ -2747,7 +2747,7 @@ export default function CompraEVendaPBA() {
         <div className="stat-card bg-muted/30 space-y-2 mt-4">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-            <div className="text-xs text-muted-foreground space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <p>
                 O Piracanjuba.ai não se responsabiliza pelas transações entre usuários. Negocie com
                 segurança.

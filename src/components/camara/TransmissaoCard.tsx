@@ -41,7 +41,7 @@ export default function TransmissaoCard() {
     <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
       <div className="flex items-center gap-2 mb-2">
         <Video className="w-5 h-5 text-primary" />
-        <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+        <span className="text-sm font-semibold text-primary uppercase tracking-wide">
           {live ? "Transmissão ao Vivo" : "Transmissões das Sessões"}
         </span>
         {live && (
@@ -54,7 +54,7 @@ export default function TransmissaoCard() {
       <p className="text-sm text-foreground mb-1">
         As sessões da Câmara são transmitidas ao vivo pelo YouTube.
       </p>
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
         <Calendar className="w-3.5 h-3.5" />
         {next.isToday ? (
           <span className="text-accent font-medium">Hoje às 19h — sessão ordinária</span>

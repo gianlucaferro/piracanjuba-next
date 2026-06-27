@@ -68,7 +68,7 @@ export default async function PlantaoFarmaciasHome() {
         </h2>
         <Link
           href="/plantao-farmacias"
-          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           Ver escala <ArrowRight className="h-3 w-3" />
         </Link>
@@ -83,7 +83,7 @@ export default async function PlantaoFarmaciasHome() {
           href={getShareWhatsAppLink(semana, nextSemana)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[#25D366] hover:underline font-medium"
+          className="inline-flex items-center gap-1.5 text-sm text-[#25D366] hover:underline font-medium"
         >
           <Share2 className="h-3.5 w-3.5" /> Compartilhar
         </a>

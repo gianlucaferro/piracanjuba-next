@@ -42,7 +42,7 @@ export default function HIVChart({
           <Activity className="w-4 h-4 text-orange-500" />
           HIV em Piracanjuba · 2010-{new Date().getFullYear()}
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Diagnósticos de HIV/AIDS notificados — série anual + breakdown por sexo e faixa
           etária. Dado epidemiológico sensível mas público (SINAN/DATASUS), essencial pra
           ações de prevenção e testagem.
@@ -52,20 +52,20 @@ export default function HIVChart({
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
         <div className="stat-card border-orange-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total acumulado</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Total acumulado</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totalAcumulado}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">diagnósticos 2010-{new Date().getFullYear()}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">diagnósticos 2010-{new Date().getFullYear()}</p>
         </div>
         {ultimoAno && (
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Último ano</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Último ano</p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">{ultimoAno.valor}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{ultimoAno.ano}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{ultimoAno.ano}</p>
           </div>
         )}
         {porSexo.length > 0 && (
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
               <Users className="w-3 h-3" /> Distribuição por sexo
             </p>
             <p className="text-sm text-foreground mt-1 leading-tight">
@@ -79,7 +79,7 @@ export default function HIVChart({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Serie temporal */}
         <div className="lg:col-span-2 h-64">
-          <p className="text-xs font-medium text-muted-foreground mb-1">
+          <p className="text-sm font-medium text-muted-foreground mb-1">
             Diagnósticos por ano
           </p>
           <ResponsiveContainer width="100%" height="100%">
@@ -112,7 +112,7 @@ export default function HIVChart({
         {/* Breakdown por faixa etária */}
         {porFaixa.length > 0 && (
           <div className="h-64">
-            <p className="text-xs font-medium text-muted-foreground mb-1">Por faixa etária</p>
+            <p className="text-sm font-medium text-muted-foreground mb-1">Por faixa etária</p>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={porFaixa} layout="vertical" margin={{ top: 8, right: 30, bottom: 0, left: 0 }}>
                 <XAxis type="number" tick={{ fontSize: 9 }} />
@@ -137,7 +137,7 @@ export default function HIVChart({
         )}
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Fonte:{" "}
         <a
           href="http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sinannet/cnv/aidsBR.def"

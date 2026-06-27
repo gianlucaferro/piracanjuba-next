@@ -68,12 +68,12 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
         </div>
         <div className="flex gap-1 overflow-x-auto">
           {["todos", ...anos.map(String)].map((y) => (
-            <button key={y} onClick={() => setAno(y)} className={`rounded-md border px-3 py-2 text-xs whitespace-nowrap ${ano === y ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
+            <button key={y} onClick={() => setAno(y)} className={`rounded-md border px-3 py-2 text-sm whitespace-nowrap ${ano === y ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
               {y === "todos" ? "Todos os anos" : y}
             </button>
           ))}
           {["todas", ...esferas].map((e) => (
-            <button key={e} onClick={() => setEsfera(e)} className={`rounded-md border px-3 py-2 text-xs whitespace-nowrap capitalize ${esfera === e ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
+            <button key={e} onClick={() => setEsfera(e)} className={`rounded-md border px-3 py-2 text-sm whitespace-nowrap capitalize ${esfera === e ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
               {e === "todas" ? "Todas as esferas" : e}
             </button>
           ))}
@@ -82,7 +82,7 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
             ["empenhado", "Maior empenhado"],
             ["pago", "Maior pago"],
           ].map(([id, label]) => (
-            <button key={id} onClick={() => setSort(id as typeof sort)} className={`rounded-md border px-3 py-2 text-xs whitespace-nowrap inline-flex items-center gap-1 ${sort === id ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
+            <button key={id} onClick={() => setSort(id as typeof sort)} className={`rounded-md border px-3 py-2 text-sm whitespace-nowrap inline-flex items-center gap-1 ${sort === id ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
               <ArrowUpDown className="w-3 h-3" />
               {label}
             </button>
@@ -129,20 +129,20 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
             <article key={e.id} className="stat-card">
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-foreground">{e.parlamentar_nome}</span>
                     {e.parlamentar_esfera && ` · ${e.parlamentar_esfera}`}
                     {e.ano && ` · ${e.ano}`}
                   </p>
                   <p className="text-sm text-foreground mt-1">{e.objeto?.slice(0, 280) || "-"}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Empenhado: <span className="text-foreground">{fmtBRL(e.valor_empenhado)}</span>
                     {" · "}
                     Pago: <span className="text-foreground">{fmtBRL(e.valor_pago)}</span>
                   </p>
                 </div>
                 {e.fonte_url && (
-                  <a href={e.fonte_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0">
+                  <a href={e.fonte_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1 shrink-0">
                     Fonte <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
@@ -158,7 +158,7 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
 function MiniStat({ label, value, tone }: { label: string; value: string; tone?: "green" }) {
   return (
     <div className="stat-card text-center">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-sm uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className={`text-2xl font-bold mt-1 ${tone === "green" ? "text-green-600" : "text-foreground"}`}>{value}</p>
     </div>
   );

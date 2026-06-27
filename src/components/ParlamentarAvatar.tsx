@@ -68,7 +68,7 @@ export default function ParlamentarAvatar({ parlamentarNome, className = "" }: P
       {photoUrl && (
         <AvatarImage src={photoUrl} alt={firstName} className="object-cover" loading="lazy" />
       )}
-      <AvatarFallback className={`${isGov ? "bg-muted" : bgColor} text-white text-xs font-bold`}>
+      <AvatarFallback className={`${isGov ? "bg-muted" : bgColor} text-white text-sm font-bold`}>
         {isGov ? (
           parlamentarNome.includes("Federal") ? (
             <Landmark className="w-4 h-4 text-muted-foreground" />

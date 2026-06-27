@@ -26,16 +26,16 @@ export default async function ClimaSaudeCard() {
         <CloudRain className="w-6 h-6 text-sky-500" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+        <p className="text-sm uppercase tracking-wider text-muted-foreground">
           Chuva últimos 7 dias
         </p>
         <p className="text-base font-semibold text-foreground">
           {chuvaSemana} mm
-          <span className="text-xs font-normal text-muted-foreground ml-2">
+          <span className="text-sm font-normal text-muted-foreground ml-2">
             · {diasComChuva} dia{diasComChuva !== 1 ? "s" : ""} com chuva
           </span>
         </p>
-        <p className={`text-xs mt-0.5 inline-flex items-center gap-1 ${corText}`}>
+        <p className={`text-sm mt-0.5 inline-flex items-center gap-1 ${corText}`}>
           {risco !== "baixo" && <AlertTriangle className="w-3 h-3" />}
           Risco de criadouros de mosquito: <span className="font-semibold capitalize">{risco}</span>
         </p>

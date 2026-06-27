@@ -78,26 +78,26 @@ function OverviewCards({ data, ano }: { data: SegurancaIndicador[]; ano: number 
       <div className="stat-card text-center">
         <ShieldAlert className="w-6 h-6 text-destructive mx-auto mb-2" />
         <p className="text-2xl font-bold text-foreground">{formatNumber(homicidios?.ocorrencias ?? null)}</p>
-        <p className="text-xs text-muted-foreground">Homicídios dolosos</p>
-        <p className="text-[10px] text-muted-foreground mt-1">{ano}</p>
+        <p className="text-sm text-muted-foreground">Homicídios dolosos</p>
+        <p className="text-xs text-muted-foreground mt-1">{ano}</p>
       </div>
       <div className="stat-card text-center">
         <AlertTriangle className="w-6 h-6 text-orange-500 mx-auto mb-2" />
         <p className="text-2xl font-bold text-foreground">{formatNumber(estupros?.ocorrencias ?? null)}</p>
-        <p className="text-xs text-muted-foreground">Estupros</p>
-        <p className="text-[10px] text-muted-foreground mt-1">{ano}</p>
+        <p className="text-sm text-muted-foreground">Estupros</p>
+        <p className="text-xs text-muted-foreground mt-1">{ano}</p>
       </div>
       <div className="stat-card text-center">
         <Scale className="w-6 h-6 text-primary mx-auto mb-2" />
         <p className="text-2xl font-bold text-foreground">{formatNumber(latrocinios?.ocorrencias ?? 0)}</p>
-        <p className="text-xs text-muted-foreground">Latrocínios</p>
-        <p className="text-[10px] text-muted-foreground mt-1">{ano}</p>
+        <p className="text-sm text-muted-foreground">Latrocínios</p>
+        <p className="text-xs text-muted-foreground mt-1">{ano}</p>
       </div>
       <div className="stat-card text-center">
         <ShieldCheck className="w-6 h-6 text-green-600 mx-auto mb-2" />
         <p className="text-2xl font-bold text-foreground">{formatNumber(totalOcorrencias)}</p>
-        <p className="text-xs text-muted-foreground">Ocorrências totais</p>
-        <p className="text-[10px] text-muted-foreground mt-1">{ano}</p>
+        <p className="text-sm text-muted-foreground">Ocorrências totais</p>
+        <p className="text-xs text-muted-foreground mt-1">{ano}</p>
       </div>
     </div>
   );
@@ -152,12 +152,12 @@ function IndicatorTable({ data, ano }: { data: SegurancaIndicador[]; ano: number
                 </td>
                 <td className="text-right py-2.5">
                   {variacao != null ? (
-                    <span className={`inline-flex items-center gap-1 text-xs font-medium ${variacao > 0 ? "text-destructive" : variacao < 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                    <span className={`inline-flex items-center gap-1 text-sm font-medium ${variacao > 0 ? "text-destructive" : variacao < 0 ? "text-green-600" : "text-muted-foreground"}`}>
                       {variacao > 0 ? <TrendingUp className="w-3 h-3" /> : variacao < 0 ? <TrendingDown className="w-3 h-3" /> : null}
                       {variacao > 0 ? "+" : ""}{variacao.toFixed(0)}%
                     </span>
                   ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
+                    <span className="text-sm text-muted-foreground">—</span>
                   )}
                 </td>
               </tr>
@@ -313,8 +313,8 @@ function EmergencyNumbers() {
             </div>
             <div className="min-w-0">
               <p className="font-semibold text-foreground text-sm">{n.number}</p>
-              <p className="text-xs text-muted-foreground">{n.name}</p>
-              <p className="text-[10px] text-muted-foreground">{n.desc}</p>
+              <p className="text-sm text-muted-foreground">{n.name}</p>
+              <p className="text-xs text-muted-foreground">{n.desc}</p>
             </div>
           </a>
         ))}
@@ -376,8 +376,8 @@ export default function Seguranca() {
             <div className="rounded-lg bg-warning/10 border border-warning/20 p-3 flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-warning">Dados de {ano}</p>
-                <p className="text-xs text-foreground">
+                <p className="text-sm font-semibold text-warning">Dados de {ano}</p>
+                <p className="text-sm text-foreground">
                   O SINESP (Ministério da Justiça) publica dados municipais com atraso de 1 a 2 anos. Os dados mais recentes disponíveis para Piracanjuba são de {ano}.
                 </p>
               </div>
@@ -422,12 +422,12 @@ export default function Seguranca() {
                 <div className="flex flex-wrap gap-3 mt-3">
                   <a href="https://dados.mj.gov.br/dataset/sistema-nacional-de-estatisticas-de-seguranca-publica"
                     target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                     <ExternalLink className="w-3 h-3" /> SINESP — Dados Abertos (MJ)
                   </a>
                   <a href="https://goias.gov.br/seguranca/estatisticas/"
                     target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                     <ExternalLink className="w-3 h-3" /> SSP Goiás — Estatísticas
                   </a>
                 </div>

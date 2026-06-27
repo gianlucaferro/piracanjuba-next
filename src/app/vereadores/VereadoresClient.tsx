@@ -38,14 +38,14 @@ export default function VereadoresClient({ vereadores }: { vereadores: Vereador[
             ["votos", "Mais votados"],
             ["mesa", "Mesa diretora"],
           ].map(([id, label]) => (
-            <button key={id} onClick={() => setSort(id)} className={`rounded-md border px-3 py-2 text-xs whitespace-nowrap ${sort === id ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
+            <button key={id} onClick={() => setSort(id)} className={`rounded-md border px-3 py-2 text-sm whitespace-nowrap ${sort === id ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border"}`}>
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">{filtered.length} de {vereadores.length} vereadores exibidos.</p>
+      <p className="text-sm text-muted-foreground">{filtered.length} de {vereadores.length} vereadores exibidos.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((v) => (
@@ -60,19 +60,19 @@ export default function VereadoresClient({ vereadores }: { vereadores: Vereador[
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-semibold text-foreground text-base truncate">{v.nome}</h2>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {v.partido || "Sem partido"}
                   {v.cargo_mesa && <span className="ml-2 text-primary">· {v.cargo_mesa}</span>}
                 </p>
                 {v.votos_eleicao && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {v.votos_eleicao.toLocaleString("pt-BR")} votos ({v.ano_eleicao})
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 text-xs">
+            <div className="flex flex-wrap gap-2 text-sm">
               {v.telefone && <Contact href={`tel:${v.telefone}`} icon={<Phone className="w-3 h-3" />} label={v.telefone} />}
               {v.email && <Contact href={`mailto:${v.email}`} icon={<Mail className="w-3 h-3" />} label={v.email} />}
               {v.instagram && <Contact href={`https://instagram.com/${v.instagram.replace("@", "")}`} icon={<Instagram className="w-3 h-3" />} label={v.instagram.replace("@", "")} external />}

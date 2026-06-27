@@ -110,12 +110,12 @@ export function FarmaciaPlantaoCard({
             {resolved.nome}
           </span>
           {is24h && (
-            <span className="shrink-0 inline-flex items-center gap-1 rounded bg-orange-500/10 px-1.5 py-0.5 text-[10px] font-bold text-orange-600 dark:text-orange-400">
+            <span className="shrink-0 inline-flex items-center gap-1 rounded bg-orange-500/10 px-1.5 py-0.5 text-xs font-bold text-orange-600 dark:text-orange-400">
               <Clock className="h-3 w-3" /> 24H
             </span>
           )}
         </span>
-        <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+        <span className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
           {isWhatsApp ? (
             <WhatsAppIcon className="h-3 w-3 shrink-0 text-[#25D366]" />
           ) : (
@@ -135,7 +135,7 @@ export function FarmaciaPlantaoCard({
           aria-label={`Abrir ${resolved.nome} no Waze`}
         >
           <Image src={wazeIcon} alt="" className={cn(compact ? "h-6 w-6" : "h-7 w-7")} />
-          <span className="text-[9px] font-semibold leading-none text-muted-foreground">
+          <span className="text-xs font-semibold leading-none text-muted-foreground">
             Waze
           </span>
         </a>

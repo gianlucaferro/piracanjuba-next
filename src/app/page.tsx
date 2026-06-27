@@ -55,11 +55,11 @@ function MiniCard({
 }) {
   return (
     <div className="stat-card text-center">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
         {label}
       </p>
       <p className="text-2xl md:text-3xl font-extrabold text-foreground mt-1">{value}</p>
-      {sub && <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>}
+      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -67,7 +67,7 @@ function MiniCard({
 function UnavailableCard({ label }: { label: string }) {
   return (
     <div className="stat-card text-center opacity-60">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
         {label}
       </p>
       <p className="text-sm text-muted-foreground mt-2">Em breve</p>
@@ -158,7 +158,7 @@ export default async function HomePage() {
               <Trophy className="w-6 h-6 text-amber-600" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 mb-0.5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 mb-0.5">
                 Nota de transparência da cidade · {NOTA_PNTP.ano}
               </p>
               <p className="text-sm sm:text-base font-bold text-foreground leading-snug">
@@ -185,7 +185,7 @@ export default async function HomePage() {
               <p className="text-sm font-medium text-foreground">
                 Zap <span className="text-[#25D366]">PBA</span>
               </p>
-              <p className="text-xs text-muted-foreground">WhatsApp de estabelecimentos</p>
+              <p className="text-sm text-muted-foreground">WhatsApp de estabelecimentos</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-[#25D366] transition-colors" />
           </Link>
@@ -195,7 +195,7 @@ export default async function HomePage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">Coleta de Lixo</p>
-              <p className="text-xs text-muted-foreground">Dias e orientações sobre a coleta</p>
+              <p className="text-sm text-muted-foreground">Dias e orientações sobre a coleta</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
           </Link>
@@ -205,7 +205,7 @@ export default async function HomePage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">Farmácias de Plantão</p>
-              <p className="text-xs text-muted-foreground">Quem está aberto esta semana</p>
+              <p className="text-sm text-muted-foreground">Quem está aberto esta semana</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-orange-500 transition-colors" />
           </Link>
@@ -221,7 +221,7 @@ export default async function HomePage() {
               <p className="text-sm font-medium text-foreground">
                 Compra e Venda <span className="text-[#25D366]">PBA</span>
               </p>
-              <p className="text-xs text-muted-foreground">Anuncie grátis: imóveis, veículos e mais</p>
+              <p className="text-sm text-muted-foreground">Anuncie grátis: imóveis, veículos e mais</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-[#25D366] transition-colors" />
           </Link>
@@ -231,7 +231,7 @@ export default async function HomePage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">Salários dos Servidores</p>
-              <p className="text-xs text-muted-foreground">Remuneração da folha municipal</p>
+              <p className="text-sm text-muted-foreground">Remuneração da folha municipal</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
           </Link>
@@ -241,7 +241,7 @@ export default async function HomePage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">Contratos da Prefeitura</p>
-              <p className="text-xs text-muted-foreground">Contratos e fornecedores do Executivo</p>
+              <p className="text-sm text-muted-foreground">Contratos e fornecedores do Executivo</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-blue-600 transition-colors" />
           </Link>
@@ -260,7 +260,7 @@ export default async function HomePage() {
               <Phone className="w-5 h-5 text-primary" />
               Contatos Úteis
             </h2>
-            <Link href="/contatos" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <Link href="/contatos" className="text-sm text-primary hover:underline flex items-center gap-1">
               Ver todos <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default async function HomePage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">Polícia Militar</p>
-                <p className="text-xs text-muted-foreground">(64) 99971-9063</p>
+                <p className="text-sm text-muted-foreground">(64) 99971-9063</p>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
             </a>
@@ -281,7 +281,7 @@ export default async function HomePage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">Bombeiros</p>
-                <p className="text-xs text-muted-foreground">(62) 98494-0249</p>
+                <p className="text-sm text-muted-foreground">(62) 98494-0249</p>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
             </a>
@@ -296,7 +296,7 @@ export default async function HomePage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">Troca de Lâmpada de Poste</p>
-                <p className="text-xs text-muted-foreground">(64) 93300-8200</p>
+                <p className="text-sm text-muted-foreground">(64) 93300-8200</p>
               </div>
               <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
             </a>
@@ -312,7 +312,7 @@ export default async function HomePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-foreground">Anuncie no Piracanjuba.ai</h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Seu negócio visto por centenas de moradores de Piracanjuba todos os dias. Público 100% local e qualificado.
                 </p>
               </div>
@@ -337,47 +337,47 @@ export default async function HomePage() {
             <Link href="/saude" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <Heart className="w-7 h-7 text-red-500 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Saúde</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Dengue, profissionais, estabelecimentos</span>
+              <span className="text-xs text-muted-foreground leading-tight">Dengue, profissionais, estabelecimentos</span>
             </Link>
             <Link href="/educacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <GraduationCap className="w-7 h-7 text-blue-500 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Educação</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">IDEB, escolas, matrículas, investimento</span>
+              <span className="text-xs text-muted-foreground leading-tight">IDEB, escolas, matrículas, investimento</span>
             </Link>
             <Link href="/beneficios-sociais" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <HandHeart className="w-7 h-7 text-purple-500 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Social</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Bolsa Família, CadÚnico, assistência</span>
+              <span className="text-xs text-muted-foreground leading-tight">Bolsa Família, CadÚnico, assistência</span>
             </Link>
             <Link href="/arrecadacao" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <DollarSign className="w-7 h-7 text-green-600 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Impostos</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Arrecadação, IPTU, ISS, receitas</span>
+              <span className="text-xs text-muted-foreground leading-tight">Arrecadação, IPTU, ISS, receitas</span>
             </Link>
             <Link href="/agro" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <Wheat className="w-7 h-7 text-amber-600 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Agro</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">PIB agro, produtividade, ranking</span>
+              <span className="text-xs text-muted-foreground leading-tight">PIB agro, produtividade, ranking</span>
             </Link>
             <Link href="/seguranca" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <ShieldAlert className="w-7 h-7 text-orange-500 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Segurança</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Ocorrências, PM, Bombeiros</span>
+              <span className="text-xs text-muted-foreground leading-tight">Ocorrências, PM, Bombeiros</span>
             </Link>
             <Link href="/economia" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <TrendingUp className="w-7 h-7 text-emerald-600 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Economia Local</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Empregos, salários, empresas, PIB</span>
+              <span className="text-xs text-muted-foreground leading-tight">Empregos, salários, empresas, PIB</span>
             </Link>
             <Link href="/infraestrutura" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <Building className="w-7 h-7 text-slate-600 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Infraestrutura</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Saneamento, energia, conectividade</span>
+              <span className="text-xs text-muted-foreground leading-tight">Saneamento, energia, conectividade</span>
             </Link>
             <Link href="/meio-ambiente" className="stat-card card-hover flex flex-col items-center gap-2 py-5 group text-center">
               <Trees className="w-7 h-7 text-emerald-700 group-hover:scale-110 transition-transform" />
               <span className="text-sm font-medium text-foreground">Meio Ambiente</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">MapBiomas, desmatamento, queimadas</span>
+              <span className="text-xs text-muted-foreground leading-tight">MapBiomas, desmatamento, queimadas</span>
             </Link>
           </div>
           {/* CTA pro hub completo de dados */}
@@ -427,7 +427,7 @@ export default async function HomePage() {
               <MiniCard label="Total recebido" value={totalEmendas.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact" })} />
               <Link href="/emendas" className="stat-card card-hover flex items-center gap-3 group">
                 <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">{emendas.length} emendas registradas</p>
+                  <p className="text-sm text-muted-foreground">{emendas.length} emendas registradas</p>
                   <p className="text-sm font-semibold text-foreground">Ver detalhes →</p>
                 </div>
               </Link>

@@ -158,7 +158,7 @@ export default function ChuvaSafraPanel({
           <CloudRain className="w-5 h-5 text-sky-500" />
           Chuva e safra · {ano}
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Precipitação acumulada em Piracanjuba versus média histórica {HIST_START_YEAR}–{HIST_END_YEAR}.
           Insumo crítico pra agropecuária — cruzamento direto com calendário de plantio.
         </p>
@@ -169,13 +169,13 @@ export default function ChuvaSafraPanel({
         <div className={`stat-card border ${sYTD.color}`}>
           <div className="flex items-center gap-2 mb-1">
             <Droplets className="w-4 h-4" />
-            <span className="text-xs uppercase tracking-wider opacity-80">Acumulado {ano}</span>
+            <span className="text-sm uppercase tracking-wider opacity-80">Acumulado {ano}</span>
           </div>
           <p className="text-2xl font-extrabold">{Math.round(stats.totalAno)} mm</p>
-          <p className="text-[11px] opacity-80 mt-0.5">
+          <p className="text-xs opacity-80 mt-0.5">
             Média histórica YTD: <strong>{Math.round(stats.mediaHistYTD)} mm</strong>
           </p>
-          <div className="mt-2 flex items-center gap-1.5 text-xs">
+          <div className="mt-2 flex items-center gap-1.5 text-sm">
             <sYTD.icon className="w-3.5 h-3.5" />
             <span className="font-semibold">{sYTD.label}</span>
             <span className="opacity-80">
@@ -188,13 +188,13 @@ export default function ChuvaSafraPanel({
         <div className={`stat-card border ${s30.color}`}>
           <div className="flex items-center gap-2 mb-1">
             <CloudRain className="w-4 h-4" />
-            <span className="text-xs uppercase tracking-wider opacity-80">Últimos 30 dias</span>
+            <span className="text-sm uppercase tracking-wider opacity-80">Últimos 30 dias</span>
           </div>
           <p className="text-2xl font-extrabold">{Math.round(ultimos30)} mm</p>
-          <p className="text-[11px] opacity-80 mt-0.5">
+          <p className="text-xs opacity-80 mt-0.5">
             Média histórica do mês: <strong>{Math.round(stats.mediaMesAtual)} mm</strong>
           </p>
-          <div className="mt-2 flex items-center gap-1.5 text-xs">
+          <div className="mt-2 flex items-center gap-1.5 text-sm">
             <s30.icon className="w-3.5 h-3.5" />
             <span className="font-semibold">{s30.label}</span>
           </div>
@@ -203,7 +203,7 @@ export default function ChuvaSafraPanel({
         <div className="stat-card border-border">
           <div className="flex items-center gap-2 mb-1">
             <Sprout className="w-4 h-4 text-emerald-600" />
-            <span className="text-xs uppercase tracking-wider text-muted-foreground">
+            <span className="text-sm uppercase tracking-wider text-muted-foreground">
               Janela de cultivo
             </span>
           </div>
@@ -217,7 +217,7 @@ export default function ChuvaSafraPanel({
               <strong className="text-foreground">{Math.round(ultimos90)} mm</strong>
             </p>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             Indicador hídrico pra pastagem e preparação de solo (INMET diário).
           </p>
         </div>
@@ -302,11 +302,11 @@ export default function ChuvaSafraPanel({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <p className="text-sm font-semibold text-foreground">{c.cultura}</p>
-                    <Badge variant="outline" className={`text-[10px] ${statusBadge.color}`}>
+                    <Badge variant="outline" className={`text-xs ${statusBadge.color}`}>
                       {statusBadge.label}
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                  <p className="text-xs text-muted-foreground leading-snug mt-0.5">
                     {MESES[c.inicio - 1]}–{MESES[c.fim - 1]} · {c.obs}
                   </p>
                 </div>
@@ -316,7 +316,7 @@ export default function ChuvaSafraPanel({
         </div>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Fontes: Open-Meteo Archive (precipitação histórica, atualizada semanalmente via cron),
         INMET (chuva diária, sync 15min), ZARC/MAPA + Embrapa Cerrados (janelas de plantio).
         O status hídrico é meramente indicativo — sempre confirme com agrônomo antes de

@@ -94,9 +94,9 @@ export function HomeCivicSearch({ variant = "card" }: { variant?: "card" | "hero
                 <div className="flex items-start gap-3">
                   <item.icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{item.type}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">{item.type}</p>
                     <p className="text-sm font-medium text-foreground truncate">{item.title}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{item.sub}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{item.sub}</p>
                   </div>
                 </div>
               </Link>
@@ -184,9 +184,9 @@ export default function HomeCivicClient() {
 function ActivityItem({ label, title, sub }: { label: string; title: string; sub?: string | null }) {
   return (
     <div className="rounded-lg border border-border p-3">
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="text-sm font-semibold text-foreground mt-1">{title}</p>
-      {sub && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{sub}</p>}
+      {sub && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{sub}</p>}
     </div>
   );
 }

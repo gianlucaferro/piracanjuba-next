@@ -127,15 +127,15 @@ function EditableEstablishmentRow({
     return (
       <div className="flex flex-col gap-3 p-4 border rounded-lg bg-card border-primary/30">
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Nome</Label>
+          <Label className="text-sm text-muted-foreground">Nome</Label>
           <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
         </div>
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">WhatsApp</Label>
+          <Label className="text-sm text-muted-foreground">WhatsApp</Label>
           <Input value={editWhatsapp} onChange={(e) => setEditWhatsapp(e.target.value)} />
         </div>
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Categoria</Label>
+          <Label className="text-sm text-muted-foreground">Categoria</Label>
           <Select value={editCategory} onValueChange={(value) => setEditCategory(value || "")}>
             <SelectTrigger>
               <SelectValue placeholder="Sem categoria" />
@@ -174,17 +174,17 @@ function EditableEstablishmentRow({
             {item.whatsapp} <ExternalLink className="w-3 h-3" />
           </a>
           {item.category && (
-            <Badge variant="secondary" className="ml-2 text-xs">{item.category}</Badge>
+            <Badge variant="secondary" className="ml-2 text-sm">{item.category}</Badge>
           )}
           <div className="flex items-center gap-3 mt-1">
-            <p className="text-xs text-muted-foreground">{formatDate(item.created_at)}</p>
-            <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+            <p className="text-sm text-muted-foreground">{formatDate(item.created_at)}</p>
+            <span className="text-sm text-muted-foreground inline-flex items-center gap-1">
               <MousePointerClick className="w-3 h-3" /> {item.click_count || 0} cliques
             </span>
           </div>
         </div>
         <div className="flex gap-1.5 shrink-0 flex-wrap">
-          <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => setEditing(true)}>
+          <Button size="sm" variant="outline" className="h-8 text-sm" onClick={() => setEditing(true)}>
             <Pencil className="w-3.5 h-3.5 mr-1" /> Editar
           </Button>
           {actions}
@@ -192,11 +192,11 @@ function EditableEstablishmentRow({
       </div>
       {itemSuggestions.length > 0 && (
         <div className="border-t pt-2 mt-1 space-y-1">
-          <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+          <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
             <MessageSquare className="w-3 h-3" /> Sugestões ({itemSuggestions.length})
           </p>
           {itemSuggestions.map(s => (
-            <p key={s.id} className="text-xs text-muted-foreground bg-muted rounded px-2 py-1">
+            <p key={s.id} className="text-sm text-muted-foreground bg-muted rounded px-2 py-1">
               {s.suggestion_text} <span className="text-muted-foreground/60">— {formatDate(s.created_at)}</span>
             </p>
           ))}
@@ -430,7 +430,7 @@ export default function Admin() {
             className="pl-10"
           />
         </div>
-        <Button variant="outline" size="sm" className="text-xs h-9 gap-1 shrink-0" onClick={handleExportCsv} disabled={dataLoading || !adminData}>
+        <Button variant="outline" size="sm" className="text-sm h-9 gap-1 shrink-0" onClick={handleExportCsv} disabled={dataLoading || !adminData}>
           <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Exportar</span> CSV
         </Button>
       </div>
@@ -442,14 +442,14 @@ export default function Admin() {
       ) : (
         <Tabs defaultValue="pending">
           <TabsList className="w-full flex gap-0.5 p-1">
-            <TabsTrigger value="pending" className="relative flex-1 text-xs px-2.5">
+            <TabsTrigger value="pending" className="relative flex-1 text-sm px-2.5">
               Pendentes
               {pending.length > 0 && (
-                <Badge className="ml-1 h-4 min-w-4 px-0.5 bg-amber-500 text-white text-[10px]">{pending.length}</Badge>
+                <Badge className="ml-1 h-4 min-w-4 px-0.5 bg-amber-500 text-white text-xs">{pending.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="approved" className="flex-1 text-xs px-2.5">Aprovados</TabsTrigger>
-            <TabsTrigger value="rejected" className="flex-1 text-xs px-2.5">Reprovados</TabsTrigger>
+            <TabsTrigger value="approved" className="flex-1 text-sm px-2.5">Aprovados</TabsTrigger>
+            <TabsTrigger value="rejected" className="flex-1 text-sm px-2.5">Reprovados</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending" className="space-y-3 mt-4">
@@ -462,10 +462,10 @@ export default function Admin() {
                 suggestions={suggestions}
                 actions={
                   <>
-                    <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white h-8 text-xs" onClick={() => updateStatus(item.id, "approved")}>
+                    <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white h-8 text-sm" onClick={() => updateStatus(item.id, "approved")}>
                       <Check className="w-3.5 h-3.5 mr-1" /> Aprovar
                     </Button>
-                    <Button size="sm" variant="destructive" className="h-8 text-xs" onClick={() => updateStatus(item.id, "rejected")}>
+                    <Button size="sm" variant="destructive" className="h-8 text-sm" onClick={() => updateStatus(item.id, "rejected")}>
                       <X className="w-3.5 h-3.5 mr-1" /> Reprovar
                     </Button>
                   </>
@@ -483,7 +483,7 @@ export default function Admin() {
                 onSaveEdit={saveEdit}
                 suggestions={suggestions}
                 actions={
-                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
+                  <Button size="sm" variant="outline" className="h-8 text-sm" onClick={() => updateStatus(item.id, "pending")}>
                     <RotateCcw className="w-3.5 h-3.5 mr-1" /> Remover
                   </Button>
                 }
@@ -500,7 +500,7 @@ export default function Admin() {
                 onSaveEdit={saveEdit}
                 suggestions={suggestions}
                 actions={
-                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => updateStatus(item.id, "pending")}>
+                  <Button size="sm" variant="outline" className="h-8 text-sm" onClick={() => updateStatus(item.id, "pending")}>
                     <RotateCcw className="w-3.5 h-3.5 mr-1" /> Revisar
                   </Button>
                 }
@@ -538,7 +538,7 @@ export default function Admin() {
             )}
             <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">{active ? active.label : "Painel Admin"}</h1>
           </div>
-          <Button variant="ghost" size="sm" className="text-xs h-8 shrink-0" onClick={logout}>Sair</Button>
+          <Button variant="ghost" size="sm" className="text-sm h-8 shrink-0" onClick={logout}>Sair</Button>
         </div>
 
         {active ? (
@@ -557,11 +557,11 @@ export default function Admin() {
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Icon className="w-5 h-5 text-primary" />
                     </div>
-                    {s.badge ? <Badge className="bg-amber-500 text-white text-[10px] h-5">{s.badge}</Badge> : null}
+                    {s.badge ? <Badge className="bg-amber-500 text-white text-xs h-5">{s.badge}</Badge> : null}
                   </div>
                   <div>
                     <p className="font-semibold text-foreground text-sm leading-tight">{s.label}</p>
-                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{s.desc}</p>
+                    <p className="text-xs text-muted-foreground leading-snug mt-0.5">{s.desc}</p>
                   </div>
                 </button>
               );

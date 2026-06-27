@@ -25,7 +25,7 @@ export function AISummaryDialog({ open, onOpenChange, title, children, resumo, l
         <div className="space-y-3">
           {children}
           <div className="rounded-lg bg-muted/50 border p-4">
-            <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+            <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
             </p>
             {loading ? (

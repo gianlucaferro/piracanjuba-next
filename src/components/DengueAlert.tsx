@@ -88,7 +88,7 @@ export default function DengueAlert() {
             </p>
 
             {/* Comparativos */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs">
               {media3meses > 0 && (
                 <span className={`inline-flex items-center gap-1 font-semibold ${
                   variacao > 0 ? "text-red-600" : "text-emerald-600"
@@ -116,13 +116,13 @@ export default function DengueAlert() {
               )}
             </div>
 
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               Elimine focos de água parada. Use repelente. Procure atendimento se tiver febre alta.
             </p>
             <div className="flex items-center gap-3 mt-2">
               <Link
                 href="/saude"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium"
               >
                 Ver dados completos <ArrowRight className="w-3 h-3" />
               </Link>
@@ -132,7 +132,7 @@ export default function DengueAlert() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline font-medium"
+                className="inline-flex items-center gap-1 text-sm text-[#25D366] hover:underline font-medium"
               >
                 <Share2 className="w-3 h-3" /> Compartilhar
               </a>

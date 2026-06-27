@@ -45,7 +45,7 @@ export default function MapasTerritorioPanel() {
           </div>
           O território em mapas
         </h2>
-        <p className="text-xs text-muted-foreground mt-1 ml-10">
+        <p className="text-sm text-muted-foreground mt-1 ml-10">
           A localização do município e a transformação do solo vista do alto, em fontes oficiais.
         </p>
       </div>
@@ -55,7 +55,7 @@ export default function MapasTerritorioPanel() {
           <figure key={m.src} className="stat-card flex flex-col">
             <figcaption className="mb-2">
               <p className="text-sm font-semibold text-foreground">{m.titulo}</p>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{m.legenda}</p>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{m.legenda}</p>
             </figcaption>
             <div className="rounded-lg overflow-hidden border bg-muted/30">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -69,7 +69,7 @@ export default function MapasTerritorioPanel() {
                 className="w-full h-auto block"
               />
             </div>
-            <p className="text-[10px] text-muted-foreground mt-2">Fonte: {m.fonte}</p>
+            <p className="text-xs text-muted-foreground mt-2">Fonte: {m.fonte}</p>
           </figure>
         ))}
       </div>

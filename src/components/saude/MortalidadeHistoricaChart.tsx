@@ -68,7 +68,7 @@ export default function MortalidadeHistoricaChart({
           <Baby className="w-4 h-4 text-pink-500" />
           Mortalidade em Piracanjuba — 30 anos
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Série histórica 1996-{new Date().getFullYear()} de óbitos infantis e gerais.
           Mortalidade infantil é o principal indicador de qualidade da saúde pública municipal —
           mostra a tendência de melhoria do acesso a pré-natal, parto seguro e atenção primária.
@@ -78,32 +78,32 @@ export default function MortalidadeHistoricaChart({
       {/* Stats compactos */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div className="stat-card border-pink-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Óbitos infantis (30 anos)</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Óbitos infantis (30 anos)</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totalInfantil}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">crianças &lt;1 ano</p>
+          <p className="text-xs text-muted-foreground mt-0.5">crianças &lt;1 ano</p>
         </div>
         <div className="stat-card border-slate-500/30">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Óbitos totais (30 anos)</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Óbitos totais (30 anos)</p>
           <p className="text-xl font-extrabold text-foreground mt-0.5">{totalGeral.toLocaleString("pt-BR")}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">todas as idades</p>
+          <p className="text-xs text-muted-foreground mt-0.5">todas as idades</p>
         </div>
         {ultimoInfantil && (
           <div className="stat-card">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Último ano</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Último ano</p>
             <p className="text-xl font-extrabold text-foreground mt-0.5">
-              {ultimoInfantil.valor} <span className="text-xs font-normal">infantis</span>
+              {ultimoInfantil.valor} <span className="text-sm font-normal">infantis</span>
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{ultimoInfantil.ano}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{ultimoInfantil.ano}</p>
           </div>
         )}
         {melhoria < 0 && primeiroInfantil && (
           <div className="stat-card border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400">
-            <p className="text-[10px] uppercase tracking-wider opacity-80">Tendência</p>
+            <p className="text-xs uppercase tracking-wider opacity-80">Tendência</p>
             <p className="text-xl font-extrabold mt-0.5 inline-flex items-center gap-1">
               <TrendingDown className="w-4 h-4" />
               {melhoria.toFixed(0)}%
             </p>
-            <p className="text-[10px] opacity-80 mt-0.5">
+            <p className="text-xs opacity-80 mt-0.5">
               vs média 96-2000 ({mediaPrimeiros.toFixed(0)} óbitos/ano)
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function MortalidadeHistoricaChart({
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Eixo esquerdo (rosa): óbitos infantis. Eixo direito (cinza): óbitos totais.
         Fonte:{" "}
         <a

@@ -356,7 +356,7 @@ function EstablishmentCard({
             {item.name}
           </p>
           {isNew && (
-            <Badge className="h-5 shrink-0 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 text-[10px] font-semibold text-amber-700">
+            <Badge className="h-5 shrink-0 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 text-xs font-semibold text-amber-700">
               Novo
             </Badge>
           )}
@@ -368,14 +368,14 @@ function EstablishmentCard({
           {item.category && (
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-1 px-2 py-0 text-[11px]"
+              className="inline-flex items-center gap-1 px-2 py-0 text-xs"
             >
               <CategoryIcon category={item.category} className="h-3 w-3" />
               {item.category}
             </Badge>
           )}
           {clickCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
               <Flame className="h-3 w-3 text-orange-500" />
               {clickCount} {clickCount === 1 ? "contato" : "contatos"}
             </span>
@@ -875,7 +875,7 @@ export default function ZapPbaClient({
           </div>
         )}
 
-        <p className="mx-auto mt-4 max-w-lg text-center text-xs text-muted-foreground">
+        <p className="mx-auto mt-4 max-w-lg text-center text-sm text-muted-foreground">
           Os números são fornecidos pelos próprios estabelecimentos.
         </p>
       </div>

@@ -26,13 +26,13 @@ export default async function ClimaHeroBadge() {
         className="w-5 h-5 sm:w-8 sm:h-8 md:w-10 md:h-10"
       />
       <div className="text-left flex items-baseline gap-1.5 sm:block">
-        <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-white/70 leading-none sm:mb-1 hidden sm:block">
+        <p className="text-xs sm:text-xs uppercase tracking-widest text-white/70 leading-none sm:mb-1 hidden sm:block">
           Piracanjuba agora
         </p>
         <p className="text-base sm:text-2xl md:text-3xl font-extrabold leading-none">
           {tempMed}°C
         </p>
-        <p className="text-[9px] sm:text-[11px] text-white/80 sm:mt-1 inline-flex items-center gap-1 sm:gap-2 flex-wrap leading-none sm:leading-normal">
+        <p className="text-xs sm:text-xs text-white/80 sm:mt-1 inline-flex items-center gap-1 sm:gap-2 flex-wrap leading-none sm:leading-normal">
           <span>{tempMin}°/{tempMax}°</span>
           <span className="hidden sm:inline-flex items-center gap-1">
             <Droplets className="w-3 h-3" /> {umid}%

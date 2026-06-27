@@ -34,7 +34,7 @@ export default function IndicacoesPanel({
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold text-foreground">Indicações</h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
             Pedidos ao Executivo (sem força de lei).{" "}
             {totalGeral && (
               <>
@@ -53,7 +53,7 @@ export default function IndicacoesPanel({
           <div key={i.id} className="p-3 rounded-lg border border-border bg-background/40">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-semibold text-violet-700">{i.numero}</p>
-              <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+              <p className="text-xs text-muted-foreground inline-flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {fmtDate(i.data_publicacao)}
               </p>
@@ -70,13 +70,13 @@ export default function IndicacoesPanel({
       {variant === "compact" && totalGeral && indicacoes.length < totalGeral && (
         <Link
           href="/transparencia/indicacoes"
-          className="block text-center text-xs text-violet-700 hover:underline pt-2 border-t border-border"
+          className="block text-center text-sm text-violet-700 hover:underline pt-2 border-t border-border"
         >
           Ver todas as {totalGeral} indicações →
         </Link>
       )}
 
-      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-2 text-[10px] text-muted-foreground leading-relaxed">
+      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-2 text-xs text-muted-foreground leading-relaxed">
         <p className="inline-flex items-center gap-1">
           <CircleAlert className="w-3 h-3 text-blue-600" />
           Indicação = pedido ao Executivo sem força de lei. Atualização semanal

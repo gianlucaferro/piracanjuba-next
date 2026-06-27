@@ -144,7 +144,7 @@ export default function MapaAnuncios({
     <div className="space-y-2">
       <button
         onClick={() => setVisible(!visible)}
-        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <MapPin className="w-3.5 h-3.5" />
         {visible ? "Ocultar mapa" : `Ver mapa (${withBairro.length} anúncios com localização)`}

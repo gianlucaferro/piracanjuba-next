@@ -27,7 +27,7 @@ function SubHeader({ title, icon: Icon, description }: { title: string; icon: ty
         <Icon className="w-4 h-4 text-primary" />
         {title}
       </h3>
-      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 }
@@ -48,7 +48,7 @@ export default function ConcentracaoFundiariaPanel() {
           </div>
           Quem é dono da terra em Piracanjuba
         </h2>
-        <p className="text-xs text-muted-foreground mt-1 ml-10">
+        <p className="text-sm text-muted-foreground mt-1 ml-10">
           Concentração fundiária pelo Censo Agropecuário 2017: porte dos estabelecimentos e condição legal das terras.
         </p>
       </div>
@@ -58,18 +58,18 @@ export default function ConcentracaoFundiariaPanel() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="rounded-lg bg-gradient-to-br from-amber-50 to-transparent dark:from-amber-950/20 border border-amber-200/50 dark:border-amber-900/40 p-3 text-center">
             <p className="text-3xl font-bold text-amber-700 dark:text-amber-400">≈ {C.giniTerra.toFixed(2).replace(".", ",")}</p>
-            <p className="text-[11px] text-muted-foreground mt-1">Índice de Gini da terra (concentração forte)</p>
+            <p className="text-xs text-muted-foreground mt-1">Índice de Gini da terra (concentração forte)</p>
           </div>
           <div className="rounded-lg bg-background border p-3 text-center flex flex-col justify-center">
             <p className="text-2xl font-bold text-foreground">só 8%</p>
-            <p className="text-[11px] text-muted-foreground mt-1">da área é da metade menor dos produtores</p>
+            <p className="text-xs text-muted-foreground mt-1">da área é da metade menor dos produtores</p>
           </div>
           <div className="rounded-lg bg-background border p-3 text-center flex flex-col justify-center">
             <p className="text-2xl font-bold text-foreground">{nf(C.arrendatarios)}</p>
-            <p className="text-[11px] text-muted-foreground mt-1">estabelecimentos arrendatários</p>
+            <p className="text-xs text-muted-foreground mt-1">estabelecimentos arrendatários</p>
           </div>
         </div>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
           <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
           <span>
             O Índice de Gini mede a desigualdade na posse da terra (0 = todos têm igual, 1 = um só dono). Em Piracanjuba ele
@@ -90,14 +90,14 @@ export default function ConcentracaoFundiariaPanel() {
           {C.porte.map((p, i) => (
             <div key={p.faixa} className="rounded-lg bg-background border p-2.5 text-center">
               <p className="text-lg font-bold text-foreground">{nf(p.estabelecimentos)}</p>
-              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{p.faixa}</p>
-              <p className="text-[10px] font-medium" style={{ color: COR_PORTE[i] }}>
+              <p className="text-xs text-muted-foreground leading-tight mt-0.5">{p.faixa}</p>
+              <p className="text-xs font-medium" style={{ color: COR_PORTE[i] }}>
                 {((p.estabelecimentos / totalEstabPorte) * 100).toFixed(0)}%
               </p>
             </div>
           ))}
         </div>
-        <p className="text-xs font-medium text-muted-foreground mb-1">Detalhe por faixa de área (17 classes)</p>
+        <p className="text-sm font-medium text-muted-foreground mb-1">Detalhe por faixa de área (17 classes)</p>
         <ResponsiveContainer width="100%" height={Math.max(380, DIST.length * 23)}>
           <BarChart data={DIST} layout="vertical" margin={{ left: 0, right: 28, top: 4, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -109,16 +109,16 @@ export default function ConcentracaoFundiariaPanel() {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] text-muted-foreground">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[0] }} /> Pequenas (até 10 ha)</span>
           <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[1] }} /> Médias (10 a 100 ha)</span>
           <span className="inline-flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: COR_PORTE[2] }} /> Grandes (mais de 100 ha)</span>
         </div>
-        <p className="text-xs text-foreground/80 mt-2 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-2 leading-relaxed">
           A maioria das unidades é de pequeno e médio porte (a faixa de 20 a 50 ha sozinha tem 592), mas a área se concentra
           nas grandes: por isso o Gini fica alto mesmo com tantos produtores pequenos.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Censo Agropecuário 2017 (tabela 6778).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Censo Agropecuário 2017 (tabela 6778).</p>
       </div>
 
       {/* 3. Condição legal das terras */}
@@ -142,11 +142,11 @@ export default function ConcentracaoFundiariaPanel() {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-2 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-2 leading-relaxed">
           <strong>15,5% da área</strong> (36.352 ha) é arrendada, traço marcante da soja na região: pecuaristas donos de
           pastagens arrendam a terra a produtores de grãos, com contratos muitas vezes pagos em sacas de soja por hectare.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Fonte: IBGE — Censo Agropecuário 2017 (tabela 6753). &apos;Em parceria&apos; foi omitido pelo IBGE por sigilo.
         </p>
       </div>

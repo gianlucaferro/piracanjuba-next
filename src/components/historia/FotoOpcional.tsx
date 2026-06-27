@@ -29,7 +29,7 @@ export default function FotoOpcional({ src, alt, legenda, className }: { src: st
     <figure className={`mt-4${className ? ` ${className}` : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} loading="lazy" className="w-full rounded-xl border border-border object-cover" />
-      {legenda && <figcaption className="text-xs text-muted-foreground mt-1.5">{legenda}</figcaption>}
+      {legenda && <figcaption className="text-sm text-muted-foreground mt-1.5">{legenda}</figcaption>}
     </figure>
   );
 }

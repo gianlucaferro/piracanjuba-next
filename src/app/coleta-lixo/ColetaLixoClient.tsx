@@ -155,7 +155,7 @@ function StatusBadge({ status }: { status: Status }) {
     proxima: { className: "bg-secondary text-muted-foreground", text: "Próxima semana" },
   };
   const m = map[status] || map.passou;
-  return <span className={`text-xs rounded-full px-2.5 py-0.5 font-semibold ${m.className}`}>{m.text}</span>;
+  return <span className={`text-sm rounded-full px-2.5 py-0.5 font-semibold ${m.className}`}>{m.text}</span>;
 }
 
 interface Saco { cor: string; borda: string; label: string }
@@ -221,7 +221,7 @@ function ColetaCard({ titulo, subtitulo, dias, sacos, seletivaMsg, reciclaveis, 
               ))}
             </div>
             <div>
-              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Saco correto</div>
+              <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Saco correto</div>
               {sacos.length === 1 ? (
                 <div className="flex items-center gap-1.5">
                   <div className="w-5 h-5 rounded-full shrink-0" style={{ background: sacos[0].cor, border: `2px solid ${sacos[0].borda}` }}/>
@@ -234,11 +234,11 @@ function ColetaCard({ titulo, subtitulo, dias, sacos, seletivaMsg, reciclaveis, 
                       <span key={sc.label} className="inline-flex items-center gap-1">
                         <span className="w-[18px] h-[18px] rounded-full shrink-0 inline-block" style={{ background: sc.cor, border: `2px solid ${sc.borda}` }}/>
                         <span className="text-sm font-medium text-foreground">{sc.label}</span>
-                        {i < sacos.length - 1 && <span className="text-xs text-muted-foreground italic mx-0.5">ou</span>}
+                        {i < sacos.length - 1 && <span className="text-sm text-muted-foreground italic mx-0.5">ou</span>}
                       </span>
                     ))}
                   </div>
-                  {seletivaMsg && <p className="text-xs text-muted-foreground italic leading-snug">{seletivaMsg}</p>}
+                  {seletivaMsg && <p className="text-sm text-muted-foreground italic leading-snug">{seletivaMsg}</p>}
                 </div>
               )}
             </div>
@@ -249,7 +249,7 @@ function ColetaCard({ titulo, subtitulo, dias, sacos, seletivaMsg, reciclaveis, 
                   return (
                     <div key={r} className="bg-blue-50 dark:bg-blue-950/30 rounded-lg py-1.5 px-1 text-center flex flex-col items-center gap-0.5">
                       <span className="text-lg">{emoji}</span>
-                      <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">{rest.join(" ")}</span>
+                      <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{rest.join(" ")}</span>
                     </div>
                   );
                 })}
@@ -257,15 +257,15 @@ function ColetaCard({ titulo, subtitulo, dias, sacos, seletivaMsg, reciclaveis, 
             )}
             {naoRec && (
               <div>
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Não vai na seletiva</div>
+                <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Não vai na seletiva</div>
                 <div className="flex flex-wrap gap-1">
-                  {naoRec.map(x => <span key={x} className="bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 rounded-full px-2.5 py-0.5 text-xs">{x}</span>)}
+                  {naoRec.map(x => <span key={x} className="bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 rounded-full px-2.5 py-0.5 text-sm">{x}</span>)}
                 </div>
               </div>
             )}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground text-center py-4">Não encontrado para este bairro</p>
+          <p className="text-sm text-muted-foreground text-center py-4">Não encontrado para este bairro</p>
         )}
       </CardContent>
     </Card>
@@ -279,15 +279,15 @@ function ProximaBanner({ proxima, tipo }: { proxima: { d: string; status: Status
 
   let badge = null;
   let diaText = proxima.d;
-  if (proxima.status === "hoje") badge = <Badge className="bg-green-600 text-white ml-2 text-xs">Hoje!</Badge>;
-  else if (proxima.status === "amanha") badge = <Badge className="bg-amber-600 text-white ml-2 text-xs">Amanhã</Badge>;
+  if (proxima.status === "hoje") badge = <Badge className="bg-green-600 text-white ml-2 text-sm">Hoje!</Badge>;
+  else if (proxima.status === "amanha") badge = <Badge className="bg-amber-600 text-white ml-2 text-sm">Amanhã</Badge>;
   else if (proxima.status === "proxima") diaText += " (próxima semana)";
 
   return (
     <div className={`rounded-xl p-4 flex items-center gap-3.5 border ${isComum ? "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800" : "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800"}`}>
       <span className="text-[30px] shrink-0 mt-0.5">{icon}</span>
       <div className="flex-1">
-        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">{isComum ? "Próxima coleta de lixo comum" : "Próxima coleta seletiva"}</div>
+        <div className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">{isComum ? "Próxima coleta de lixo comum" : "Próxima coleta seletiva"}</div>
         <div className="text-2xl font-extrabold text-foreground flex items-center flex-wrap gap-2">{diaText} {badge}</div>
         <div className="text-sm text-muted-foreground">{sub}</div>
       </div>
@@ -411,7 +411,7 @@ export default function ColetaLixoClient() {
   return (
     <div className="container max-w-2xl py-6 space-y-6">
       <div className="text-center space-y-3 pb-2">
-        <div className="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800 rounded-full px-3 py-1 text-xs font-medium text-green-800 dark:text-green-300">
+        <div className="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800 rounded-full px-3 py-1 text-sm font-medium text-green-800 dark:text-green-300">
           🗑️ Prefeitura de Piracanjuba
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Quando colocar o lixo na rua?</h1>
@@ -464,11 +464,11 @@ export default function ColetaLixoClient() {
               <span className="text-xl font-bold text-foreground">{selected}</span>
             </div>
             <div className="flex flex-wrap gap-1.5 items-center">
-              <Button variant="outline" size="sm" onClick={reset} className="rounded-full text-xs">Trocar bairro</Button>
-              <Button variant="outline" size="sm" onClick={() => copiarLink(selected)} className={`rounded-full text-xs ${copied ? "bg-green-100 dark:bg-green-900/40 border-green-300 dark:border-green-700 text-green-800 dark:text-green-300" : ""}`}>
+              <Button variant="outline" size="sm" onClick={reset} className="rounded-full text-sm">Trocar bairro</Button>
+              <Button variant="outline" size="sm" onClick={() => copiarLink(selected)} className={`rounded-full text-sm ${copied ? "bg-green-100 dark:bg-green-900/40 border-green-300 dark:border-green-700 text-green-800 dark:text-green-300" : ""}`}>
                 {copied ? <><Check className="w-3.5 h-3.5 mr-1" /> Link copiado!</> : shareError ? <><X className="w-3.5 h-3.5 mr-1" /> Não copiou</> : <><Link2 className="w-3.5 h-3.5 mr-1" /> Compartilhar</>}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setShowCal(v => !v)} className={`rounded-full text-xs ${showCal ? "bg-blue-100 dark:bg-blue-900/40 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300" : ""}`}>
+              <Button variant="outline" size="sm" onClick={() => setShowCal(v => !v)} className={`rounded-full text-sm ${showCal ? "bg-blue-100 dark:bg-blue-900/40 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300" : ""}`}>
                 <CalendarPlus className="w-3.5 h-3.5 mr-1" /> Lembrar
               </Button>
             </div>
@@ -483,7 +483,7 @@ export default function ColetaLixoClient() {
                 readOnly
                 value={shareUrl}
                 onFocus={(e) => e.currentTarget.select()}
-                className="h-9 text-xs bg-background"
+                className="h-9 text-sm bg-background"
               />
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(`Coleta de lixo no ${selected}: ${shareUrl}`)}`}
@@ -548,8 +548,8 @@ export default function ColetaLixoClient() {
           </div>
 
           <div className="bg-secondary/50 rounded-xl p-4 text-center space-y-0.5">
-            <p className="text-xs text-muted-foreground">Dados fornecidos pela Prefeitura Municipal de Piracanjuba · 2025</p>
-            <p className="text-xs text-muted-foreground">Dúvidas? Entre em contato com a Prefeitura.</p>
+            <p className="text-sm text-muted-foreground">Dados fornecidos pela Prefeitura Municipal de Piracanjuba · 2025</p>
+            <p className="text-sm text-muted-foreground">Dúvidas? Entre em contato com a Prefeitura.</p>
           </div>
         </div>
       )}

@@ -26,7 +26,7 @@ function SubHeader({ title, icon: Icon, description }: { title: string; icon: ty
         <Icon className="w-4 h-4 text-primary" />
         {title}
       </h3>
-      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 }
@@ -72,7 +72,7 @@ export default function TransformacaoAgrariaPanel() {
           </div>
           A transformação agrária de Piracanjuba (1985–2024)
         </h2>
-        <p className="text-xs text-muted-foreground mt-1 ml-10">
+        <p className="text-sm text-muted-foreground mt-1 ml-10">
           Séries históricas longas do IBGE: o avanço da soja, o recuo do leite e a estrutura da terra.
         </p>
       </div>
@@ -103,14 +103,14 @@ export default function TransformacaoAgrariaPanel() {
             <Line yAxisId="leite" type="monotone" dataKey="leiteMilLitros" stroke={COR_LEITE} strokeWidth={2.6} strokeDasharray="5 4" dot={{ r: 2 }} />
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           Entre 2000 e 2024 a área de soja saltou de <strong>{nf(tesoura[0].sojaHa)} ha</strong> para{" "}
           <strong>{nf(leiteFim.sojaHa)} ha</strong>, enquanto a produção de leite, após o pico de{" "}
           <strong>{nf(leitePico.leiteMilLitros / 1000)} milhões de litros</strong> em {leitePico.ano}, recuou para{" "}
           <strong>{nf(leiteFim.leiteMilLitros / 1000)} milhões</strong> em {leiteFim.ano}. É a substituição da
           pecuária leiteira pelos grãos no município.
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — PAM (tabela 1612) e PPM (tabela 74).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — PAM (tabela 1612) e PPM (tabela 74).</p>
       </div>
 
       {/* 2. Soja área longo prazo */}
@@ -135,11 +135,11 @@ export default function TransformacaoAgrariaPanel() {
             <Area type="monotone" dataKey="ha" stroke={COR_SOJA} strokeWidth={2.4} fill="url(#gradSojaHist)" />
           </AreaChart>
         </ResponsiveContainer>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
           A área plantada de soja multiplicou-se cerca de <strong>{sojaMult.toFixed(0)} vezes</strong> desde 1991
           ({nf(sojaIni.ha)} ha) até {sojaFim.ano} (<strong>{nf(sojaFim.ha)} ha</strong>).
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Produção Agrícola Municipal (tabela 1612).</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Produção Agrícola Municipal (tabela 1612).</p>
       </div>
 
       {/* 3. Estrutura fundiária Censo Agro 2017 */}
@@ -151,7 +151,7 @@ export default function TransformacaoAgrariaPanel() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1 text-center">Estabelecimentos</p>
+            <p className="text-sm font-medium text-muted-foreground mb-1 text-center">Estabelecimentos</p>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={estabData} margin={{ left: 0, right: 8, top: 8, bottom: 4 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -165,7 +165,7 @@ export default function TransformacaoAgrariaPanel() {
             </ResponsiveContainer>
           </div>
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1 text-center">Área ocupada (ha)</p>
+            <p className="text-sm font-medium text-muted-foreground mb-1 text-center">Área ocupada (ha)</p>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={areaData} margin={{ left: 0, right: 8, top: 8, bottom: 4 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -182,25 +182,25 @@ export default function TransformacaoAgrariaPanel() {
         <div className="mt-3 grid grid-cols-3 gap-2">
           <div className="rounded-lg bg-background p-2.5 text-center">
             <p className="text-lg font-bold text-foreground">{pctFamEstab.toFixed(0)}%</p>
-            <p className="text-[10px] text-muted-foreground">dos estabelecimentos são familiares</p>
+            <p className="text-xs text-muted-foreground">dos estabelecimentos são familiares</p>
           </div>
           <div className="rounded-lg bg-background p-2.5 text-center">
             <p className="text-lg font-bold text-foreground">{pctFamArea.toFixed(0)}%</p>
-            <p className="text-[10px] text-muted-foreground">da área é da agricultura familiar</p>
+            <p className="text-xs text-muted-foreground">da área é da agricultura familiar</p>
           </div>
           <div className="rounded-lg bg-background p-2.5 text-center">
             <p className="text-lg font-bold text-foreground">{pctArrend.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</p>
-            <p className="text-[10px] text-muted-foreground">da área é arrendada</p>
+            <p className="text-xs text-muted-foreground">da área é arrendada</p>
           </div>
         </div>
-        <p className="text-xs text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
+        <p className="text-sm text-foreground/80 mt-3 leading-relaxed inline-flex items-start gap-1.5">
           <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
           <span>
             Concentração fundiária: a agricultura familiar reúne a <strong>maioria dos produtores</strong> ({nf(ef.familiar.estabelecimentos)} de {nf(ef.totalEstabelecimentos)} estabelecimentos),
             mas ocupa só <strong>{pctFamArea.toFixed(0)}% da área</strong>. Os {nf(ef.naoFamiliar.estabelecimentos)} estabelecimentos não familiares controlam o restante.
           </span>
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: IBGE — Censo Agropecuário 2017 (tabela 6753), critério da Lei 11.326/2006.</p>
+        <p className="text-xs text-muted-foreground mt-1">Fonte: IBGE — Censo Agropecuário 2017 (tabela 6753), critério da Lei 11.326/2006.</p>
       </div>
     </section>
   );

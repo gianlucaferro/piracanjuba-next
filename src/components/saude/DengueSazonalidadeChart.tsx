@@ -67,7 +67,7 @@ export default function DengueSazonalidadeChart({
           <Bug className="w-4 h-4 text-red-500" />
           Sazonalidade da {labelCategoria} · {anos.join(" / ")}
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Casos mensais sobrepostos para comparar como o ano corrente está em relação aos
           anos anteriores. {labelCategoria} concentra picos no verão chuvoso (jan-mai) — o
           ano corrente em <strong className="text-red-500">vermelho</strong> destaca.
@@ -78,7 +78,7 @@ export default function DengueSazonalidadeChart({
         {anos.map((ano) => (
           <div
             key={ano}
-            className={`inline-flex items-center gap-2 text-xs ${
+            className={`inline-flex items-center gap-2 text-sm ${
               ano === anoCorrente ? "font-semibold" : "text-muted-foreground"
             }`}
           >
@@ -133,7 +133,7 @@ export default function DengueSazonalidadeChart({
         </ResponsiveContainer>
       </div>
 
-      <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
         Fonte: InfoDengue (Fiocruz) + Ministério da Saúde / SINAN. Notificações
         compulsórias de arboviroses em Piracanjuba.
       </p>
