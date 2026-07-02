@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowRight, Instagram, Mail, Phone, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { Vereador } from "@/lib/data/vereadores";
+import FundoEleitoralCard from "@/components/vereadores/FundoEleitoralCard";
 
 export default function VereadoresClient({ vereadores }: { vereadores: Vereador[] }) {
   const [search, setSearch] = useState("");
@@ -27,6 +28,8 @@ export default function VereadoresClient({ vereadores }: { vereadores: Vereador[
 
   return (
     <div className="space-y-4">
+      <FundoEleitoralCard />
+
       <div className="flex flex-col md:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
