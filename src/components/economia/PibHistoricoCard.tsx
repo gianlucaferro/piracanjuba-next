@@ -36,6 +36,13 @@ const agroFirst = AGRO_SHARE_SERIE[0];
 const agroLast = AGRO_SHARE_SERIE[AGRO_SHARE_SERIE.length - 1];
 const pico = PIB_SERIE.find((p) => p.ano === META.anoPico);
 
+// Rótulo string pré-computado por barra (o LabelList do recharts v3 não aplica
+// `formatter` de forma confiável; um dataKey de string é o padrão que renderiza).
+const comparacaoData = AGRO_SHARE_COMPARACAO_2021.map((r) => ({
+  ...r,
+  rotulo: `${r.pct.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
+}));
+
 export default function PibHistoricoCard() {
   return (
     <section className="stat-card border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent">
@@ -109,8 +116,8 @@ export default function PibHistoricoCard() {
             />
             <YAxis
               tick={{ fontSize: 11 }}
-              width={42}
-              tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}bi`}
+              width={46}
+              tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1).replace(".", ",")} bi`}
             />
             <Tooltip
               contentStyle={{
@@ -163,9 +170,9 @@ export default function PibHistoricoCard() {
         <div className="h-32">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={AGRO_SHARE_COMPARACAO_2021 as unknown as { nivel: string; pct: number; destaque: boolean }[]}
+              data={comparacaoData}
               layout="vertical"
-              margin={{ top: 2, right: 44, bottom: 2, left: 0 }}
+              margin={{ top: 2, right: 48, bottom: 2, left: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11 }} domain={[0, 60]} tickFormatter={(v) => `${v}%`} />
@@ -180,13 +187,12 @@ export default function PibHistoricoCard() {
                 formatter={(v: number) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, "Agro no VAB"]}
               />
               <Bar dataKey="pct" radius={[0, 5, 5, 0]}>
-                {AGRO_SHARE_COMPARACAO_2021.map((r) => (
+                {comparacaoData.map((r) => (
                   <Cell key={r.nivel} fill={r.destaque ? "#d97706" : "#94a3b8"} />
                 ))}
                 <LabelList
-                  dataKey="pct"
+                  dataKey="rotulo"
                   position="right"
-                  formatter={(v: number) => `${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`}
                   style={{ fontSize: 11, fill: "hsl(var(--foreground))", fontWeight: 600 }}
                 />
               </Bar>
