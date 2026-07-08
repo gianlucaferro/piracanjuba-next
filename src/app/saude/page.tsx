@@ -16,6 +16,7 @@ import {
 } from "@/lib/data/saude";
 import SaudeClient from "./SaudeClient";
 import ClimaSaudeCard from "@/components/clima/ClimaSaudeCard";
+import InternacoesSihCard from "@/components/saude/InternacoesSihCard";
 
 export const metadata = pageMetadata({
   title: "Saúde Pública de Piracanjuba GO",
@@ -204,6 +205,7 @@ export default async function SaudePage() {
       ))}
       <div className="container py-4 space-y-4">
         <ClimaSaudeCard />
+        <InternacoesSihCard />
       </div>
       <SaudeClient />
     </HydrationBoundary>

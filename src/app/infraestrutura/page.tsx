@@ -2,6 +2,7 @@ import { Building } from "lucide-react";
 import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import EmColetaSection from "@/components/EmColetaSection";
 import InfraestruturaPanel from "@/components/infraestrutura/InfraestruturaPanel";
+import SaneamentoSnisCard from "@/components/infraestrutura/SaneamentoSnisCard";
 import { fetchIndicadores } from "@/lib/data/home";
 import { fetchInfraestruturaIndicadores } from "@/lib/data/infraestrutura";
 import { fetchArbovirosesMensal } from "@/lib/data/saude";
@@ -112,11 +113,16 @@ export default async function InfraestruturaPage() {
       </header>
 
       {/* Painel principal — 9 painéis com dados reais */}
-      <section className="mb-10">
+      <section className="mb-6">
         <InfraestruturaPanel
           rows={infraRows}
           dengue2024_2026={dengue2024_2026}
         />
+      </section>
+
+      {/* Saneamento pela ótica do prestador (SNIS via BigQuery) */}
+      <section className="mb-10">
+        <SaneamentoSnisCard />
       </section>
 
       {/* Bloco antigo (em coleta + fontes oficiais) — pra usuário consultar
