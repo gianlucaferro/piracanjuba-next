@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 import { Users, TrendingDown, Info } from "lucide-react";
 import { POPULACAO_CENSOS, CENSO_DEMOGRAFIA_META as META } from "@/lib/data/censo-demografia";
@@ -24,7 +24,6 @@ const chartData = POPULACAO_CENSOS.map((c) => ({
   ano: String(c.ano),
   Rural: c.rural,
   Urbana: c.urbana,
-  rotuloRural: `${pct(c.rural, c.total)}%`,
 }));
 
 export default function ExodoRuralPanel() {
@@ -79,14 +78,12 @@ export default function ExodoRuralPanel() {
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Bar dataKey="Urbana" stackId="pop" fill={COR_URBANA} radius={[0, 0, 0, 0]} />
-            <Bar dataKey="Rural" stackId="pop" fill={COR_RURAL} radius={[4, 4, 0, 0]}>
-              <LabelList dataKey="rotuloRural" position="top" style={{ fontSize: 11, fill: COR_RURAL, fontWeight: 600 }} />
-            </Bar>
+            <Bar dataKey="Rural" stackId="pop" fill={COR_RURAL} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
       <p className="text-xs text-muted-foreground mt-1 text-center">
-        Barras = população total por censo (urbana + rural). O rótulo verde é o % que ainda vivia no campo.
+        Cada barra é a população total do censo (urbana + rural). A faixa verde é quem vivia no campo, encolhendo censo a censo. Passe o mouse para ver os números.
       </p>
 
       {/* Amarração com a soja */}
