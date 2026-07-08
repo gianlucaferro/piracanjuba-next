@@ -68,14 +68,16 @@ const INDICADORES: IndicadorSync[] = [
   },
   {
     chave: "pib_per_capita",
-    // Pesquisa 38, ind 47001 = PIB per capita série revisada
-    fetch: () => fetchPesquisaLatest(38, 47001, ["2023", "2022", "2021"]),
+    // Pesquisa 38, ind 47001 = PIB per capita série revisada.
+    // Lista com anos futuros primeiro pra auto-pegar o mais novo assim que o IBGE publicar.
+    fetch: () => fetchPesquisaLatest(38, 47001, ["2026", "2025", "2024", "2023", "2022"]),
     formatTexto: (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
   },
   {
     chave: "ideb_anos_iniciais",
-    // Pesquisa 40, ind 78187 = IDEB Anos Iniciais - Rede Pública
-    fetch: () => fetchPesquisaLatest(40, 78187, ["2023", "2021", "2019"]),
+    // Pesquisa 40, ind 78187 = IDEB Anos Iniciais - Rede Pública (bienal).
+    // Anos futuros primeiro pra auto-pegar o IDEB novo assim que o INEP/IBGE publicar.
+    fetch: () => fetchPesquisaLatest(40, 78187, ["2027", "2025", "2023", "2021"]),
     formatTexto: (v) => v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
   },
   {
@@ -104,8 +106,10 @@ const INDICADORES: IndicadorSync[] = [
   },
   {
     chave: "frota_veiculos",
-    // Pesquisa 22, ind 28120 = Total de veículos (SENATRAN)
-    fetch: () => fetchPesquisaLatest(22, 28120, ["2024", "2023", "2022"]),
+    // Pesquisa 22, ind 28120 = Total de veículos (SENATRAN via IBGE).
+    // O IBGE já tem 2025 (a lista antiga parava em 2024, então o site mostrava dado velho).
+    // Anos futuros primeiro pra auto-pegar o mais recente que a SENATRAN publicar.
+    fetch: () => fetchPesquisaLatest(22, 28120, ["2027", "2026", "2025", "2024", "2023"]),
     formatTexto: (v) => `${v.toLocaleString("pt-BR")} veículos`,
   },
 ];
