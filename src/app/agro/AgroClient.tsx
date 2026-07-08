@@ -23,6 +23,7 @@ import TransformacaoAgrariaPanel from "@/components/agro/TransformacaoAgrariaPan
 import ConcentracaoFundiariaPanel from "@/components/agro/ConcentracaoFundiariaPanel";
 import ContextoEstadualPanel from "@/components/agro/ContextoEstadualPanel";
 import TerritorioRuralPanel from "@/components/agro/TerritorioRuralPanel";
+import ExodoRuralPanel from "@/components/agro/ExodoRuralPanel";
 import MapasTerritorioPanel from "@/components/agro/MapasTerritorioPanel";
 
 /* ── helpers ── */
@@ -467,6 +468,9 @@ export default function Agro({
 
             {/* ===== TERRITÓRIO, COMUNIDADES, PNAE e contexto histórico ===== */}
             <TerritorioRuralPanel />
+
+            {/* ===== ÊXODO RURAL EM NÚMEROS (Censo IBGE 1970-2022) ===== */}
+            <ExodoRuralPanel />
 
             {/* ===== MAPAS do território (localização IBGE + MapBiomas) ===== */}
             <MapasTerritorioPanel />
