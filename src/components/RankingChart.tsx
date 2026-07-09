@@ -61,11 +61,21 @@ export function useRankingData(
       return map.get(key)!;
     };
 
+    // Credita por autor_texto (lista TODOS os coautores: "Douglas Miranda, Wennder
+    // Silva"), pra coautoria contar pra cada um. O vínculo autor_vereador_id é único
+    // por projeto (só o 1º autor) e fica como fallback quando o texto não casa.
     projetos.forEach((p) => {
-      const e = getEntry(p.autor_vereador_id);
-      if (!e) return;
-      if (p.tipo === "Projeto de Lei") e.projetosLei++;
-      else e.projetosOutros++; // Resolucao, Decreto Legislativo
+      const creditados = vereadores.filter(
+        (v) => p.autor_texto && p.autor_texto.includes(v.nome),
+      );
+      const entries = creditados.length
+        ? creditados.map((v) => getEntry(v.id)).filter(Boolean)
+        : [getEntry(p.autor_vereador_id)].filter(Boolean);
+      for (const e of entries) {
+        if (!e) continue;
+        if (p.tipo === "Projeto de Lei") e.projetosLei++;
+        else e.projetosOutros++; // Resolucao, Decreto Legislativo
+      }
     });
     atuacoes.forEach((a) => {
       const e = getEntry(a.autor_vereador_id);

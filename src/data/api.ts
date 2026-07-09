@@ -127,11 +127,17 @@ export async function fetchRemuneracaoByVereador(vereadorId: string): Promise<Re
   return data as Remuneracao | null;
 }
 
-export async function fetchProjetosCountByVereador(vereadorId: string) {
-  const { data, error } = await supabase
-    .from("projetos")
-    .select("status, tipo")
-    .eq("autor_vereador_id", vereadorId);
+export async function fetchProjetosCountByVereador(vereadorId: string, vereadorNome?: string) {
+  // Inclui coautorias: o vínculo (autor_vereador_id) é único por projeto, então um
+  // PL em coautoria fica vinculado só ao 1º autor; o autor_texto lista todos os
+  // nomes ("Douglas Miranda, Wennder Silva") e credita o projeto pra cada coautor.
+  let query = supabase.from("projetos").select("status, tipo");
+  if (vereadorNome) {
+    query = query.or(`autor_vereador_id.eq.${vereadorId},autor_texto.ilike.*${vereadorNome}*`);
+  } else {
+    query = query.eq("autor_vereador_id", vereadorId);
+  }
+  const { data, error } = await query;
   if (error) throw error;
   // Conta apenas Projetos de Lei, pra bater com o ranking. Resoluções e decretos
   // legislativos aparecem no ranking e na página do vereador, não neste contador.
