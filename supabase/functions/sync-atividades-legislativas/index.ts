@@ -1,170 +1,195 @@
-// Sync semanal de Atividades Legislativas (consolidado) via portal LAI Centi
-// Cobre TODOS os tipos: PL Legislativo, PL Executivo, Decretos, Resolucoes, Emendas LO, Emendas
+// Sync semanal de Atividades Legislativas da Câmara de Piracanjuba.
+// 2026-07: a Câmara migrou do portal SAPL (acessoainformacao.piracanjuba.go.leg.br,
+// que congelou/saiu do ar) para o Centi (camarapiracanjuba.centi.com.br). Esta função
+// agora raspa o portal NOVO, paginado, cobrindo Projeto de Lei (Legislativo e Executivo),
+// Resolução e Decreto Legislativo, e normaliza os autores para os nomes canônicos dos
+// vereadores (pra o ranking por autor bater com a tabela `vereadores`).
+//
+// Estratégia de refresh sem janela vazia: faz upsert das linhas novas (chave sintética
+// `novo-{codigo}-{numero}-{ano}`) e só depois apaga as linhas antigas do SAPL. Aborta se
+// a raspagem trouxer poucas linhas (proteção contra portal fora do ar).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { centiListAll } from "../_shared/centi-client.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, content-type, x-cron-secret, x-centi-ingest-secret",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret, x-centi-ingest-secret",
 };
 
-const REFERER = "/cidadao/legislacao/atividades_legislativas";
-const ACAO = "atividades_legislativas/listar";
+const CENTI_BASE = "https://camarapiracanjuba.centi.com.br/transparencia/atosadministrativos";
+const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+const DESDE = "2025-01-01"; // legislatura atual
 
-type CentiAtividade = {
-  linha_id: string | number;
-  modulo_id: string | number;
-  modulo_nome: string;
-  ato_tipo: string;
-  numero: string;
-  data_registro: string;   // "<b>Publicação:</b> 15/04/2026"
-  parlamentar: string;     // "PODER EXECUTIVO" ou "Adriana Dias, Douglas Miranda..."
-  descricao: string;       // HTML
-  relator: string;
-  tramitacao: string;
-  situacao: string;
-  ano: string | number | null;
-  ato: string;             // "Projeto de Lei do Executivo 15/2026"
+// codigo Centi -> tipo lógico + se é autoria do Executivo
+const TIPOS: Record<number, { tipo: string; executivo: boolean }> = {
+  21: { tipo: "Projeto de Lei do Executivo", executivo: true },
+  22: { tipo: "Projeto de Lei do Legislativo", executivo: false },
+  23: { tipo: "Projeto de Resolução", executivo: false },
+  30: { tipo: "Projeto de Decreto Legislativo", executivo: false },
 };
 
-function stripHtml(s: string | null | undefined): string {
-  if (!s) return "";
+// primeiro nome (UPPER) -> nome canônico da tabela `vereadores`
+const CANON: Record<string, string> = {
+  ADRIANA: "Adriana Dias", APARECIDA: "Aparecida Cordeiro", DOUGLAS: "Douglas Miranda",
+  EDIMAR: "Edimar Lopes", FERNANDO: "Fernando Silva", MARCO: "Marco Antônio",
+  REGINALDO: "Reginaldo Silva", SIRLEY: "Sirley de Fatima", WELTON: "Welton da Silva",
+  WENNDER: "Wennder Silva", YURI: "Yuri Santiago",
+};
+
+function decode(s: string): string {
   return s
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#8220;/gi, '"')
-    .replace(/&#8221;/gi, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"')
+    .replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function extractDateBR(raw: string): string | null {
-  if (!raw) return null;
-  const m = raw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (!m) return null;
-  return `${m[3]}-${m[2]}-${m[1]}`;
+function isoDate(raw: string | undefined): string | null {
+  const m = (raw ?? "").match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
 }
 
-function extractYearFromAto(ato: string): number | null {
-  const m = ato.match(/\/(\d{4})\b/);
-  return m ? parseInt(m[1], 10) : null;
-}
-
-function parseAutores(raw: string): { autores: string[]; executivo: boolean } {
-  if (!raw) return { autores: [], executivo: false };
-  const norm = raw.trim();
-  if (/^poder\s+executivo$/i.test(norm) || /executivo/i.test(norm) && norm.length < 30) {
-    return { autores: [norm], executivo: true };
+function parseAutores(desc: string, execTipo: boolean): { autores: string[]; executivo: boolean } {
+  if (execTipo || /poder\s+executivo/i.test(desc)) return { autores: ["Poder Executivo"], executivo: true };
+  if (/todos\s+(?:os\s+)?vereadores/i.test(desc)) return { autores: ["Todos os vereadores"], executivo: false };
+  if (/mesa\s+diretora/i.test(desc)) return { autores: ["Mesa Diretora"], executivo: false };
+  const tail = desc.replace(/^.*?\d+\/\d{4}\s*[-–]\s*/, "");
+  const chunks = tail.split(/[,/]|VEREADORA?\.?|VER\.?/i).map((s) => s.trim()).filter(Boolean);
+  const set = new Set<string>();
+  for (const c of chunks) {
+    const first = (c.split(/\s+/)[0] ?? "").toUpperCase().replace(/[^A-ZÀ-Ú]/g, "");
+    if (CANON[first]) set.add(CANON[first]);
   }
-  // Split por vírgula
-  const parts = norm.split(/,\s*/).map((p) => p.trim()).filter((p) => p.length > 0);
-  // Remover duplicatas
-  const unique = [...new Set(parts)];
-  return { autores: unique, executivo: false };
+  return { autores: [...set], executivo: false };
+}
+
+// id numérico estável e único por (codigo, ano, numero); sempre >= 2.1e9, bem acima
+// dos ids pequenos do SAPL antigo (que serão apagados por < 2e9).
+const CHAVE_MIN_NOVO = 2_000_000_000;
+function chaveNova(cod: number, ano: number, num: number): number {
+  return cod * 100_000_000 + ano * 10_000 + num;
+}
+
+type Linha = {
+  centi_linha_id: number; modulo_id: number; modulo_nome: string; ato_tipo: string;
+  numero: string; numero_int: number; ano: number; ato_completo: string;
+  data_publicacao: string; parlamentar_raw: string; autores: string[];
+  autoria_executivo: boolean; descricao_texto: string; descricao_html: string | null;
+  relator: string | null; tramitacao_html: string | null; situacao: string;
+  raw_payload: Record<string, unknown>;
+};
+
+async function pageRows(cod: number, pg: number): Promise<Array<{ desc: string; ementa: string; data: string | null; link: string | null }> | null> {
+  const r = await fetch(`${CENTI_BASE}/${cod}?pagina=${pg}`, { headers: { "User-Agent": UA } });
+  if (!r.ok) return null;
+  const html = await r.text();
+  const tb = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+  if (!tb) return [];
+  return tb[1].split(/<tr[^>]*>/i).filter((x) => x.includes("<td")).map((tr) => {
+    const cells = [...tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((m) => decode(m[1]));
+    const dateCell = cells.find((c) => /\d{2}\/\d{2}\/\d{4}/.test(c));
+    const link = (tr.match(/href="([^"]+\/download\/[^"]+)"/i) ?? [])[1] ?? null;
+    return { desc: cells[0] ?? "", ementa: cells[1] ?? "", data: isoDate(dateCell), link };
+  });
+}
+
+async function scrapeTudo(): Promise<Linha[]> {
+  const out: Linha[] = [];
+  const seen = new Set<number>();
+  for (const codStr of Object.keys(TIPOS)) {
+    const cod = Number(codStr);
+    const { tipo, executivo } = TIPOS[cod];
+    for (let pg = 1; pg <= 15; pg++) {
+      const rows = await pageRows(cod, pg);
+      if (!rows || rows.length === 0) break;
+      for (const r of rows) {
+        if (!r.data || r.data < DESDE) continue;
+        const m = r.desc.match(/(\d+)\/(\d{4})/);
+        if (!m) continue;
+        const num = parseInt(m[1]);
+        const ano = parseInt(m[2]);
+        const id = chaveNova(cod, ano, num);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const { autores, executivo: exeAutor } = parseAutores(r.desc, executivo);
+        out.push({
+          centi_linha_id: id, modulo_id: cod, modulo_nome: tipo, ato_tipo: tipo,
+          numero: String(num), numero_int: num, ano, ato_completo: `${tipo} ${num}/${ano}`,
+          data_publicacao: r.data, parlamentar_raw: autores.join(", "), autores,
+          autoria_executivo: exeAutor, descricao_texto: r.ementa, descricao_html: null,
+          relator: null, tramitacao_html: null, situacao: "PROTOCOLADO",
+          raw_payload: { fonte: "centi-atosadministrativos", codigo: cod, descricao: r.desc, documento_url: r.link },
+        });
+      }
+      if (rows.length < 10) break;
+    }
+  }
+  return out;
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const CRON_SECRET = Deno.env.get("CRON_SECRET");
-  const CENTI_INGEST_SECRET = Deno.env.get("CENTI_INGEST_SECRET");
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
 
-  const cronHeader = req.headers.get("x-cron-secret");
-  const ingestHeader = req.headers.get("x-centi-ingest-secret");
-  const authHeader = req.headers.get("authorization") ?? "";
-  const isAuthorized =
-    (CRON_SECRET && cronHeader === CRON_SECRET) ||
-    (CENTI_INGEST_SECRET && ingestHeader === CENTI_INGEST_SECRET) ||
-    authHeader.includes(SUPABASE_SERVICE_ROLE_KEY);
-
-  if (!isAuthorized) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const startedAt = Date.now();
+  const { data: logEntry } = await supabase
+    .from("sync_log")
+    .insert({ tipo: "atividades_legislativas", status: "running" })
+    .select("id").single();
+  const logId = logEntry?.id;
 
   try {
-    const atividades = await centiListAll<CentiAtividade>(REFERER, ACAO, { pageSize: 100, maxPages: 20 });
+    const linhas = await scrapeTudo();
 
-    let inserted = 0;
-    let updated = 0;
-    let errors = 0;
-    const errorSamples: string[] = [];
-
-    for (const a of atividades) {
-      try {
-        const linha_id = typeof a.linha_id === "string" ? parseInt(a.linha_id, 10) : a.linha_id;
-        const modulo_id = typeof a.modulo_id === "string" ? parseInt(a.modulo_id, 10) : a.modulo_id;
-        const numero_int = parseInt(String(a.numero), 10) || null;
-        const ano = a.ano ? Number(a.ano) : extractYearFromAto(a.ato);
-        const data_publicacao = extractDateBR(a.data_registro);
-        const { autores, executivo } = parseAutores(a.parlamentar);
-
-        const payload = {
-          centi_linha_id: linha_id,
-          modulo_id: modulo_id,
-          modulo_nome: a.modulo_nome,
-          ato_tipo: a.ato_tipo,
-          numero: a.numero,
-          numero_int,
-          ano,
-          ato_completo: a.ato,
-          data_publicacao,
-          parlamentar_raw: a.parlamentar,
-          autores,
-          autoria_executivo: executivo,
-          descricao_html: a.descricao,
-          descricao_texto: stripHtml(a.descricao),
-          relator: a.relator === "." ? null : a.relator,
-          tramitacao_html: a.tramitacao,
-          situacao: a.situacao,
-          raw_payload: a as unknown as Record<string, unknown>,
-        };
-
-        const { data: existing } = await supabase
-          .from("atividade_legislativa")
-          .select("id")
-          .eq("centi_linha_id", linha_id)
-          .maybeSingle();
-
-        if (existing) {
-          await supabase.from("atividade_legislativa").update(payload).eq("id", existing.id);
-          updated++;
-        } else {
-          await supabase.from("atividade_legislativa").insert(payload);
-          inserted++;
-        }
-      } catch (e) {
-        errors++;
-        if (errorSamples.length < 5) errorSamples.push(`${a.linha_id}: ${e}`);
+    // Proteção: se raspou pouco, não mexe na tabela (portal pode estar fora do ar).
+    if (linhas.length < 40) {
+      if (logId) {
+        await supabase.from("sync_log").update({
+          status: "error", finished_at: new Date().toISOString(),
+          detalhes: { erro: "poucas linhas raspadas, abortado", total: linhas.length },
+        }).eq("id", logId);
       }
+      return new Response(JSON.stringify({ error: "poucas linhas, abortado", total: linhas.length }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        duration_ms: Date.now() - startedAt,
-        total_fetched: atividades.length,
-        inserted,
-        updated,
-        errors,
-        error_samples: errorSamples,
-      }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  } catch (err) {
-    return new Response(
-      JSON.stringify({ error: String(err), duration_ms: Date.now() - startedAt }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    // Upsert das linhas novas (sem janela vazia), em lotes.
+    for (let i = 0; i < linhas.length; i += 100) {
+      const lote = linhas.slice(i, i + 100).map((l) => ({ ...l, updated_at: new Date().toISOString() }));
+      const { error } = await supabase.from("atividade_legislativa").upsert(lote, { onConflict: "centi_linha_id" });
+      if (error) throw new Error(`upsert lote ${i}: ${error.message}`);
+    }
+
+    // Remove as linhas antigas do SAPL (ids pequenos, abaixo do range das chaves novas).
+    const { error: delErr } = await supabase
+      .from("atividade_legislativa").delete().lt("centi_linha_id", CHAVE_MIN_NOVO);
+    if (delErr) throw new Error(`delete antigas: ${delErr.message}`);
+
+    const porTipo: Record<string, number> = {};
+    for (const l of linhas) porTipo[l.ato_tipo] = (porTipo[l.ato_tipo] ?? 0) + 1;
+
+    if (logId) {
+      await supabase.from("sync_log").update({
+        status: "success", finished_at: new Date().toISOString(),
+        detalhes: { total: linhas.length, por_tipo: porTipo, fonte: "centi-novo" },
+      }).eq("id", logId);
+    }
+    return new Response(JSON.stringify({ success: true, total: linhas.length, por_tipo: porTipo }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    if (logId) {
+      await supabase.from("sync_log").update({
+        status: "error", finished_at: new Date().toISOString(),
+        detalhes: { erro: (error as Error).message },
+      }).eq("id", logId);
+    }
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
