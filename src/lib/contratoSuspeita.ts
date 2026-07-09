@@ -166,7 +166,7 @@ export function calcularSuspeitaContrato(
     // Count by CNPJ across all contracts
     let count = 0;
     for (const c of historicoCompleto) {
-      const cnpj = resolverCnpj(c, contratoToCnpj, nomeToCnpj);
+      const cnpj = resolverCnpj(c, nomeToCnpj);
       if (cnpj === meuCnpj) count++;
     }
     if (count > 20) pontos += 3;
@@ -291,7 +291,7 @@ export function calcularSuspeitaContrato(
 
         // Match by CNPJ first, then by name
         if (meuCnpj) {
-          const outroCnpj = resolverCnpj(c, contratoToCnpj, nomeToCnpj);
+          const outroCnpj = resolverCnpj(c, nomeToCnpj);
           return outroCnpj === meuCnpj;
         }
         return c.fornecedor?.trim().toUpperCase() === fornecedor;
