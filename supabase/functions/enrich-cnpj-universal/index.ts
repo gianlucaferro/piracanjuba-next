@@ -418,11 +418,21 @@ Deno.serve(async (req) => {
   // ===================== contratos (Prefeitura) =====================
   if (tabela === "contratos") {
     // Pega nomes unicos sem enriquecimento ou sem CNPJ
-    let q = supabase.from("contratos").select("empresa").not("empresa", "is", null);
+    let q = supabase.from("contratos").select("empresa, empresa_cnpj_digitos").not("empresa", "is", null);
     if (!force) q = q.or("empresa_cnpj.is.null,empresa_enriquecido_em.is.null");
     const { data: rows } = await q;
-    const nomesUnicos = [...new Set((rows ?? []).map((r: { empresa: string }) => r.empresa.trim()))]
-      .filter(Boolean)
+    // CNPJ ja gravado no proprio contrato (backfill do portal) = fonte primaria de resolucao,
+    // antes de qualquer lookup por nome. Antes a funcao ignorava esse campo.
+    const ownCnpjByNome = new Map<string, string>();
+    for (const r of (rows ?? []) as { empresa: string; empresa_cnpj_digitos: string | null }[]) {
+      const nm = r.empresa?.trim();
+      const cd = r.empresa_cnpj_digitos;
+      if (nm && cd && /^\d{14}$/.test(cd) && !ownCnpjByNome.has(nm)) ownCnpjByNome.set(nm, cd);
+    }
+    const todosNomes = [...new Set((rows ?? []).map((r: { empresa: string }) => r.empresa.trim()))].filter(Boolean);
+    // prioriza quem ja tem CNPJ resolvivel, pra o lote nao ser desperdicado em contratos sem CNPJ
+    const nomesUnicos = todosNomes
+      .sort((a, b) => (ownCnpjByNome.has(b) ? 1 : 0) - (ownCnpjByNome.has(a) ? 1 : 0))
       .slice(0, limit);
 
     // Lookup combinado: fornecedores_cnpj (cache) + contrato_camara
@@ -476,9 +486,11 @@ Deno.serve(async (req) => {
 
     for (const nome of nomesUnicos) {
       processados++;
+      // 0) CNPJ ja gravado no proprio contrato (backfill do portal, fonte oficial)
+      let cnpj = ownCnpjByNome.get(nome) ?? null;
+      let fonteMatch = "cnpj_do_contrato";
       // 1) CNPJ no texto
-      let cnpj = extractCnpjFromText(nome);
-      let fonteMatch = "regex_nome";
+      if (!cnpj) { cnpj = extractCnpjFromText(nome); if (cnpj) fonteMatch = "regex_nome"; }
       // 2) Lookup exato (cache + camara)
       if (!cnpj) {
         cnpj = camaraLookup.get(normalize(nome)) ?? null;
