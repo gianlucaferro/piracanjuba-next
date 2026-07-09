@@ -20,12 +20,14 @@ const CENTI_BASE = "https://camarapiracanjuba.centi.com.br/transparencia/atosadm
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
 const DESDE = "2025-01-01"; // legislatura atual
 
-// codigo Centi -> tipo lógico + se é autoria do Executivo
-const TIPOS: Record<number, { tipo: string; executivo: boolean }> = {
+// codigo Centi -> tipo lógico + se é autoria do Executivo.
+// invertido: no cod 6 as células vêm trocadas (Descrição=ementa, Observação="EMENDA 021/2025").
+const TIPOS: Record<number, { tipo: string; executivo: boolean; invertido?: boolean }> = {
   21: { tipo: "Projeto de Lei do Executivo", executivo: true },
   22: { tipo: "Projeto de Lei do Legislativo", executivo: false },
   23: { tipo: "Projeto de Resolução", executivo: false },
   30: { tipo: "Projeto de Decreto Legislativo", executivo: false },
+  6: { tipo: "Emenda à Lei Orgânica", executivo: false, invertido: true },
 };
 
 // primeiro nome (UPPER) -> nome canônico da tabela `vereadores`
@@ -63,9 +65,9 @@ function parseAutores(desc: string, execTipo: boolean): { autores: string[]; exe
   return { autores: [...set], executivo: false };
 }
 
-// id numérico estável e único por (codigo, ano, numero); sempre >= 2.1e9, bem acima
-// dos ids pequenos do SAPL antigo (que serão apagados por < 2e9).
-const CHAVE_MIN_NOVO = 2_000_000_000;
+// id numérico estável e único por (codigo, ano, numero); o menor caso (cod 6) dá
+// ~6,2e8, bem acima dos ids pequenos do SAPL antigo (apagados por < 1e8).
+const CHAVE_MIN_NOVO = 100_000_000;
 function chaveNova(cod: number, ano: number, num: number): number {
   return cod * 100_000_000 + ano * 10_000 + num;
 }
@@ -98,25 +100,28 @@ async function scrapeTudo(): Promise<Linha[]> {
   const seen = new Set<number>();
   for (const codStr of Object.keys(TIPOS)) {
     const cod = Number(codStr);
-    const { tipo, executivo } = TIPOS[cod];
+    const { tipo, executivo, invertido } = TIPOS[cod];
     for (let pg = 1; pg <= 15; pg++) {
       const rows = await pageRows(cod, pg);
       if (!rows || rows.length === 0) break;
       for (const r of rows) {
         if (!r.data || r.data < DESDE) continue;
-        const m = r.desc.match(/(\d+)\/(\d{4})/);
+        // no cod invertido, o número está na célula Observação e a ementa na Descrição
+        const campoNumero = invertido ? r.ementa : r.desc;
+        const campoEmenta = invertido ? r.desc : r.ementa;
+        const m = campoNumero.match(/(\d+)\/(\d{4})/);
         if (!m) continue;
         const num = parseInt(m[1]);
         const ano = parseInt(m[2]);
         const id = chaveNova(cod, ano, num);
         if (seen.has(id)) continue;
         seen.add(id);
-        const { autores, executivo: exeAutor } = parseAutores(r.desc, executivo);
+        const { autores, executivo: exeAutor } = parseAutores(campoNumero, executivo);
         out.push({
           centi_linha_id: id, modulo_id: cod, modulo_nome: tipo, ato_tipo: tipo,
           numero: String(num), numero_int: num, ano, ato_completo: `${tipo} ${num}/${ano}`,
           data_publicacao: r.data, parlamentar_raw: autores.join(", "), autores,
-          autoria_executivo: exeAutor, descricao_texto: r.ementa, descricao_html: null,
+          autoria_executivo: exeAutor, descricao_texto: campoEmenta, descricao_html: null,
           relator: null, tramitacao_html: null, situacao: "PROTOCOLADO",
           raw_payload: { fonte: "centi-atosadministrativos", codigo: cod, descricao: r.desc, documento_url: r.link },
         });

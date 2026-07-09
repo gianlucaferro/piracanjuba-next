@@ -55,8 +55,8 @@ interface AtoRow {
   documento_url: string | null;
 }
 
-async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
-  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}`, { headers: { "User-Agent": UA } });
+async function scrapeCentiPage(tipoCodigo: number, pagina: number): Promise<AtoRow[]> {
+  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}?pagina=${pagina}`, { headers: { "User-Agent": UA } });
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const html = await resp.text();
   const tbody = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
@@ -88,6 +88,20 @@ async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
   return out;
 }
 
+// Percorre TODAS as páginas (o portal pagina de 10 em 10; só a página 1 deixava
+// a tabela com 10 itens por tipo).
+async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
+  const out: AtoRow[] = [];
+  for (let pagina = 1; pagina <= 60; pagina++) {
+    const rows = await scrapeCentiPage(tipoCodigo, pagina);
+    if (rows.length === 0) break;
+    out.push(...rows);
+    if (rows.length < 10) break;
+    await delay(350);
+  }
+  return out;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -106,14 +120,21 @@ Deno.serve(async (req) => {
     // mapa de vereadores pra vincular o autor por nome (melhor esforco)
     const { data: vereadores } = await supabase.from("vereadores").select("id, nome");
     const vlist = (vereadores || []) as { id: string; nome: string }[];
+    // Match pelo PRIMEIRO nome (único entre os 11 vereadores); o match antigo por
+    // qualquer token casava errado ("SILVA" existe em vários nomes).
+    const porPrimeiroNome = new Map<string, string>();
+    for (const v of vlist) {
+      const primeiro = (v.nome || "").toUpperCase().split(/\s+/)[0];
+      if (primeiro) porPrimeiroNome.set(primeiro, v.id);
+    }
     const matchVereador = (autor: string | null): string | null => {
       if (!autor) return null;
-      const a = autor.toUpperCase();
-      const found = vlist.find((v) => {
-        const tokens = (v.nome || "").toUpperCase().split(/\s+/).filter((t) => t.length > 2);
-        return tokens.some((t) => a.includes(t));
-      });
-      return found?.id ?? null;
+      for (const palavra of autor.toUpperCase().split(/[\s,/]+/)) {
+        const limpa = palavra.replace(/[^A-ZÀ-Ú]/g, "");
+        const id = porPrimeiroNome.get(limpa);
+        if (id) return id;
+      }
+      return null;
     };
 
     for (const [codigoStr, info] of Object.entries(TIPOS)) {
@@ -153,7 +174,9 @@ Deno.serve(async (req) => {
         if (deduped.length) {
           const { error } = await supabase
             .from("projetos")
-            .upsert(deduped, { onConflict: "tipo,numero,ano,origem" });
+            // insere só os que faltam: preserva autor_texto/resumo já enriquecidos
+            // (o portal novo não expõe autor completo; upsert sobrescrevia com pior)
+            .upsert(deduped, { onConflict: "tipo,numero,ano,origem", ignoreDuplicates: true });
           if (error) errors.push(`${info.tipo}/${info.origem}: ${error.message}`);
           else total += deduped.length;
         }
