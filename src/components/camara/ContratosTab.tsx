@@ -67,8 +67,14 @@ export default function ContratosTab() {
     }));
     const ids = new Set<string>();
     for (const c of normalizados) {
-      if (calcularSuspeitaContrato(c, normalizados, aditivos, cnpjData || undefined)) {
-        ids.add(c.id);
+      // isola a falha por contrato: um erro isolado nao pode apagar o indicador
+      // de risco de TODOS os cards.
+      try {
+        if (calcularSuspeitaContrato(c, normalizados, aditivos, cnpjData || undefined)) {
+          ids.add(c.id);
+        }
+      } catch (err) {
+        console.error("calcularSuspeitaContrato falhou no contrato", c?.numero, err);
       }
     }
     return ids;

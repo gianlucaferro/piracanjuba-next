@@ -649,8 +649,15 @@ function ContratosTab() {
       if (cancelled) return;
       const end = Math.min(i + CHUNK, normalizados.length);
       for (; i < end; i++) {
-        if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined)) {
-          ids.add(normalizados[i].id);
+        // isola a falha por contrato: um erro isolado nao pode apagar o indicador
+        // de risco de TODOS os cards (foi o que aconteceu quando calcularSuspeita
+        // passou a lancar ReferenceError e a pagina inteira ficou sem bolinha).
+        try {
+          if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined)) {
+            ids.add(normalizados[i].id);
+          }
+        } catch (err) {
+          console.error("calcularSuspeitaContrato falhou no contrato", normalizados[i]?.numero, err);
         }
       }
       if (i < normalizados.length) {
