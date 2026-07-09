@@ -65,12 +65,15 @@ function extractContratoOrigemIdFromAditivoUrl(url: string | null | undefined): 
 function filtrarAditivosDoContrato(aditivos: Array<Record<string, unknown>>, contrato: { empresa?: string | null; fonte_url?: string | null }) {
   const origemId = extractContratoOrigemIdFromContratoUrl(contrato.fonte_url);
   if (origemId) {
-    const byOrigem = aditivos.filter((a) => {
+    // Vínculo autoritativo pelo id do portal, SEM fallback: quando não há aditivo
+    // desse id, o contrato não tem aditivo. (Os fallbacks colavam aditivos de
+    // contratos homônimos de outros anos no resumo IA.)
+    return aditivos.filter((a) => {
       const aditivoOrigemId = (a.centi_id as string | undefined) || extractContratoOrigemIdFromAditivoUrl(a.fonte_url as string | undefined);
       return aditivoOrigemId === origemId;
     });
-    if (byOrigem.length) return byOrigem;
   }
+  // Fallbacks heurísticos: apenas para contratos antigos sem id de portal na fonte.
   const fornecedorNorm = normalizarCredor(contrato.empresa);
   if (fornecedorNorm) {
     const byCredor = aditivos.filter((a) => normalizarCredor(a.credor as string) === fornecedorNorm);

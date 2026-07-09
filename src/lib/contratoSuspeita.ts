@@ -80,20 +80,6 @@ function buildNomeToCnpjMap(aditivos: AditivoInfo[]): Map<string, string> {
 }
 
 /**
- * Build a map: contrato_numero -> cnpj from aditivos
- */
-function buildContratoToCnpjMap(aditivos: AditivoInfo[]): Map<string, string> {
-  const map = new Map<string, string>();
-  for (const a of aditivos) {
-    if (a.contrato_numero && a.cnpj) {
-      const clean = a.cnpj.replace(/\D/g, "");
-      if (clean.length === 14) map.set(a.contrato_numero, clean);
-    }
-  }
-  return map;
-}
-
-/**
  * Detect if a contract's object text suggests emergency procurement.
  */
 function isEmergencial(objeto: string): boolean {
@@ -102,19 +88,14 @@ function isEmergencial(objeto: string): boolean {
 }
 
 /**
- * Resolve the CNPJ for a given contract, trying:
- * 1. Direct match by contrato_numero in aditivos
- * 2. Match by fornecedor name in aditivos
+ * Resolve the CNPJ for a given contract pelo NOME do fornecedor nos aditivos.
+ * O lookup antigo por contrato_numero foi removido: números de contrato se
+ * repetem entre anos/órgãos e atribuíam CNPJ de contratos homônimos.
  */
 function resolverCnpj(
   contrato: ContratoBase,
-  contratoToCnpj: Map<string, string>,
   nomeToCnpj: Map<string, string>
 ): string | null {
-  if (contrato.numero) {
-    const cnpj = contratoToCnpj.get(contrato.numero);
-    if (cnpj) return cnpj;
-  }
   if (contrato.fornecedor) {
     const cnpj = nomeToCnpj.get(contrato.fornecedor.trim().toUpperCase());
     if (cnpj) return cnpj;
@@ -134,10 +115,9 @@ export function calcularSuspeitaContrato(
   const fornecedor = contrato.fornecedor?.trim().toUpperCase() || "";
   const objeto = contrato.objeto?.trim().toLowerCase() || "";
 
-  // Pre-compute CNPJ maps (memoized per call but cheap enough)
-  const contratoToCnpj = buildContratoToCnpjMap(aditivos);
+  // Pre-compute CNPJ map (memoized per call but cheap enough)
   const nomeToCnpj = buildNomeToCnpjMap(aditivos);
-  const meuCnpj = resolverCnpj(contrato, contratoToCnpj, nomeToCnpj);
+  const meuCnpj = resolverCnpj(contrato, nomeToCnpj);
 
   // ──────────────────────────────────────────────────────────
   // 1. DISPENSA PRÓXIMA DO LIMITE (+2)

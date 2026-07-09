@@ -112,14 +112,21 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 3. Fetch aditivos for context
-    const contratoNumeros = toAnalyze.map((c: any) => c.numero).filter(Boolean);
+    // 3. Fetch aditivos for context, casados pelo ID do portal (centi_id do aditivo
+    // = id interno do contrato-pai). O join antigo por contrato_numero misturava
+    // aditivos de contratos homônimos de outros anos e gerava falsos "aditivos de
+    // +1000%" na análise (ex.: G7 146 recebia aditivos de três outras empresas).
+    const extractContratoOrigemId = (url: string | null | undefined): string | null =>
+      url?.match(/\/contratos\/contrato\/(\d+)/i)?.[1] ?? null;
+    const origemIds = toAnalyze
+      .map((c: any) => extractContratoOrigemId(c.fonte_url))
+      .filter(Boolean);
     let aditivos: any[] = [];
-    if (contratoNumeros.length > 0) {
+    if (origemIds.length > 0) {
       const { data: adData } = await supabase
         .from("contratos_aditivos")
-        .select("contrato_numero, termo, tipo_aditivo, valor, data_termo")
-        .in("contrato_numero", contratoNumeros);
+        .select("contrato_numero, termo, tipo_aditivo, valor, data_termo, centi_id, fonte_url")
+        .in("centi_id", origemIds);
       aditivos = adData || [];
     }
 
@@ -156,9 +163,14 @@ Deno.serve(async (req) => {
         const supplierContracts = supplierCount[supplier] || 1;
         const supplierTotalValue = supplierTotal[supplier] || 0;
 
-        const contratoAditivos = aditivos.filter(
-          (a: any) => a.contrato_numero === (contrato as any).numero
-        );
+        const contratoOrigemId = extractContratoOrigemId((contrato as any).fonte_url);
+        const contratoAditivos = aditivos.filter((a: any) => {
+          const aditivoOrigemId =
+            (a.centi_id && String(a.centi_id)) ||
+            a.fonte_url?.match(/\/contratos\/contratoaditivo\/(\d+)/i)?.[1] ||
+            null;
+          return contratoOrigemId !== null && aditivoOrigemId === contratoOrigemId;
+        });
         const totalAditivos = contratoAditivos.reduce((s: number, a: any) => s + (a.valor || 0), 0);
 
         const valorContrato = (contrato as any).valor || 0;
