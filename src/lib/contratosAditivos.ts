@@ -125,10 +125,14 @@ export function getAditivosDoContrato(
 
   const origemId = extractContratoOrigemIdFromContratoUrl(fonteUrl);
   if (origemId) {
-    const matchByOrigem = lookup.byContratoOrigemId.get(origemId);
-    if (matchByOrigem) return matchByOrigem;
+    // Vínculo AUTORITATIVO: o id do portal identifica o contrato com exatidão.
+    // Sem fallback: se não há aditivo com esse id, o contrato não tem aditivo.
+    // (Os fallbacks por número/credor colavam aditivos de contratos homônimos
+    // de outros anos: ex. Neoconsig 158/2026 exibia o aditivo do J C DIAS 158.)
+    return lookup.byContratoOrigemId.get(origemId) ?? null;
   }
 
+  // Fallbacks heurísticos: apenas para contratos antigos sem id de portal na fonte.
   const matchByComposite = lookup.byCompositeKey.get(makeKey(numeroKey, credor));
   if (matchByComposite) return matchByComposite;
 
