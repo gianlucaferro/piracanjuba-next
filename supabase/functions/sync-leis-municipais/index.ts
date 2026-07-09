@@ -9,6 +9,52 @@ const corsHeaders = {
 const WP_API = "https://piracanjuba.go.gov.br/wp-json/wp/v2";
 const TIPO_LEI_MUNICIPAL_ID = 56;
 
+// Fonte complementar (2026-07): o WP da Prefeitura parou de publicar leis em 2024.
+// O portal da Câmara (Centi) tem as leis recentes: código 5 = LEIS MUNICIPAIS.
+const CENTI_LEIS_URL = "https://camarapiracanjuba.centi.com.br/transparencia/atosadministrativos/5";
+const UA_BROWSER = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function decodeCenti(s: string): string {
+  return s
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"')
+    .replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+type LeiCenti = { numero: string; ementa: string; data_publicacao: string | null; fonte_url: string };
+
+async function scrapeLeisCenti(): Promise<LeiCenti[]> {
+  const out: LeiCenti[] = [];
+  for (let pagina = 1; pagina <= 80; pagina++) {
+    const r = await fetch(`${CENTI_LEIS_URL}?pagina=${pagina}`, { headers: { "User-Agent": UA_BROWSER } });
+    if (!r.ok) break;
+    const html = await r.text();
+    const tb = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+    if (!tb) break;
+    const trs = tb[1].split(/<tr[^>]*>/i).filter((x) => x.includes("<td"));
+    if (trs.length === 0) break;
+    for (const tr of trs) {
+      const cells = [...tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((m) => decodeCenti(m[1]));
+      // D: "LEI 2.278/2026" | O: ementa | data
+      const m = (cells[0] ?? "").match(/LEI\s+([\d.]+\/\d{4})/i);
+      if (!m) continue;
+      const dm = (cells.find((c) => /\d{2}\/\d{2}\/\d{4}/.test(c)) ?? "").match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      const link = (tr.match(/href="([^"]+\/download\/[^"]+)"/i) ?? [])[1] ?? null;
+      out.push({
+        numero: m[1],
+        ementa: (cells[1] ?? cells[0] ?? "").slice(0, 2000),
+        data_publicacao: dm ? `${dm[3]}-${dm[2]}-${dm[1]}` : null,
+        fonte_url: link ? decodeCenti(link) : `${CENTI_LEIS_URL}?pagina=${pagina}`,
+      });
+    }
+    if (trs.length < 10) break;
+    await delay(350);
+  }
+  return out;
+}
+
 async function fetchLeiPage(url: string): Promise<{ ementa: string; data_pub: string | null }> {
   try {
     const resp = await fetch(url, { headers: { "User-Agent": "piracanjuba.ai/1.0" } });
@@ -52,26 +98,33 @@ Deno.serve(async (req) => {
 
   try {
     let allPosts: any[] = [];
-    let page = 1;
-    const perPage = 100;
+    let wpErro: string | null = null;
+    // Fase 1 — WP da Prefeitura (histórico até 2024). Falha aqui não bloqueia a fase 2.
+    try {
+      let page = 1;
+      const perPage = 100;
 
-    while (true) {
-      const url = `${WP_API}/leis-municipais?tipo-de-lei=${TIPO_LEI_MUNICIPAL_ID}&per_page=${perPage}&page=${page}`;
-      console.log(`Fetching page ${page}: ${url}`);
-      const resp = await fetch(url, { headers: { "User-Agent": "piracanjuba.ai/1.0" } });
+      while (true) {
+        const url = `${WP_API}/leis-municipais?tipo-de-lei=${TIPO_LEI_MUNICIPAL_ID}&per_page=${perPage}&page=${page}`;
+        console.log(`Fetching page ${page}: ${url}`);
+        const resp = await fetch(url, { headers: { "User-Agent": "piracanjuba.ai/1.0" } });
 
-      if (!resp.ok) {
-        if (resp.status === 400) break;
-        throw new Error(`WP API error: ${resp.status}`);
+        if (!resp.ok) {
+          if (resp.status === 400) break;
+          throw new Error(`WP API error: ${resp.status}`);
+        }
+
+        const posts = await resp.json();
+        if (!posts.length) break;
+        allPosts = allPosts.concat(posts);
+
+        const totalPages = parseInt(resp.headers.get("X-WP-TotalPages") || "1");
+        if (page >= totalPages) break;
+        page++;
       }
-
-      const posts = await resp.json();
-      if (!posts.length) break;
-      allPosts = allPosts.concat(posts);
-
-      const totalPages = parseInt(resp.headers.get("X-WP-TotalPages") || "1");
-      if (page >= totalPages) break;
-      page++;
+    } catch (e) {
+      wpErro = (e as Error).message;
+      console.error("Fase WP falhou (segue pra fase Câmara):", wpErro);
     }
 
     console.log(`Total leis municipais from WP: ${allPosts.length}`);
@@ -124,9 +177,49 @@ Deno.serve(async (req) => {
       console.log(`Processed ${Math.min(i + BATCH, allPosts.length)}/${allPosts.length}`);
     }
 
-    console.log(`Done: ${inserted} inserted, ${updated} updated`);
+    // Fase 2 — portal da Câmara (Centi cod 5): completa as leis que o WP não tem
+    // (o WP parou em 2024; a Câmara publica as leis atuais). Insere só números novos.
+    let camaraInseridas = 0;
+    let camaraErro: string | null = null;
+    try {
+      const leisCenti = await scrapeLeisCenti();
+      console.log(`Leis no portal da Câmara: ${leisCenti.length}`);
+      // dedup interno por numero
+      const vistos = new Set<string>();
+      const unicas = leisCenti.filter((l) => {
+        if (vistos.has(l.numero)) return false;
+        vistos.add(l.numero);
+        return true;
+      });
+      for (const lei of unicas) {
+        const { data: existing } = await supabase
+          .from("leis_municipais")
+          .select("id")
+          .eq("numero", lei.numero)
+          .maybeSingle();
+        if (existing) continue; // preserva a versão existente (WP tem mais detalhe)
+        const { error } = await supabase.from("leis_municipais").insert({
+          numero: lei.numero,
+          data_publicacao: lei.data_publicacao,
+          ementa: lei.ementa,
+          orgao: "Câmara Municipal",
+          categoria: null,
+          fonte_url: lei.fonte_url,
+        });
+        if (error) console.error(`Insert Câmara ${lei.numero}:`, error.message);
+        else camaraInseridas++;
+      }
+    } catch (e) {
+      camaraErro = (e as Error).message;
+      console.error("Fase Câmara falhou:", camaraErro);
+    }
+
+    console.log(`Done: WP ${inserted} inserted/${updated} updated · Câmara ${camaraInseridas} inseridas`);
     return new Response(
-      JSON.stringify({ success: true, total: allPosts.length, inserted, updated }),
+      JSON.stringify({
+        success: true, total_wp: allPosts.length, inserted, updated,
+        camara_inseridas: camaraInseridas, wp_erro: wpErro, camara_erro: camaraErro,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

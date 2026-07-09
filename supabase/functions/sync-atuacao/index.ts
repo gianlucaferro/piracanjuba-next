@@ -51,8 +51,8 @@ interface AtoRow {
   documento_url: string | null;
 }
 
-async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
-  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}`, { headers: { "User-Agent": UA } });
+async function scrapeCentiPage(tipoCodigo: number, pagina: number): Promise<AtoRow[]> {
+  const resp = await fetch(`${CENTI_BASE}/${tipoCodigo}?pagina=${pagina}`, { headers: { "User-Agent": UA } });
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const html = await resp.text();
   const tbody = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
@@ -83,6 +83,20 @@ async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
   return out;
 }
 
+// Percorre TODAS as páginas do tipo (o portal pagina de 10 em 10; só a página 1
+// deixava buracos sempre que protocolavam mais de 10 itens entre execuções).
+async function scrapeCenti(tipoCodigo: number): Promise<AtoRow[]> {
+  const out: AtoRow[] = [];
+  for (let pagina = 1; pagina <= 120; pagina++) {
+    const rows = await scrapeCentiPage(tipoCodigo, pagina);
+    if (rows.length === 0) break;
+    out.push(...rows);
+    if (rows.length < 10) break;
+    await delay(350); // gentil com o portal (soltou GOAWAY em rajadas)
+  }
+  return out;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -100,14 +114,21 @@ Deno.serve(async (req) => {
   try {
     const { data: vereadores } = await supabase.from("vereadores").select("id, nome");
     const vlist = (vereadores || []) as { id: string; nome: string }[];
+    // Match pelo PRIMEIRO nome (único entre os 11 vereadores). O match antigo por
+    // qualquer token casava errado ("SILVA" existe em vários nomes).
+    const porPrimeiroNome = new Map<string, string>();
+    for (const v of vlist) {
+      const primeiro = (v.nome || "").toUpperCase().split(/\s+/)[0];
+      if (primeiro) porPrimeiroNome.set(primeiro, v.id);
+    }
     const matchVereador = (autor: string | null): string | null => {
       if (!autor) return null;
-      const a = autor.toUpperCase();
-      const found = vlist.find((v) => {
-        const tokens = (v.nome || "").toUpperCase().split(/\s+/).filter((t) => t.length > 2);
-        return tokens.some((t) => a.includes(t));
-      });
-      return found?.id ?? null;
+      for (const palavra of autor.toUpperCase().split(/[\s,/]+/)) {
+        const limpa = palavra.replace(/[^A-ZÀ-Ú]/g, "");
+        const id = porPrimeiroNome.get(limpa);
+        if (id) return id;
+      }
+      return null;
     };
 
     for (const [codigoStr, tipo] of Object.entries(TIPOS)) {
@@ -131,7 +152,8 @@ Deno.serve(async (req) => {
             descricao: (ato.observacao || ato.descricao).slice(0, 2000),
             autor_texto: autorTexto || "Não identificado",
             autor_vereador_id: matchVereador(autorTexto),
-            fonte_url: ato.documento_url,
+            // fonte_url é NOT NULL; sem documento na linha, aponta pra página do tipo
+            fonte_url: ato.documento_url ?? `${CENTI_BASE}/${codigo}`,
           });
         }
         // dedup por chave unica (tipo,numero,ano): a fonte pode repetir a linha
@@ -142,11 +164,18 @@ Deno.serve(async (req) => {
           seen.add(k);
           return true;
         });
+        // Insere APENAS os que faltam (ON CONFLICT DO NOTHING): o upsert antigo
+        // sobrescrevia autor_texto bom (da era SAPL) com "Não identificado", já que
+        // o portal novo não expõe autor na listagem. Linhas existentes ficam intactas.
         if (deduped.length) {
-          const { error } = await supabase
-            .from("atuacao_parlamentar")
-            .upsert(deduped, { onConflict: "tipo,numero,ano" });
-          if (error) errors.push(`${tipo}: ${error.message}`);
+          let insErr: string | null = null;
+          for (let i = 0; i < deduped.length; i += 200) {
+            const { error } = await supabase
+              .from("atuacao_parlamentar")
+              .upsert(deduped.slice(i, i + 200), { onConflict: "tipo,numero,ano", ignoreDuplicates: true });
+            if (error) { insErr = error.message; break; }
+          }
+          if (insErr) errors.push(`${tipo}: ${insErr}`);
           else total += deduped.length;
         }
       } catch (e) {
