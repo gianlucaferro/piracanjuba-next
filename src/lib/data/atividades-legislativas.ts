@@ -24,7 +24,8 @@ export type AtividadesStats = {
   total: number;
   por_tipo: Array<{ tipo: string; quantidade: number }>;
   por_ano: Array<{ ano: number; quantidade: number }>;
-  por_autor: Array<{ autor: string; quantidade: number }>;
+  /** tipos = detalhamento por tipo de ato (ex.: "Projeto de Lei do Legislativo" -> 17) */
+  por_autor: Array<{ autor: string; quantidade: number; tipos: Record<string, number> }>;
   ultima_publicacao: string | null;
 };
 
@@ -69,7 +70,7 @@ export const fetchAtividadesStats = unstable_cache(
 
     const porTipo = new Map<string, number>();
     const porAno = new Map<number, number>();
-    const porAutor = new Map<string, number>();
+    const porAutor = new Map<string, { quantidade: number; tipos: Record<string, number> }>();
     let ultima: string | null = null;
 
     for (const r of data as Array<{ ato_tipo: string; ano: number | null; autores: string[]; autoria_executivo: boolean; data_publicacao: string | null }>) {
@@ -77,7 +78,10 @@ export const fetchAtividadesStats = unstable_cache(
       if (r.ano) porAno.set(r.ano, (porAno.get(r.ano) ?? 0) + 1);
       if (!r.autoria_executivo) {
         for (const a of r.autores ?? []) {
-          porAutor.set(a, (porAutor.get(a) ?? 0) + 1);
+          const atual = porAutor.get(a) ?? { quantidade: 0, tipos: {} };
+          atual.quantidade += 1;
+          atual.tipos[r.ato_tipo] = (atual.tipos[r.ato_tipo] ?? 0) + 1;
+          porAutor.set(a, atual);
         }
       }
       if (r.data_publicacao && (!ultima || r.data_publicacao > ultima)) {
@@ -89,7 +93,7 @@ export const fetchAtividadesStats = unstable_cache(
       total: data.length,
       por_tipo: Array.from(porTipo.entries()).map(([tipo, q]) => ({ tipo, quantidade: q })).sort((a, b) => b.quantidade - a.quantidade),
       por_ano: Array.from(porAno.entries()).map(([ano, q]) => ({ ano, quantidade: q })).sort((a, b) => b.ano - a.ano),
-      por_autor: Array.from(porAutor.entries()).map(([autor, q]) => ({ autor, quantidade: q })).sort((a, b) => b.quantidade - a.quantidade).slice(0, 20),
+      por_autor: Array.from(porAutor.entries()).map(([autor, v]) => ({ autor, quantidade: v.quantidade, tipos: v.tipos })).sort((a, b) => b.quantidade - a.quantidade).slice(0, 20),
       ultima_publicacao: ultima,
     };
   },
