@@ -19,8 +19,9 @@ export default function VereadorCard({ v }: { v: Vereador }) {
   const router = useRouter();
 
   const { data: counts } = useQuery({
-    queryKey: ["projetos-count", v.id],
-    queryFn: () => fetchProjetosCountByVereador(v.id),
+    // nome no queryKey + queryFn pra incluir coautorias (autor_texto lista todos os autores)
+    queryKey: ["projetos-count", v.id, v.nome],
+    queryFn: () => fetchProjetosCountByVereador(v.id, v.nome),
   });
 
   const { data: atuacao } = useQuery({
