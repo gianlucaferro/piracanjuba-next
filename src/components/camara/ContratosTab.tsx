@@ -70,7 +70,7 @@ export default function ContratosTab() {
       // isola a falha por contrato: um erro isolado nao pode apagar o indicador
       // de risco de TODOS os cards.
       try {
-        if (calcularSuspeitaContrato(c, normalizados, aditivos, cnpjData || undefined)) {
+        if (calcularSuspeitaContrato(c, normalizados, aditivos, cnpjData || undefined, aditivosPorContrato)) {
           ids.add(c.id);
         }
       } catch (err) {
@@ -78,7 +78,7 @@ export default function ContratosTab() {
       }
     }
     return ids;
-  }, [contratos, aditivosData, cnpjData]);
+  }, [contratos, aditivosData, cnpjData, aditivosPorContrato]);
 
   // Maior fornecedor
   const maiorFornecedor = useMemo(() => {

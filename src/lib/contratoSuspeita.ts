@@ -3,6 +3,8 @@
  * Retorna true se pontos >= 5. Silencioso — sem explicações na UI.
  */
 
+import { getAditivosDoContrato, type AditivosLookup } from "./contratosAditivos";
+
 interface ContratoBase {
   id: string;
   valor: number | null;
@@ -12,6 +14,7 @@ interface ContratoBase {
   vigencia_inicio: string | null;
   vigencia_fim: string | null;
   fornecedor: string | null; // empresa (prefeitura) ou credor (câmara)
+  fonte_url: string | null; // URL do portal — id autoritativo pra vincular aditivos
 }
 
 interface AditivoInfo {
@@ -107,7 +110,8 @@ export function calcularSuspeitaContrato(
   contrato: ContratoBase,
   historicoCompleto: ContratoBase[],
   aditivos: AditivoInfo[],
-  fornecedoresCNPJ?: Map<string, FornecedorCNPJ>
+  fornecedoresCNPJ?: Map<string, FornecedorCNPJ>,
+  aditivosLookup?: AditivosLookup
 ): boolean {
   let pontos = 0;
 
@@ -194,15 +198,21 @@ export function calcularSuspeitaContrato(
 
   // ──────────────────────────────────────────────────────────
   // 5. ADITIVOS DESPROPORCIONAIS (+2 ou +3)
+  //    Vínculo AUTORITATIVO pelo id do contrato no portal (via
+  //    aditivosLookup). O match antigo por contrato_numero colava
+  //    aditivos de contratos homônimos de outros anos e inflava o
+  //    ratio: um contrato pequeno (ex: R$ 405) herdava o aditivo
+  //    gigante de outro contrato de mesmo número e era marcado como
+  //    risco sem ter aditivo nenhum. Sem lookup, a regra não pontua.
   // ──────────────────────────────────────────────────────────
-  if (contrato.numero && valor > 0) {
-    const aditivosContrato = aditivos.filter(
-      (a) => a.contrato_numero === contrato.numero
+  if (aditivosLookup && valor > 0) {
+    const agregado = getAditivosDoContrato(
+      aditivosLookup,
+      contrato.numero,
+      contrato.fornecedor,
+      contrato.fonte_url
     );
-    const totalAditivos = aditivosContrato.reduce(
-      (s, a) => s + (a.valor || 0),
-      0
-    );
+    const totalAditivos = agregado?.totalValor || 0;
     if (totalAditivos > 0) {
       const ratio = totalAditivos / valor;
       if (ratio > 1) pontos += 3;
@@ -342,8 +352,9 @@ export function normalizarPrefeitura(c: {
   vigencia_inicio: string | null;
   vigencia_fim: string | null;
   status: string | null;
+  fonte_url?: string | null;
 }): ContratoBase {
-  return { ...c, fornecedor: c.empresa };
+  return { ...c, fornecedor: c.empresa, fonte_url: c.fonte_url ?? null };
 }
 
 export function normalizarCamara(c: {
@@ -355,6 +366,7 @@ export function normalizarCamara(c: {
   vigencia_inicio: string | null;
   vigencia_fim: string | null;
   status: string | null;
+  fonte_url?: string | null;
 }): ContratoBase {
-  return { ...c, fornecedor: c.credor };
+  return { ...c, fornecedor: c.credor, fonte_url: c.fonte_url ?? null };
 }

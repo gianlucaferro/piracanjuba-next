@@ -653,7 +653,7 @@ function ContratosTab() {
         // de risco de TODOS os cards (foi o que aconteceu quando calcularSuspeita
         // passou a lancar ReferenceError e a pagina inteira ficou sem bolinha).
         try {
-          if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined)) {
+          if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined, aditivosPorContrato || undefined)) {
             ids.add(normalizados[i].id);
           }
         } catch (err) {
@@ -668,7 +668,7 @@ function ContratosTab() {
     };
     setTimeout(processChunk, 50);
     return () => { cancelled = true; };
-  }, [data, aditivosReady, aditivos, cnpjData]);
+  }, [data, aditivosReady, aditivos, cnpjData, aditivosPorContrato]);
 
   const fetchResumoContrato = async (c: Contrato, forceRefresh = false) => {
     setResumo(null);

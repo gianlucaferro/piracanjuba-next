@@ -130,16 +130,8 @@ Deno.serve(async (req) => {
       aditivos = adData || [];
     }
 
-    // 4. Build statistics context
-    const allValues = allContratos
-      .map((c: any) => c.valor)
-      .filter((v: any): v is number => v !== null && v > 0)
-      .sort((a: number, b: number) => a - b);
-    const mid = Math.floor(allValues.length / 2);
-    const median = allValues.length % 2 === 0
-      ? (allValues[mid - 1] + allValues[mid]) / 2
-      : allValues[mid];
-    const avg = allValues.reduce((s: number, v: number) => s + v, 0) / allValues.length;
+    // 4. (mediana/média removidas: desvio da média NÃO é sinal de risco. Um contrato
+    //    ser muito menor ou maior que a média nao indica irregularidade por si só.)
 
     // 5. Count contracts per supplier for concentration analysis
     const supplierField = orgao === "camara" ? "credor" : "empresa";
@@ -174,7 +166,6 @@ Deno.serve(async (req) => {
         const totalAditivos = contratoAditivos.reduce((s: number, a: any) => s + (a.valor || 0), 0);
 
         const valorContrato = (contrato as any).valor || 0;
-        const ratioToMedian = median > 0 ? (valorContrato / median).toFixed(1) : "N/A";
 
         const objetoInfo = (contrato as any).objeto;
         const hasObjeto = objetoInfo && objetoInfo.trim() !== "";
@@ -188,6 +179,7 @@ REGRAS FUNDAMENTAIS:
 - Contratos de combustível, medicamentos, coleta de lixo, obras viárias, pavimentação e serviços de saúde tipicamente têm valores altos e são legítimos.
 - Múltiplos contratos com o mesmo fornecedor são normais em compras recorrentes (combustível, alimentos, materiais).
 - Aditivos até 25% do valor original são comuns e legais.
+- O valor do contrato estar ACIMA ou ABAIXO da média/mediana dos demais contratos NÃO é, por si só, indício de risco. NUNCA classifique por desvio da média: um contrato pequeno (ex: R$ 405) não é suspeito só por ser muito menor que a média, e um grande não é suspeito só por ser maior.
 
 CLASSIFIQUE COMO ALTO RISCO SOMENTE SE PELO MENOS 3 DESTES CRITÉRIOS GRAVES SE APLICAREM SIMULTANEAMENTE:
 1. Aditivos que somam mais de 100% do valor original (dobro ou mais)
@@ -204,9 +196,8 @@ DADOS DO CONTRATO:
 - Status: ${(contrato as any).status || "N/I"}
 - Vigência: ${(contrato as any).vigencia_inicio || "N/I"} a ${(contrato as any).vigencia_fim || "N/I"}
 
-CONTEXTO:
-- Mediana: R$ ${median.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} | Média: R$ ${avg.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-- Razão valor/mediana: ${ratioToMedian}x | Total contratos: ${allContratos.length}
+CONTEXTO (referência apenas, NÃO usar desvio da média como risco):
+- Total de contratos analisados: ${allContratos.length}
 - Contratos deste fornecedor: ${supplierContracts} | Total fornecedor: R$ ${supplierTotalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
 ${contratoAditivos.length > 0 ? `- Aditivos: ${contratoAditivos.length} termos, total R$ ${totalAditivos.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} (${valorContrato > 0 ? ((totalAditivos / valorContrato) * 100).toFixed(0) : "N/A"}% do original)` : "- Aditivos: Nenhum"}
 
