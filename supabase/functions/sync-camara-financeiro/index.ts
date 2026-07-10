@@ -232,28 +232,27 @@ Deno.serve(async (req) => {
     }
     } // end !onlyContratos
 
-    // === CONTRATOS ===
+    // === CONTRATOS: apenas o documento_url ===
+    // A ingestao dos contratos da Camara pertence ao sync-contratos-camara, que escreve na
+    // tabela canonica `contrato_camara` (id REAL do portal, CNPJ, enriquecimento). Este bloco
+    // mantinha uma 2a tabela (`camara_contratos`) com id sintetico ctr-{id}-{ano}, duplicando
+    // a fonte e divergindo em credor/objeto. O unico dado exclusivo deste endpoint e o link do
+    // documento (GetContratoPortal expoe `docs`; contratos_cnt/listar nao). Entao agora ele so
+    // enriquece o documento_url da canonica. O `Id` daqui e o proprio centi_id do portal.
     for (const ano of contractYears) {
       try {
         await delay(1000);
         const data = await centiPost("GetContratoPortal", { Ano: ano, IdOrgao: 3 });
         const items = extractItems(data);
         for (const item of items) {
-          const centiId = `ctr-${item.Id || item.id || item.Numero || Math.random().toString(36).slice(2)}-${ano}`;
-          const vigInicio = toIsoDate(item.DataInicio || item.VigenciaInicio || item.DataPublicacao);
-          const vigFim = toIsoDate(item.DataFim || item.DataFinal || item.VigenciaFim);
-          const status = vigFim && new Date(vigFim) < new Date() ? "encerrado" : "ativo";
-          const { error } = await sb.from("camara_contratos").upsert({
-            centi_id: centiId, ano,
-            numero: item.Numero || item.NumeroContrato || null,
-            credor: decodeHtmlEntities(item.NomePessoa || item.Credor || item.NomeCredor || item.Fornecedor || item.Prestador || item.NomePrestador || item.Pessoa || item.RazaoSocial || null),
-            objeto: decodeHtmlEntities(item.Objeto || item.Descricao || null),
-            valor: item.Valor || item.ValorContrato || null,
-            vigencia_inicio: vigInicio,
-            vigencia_fim: vigFim, status,
-            documento_url: buildDocUrl(item),
-          }, { onConflict: "centi_id" });
-          if (error) errors.push(`Ctr: ${error.message}`);
+          const portalId = Number(item.Id ?? item.id);
+          const docUrl = buildDocUrl(item);
+          if (!Number.isFinite(portalId) || !docUrl) continue;
+          const { error } = await sb
+            .from("contrato_camara")
+            .update({ documento_url: docUrl })
+            .eq("centi_id", portalId);
+          if (error) errors.push(`Ctr doc: ${error.message}`);
           else counts.contratos++;
         }
       } catch (e) { errors.push(`Contratos ${ano}: ${(e as Error).message?.slice(0, 100)}`); }

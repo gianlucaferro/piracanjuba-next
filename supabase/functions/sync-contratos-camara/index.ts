@@ -95,6 +95,10 @@ Deno.serve(async (req) => {
       try {
         const payload = {
           centi_id: c.id,
+          // URL individual do contrato no portal. E o vinculo autoritativo com os
+          // aditivos (aditivo.centi_id = id do contrato-pai). A URL generica /contratos
+          // que a tabela legada guardava impedia esse casamento.
+          fonte_url: `https://camarapiracanjuba.centi.com.br/contratos/contrato/${c.id}`,
           label: c.label,
           numero: c.numero,
           numero_int: parseInt(c.numero, 10) || null,
