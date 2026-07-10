@@ -15,6 +15,7 @@ interface ContratoBase {
   vigencia_fim: string | null;
   fornecedor: string | null; // empresa (prefeitura) ou credor (câmara)
   fonte_url: string | null; // URL do portal — id autoritativo pra vincular aditivos
+  centi_id: string | null; // id do portal (câmara guarda como "ctr-{id}-{ano}")
 }
 
 interface AditivoInfo {
@@ -210,7 +211,8 @@ export function calcularSuspeitaContrato(
       aditivosLookup,
       contrato.numero,
       contrato.fornecedor,
-      contrato.fonte_url
+      contrato.fonte_url,
+      contrato.centi_id
     );
     const totalAditivos = agregado?.totalValor || 0;
     if (totalAditivos > 0) {
@@ -353,8 +355,9 @@ export function normalizarPrefeitura(c: {
   vigencia_fim: string | null;
   status: string | null;
   fonte_url?: string | null;
+  centi_id?: string | null;
 }): ContratoBase {
-  return { ...c, fornecedor: c.empresa, fonte_url: c.fonte_url ?? null };
+  return { ...c, fornecedor: c.empresa, fonte_url: c.fonte_url ?? null, centi_id: c.centi_id ?? null };
 }
 
 export function normalizarCamara(c: {
@@ -367,6 +370,7 @@ export function normalizarCamara(c: {
   vigencia_fim: string | null;
   status: string | null;
   fonte_url?: string | null;
+  centi_id?: string | null;
 }): ContratoBase {
-  return { ...c, fornecedor: c.credor, fonte_url: c.fonte_url ?? null };
+  return { ...c, fornecedor: c.credor, fonte_url: c.fonte_url ?? null, centi_id: c.centi_id ?? null };
 }

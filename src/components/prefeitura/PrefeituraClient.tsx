@@ -625,9 +625,14 @@ function ContratosTab() {
     return () => clearTimeout(id);
   }, [aditivos]);
 
-  const getAditivos = (numero: string | null, credor: string | null | undefined, fonteUrl?: string | null) => {
+  const getAditivos = (
+    numero: string | null,
+    credor: string | null | undefined,
+    fonteUrl?: string | null,
+    centiId?: string | null,
+  ) => {
     if (!aditivosPorContrato) return null;
-    return getAditivosDoContrato(aditivosPorContrato, numero, credor, fonteUrl);
+    return getAditivosDoContrato(aditivosPorContrato, numero, credor, fonteUrl, centiId);
   };
 
   // Client-side risk scoring — chunked to avoid blocking UI

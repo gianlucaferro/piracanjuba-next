@@ -62,15 +62,24 @@ function extractContratoOrigemIdFromAditivoUrl(url: string | null | undefined): 
   return url?.match(/\/contratos\/contratoaditivo\/(\d+)/i)?.[1] ?? null;
 }
 
+// Prefeitura e Camara sao portais com sequencias de id INDEPENDENTES: o id 4697
+// existe nos dois. Sem comparar o host, o aditivo da Camara entrava no resumo do
+// contrato homonimo da Prefeitura.
+function portalHost(url: string | null | undefined): string {
+  return url?.match(/^https?:\/\/([^/]+)/i)?.[1]?.toLowerCase() ?? "";
+}
+
 function filtrarAditivosDoContrato(aditivos: Array<Record<string, unknown>>, contrato: { empresa?: string | null; fonte_url?: string | null }) {
   const origemId = extractContratoOrigemIdFromContratoUrl(contrato.fonte_url);
   if (origemId) {
     // Vínculo autoritativo pelo id do portal, SEM fallback: quando não há aditivo
     // desse id, o contrato não tem aditivo. (Os fallbacks colavam aditivos de
     // contratos homônimos de outros anos no resumo IA.)
+    const host = portalHost(contrato.fonte_url);
     return aditivos.filter((a) => {
       const aditivoOrigemId = (a.centi_id as string | undefined) || extractContratoOrigemIdFromAditivoUrl(a.fonte_url as string | undefined);
-      return aditivoOrigemId === origemId;
+      if (aditivoOrigemId !== origemId) return false;
+      return portalHost(a.fonte_url as string | undefined) === host;
     });
   }
   // Fallbacks heurísticos: apenas para contratos antigos sem id de portal na fonte.

@@ -50,9 +50,16 @@ export default function ContratosTab() {
 
   const aditivosPorContrato = useMemo(() => buildAditivosLookup(aditivosData || []), [aditivosData]);
 
-  // Helper to get aditivos value for a specific contract
-  const getAditivosValor = (numero: string | null, credor: string | null, fonteUrl?: string | null) => {
-    return getAditivosDoContrato(aditivosPorContrato, numero, credor, fonteUrl)?.totalValor || 0;
+  // Helper to get aditivos value for a specific contract.
+  // centi_id carrega o id do portal da Camara ("ctr-{id}-{ano}"), ja que a
+  // fonte_url dos contratos da Camara e generica (/contratos, sem id).
+  const getAditivosValor = (
+    numero: string | null,
+    credor: string | null,
+    fonteUrl?: string | null,
+    centiId?: string | null,
+  ) => {
+    return getAditivosDoContrato(aditivosPorContrato, numero, credor, fonteUrl, centiId)?.totalValor || 0;
   };
 
   // Client-side risk scoring
@@ -221,7 +228,7 @@ export default function ContratosTab() {
                 <span className="text-base font-bold text-foreground whitespace-nowrap">
                   {formatCurrency(c.valor)}
                 </span>
-                {(() => { const av = getAditivosValor(c.numero, c.credor, c.fonte_url); return av > 0 ? (
+                {(() => { const av = getAditivosValor(c.numero, c.credor, c.fonte_url, c.centi_id); return av > 0 ? (
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
                     c/ aditivos: {formatCurrency((c.valor || 0) + av)}
                   </span>

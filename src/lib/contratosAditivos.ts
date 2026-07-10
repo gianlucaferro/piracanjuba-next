@@ -22,6 +22,26 @@ export type AditivosLookup = {
 
 const CONTRATO_URL_REGEX = /\/contratos\/contrato\/(\d+)/i;
 const ADITIVO_URL_REGEX = /\/contratos\/contratoaditivo\/(\d+)/i;
+const HOST_REGEX = /^https?:\/\/([^/]+)/i;
+// centi_id dos contratos da camara vem como "ctr-{idDoPortal}-{ano}".
+const CENTI_ID_CTR_REGEX = /^ctr-(\d+)-/i;
+
+/**
+ * Portal (host) de origem do registro.
+ *
+ * Prefeitura (piracanjuba.centi.com.br) e Camara (camarapiracanjuba.centi.com.br)
+ * tem sequencias de id INDEPENDENTES: o id 4697 existe nos dois e aponta pra
+ * contratos diferentes. Sem escopo por portal, o aditivo de R$ 85.200 da Camara
+ * (CONTABIL EXATA) grudava no contrato de R$ 3.204,54 da Prefeitura (nº 159).
+ * Todas as chaves do lookup sao escopadas por este host.
+ */
+function portalScope(url: string | null | undefined): string {
+  return url?.match(HOST_REGEX)?.[1]?.toLowerCase().replace(/^www\./, "") ?? "";
+}
+
+function scopedKey(scope: string, key: string): string {
+  return `${scope}#${key}`;
+}
 
 /**
  * Normaliza o nome de um fornecedor/credor de forma agressiva para permitir
@@ -65,12 +85,31 @@ function mergeAgregado(atual: AditivosAgregados | undefined, valor: number | nul
   };
 }
 
-function extractContratoOrigemIdFromContratoUrl(fonteUrl: string | null | undefined): string | null {
-  return fonteUrl?.match(CONTRATO_URL_REGEX)?.[1] ?? null;
+/**
+ * Id do contrato no portal.
+ * Prefeitura: vem da propria URL (/contratos/contrato/{id}).
+ * Camara: a fonte_url e generica (/contratos), mas o centi_id guarda o id do
+ * portal no formato "ctr-{id}-{ano}" (validado: 162/162 batem com contrato_camara).
+ */
+function extractContratoOrigemId(
+  fonteUrl: string | null | undefined,
+  centiId?: string | null,
+): string | null {
+  const fromUrl = fonteUrl?.match(CONTRATO_URL_REGEX)?.[1];
+  if (fromUrl) return fromUrl;
+
+  const raw = centiId?.trim();
+  if (!raw) return null;
+  const fromCtr = raw.match(CENTI_ID_CTR_REGEX)?.[1];
+  if (fromCtr) return fromCtr;
+  return /^\d+$/.test(raw) ? raw : null;
 }
 
+/** No aditivo, o centi_id e o id do contrato-PAI no portal (sempre numerico). */
 function extractContratoOrigemIdFromAditivo(aditivo: ContratoAditivo): string | null {
-  return aditivo.centi_id?.trim() || aditivo.fonte_url?.match(ADITIVO_URL_REGEX)?.[1] || null;
+  const raw = aditivo.centi_id?.trim();
+  if (raw && /^\d+$/.test(raw)) return raw;
+  return aditivo.fonte_url?.match(ADITIVO_URL_REGEX)?.[1] ?? null;
 }
 
 /**
@@ -88,18 +127,22 @@ export function buildAditivosLookup(aditivos: ContratoAditivo[]): AditivosLookup
     const numero = (aditivo.contrato_numero || "").trim();
     if (!numero) continue;
 
-    const compositeKey = makeKey(numero, aditivo.credor);
+    const scope = portalScope(aditivo.fonte_url);
+
+    const compositeKey = scopedKey(scope, makeKey(numero, aditivo.credor));
     const nextComposite = mergeAgregado(byCompositeKey.get(compositeKey), aditivo.valor);
     byCompositeKey.set(compositeKey, nextComposite);
 
     const origemId = extractContratoOrigemIdFromAditivo(aditivo);
     if (origemId) {
-      byContratoOrigemId.set(origemId, mergeAgregado(byContratoOrigemId.get(origemId), aditivo.valor));
+      const idKey = scopedKey(scope, origemId);
+      byContratoOrigemId.set(idKey, mergeAgregado(byContratoOrigemId.get(idKey), aditivo.valor));
     }
 
-    const numeroBucket = byNumeroBuckets.get(numero) || new Map<string, AditivosAgregados>();
+    const numeroKey = scopedKey(scope, numero);
+    const numeroBucket = byNumeroBuckets.get(numeroKey) || new Map<string, AditivosAgregados>();
     numeroBucket.set(compositeKey, nextComposite);
-    byNumeroBuckets.set(numero, numeroBucket);
+    byNumeroBuckets.set(numeroKey, numeroBucket);
   }
 
   const byNumero = new Map<string, AditivosAgregados[]>();
@@ -119,24 +162,28 @@ export function getAditivosDoContrato(
   numero: string | null,
   credor: string | null | undefined,
   fonteUrl?: string | null,
+  centiId?: string | null,
 ) {
   const numeroKey = (numero || "").trim();
   if (!numeroKey) return null;
 
-  const origemId = extractContratoOrigemIdFromContratoUrl(fonteUrl);
+  // Escopo por portal: um id so vale dentro do portal que o emitiu.
+  const scope = portalScope(fonteUrl);
+
+  const origemId = extractContratoOrigemId(fonteUrl, centiId);
   if (origemId) {
     // Vínculo AUTORITATIVO: o id do portal identifica o contrato com exatidão.
     // Sem fallback: se não há aditivo com esse id, o contrato não tem aditivo.
     // (Os fallbacks por número/credor colavam aditivos de contratos homônimos
     // de outros anos: ex. Neoconsig 158/2026 exibia o aditivo do J C DIAS 158.)
-    return lookup.byContratoOrigemId.get(origemId) ?? null;
+    return lookup.byContratoOrigemId.get(scopedKey(scope, origemId)) ?? null;
   }
 
   // Fallbacks heurísticos: apenas para contratos antigos sem id de portal na fonte.
-  const matchByComposite = lookup.byCompositeKey.get(makeKey(numeroKey, credor));
+  const matchByComposite = lookup.byCompositeKey.get(scopedKey(scope, makeKey(numeroKey, credor)));
   if (matchByComposite) return matchByComposite;
 
-  const sameNumero = lookup.byNumero.get(numeroKey) || [];
+  const sameNumero = lookup.byNumero.get(scopedKey(scope, numeroKey)) || [];
   if (sameNumero.length === 1) return sameNumero[0];
 
   return null;

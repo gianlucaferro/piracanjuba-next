@@ -118,6 +118,12 @@ Deno.serve(async (req) => {
     // +1000%" na análise (ex.: G7 146 recebia aditivos de três outras empresas).
     const extractContratoOrigemId = (url: string | null | undefined): string | null =>
       url?.match(/\/contratos\/contrato\/(\d+)/i)?.[1] ?? null;
+
+    // Prefeitura e Camara sao portais com sequencias de id INDEPENDENTES: o id
+    // 4697 existe nos dois. Sem comparar o host, o aditivo de R$85.200 da Camara
+    // era atribuido ao contrato de R$3.204,54 da Prefeitura (nº 159).
+    const portalHost = (url: string | null | undefined): string =>
+      url?.match(/^https?:\/\/([^/]+)/i)?.[1]?.toLowerCase() ?? "";
     const origemIds = toAnalyze
       .map((c: any) => extractContratoOrigemId(c.fonte_url))
       .filter(Boolean);
@@ -156,12 +162,15 @@ Deno.serve(async (req) => {
         const supplierTotalValue = supplierTotal[supplier] || 0;
 
         const contratoOrigemId = extractContratoOrigemId((contrato as any).fonte_url);
+        const contratoHost = portalHost((contrato as any).fonte_url);
         const contratoAditivos = aditivos.filter((a: any) => {
           const aditivoOrigemId =
             (a.centi_id && String(a.centi_id)) ||
             a.fonte_url?.match(/\/contratos\/contratoaditivo\/(\d+)/i)?.[1] ||
             null;
-          return contratoOrigemId !== null && aditivoOrigemId === contratoOrigemId;
+          if (contratoOrigemId === null || aditivoOrigemId !== contratoOrigemId) return false;
+          // mesmo id so vale se vier do MESMO portal
+          return portalHost(a.fonte_url) === contratoHost;
         });
         const totalAditivos = contratoAditivos.reduce((s: number, a: any) => s + (a.valor || 0), 0);
 
