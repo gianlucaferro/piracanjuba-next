@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, content-type, x-cron-secret, x-centi-ingest-secret",
 };
 
 const CENTI_API = "https://api.centi.com.br/portal";
@@ -172,12 +172,33 @@ function buildDocUrl(item: any): string | null {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  // Auth antes de qualquer efeito colateral. Sem isso a funcao era publicamente
+  // invocavel (verify_jwt=false e nenhuma checagem interna): qualquer um disparava
+  // um sync que martela o portal Centi, escreve no banco e polui sync_log.
+  // Mesmo padrao do sync-contratos-camara. O cron usa invoke_edge_function_secure,
+  // que envia x-cron-secret.
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const CRON_SECRET = Deno.env.get("CRON_SECRET");
+  const CENTI_INGEST_SECRET = Deno.env.get("CENTI_INGEST_SECRET");
+
+  const isAuthorized =
+    (CRON_SECRET && req.headers.get("x-cron-secret") === CRON_SECRET) ||
+    (CENTI_INGEST_SECRET && req.headers.get("x-centi-ingest-secret") === CENTI_INGEST_SECRET) ||
+    (req.headers.get("authorization") ?? "").includes(SUPABASE_SERVICE_ROLE_KEY);
+
+  if (!isAuthorized) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   let body: Record<string, any> = {};
   try { body = await req.json(); } catch { /* empty body ok */ }
   const onlyContratos = body?.only === "contratos";
   const customYears: number[] | undefined = body?.years;
 
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const sb = createClient(Deno.env.get("SUPABASE_URL")!, SUPABASE_SERVICE_ROLE_KEY);
   const { data: log } = await sb.from("sync_log")
     .insert({ tipo: "camara-financeiro", status: "running", detalhes: {} })
     .select("id").single();
