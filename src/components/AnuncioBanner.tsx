@@ -93,12 +93,22 @@ export function AnuncioBannerDestaque() {
   );
   const total = destaques.length;
   const [index, setIndex] = useState(0);
+  const [pausado, setPausado] = useState(false);
 
   // Início aleatório: mantém a variedade entre visitas (exposição justa entre
   // os anunciantes). Só reembaralha quando a quantidade de destaques muda.
   useEffect(() => {
     if (total > 0) setIndex(Math.floor(Math.random() * total));
   }, [total]);
+
+  // Intercalação automática na tela: com 2+ destaques, avança sozinho a cada 7s
+  // (pausa no hover/foco de teclado abaixo). Respeita prefers-reduced-motion.
+  useEffect(() => {
+    if (total <= 1 || pausado) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setIndex((i) => (i + 1) % total), 7000);
+    return () => clearInterval(t);
+  }, [total, pausado]);
 
   if (total === 0) return null;
 
@@ -107,7 +117,14 @@ export function AnuncioBannerDestaque() {
   const ir = (delta: number) => setIndex((i) => (i + delta + total) % total);
 
   return (
-    <section aria-label="Anúncio patrocinado" className="relative group">
+    <section
+      aria-label="Anúncio patrocinado"
+      className="relative group"
+      onMouseEnter={() => setPausado(true)}
+      onMouseLeave={() => setPausado(false)}
+      onFocusCapture={() => setPausado(true)}
+      onBlurCapture={() => setPausado(false)}
+    >
       {/* key por id: ao trocar, o card remonta e a impressão é contada de novo */}
       <AnuncioCard key={anuncio.id} anuncio={anuncio} />
       {temVarios && (
