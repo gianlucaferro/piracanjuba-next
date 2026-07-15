@@ -5,6 +5,7 @@ import {
   Trash2,
   Pill,
   ShoppingBag,
+  Fuel,
   Phone,
   ExternalLink,
   Megaphone,
@@ -244,6 +245,18 @@ export default async function HomePage() {
               <p className="text-sm text-muted-foreground">Contratos e fornecedores do Executivo</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-blue-600 transition-colors" />
+          </Link>
+          <Link href="/postos-combustivel" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
+              <Fuel className="w-5 h-5 text-orange-500" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">
+                Postos de Combustível <span className="text-orange-500">PBA</span>
+              </p>
+              <p className="text-sm text-muted-foreground">Bandeira, produtos e situação na ANP</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-orange-500 transition-colors" />
           </Link>
         </section>
 
