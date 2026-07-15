@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type Anuncio = {
@@ -86,12 +87,49 @@ export function AnuncioBannerDestaque() {
     queryKey: ["anuncios-ativos"],
     queryFn: fetchAnunciosAtivos,
   });
-  const destaques = anuncios?.filter((a) => a.plano === "destaque") || [];
-  if (destaques.length === 0) return null;
-  const anuncio = destaques[Math.floor(Math.random() * destaques.length)];
+  const destaques = useMemo(
+    () => anuncios?.filter((a) => a.plano === "destaque") || [],
+    [anuncios]
+  );
+  const total = destaques.length;
+  const [index, setIndex] = useState(0);
+
+  // Início aleatório: mantém a variedade entre visitas (exposição justa entre
+  // os anunciantes). Só reembaralha quando a quantidade de destaques muda.
+  useEffect(() => {
+    if (total > 0) setIndex(Math.floor(Math.random() * total));
+  }, [total]);
+
+  if (total === 0) return null;
+
+  const anuncio = destaques[index % total];
+  const temVarios = total > 1;
+  const ir = (delta: number) => setIndex((i) => (i + delta + total) % total);
+
   return (
-    <section aria-label="Anúncio patrocinado">
-      <AnuncioCard anuncio={anuncio} />
+    <section aria-label="Anúncio patrocinado" className="relative group">
+      {/* key por id: ao trocar, o card remonta e a impressão é contada de novo */}
+      <AnuncioCard key={anuncio.id} anuncio={anuncio} />
+      {temVarios && (
+        <>
+          <button
+            type="button"
+            aria-label="Anúncio anterior"
+            onClick={() => ir(-1)}
+            className="absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:opacity-60 md:group-hover:opacity-100"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Próximo anúncio"
+            onClick={() => ir(1)}
+            className="absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:opacity-60 md:group-hover:opacity-100"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </>
+      )}
     </section>
   );
 }
