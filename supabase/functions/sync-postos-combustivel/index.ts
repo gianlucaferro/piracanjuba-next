@@ -15,6 +15,63 @@ const MUNICIPIO = "PIRACANJUBA";
 const UF = "GO";
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
 
+// App "ANP com Você" (nota 0..5 por posto). A lista pública por município é
+// protegida por checksum (cs), mas o cs é ESTÁVEL por município (não depende de
+// sessão): um GET simples já devolve o HTML com o modelo do relatório APEX.
+// Se a ANP mudar o app/checksum, o parse falha de forma segura (nota não atualiza,
+// os dados cadastrais da API oficial continuam).
+const ANP_NOTA_CS =
+  "1diwAcw0Hj_KQP4JeZBLbfv3dv5qksMZOTDJe8L1d_KQW3F1faFZtt-lERd88JrWurti28uNbOTtjDKlNtGxPsQ";
+const ANP_NOTA_URL =
+  `https://anpcomvcpostos.anp.gov.br/ordsdw/r/sfi_apex/anpcomvcpostos/postos-lista` +
+  `?p5_municipio=${MUNICIPIO}&p5_uf=${UF}&clear=1&cs=${ANP_NOTA_CS}`;
+
+// Extrai o mapa CNPJ(14 dígitos) -> nota (0..5) do modelo do relatório APEX,
+// que vem embutido no HTML como arrays JS por linha. Índice validado: [1]=CNPJ,
+// [38]=nota. Só aceita valores válidos (fail-safe).
+function parseNotasAnp(html: string): Map<string, number> {
+  const map = new Map<string, number>();
+  const clean = html.replace(/\\\//g, "/");
+  const re = /\b\d{14}\b/g;
+  const vistos = new Set<number>();
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(clean)) !== null) {
+    const start = clean.lastIndexOf("[", m.index);
+    if (start < 0 || vistos.has(start)) continue;
+    let depth = 0, end = -1, inStr = false, esc = false;
+    for (let j = start; j < Math.min(start + 6000, clean.length); j++) {
+      const ch = clean[j];
+      if (esc) { esc = false; continue; }
+      if (ch === "\\") { esc = true; continue; }
+      if (ch === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (ch === "[") depth++;
+      else if (ch === "]") { depth--; if (depth === 0) { end = j + 1; break; } }
+    }
+    if (end < 0) continue;
+    vistos.add(start);
+    try {
+      const arr = JSON.parse(clean.slice(start, end));
+      const cnpj = String(arr?.[1] ?? "");
+      const nota = Number(arr?.[38]);
+      if (/^\d{14}$/.test(cnpj) && Number.isInteger(nota) && nota >= 0 && nota <= 5) {
+        map.set(cnpj, nota);
+      }
+    } catch { /* linha inválida, ignora */ }
+  }
+  return map;
+}
+
+async function fetchNotasAnp(): Promise<Map<string, number>> {
+  const resp = await fetch(ANP_NOTA_URL, {
+    headers: { "User-Agent": UA, Accept: "text/html" },
+  });
+  if (!resp.ok) throw new Error(`ANP lista ${resp.status}`);
+  const html = await resp.text();
+  if (html.includes("roteção de estado")) throw new Error("checksum de sessão inválido");
+  return parseNotasAnp(html);
+}
+
 type AnpProduto = { produto?: string; tancagem?: number; unidMedidaTancagem?: string };
 type AnpPosto = {
   codigoSIMP: string;
@@ -90,9 +147,23 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Notas do app "ANP com Você" (best-effort): se falhar, seguimos só com o
+    // cadastral e NÃO tocamos na coluna nota (preserva a última conhecida).
+    let notas = new Map<string, number>();
+    try {
+      notas = await fetchNotasAnp();
+    } catch (e) {
+      console.warn("Notas ANP indisponíveis:", e instanceof Error ? e.message : e);
+    }
+    const temNotas = notas.size > 0;
+    const agora = new Date().toISOString();
+
     const rows = postos
       .filter((p) => p.codigoSIMP)
       .map((p) => ({
+        ...(temNotas
+          ? { nota: notas.get(p.cnpj ?? "") ?? null, nota_atualizada_em: agora }
+          : {}),
         codigo_simp: String(p.codigoSIMP),
         autorizacao: p.autorizacao ?? null,
         razao_social: p.razaoSocial ?? "Posto sem nome",
@@ -151,6 +222,7 @@ Deno.serve(async (req) => {
         success: true,
         upserted: rows.length,
         removed,
+        notas: notas.size,
         duration_ms: Date.now() - startedAt,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },

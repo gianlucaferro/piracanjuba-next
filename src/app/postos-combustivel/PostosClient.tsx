@@ -2,7 +2,65 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchPostos, type Posto, type PostoProduto } from "@/data/postosApi";
-import { Fuel, MapPin, ExternalLink, ShieldAlert, CircleCheck, Loader2 } from "lucide-react";
+import { Fuel, MapPin, ExternalLink, ShieldAlert, CircleCheck, Loader2, Gauge } from "lucide-react";
+
+// Cor da nota na escala da ANP (vermelho = risco, verde = conforme).
+function notaCor(nota: number): string {
+  if (nota >= 5) return "#16a34a"; // verde
+  if (nota >= 4) return "#65a30d"; // verde-limão
+  if (nota >= 3) return "#d97706"; // âmbar
+  if (nota >= 2) return "#ea580c"; // laranja
+  if (nota >= 1) return "#dc2626"; // vermelho
+  return "#b91c1c"; // vermelho escuro
+}
+
+// Medidor circular (0 a 5) com a nota oficial da ANP no centro.
+function NotaGauge({ nota }: { nota: number | null }) {
+  if (nota == null) {
+    return (
+      <div className="flex flex-col items-center shrink-0 w-12" title="Nota ainda não disponível">
+        <div className="w-11 h-11 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
+          <Gauge className="w-4 h-4 text-muted-foreground/50" />
+        </div>
+        <span className="text-[10px] font-medium text-muted-foreground mt-0.5">s/ nota</span>
+      </div>
+    );
+  }
+  const cor = notaCor(nota);
+  const r = 18;
+  const circ = 2 * Math.PI * r;
+  return (
+    <div
+      className="flex flex-col items-center shrink-0 w-12"
+      title={`Nota ${nota} de 5 na ANP`}
+      aria-label={`Nota ${nota} de 5 na ANP`}
+    >
+      <div className="relative w-11 h-11">
+        <svg viewBox="0 0 44 44" className="w-11 h-11 -rotate-90">
+          <circle cx="22" cy="22" r={r} fill="none" strokeWidth="4" className="stroke-muted-foreground/15" />
+          <circle
+            cx="22"
+            cy="22"
+            r={r}
+            fill="none"
+            stroke={cor}
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray={circ}
+            strokeDashoffset={circ * (1 - nota / 5)}
+          />
+        </svg>
+        <span
+          className="absolute inset-0 flex items-center justify-center text-base font-bold"
+          style={{ color: cor }}
+        >
+          {nota}
+        </span>
+      </div>
+      <span className="text-[10px] font-medium text-muted-foreground mt-0.5">Nota ANP</span>
+    </div>
+  );
+}
 
 // Encurta os nomes longos da ANP para rótulos legíveis, sem duplicar.
 function rotuloProduto(nome: string | null): string | null {
@@ -46,10 +104,11 @@ function PostoCard({ posto }: { posto: Posto }) {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground leading-snug">{posto.razao_social}</p>
           {endereco && <p className="text-sm text-muted-foreground mt-0.5">{endereco}</p>}
+          <span className="inline-block text-xs font-medium mt-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+            {posto.distribuidora || "Bandeira branca"}
+          </span>
         </div>
-        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
-          {posto.distribuidora || "Bandeira branca"}
-        </span>
+        <NotaGauge nota={posto.nota} />
       </div>
 
       {produtos.length > 0 && (
@@ -148,20 +207,20 @@ export default function PostosClient() {
 
       <div className="stat-card bg-muted/40 text-sm text-muted-foreground space-y-2">
         <p>
-          Fonte: <strong className="text-foreground">API de Revendedores da ANP</strong> (dados cadastrais e
-          de fiscalização). A situação mostra interdição no Sigaf e pendências de qualidade do PMQC, quando
-          houver. Atualizamos mensalmente.
+          A <strong className="text-foreground">Nota ANP</strong> vai de 0 a 5 e resume o histórico de
+          fiscalização de cada posto nos últimos 5 anos: qualidade do combustível (PMQC), precisão da bomba e
+          preço abusivo. Infrações mais recentes pesam mais.
         </p>
         <p>
-          A ANP também oferece uma nota por posto no aplicativo &quot;ANP com Você&quot;, que considera preço
-          e outros fatores.{" "}
+          Fonte: aplicativo oficial <strong className="text-foreground">&quot;ANP com Você&quot;</strong> (nota
+          e situação) e API de Revendedores da ANP (dados cadastrais). Atualizamos mensalmente.{" "}
           <a
             href="https://anpcomvcpostos.anp.gov.br/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-primary hover:underline"
           >
-            Consultar no app da ANP <ExternalLink className="w-3.5 h-3.5" />
+            Ver no app da ANP <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </p>
       </div>
