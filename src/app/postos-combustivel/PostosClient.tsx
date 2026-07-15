@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchPostos, type Posto, type PostoProduto } from "@/data/postosApi";
-import { Fuel, MapPin, ExternalLink, ShieldAlert, CircleCheck, Loader2, Gauge } from "lucide-react";
+import { Fuel, MapPin, ExternalLink, ShieldAlert, CircleCheck, Loader2, Gauge, TriangleAlert } from "lucide-react";
 
 // Cor da nota na escala da ANP (vermelho = risco, verde = conforme).
 function notaCor(nota: number): string {
@@ -83,10 +83,29 @@ function produtosUnicos(produtos: PostoProduto[]): string[] {
   return Array.from(set);
 }
 
+function plural(n: number, singular: string, plural: string): string {
+  return `${n} ${n === 1 ? singular : plural}`;
+}
+
+// O que pesou na nota: infrações formais (qualidade/quantidade) e amostras de
+// combustível reprovadas no monitoramento (PMQC). Só entra quando houver > 0.
+function motivosNota(posto: Posto): string[] {
+  const motivos: string[] = [];
+  const qualidade = posto.infracoes_qualidade ?? 0;
+  const quantidade = posto.infracoes_quantidade ?? 0;
+  const amostras = posto.amostras_nao_conforme ?? 0;
+  if (qualidade > 0) motivos.push(plural(qualidade, "infração de qualidade", "infrações de qualidade"));
+  if (quantidade > 0)
+    motivos.push(plural(quantidade, "infração na bomba (quantidade)", "infrações na bomba (quantidade)"));
+  if (amostras > 0) motivos.push(plural(amostras, "amostra fora do padrão", "amostras fora do padrão"));
+  return motivos;
+}
+
 function PostoCard({ posto }: { posto: Posto }) {
   const interditado = !!posto.status_sigaf;
   const pendenciaPmqc = Array.isArray(posto.inadimplencia_pmqc) && posto.inadimplencia_pmqc.length > 0;
   const produtos = produtosUnicos(posto.produtos || []);
+  const motivos = motivosNota(posto);
   const endereco = [posto.endereco, posto.bairro].filter(Boolean).join(" · ");
   const mapsUrl =
     posto.latitude != null && posto.longitude != null
@@ -121,6 +140,15 @@ function PostoCard({ posto }: { posto: Posto }) {
               {p}
             </span>
           ))}
+        </div>
+      )}
+
+      {motivos.length > 0 && (
+        <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+          <TriangleAlert className="w-3.5 h-3.5 mt-px shrink-0 text-amber-500" />
+          <span>
+            <span className="text-foreground/70">Na fiscalização da ANP:</span> {motivos.join(" · ")}
+          </span>
         </div>
       )}
 

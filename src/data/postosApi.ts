@@ -21,6 +21,9 @@ export interface Posto {
   inadimplencia_pmqc: unknown[];
   nota: number | null;
   nota_atualizada_em: string | null;
+  infracoes_qualidade: number | null;
+  infracoes_quantidade: number | null;
+  amostras_nao_conforme: number | null;
   atualizado_em: string;
 }
 
@@ -29,7 +32,7 @@ export async function fetchPostos(): Promise<Posto[]> {
   const { data, error } = await supabase
     .from("postos_combustivel")
     .select(
-      "codigo_simp, razao_social, cnpj, endereco, complemento, bairro, distribuidora, produtos, latitude, longitude, status_sigaf, inadimplencia_pmqc, nota, nota_atualizada_em, atualizado_em"
+      "codigo_simp, razao_social, cnpj, endereco, complemento, bairro, distribuidora, produtos, latitude, longitude, status_sigaf, inadimplencia_pmqc, nota, nota_atualizada_em, infracoes_qualidade, infracoes_quantidade, amostras_nao_conforme, atualizado_em"
     )
     .order("nota", { ascending: false, nullsFirst: false })
     .order("razao_social", { ascending: true });

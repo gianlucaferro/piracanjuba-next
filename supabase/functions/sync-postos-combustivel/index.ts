@@ -26,11 +26,25 @@ const ANP_NOTA_URL =
   `https://anpcomvcpostos.anp.gov.br/ordsdw/r/sfi_apex/anpcomvcpostos/postos-lista` +
   `?p5_municipio=${MUNICIPIO}&p5_uf=${UF}&clear=1&cs=${ANP_NOTA_CS}`;
 
-// Extrai o mapa CNPJ(14 dígitos) -> nota (0..5) do modelo do relatório APEX,
-// que vem embutido no HTML como arrays JS por linha. Índice validado: [1]=CNPJ,
-// [38]=nota. Só aceita valores válidos (fail-safe).
-function parseNotasAnp(html: string): Map<string, number> {
-  const map = new Map<string, number>();
+type NotaAnp = {
+  nota: number;                    // 0..5
+  infracoesQualidade: number | null;
+  infracoesQuantidade: number | null;
+  amostrasNaoConforme: number | null;
+};
+
+// Contagem oficial: inteiro >= 0 e razoável; senão null (fail-safe).
+function contagem(v: unknown): number | null {
+  const n = Number(v);
+  return Number.isInteger(n) && n >= 0 && n < 10000 ? n : null;
+}
+
+// Extrai CNPJ(14) -> {nota, infrações} do modelo do relatório APEX, embutido no
+// HTML como arrays JS por linha. Índices validados nos 11 postos contra o app:
+// [1]=CNPJ, [29]=infrações qualidade, [30]=infrações quantidade,
+// [33]=amostras não conforme, [38]=nota. Só aceita valores válidos (fail-safe).
+function parseNotasAnp(html: string): Map<string, NotaAnp> {
+  const map = new Map<string, NotaAnp>();
   const clean = html.replace(/\\\//g, "/");
   const re = /\b\d{14}\b/g;
   const vistos = new Set<number>();
@@ -55,14 +69,19 @@ function parseNotasAnp(html: string): Map<string, number> {
       const cnpj = String(arr?.[1] ?? "");
       const nota = Number(arr?.[38]);
       if (/^\d{14}$/.test(cnpj) && Number.isInteger(nota) && nota >= 0 && nota <= 5) {
-        map.set(cnpj, nota);
+        map.set(cnpj, {
+          nota,
+          infracoesQualidade: contagem(arr?.[29]),
+          infracoesQuantidade: contagem(arr?.[30]),
+          amostrasNaoConforme: contagem(arr?.[33]),
+        });
       }
     } catch { /* linha inválida, ignora */ }
   }
   return map;
 }
 
-async function fetchNotasAnp(): Promise<Map<string, number>> {
+async function fetchNotasAnp(): Promise<Map<string, NotaAnp>> {
   const resp = await fetch(ANP_NOTA_URL, {
     headers: { "User-Agent": UA, Accept: "text/html" },
   });
@@ -149,7 +168,7 @@ Deno.serve(async (req) => {
 
     // Notas do app "ANP com Você" (best-effort): se falhar, seguimos só com o
     // cadastral e NÃO tocamos na coluna nota (preserva a última conhecida).
-    let notas = new Map<string, number>();
+    let notas = new Map<string, NotaAnp>();
     try {
       notas = await fetchNotasAnp();
     } catch (e) {
@@ -160,9 +179,17 @@ Deno.serve(async (req) => {
 
     const rows = postos
       .filter((p) => p.codigoSIMP)
-      .map((p) => ({
+      .map((p) => {
+        const n = notas.get(p.cnpj ?? "");
+        return {
         ...(temNotas
-          ? { nota: notas.get(p.cnpj ?? "") ?? null, nota_atualizada_em: agora }
+          ? {
+              nota: n?.nota ?? null,
+              infracoes_qualidade: n?.infracoesQualidade ?? null,
+              infracoes_quantidade: n?.infracoesQuantidade ?? null,
+              amostras_nao_conforme: n?.amostrasNaoConforme ?? null,
+              nota_atualizada_em: agora,
+            }
           : {}),
         codigo_simp: String(p.codigoSIMP),
         autorizacao: p.autorizacao ?? null,
@@ -189,7 +216,8 @@ Deno.serve(async (req) => {
         data_vinculacao: p.dataVinculacao ?? null,
         fonte_url: "https://anpcomvcpostos.anp.gov.br/",
         atualizado_em: new Date().toISOString(),
-      }));
+        };
+      });
 
     const { error: upErr } = await supabase
       .from("postos_combustivel")
