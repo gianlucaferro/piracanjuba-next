@@ -106,9 +106,16 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 Dados públicos obtidos de fontes oficiais. Este app não tem vínculo com
                 nenhum órgão público.
               </p>
-              <p className="text-xs text-foreground/70 font-medium">
-                Ferro Labs Tecnologia LTDA · CNPJ 66.034.538/0001-25 - Todos os direitos
-                reservados.
+              <p className="text-sm text-foreground/70 font-medium">
+                <a
+                  href="https://apareca.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary underline-offset-2 hover:underline transition-colors"
+                >
+                  Ferro Labs Tecnologia LTDA
+                </a>{" "}
+                · CNPJ 66.034.538/0001-25 - Todos os direitos reservados.
               </p>
             </div>
           </div>
