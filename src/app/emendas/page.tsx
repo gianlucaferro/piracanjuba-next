@@ -19,8 +19,11 @@ function fmtBRL(n: number | string | null | undefined) {
 
 export default async function EmendasPage() {
   const emendas = await fetchEmendas();
-  const totalEmpenhado = emendas.reduce((s, e) => s + Number(e.valor_empenhado || 0), 0);
-  const totalPago = emendas.reduce((s, e) => s + Number(e.valor_pago || 0), 0);
+  const isTransfer = (e: (typeof emendas)[number]) =>
+    (e.parlamentar_nome || "").toLowerCase().startsWith("governo");
+  const nominais = emendas.filter((e) => !isTransfer(e));
+  const totalPagoNominal = nominais.reduce((s, e) => s + Number(e.valor_pago || 0), 0);
+  const totalTransfer = emendas.filter(isTransfer).reduce((s, e) => s + Number(e.valor_pago || 0), 0);
 
   return (
     <>
@@ -31,14 +34,20 @@ export default async function EmendasPage() {
             Emendas Parlamentares
           </h1>
           <p className="mt-3 text-muted-foreground max-w-2xl">
-            {emendas.length} emendas destinadas a Piracanjuba, totalizando {fmtBRL(totalEmpenhado)}
-            {" "}empenhados e {fmtBRL(totalPago)} pagos.
+            {nominais.length} emendas de deputados estaduais e federais destinadas a Piracanjuba,
+            totalizando {fmtBRL(totalPagoNominal)} pagos.
+            {totalTransfer > 0 && (
+              <>
+                {" "}O município também recebeu {fmtBRL(totalTransfer)} em transferências federais
+                constitucionais e legais (FPM, INSS, FNDE), que não são emendas parlamentares.
+              </>
+            )}
           </p>
         </div>
       </section>
 
       <div className="container py-8">
-        <EmendasClient emendas={emendas} />
+        <EmendasClient emendas={nominais} />
       </div>
     </>
   );
