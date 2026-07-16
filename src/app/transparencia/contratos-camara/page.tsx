@@ -4,6 +4,8 @@ import { pageMetadata } from "@/lib/seo";
 import { fetchContratosCamara, fetchContratosStats } from "@/lib/data/contratos-camara";
 import AlertaContratosSancao from "@/components/transparencia/AlertaContratosSancao";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
+import GrupoEconomicoBadgeAuto from "@/components/transparencia/GrupoEconomicoBadgeAuto";
+import GruposContratosAviso from "@/components/transparencia/GruposContratosAviso";
 
 export const metadata = pageMetadata({
   title: "Contratos da Câmara — Fornecedores e Valores em Piracanjuba GO",
@@ -134,6 +136,7 @@ export default async function ContratosCamaraPage() {
       <section className="space-y-2">
         <h2 className="text-lg font-semibold text-foreground">Contratos detalhados</h2>
         <p className="text-sm text-muted-foreground">Mostrando {contratos.length} contratos mais recentes.</p>
+        <GruposContratosAviso poder="camara" />
         {contratos.map((c) => (
           <article key={c.id} className="stat-card hover:border-orange-500/30 transition-colors">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
@@ -161,6 +164,7 @@ export default async function ContratosCamaraPage() {
                 razaoSocial={c.empresa_razao_social}
                 cnae={c.empresa_cnae_descricao}
               />
+              <GrupoEconomicoBadgeAuto cnpj={c.fornecedor_cnpj} />
             </div>
             {c.empresa_razao_social &&
               c.empresa_razao_social.trim().toUpperCase() !==

@@ -112,7 +112,8 @@ export function calcularSuspeitaContrato(
   historicoCompleto: ContratoBase[],
   aditivos: AditivoInfo[],
   fornecedoresCNPJ?: Map<string, FornecedorCNPJ>,
-  aditivosLookup?: AditivosLookup
+  aditivosLookup?: AditivosLookup,
+  emGrupoEconomico?: boolean
 ): boolean {
   let pontos = 0;
 
@@ -338,6 +339,14 @@ export function calcularSuspeitaContrato(
       // skip
     }
   }
+
+  // ──────────────────────────────────────────────────────────
+  // 11. VÍNCULO SOCIETÁRIO / GRUPO ECONÔMICO (+2)
+  //    A empresa divide sócios com outra(s) fornecedora(s) da
+  //    prefeitura/câmara. Sinal, não prova: soma pontos mas não
+  //    aciona a bolinha sozinho (o corte é >= 5).
+  // ──────────────────────────────────────────────────────────
+  if (emGrupoEconomico) pontos += 2;
 
   return pontos >= 5;
 }

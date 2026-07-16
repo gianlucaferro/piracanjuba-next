@@ -33,6 +33,9 @@ import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
+import GrupoEconomicoBadge from "@/components/transparencia/GrupoEconomicoBadge";
+import GruposContratosAviso from "@/components/transparencia/GruposContratosAviso";
+import { fetchGrupos, indexarPorCnpj } from "@/data/gruposApi";
 import { LayoutDashboard } from "lucide-react";
 import { calcularSuspeitaContrato, normalizarPrefeitura, type FornecedorCNPJ } from "@/lib/contratoSuspeita";
 import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditivos";
@@ -604,6 +607,15 @@ function ContratosTab() {
     },
     staleTime: 1000 * 60 * 10,
   });
+  const { data: gruposEconomicos } = useQuery({
+    queryKey: ["grupos-economicos"],
+    queryFn: fetchGrupos,
+    staleTime: 1000 * 60 * 10,
+  });
+  const gruposIndex = useMemo(
+    () => (gruposEconomicos ? indexarPorCnpj(gruposEconomicos) : null),
+    [gruposEconomicos]
+  );
   const [selectedContrato, setSelectedContrato] = useState<Contrato | null>(null);
   const [resumo, setResumo] = useState<string | null>(null);
   const [resumoError, setResumoError] = useState<{ code: string; message: string } | null>(null);
@@ -658,7 +670,9 @@ function ContratosTab() {
         // de risco de TODOS os cards (foi o que aconteceu quando calcularSuspeita
         // passou a lancar ReferenceError e a pagina inteira ficou sem bolinha).
         try {
-          if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined, aditivosPorContrato || undefined)) {
+          const cnpjDigGrupo = (data[i]?.empresa_cnpj || "").replace(/\D/g, "");
+          const emGrupo = !!gruposIndex?.get(cnpjDigGrupo);
+          if (calcularSuspeitaContrato(normalizados[i], normalizados, aditivosList, cnpjData || undefined, aditivosPorContrato || undefined, emGrupo)) {
             ids.add(normalizados[i].id);
           }
         } catch (err) {
@@ -673,7 +687,7 @@ function ContratosTab() {
     };
     setTimeout(processChunk, 50);
     return () => { cancelled = true; };
-  }, [data, aditivosReady, aditivos, cnpjData, aditivosPorContrato]);
+  }, [data, aditivosReady, aditivos, cnpjData, aditivosPorContrato, gruposIndex]);
 
   const fetchResumoContrato = async (c: Contrato, forceRefresh = false) => {
     setResumo(null);
@@ -857,6 +871,7 @@ function ContratosTab() {
         </div>
       )}
 
+      <GruposContratosAviso />
       <div className="space-y-2">
         {visibleContratos.map((c) => (
           <button key={c.id} onClick={() => handleOpenResumo(c)} className="stat-card card-hover block w-full text-left space-y-1 relative">
@@ -873,6 +888,7 @@ function ContratosTab() {
                     razaoSocial={c.empresa_razao_social}
                     cnae={c.empresa_cnae_descricao}
                   />
+                  <GrupoEconomicoBadge grupo={gruposIndex?.get((c.empresa_cnpj || "").replace(/\D/g, ""))} />
                 </div>
                 {c.empresa_razao_social &&
                   c.empresa &&

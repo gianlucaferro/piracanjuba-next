@@ -14,6 +14,7 @@ import { calcularSuspeitaContrato, normalizarCamara, type FornecedorCNPJ } from 
 import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditivos";
 import { formatCurrency } from "@/lib/formatters";
 import { downloadCSV } from "@/lib/csvExport";
+import GruposContratosAviso from "@/components/transparencia/GruposContratosAviso";
 
 export default function ContratosTab() {
   const [search, setSearch] = useState("");
@@ -190,6 +191,7 @@ export default function ContratosTab() {
         </div>
       )}
 
+      <GruposContratosAviso poder="camara" />
       <div className="space-y-2">
         {filtered.map((c) => (
           <button

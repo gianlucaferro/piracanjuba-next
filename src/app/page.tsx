@@ -21,6 +21,7 @@ import {
   Building,
   Trees,
   Trophy,
+  Network,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { NOTA_PNTP } from "@/data/notaTransparencia";
@@ -257,6 +258,16 @@ export default async function HomePage() {
               <p className="text-sm text-muted-foreground">Bandeira, produtos e situação na ANP</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-orange-500 transition-colors" />
+          </Link>
+          <Link href="/grupos-economicos" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-violet-500/10 flex items-center justify-center shrink-0">
+              <Network className="w-5 h-5 text-violet-500" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Grupos Econômicos</p>
+              <p className="text-sm text-muted-foreground">Fornecedores que dividem os mesmos sócios</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-violet-500 transition-colors" />
           </Link>
         </section>
 
