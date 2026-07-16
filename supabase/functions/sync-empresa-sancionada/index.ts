@@ -29,11 +29,22 @@ type CeisItem = {
 
 type CnepItem = CeisItem & { valorMulta?: number | string };
 
+// CEPIM: entidades privadas sem fins lucrativos impedidas de receber convênio federal.
+// Formato do Portal difere do CEIS/CNEP (pessoaJuridica em vez de sancionado, motivo, orgaoSuperior).
+type CepimItem = {
+  id: number;
+  dataReferencia?: string;
+  motivo?: string;
+  orgaoSuperior?: { nome?: string };
+  pessoaJuridica?: { cnpjFormatado?: string; nome?: string; razaoSocialReceita?: string };
+  convenio?: Record<string, unknown>;
+};
+
 async function fetchPagina(
   token: string,
-  endpoint: "ceis" | "cnep",
+  endpoint: "ceis" | "cnep" | "cepim",
   pagina: number,
-): Promise<(CeisItem | CnepItem)[]> {
+): Promise<(CeisItem | CnepItem | CepimItem)[]> {
   const url = `${PORTAL_BASE}/${endpoint}?pagina=${pagina}`;
   const resp = await fetch(url, {
     headers: { "chave-api-dados": token, Accept: "application/json" },
@@ -46,7 +57,26 @@ async function fetchPagina(
     }
     throw new Error(`PortalTransparencia ${endpoint} p${pagina} ${resp.status}`);
   }
-  return (await resp.json()) as (CeisItem | CnepItem)[];
+  return (await resp.json()) as (CeisItem | CnepItem | CepimItem)[];
+}
+
+function normRowCepim(item: CepimItem): Record<string, unknown> | null {
+  const cnpj = item.pessoaJuridica?.cnpjFormatado ?? "";
+  const nome = item.pessoaJuridica?.nome ?? item.pessoaJuridica?.razaoSocialReceita ?? "";
+  if (!cnpj || !nome) return null;
+  return {
+    cnpj,
+    nome,
+    cadastro: "CEPIM",
+    tipo_sancao: "Entidade impedida de receber convênio federal (CEPIM)",
+    data_inicio_sancao: parseDate(item.dataReferencia),
+    data_fim_sancao: null,
+    orgao_sancionador: item.orgaoSuperior?.nome ?? null,
+    fundamentacao: item.motivo ?? null,
+    valor_multa: null,
+    id_externo: String(item.id),
+    raw_payload: item as Record<string, unknown>,
+  };
 }
 
 /**
@@ -137,14 +167,14 @@ Deno.serve(async (req) => {
     );
   }
 
-  let body: { maxPaginas?: number; cadastros?: Array<"CEIS" | "CNEP"> } = {};
+  let body: { maxPaginas?: number; cadastros?: Array<"CEIS" | "CNEP" | "CEPIM"> } = {};
   try {
     body = req.method === "POST" ? await req.json() : {};
   } catch {
     // body vazio ok
   }
   const maxPaginas = Math.max(1, Math.min(body.maxPaginas ?? 10, 50));
-  const cadastros = body.cadastros ?? (["CEIS", "CNEP"] as const);
+  const cadastros = body.cadastros ?? (["CEIS", "CNEP", "CEPIM"] as const);
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   const startedAt = Date.now();
@@ -155,7 +185,7 @@ Deno.serve(async (req) => {
     let pagina = 1;
     let vaziaConsecutiva = 0;
     while (pagina <= maxPaginas && vaziaConsecutiva < 2) {
-      const items = await fetchPagina(TOKEN, cadastro.toLowerCase() as "ceis" | "cnep", pagina);
+      const items = await fetchPagina(TOKEN, cadastro.toLowerCase() as "ceis" | "cnep" | "cepim", pagina);
       if (items.length === 0) {
         vaziaConsecutiva++;
         pagina++;
@@ -163,7 +193,11 @@ Deno.serve(async (req) => {
       }
       vaziaConsecutiva = 0;
       const rows = items
-        .map((i) => normRow(i, cadastro))
+        .map((i) =>
+          cadastro === "CEPIM"
+            ? normRowCepim(i as CepimItem)
+            : normRow(i as CeisItem | CnepItem, cadastro as "CEIS" | "CNEP")
+        )
         .filter((r): r is Record<string, unknown> => r !== null);
       if (rows.length > 0) {
         const { error } = await supabase
