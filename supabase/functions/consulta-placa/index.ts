@@ -1,3 +1,6 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -28,6 +31,11 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Rate limit por IP (repo público: função exposta que chama API paga de placas)
+    const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const guard = await aiGuard(sb, req, "consulta-placa");
+    if (!guard.allowed) return guardBlockedResponse(guard);
 
     let vehicleData: Record<string, string | number | null> = {};
     let found = false;
