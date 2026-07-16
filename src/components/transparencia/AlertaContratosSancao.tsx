@@ -88,15 +88,17 @@ export default async function AlertaContratosSancao() {
             id="contratos-sancao-heading"
             className="text-base font-bold text-foreground"
           >
-            Cruzamento cívico: contratos × CEIS/CNEP
+            Cruzamento cívico: contratos × cadastros de sanção
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mt-1">
             Sistema automatizado que cruza{" "}
-            <strong>contratos da Câmara de Piracanjuba</strong> com o{" "}
-            <strong>Cadastro Nacional de Empresas Inidôneas (CEIS)</strong> e o{" "}
-            <strong>Cadastro Nacional de Empresas Punidas (CNEP)</strong> do
-            Portal da Transparência Federal. Classificado por sobreposição
-            temporal entre vigência do contrato e período da sanção.
+            <strong>contratos da Câmara de Piracanjuba</strong> com os cadastros
+            federais de sanção: <strong>CEIS</strong> e <strong>CNEP</strong>{" "}
+            (Portal da Transparência), <strong>CEPIM</strong> (entidades
+            impedidas de convênio), a <strong>Lista Suja do Trabalho Escravo</strong>{" "}
+            (MTE) e os <strong>inidôneos do TCU</strong> (barrados de licitar).
+            Classificado por sobreposição temporal entre vigência do contrato e
+            período da sanção.
           </p>
         </div>
       </header>
@@ -206,9 +208,20 @@ export default async function AlertaContratosSancao() {
         >
           CNEP <ExternalLink className="w-3 h-3" />
         </Link>{" "}
-        — Portal da Transparência Federal. Atualização automática mensal.
-        Existência da sanção <strong>não implica culpa</strong> automática do
-        contrato municipal — é alerta para escrutínio público. A{" "}
+        ·{" "}
+        <Link
+          href="https://portaldatransparencia.gov.br/sancoes/cepim"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline inline-flex items-center gap-0.5"
+        >
+          CEPIM <ExternalLink className="w-3 h-3" />
+        </Link>{" "}
+        (Portal da Transparência Federal) · <strong>Lista Suja do Trabalho
+        Escravo</strong> (MTE) · <strong>inidôneos do TCU</strong>. CEIS, CNEP e
+        CEPIM têm atualização automática; Lista Suja e TCU são fontes
+        complementares. Existência da sanção <strong>não implica culpa</strong>{" "}
+        automática do contrato municipal, é alerta para escrutínio público. A{" "}
         <strong>presunção de inocência é inviolável</strong> (CF art. 5º LVII).
       </p>
     </section>

@@ -14,7 +14,7 @@ export type ContratoComSancao = {
   fim_vigencia: string | null;
   objeto: string | null;
   situacao: string | null;
-  cadastro: "CEIS" | "CNEP";
+  cadastro: "CEIS" | "CNEP" | "CEPIM" | "Lista Suja" | "TCU";
   tipo_sancao: string | null;
   data_inicio_sancao: string | null;
   data_fim_sancao: string | null;
