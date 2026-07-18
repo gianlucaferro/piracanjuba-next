@@ -44,6 +44,22 @@ import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
 
+/**
+ * Foto de pessoa com fallback gracioso: se a URL for nula OU falhar ao carregar,
+ * mostra o ícone de pessoa em vez de deixar uma caixa vazia.
+ */
+function FotoComFallback({ src, alt, className }: { src: string | null; alt: string; className: string }) {
+  const [erro, setErro] = useState(false);
+  if (!src || erro) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <Users className="w-6 h-6 text-muted-foreground" />
+      </div>
+    );
+  }
+  return <img src={src} alt={alt} className={className} onError={() => setErro(true)} />;
+}
+
 function EmptyState({ icon: Icon, title, description, fonteUrl }: {
   icon: React.ElementType; title: string; description: string; fonteUrl?: string;
 }) {
@@ -106,11 +122,8 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
         <div key={a.id} className="stat-card space-y-4">
           <div className="flex items-start gap-4">
             <div className="w-32 sm:w-40 aspect-[4/5] rounded-2xl bg-primary/10 flex-shrink-0 overflow-hidden">
-              {a.foto_url && (
-                <img src={a.foto_url} alt={`Foto de ${a.nome}`}
-                  className="w-full h-full rounded-2xl object-cover object-top"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }} />
-              )}
+              <FotoComFallback src={a.foto_url} alt={`Foto de ${a.nome}`}
+                className="w-full h-full rounded-2xl object-cover object-top" />
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-lg font-bold text-foreground">{a.nome}</h2>
@@ -236,15 +249,8 @@ function SecretariasTab() {
           <div key={s.id} className="stat-card space-y-3 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all" onClick={() => handleClick(s)}>
             <div className="flex items-start gap-3">
               <div className="w-16 aspect-[4/5] rounded-xl bg-primary/10 flex-shrink-0 overflow-hidden">
-                {s.foto_url ? (
-                  <img src={s.foto_url} alt={s.secretario_nome || s.nome}
-                    className="w-full h-full rounded-xl object-cover object-top"
-                    onError={(e) => { e.currentTarget.style.display = "none"; }} />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Users className="w-6 h-6 text-muted-foreground" />
-                  </div>
-                )}
+                <FotoComFallback src={s.foto_url} alt={s.secretario_nome || s.nome}
+                  className="w-full h-full rounded-xl object-cover object-top" />
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-semibold text-foreground text-sm leading-tight">{s.nome}</h3>
