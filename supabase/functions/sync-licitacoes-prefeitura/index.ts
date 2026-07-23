@@ -91,11 +91,25 @@ Deno.serve(async (req) => {
   );
   const startedAt = Date.now();
 
+  // O portal serve licitacoes e dispensas/inexigibilidades pela MESMA acao,
+  // alternando a flag `dispensas`. Sao ~554 licitacoes e ~5.781 dispensas.
+  // A API e lenta (500 registros ~57s), por isso o volume e limitado por body.
+  let body: { dispensas?: number; pageSize?: number; maxPages?: number } = {};
+  try {
+    body = req.method === "POST" ? await req.json() : {};
+  } catch {
+    // body vazio e valido (cron chama com {})
+  }
+  const isDispensa = Number(body.dispensas ?? 0) === 1;
+  const pageSize = Math.min(Math.max(Number(body.pageSize ?? 100), 10), 500);
+  const maxPages = Math.min(Math.max(Number(body.maxPages ?? 30), 1), 60);
+
   try {
     const licits = await centiListAll<NucleoLicit>(REFERER, ACAO, {
       base: CENTI_BASE_PREFEITURA,
-      pageSize: 100,
-      maxPages: 30, // teto de 3000 registros; hoje sao ~554
+      extra: { dispensas: isDispensa ? "1" : "0" },
+      pageSize,
+      maxPages,
     });
 
     // Sem `chave` nao ha como fazer upsert idempotente: descarta e reporta.
@@ -123,6 +137,7 @@ Deno.serve(async (req) => {
       data_encerramento: parseDateTimeBR(l.data_encerramento),
       valor_estimado: parseValorBR(l.valor_estimado),
       valor_sigiloso: isSigiloso(l.valor_estimado),
+      tipo: isDispensa ? "dispensa" : "licitacao",
       fonte: "nucleogov",
       fonte_url: FONTE_URL,
       raw_payload: l as unknown as Record<string, unknown>,
@@ -148,6 +163,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: ok,
+        tipo: isDispensa ? "dispensa" : "licitacao",
         duration_ms: Date.now() - startedAt,
         total_fetched: licits.length,
         duplicadas_ignoradas: validas.length - porChave.size,

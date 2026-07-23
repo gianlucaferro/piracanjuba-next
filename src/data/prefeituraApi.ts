@@ -314,13 +314,28 @@ export async function fetchContratos(): Promise<Contrato[]> {
   return allData;
 }
 
+/**
+ * O PostgREST corta em 1000 linhas (db-max-rows), então uma query simples
+ * esconderia registros silenciosamente. Pagina por range até esgotar.
+ */
 export async function fetchLicitacoes(): Promise<Licitacao[]> {
-  const { data, error } = await supabase
-    .from("licitacoes")
-    .select("*")
-    .order("data_publicacao", { ascending: false });
-  if (error) throw error;
-  return (data || []) as Licitacao[];
+  const PAGINA = 1000;
+  const TETO = 6000; // trava de segurança: a base de dispensas ainda cresce
+  const todas: Licitacao[] = [];
+
+  for (let inicio = 0; inicio < TETO; inicio += PAGINA) {
+    const { data, error } = await supabase
+      .from("licitacoes")
+      .select("*")
+      .order("data_publicacao", { ascending: false })
+      .range(inicio, inicio + PAGINA - 1);
+    if (error) throw error;
+    const lote = (data || []) as Licitacao[];
+    todas.push(...lote);
+    if (lote.length < PAGINA) break;
+  }
+
+  return todas;
 }
 
 export async function fetchDiarias(): Promise<Diaria[]> {

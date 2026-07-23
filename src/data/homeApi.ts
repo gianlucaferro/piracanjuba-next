@@ -96,18 +96,32 @@ export async function fetchContratosResumo() {
   };
 }
 
+/**
+ * Usa contagem exata no servidor: buscar as linhas truncaria em 1000 (db-max-rows).
+ * Os status seguem o vocabulário do portal NucleoGov ("Iniciada", "Homologada"...),
+ * não os rótulos minúsculos do sync legado, que não casavam com nada.
+ */
 export async function fetchLicitacoesResumo() {
-  const { data, error } = await supabase
-    .from("licitacoes")
-    .select("status, data_publicacao");
-  if (error) throw error;
-  const licitacoes = data || [];
-  return {
-    abertas: licitacoes.filter(l => l.status === "aberta").length,
-    andamento: licitacoes.filter(l => l.status === "em_andamento").length,
-    concluidas: licitacoes.filter(l => l.status === "concluida" || l.status === "homologada").length,
-    total: licitacoes.length,
+  const ABERTAS = ["Iniciada", "Em credenciamento"];
+  const ANDAMENTO = ["Em julgamento", "Julgada", "Adjudicada"];
+  const CONCLUIDAS = ["Homologada"];
+
+  const contar = async (statuses?: string[]) => {
+    let q = supabase.from("licitacoes").select("id", { count: "exact", head: true });
+    if (statuses) q = q.in("status", statuses);
+    const { count, error } = await q;
+    if (error) throw error;
+    return count ?? 0;
   };
+
+  const [abertas, andamento, concluidas, total] = await Promise.all([
+    contar(ABERTAS),
+    contar(ANDAMENTO),
+    contar(CONCLUIDAS),
+    contar(),
+  ]);
+
+  return { abertas, andamento, concluidas, total };
 }
 
 export async function fetchServidoresResumo() {
