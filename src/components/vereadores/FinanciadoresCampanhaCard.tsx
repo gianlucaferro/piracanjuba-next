@@ -5,6 +5,7 @@ import {
   fetchDoadoresDoExecutivo,
   type DoadoresResult,
 } from "@/lib/data/tse-doadores";
+import { getCargoAtualDoador } from "@/lib/funprepi";
 
 function fmtMoeda(n: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
@@ -60,6 +61,7 @@ function FinanciadoresView({
       <div className="space-y-2">
         {topDoadores.map((d, i) => {
           const isPj = (d.tipo_doador ?? "").toLowerCase().includes("jurid") || d.cpf_cnpj_doador.replace(/\D/g, "").length === 14;
+          const cargoAtual = getCargoAtualDoador(d.nome_doador);
           return (
             <div key={d.id} className="flex items-start gap-3 p-3 rounded-lg border border-border bg-background/40">
               <div
@@ -70,7 +72,14 @@ function FinanciadoresView({
                 #{i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-foreground truncate">{d.nome_doador}</p>
+                <p className="font-semibold text-sm text-foreground leading-snug">
+                  {d.nome_doador}
+                  {cargoAtual && (
+                    <span className="font-normal text-muted-foreground">
+                      {" - "}{cargoAtual.cargo}
+                    </span>
+                  )}
+                </p>
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     {isPj ? <Building2 className="w-3 h-3" /> : <User className="w-3 h-3" />}
@@ -79,6 +88,17 @@ function FinanciadoresView({
                   <span className="font-mono">{mascararCpf(d.cpf_cnpj_doador)}</span>
                   {d.dt_receita && <span>{new Date(d.dt_receita).toLocaleDateString("pt-BR")}</span>}
                 </div>
+                {cargoAtual && (
+                  <Link
+                    href={cargoAtual.fonteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-xs text-primary underline-offset-2 hover:underline"
+                  >
+                    Cargo atual: Prefeitura de Piracanjuba
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
               </div>
               <p className="text-sm font-bold text-emerald-700 shrink-0">{fmtMoeda(d.vr_receita)}</p>
             </div>
