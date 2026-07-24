@@ -13,7 +13,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.sync-prefeitura-diaria]
-verify_jwt = false
+verify_jwt = true
 
 [functions.sync-lei-organica]
 verify_jwt = false
@@ -106,7 +106,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.import-folha-manual]
-verify_jwt = false
+verify_jwt = true
 
 [functions.summarize-servidor]
 verify_jwt = false
@@ -215,6 +215,33 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.sync-transferencias-federais]
+verify_jwt = false
+
+[functions.sync-licitacoes-prefeitura]
+verify_jwt = false
+
+[functions.sync-contratos-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-aditivos-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-fiscais-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-empenhos-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-pagamentos-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-diarias-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-folha-prefeitura-nucleogov]
+verify_jwt = false
+
+[functions.sync-atos-prefeitura-nucleogov]
 verify_jwt = false
 
 # Functions chamadas pelo frontend (JWT verify ON, default)

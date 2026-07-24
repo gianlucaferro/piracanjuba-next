@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 // Sync das licitacoes da PREFEITURA de Piracanjuba a partir do portal NucleoGov
 // (acessoainformacao.piracanjuba.go.gov.br), que substituiu o Centi em 2026-07.
 //
@@ -8,18 +10,25 @@
 // Idempotente: upsert em lote pela `chave` (id interno do portal). As linhas
 // legadas do sync antigo (fonte='legado', chave NULL) nao sao tocadas.
 
+// deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { centiListAll, CENTI_BASE_PREFEITURA } from "../_shared/centi-client.ts";
+import {
+  CENTI_BASE_PREFEITURA,
+  centiListAllWithMeta,
+} from "../_shared/centi-client.ts";
 import { checkCentiAuth } from "../_shared/centi-auth.ts";
+import { assertPersistenceSucceeded } from "../_shared/persistence-guards.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, content-type, x-cron-secret, x-centi-ingest-secret",
+  "Access-Control-Allow-Headers":
+    "authorization, content-type, x-cron-secret, x-centi-ingest-secret",
 };
 
-const REFERER = "/cidadao/informacao/licitacoes_cnt";
+const REFERER = "/cidadao/transparencia/licitacoes_cnt";
 const ACAO = "licitacoes_cnt/listar";
-const FONTE_URL = `${CENTI_BASE_PREFEITURA}/cidadao/informacao/licitacoes_cnt`;
+const FONTE_URL =
+  `${CENTI_BASE_PREFEITURA}/cidadao/transparencia/licitacoes_cnt`;
 const CHUNK = 100;
 
 type NucleoLicit = {
@@ -50,7 +59,9 @@ function parseDateBR(s?: string | null): string | null {
 /** "21/08/2026 08:00" (segundos opcionais) -> ISO com offset de Brasilia */
 function parseDateTimeBR(s?: string | null): string | null {
   if (!s) return null;
-  const m = String(s).match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
+  const m = String(s).match(
+    /^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/,
+  );
   if (!m) return null;
   const [, d, mo, y, hh, mi, ss] = m;
   if (!hh) return `${y}-${mo}-${d}T00:00:00-03:00`;
@@ -65,7 +76,10 @@ function isSigiloso(s?: string | null): boolean {
 /** "1.234.567,89" -> 1234567.89 */
 function parseValorBR(s?: string | null): number | null {
   if (!s || isSigiloso(s)) return null;
-  const limpo = String(s).replace(/[^\d.,-]/g, "").replace(/\./g, "").replace(",", ".");
+  const limpo = String(s).replace(/[^\d.,-]/g, "").replace(/\./g, "").replace(
+    ",",
+    ".",
+  );
   const n = parseFloat(limpo);
   return Number.isFinite(n) ? n : null;
 }
@@ -77,7 +91,9 @@ function toInt(v: unknown): number | null {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
   if (!checkCentiAuth(req)) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
@@ -94,23 +110,101 @@ Deno.serve(async (req) => {
   // O portal serve licitacoes e dispensas/inexigibilidades pela MESMA acao,
   // alternando a flag `dispensas`. Sao ~554 licitacoes e ~5.781 dispensas.
   // A API e lenta (500 registros ~57s), por isso o volume e limitado por body.
-  let body: { dispensas?: number; pageSize?: number; maxPages?: number } = {};
+  let body: {
+    dispensas?: number;
+    year?: number;
+    pageSize?: number;
+    maxPages?: number;
+    allYears?: boolean;
+  } = {};
   try {
-    body = req.method === "POST" ? await req.json() : {};
+    const parsed = req.method === "POST" ? await req.json() : {};
+    body = parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? parsed
+      : {};
   } catch {
     // body vazio e valido (cron chama com {})
   }
   const isDispensa = Number(body.dispensas ?? 0) === 1;
-  const pageSize = Math.min(Math.max(Number(body.pageSize ?? 100), 10), 500);
-  const maxPages = Math.min(Math.max(Number(body.maxPages ?? 30), 1), 60);
+  const parseBounded = (
+    value: unknown,
+    fallback: number,
+    min: number,
+    max: number,
+  ) => {
+    if (value === null || value === undefined || value === "") return fallback;
+    const parsed = Number(value);
+    if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+      throw new Error(`Parametro inteiro invalido: ${String(value)}`);
+    }
+    return parsed;
+  };
+  let pageSize: number;
+  let maxPages: number;
+  let year: number | null;
+  try {
+    pageSize = parseBounded(body.pageSize, 100, 10, 500);
+    maxPages = parseBounded(body.maxPages, 30, 1, 60);
+    year = (isDispensa && body.allYears !== true) ||
+        body.year !== undefined
+      ? parseBounded(
+        body.year,
+        new Date().getUTCFullYear(),
+        2000,
+        new Date().getUTCFullYear(),
+      )
+      : null;
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
+  }
+  const tipo = isDispensa ? "dispensa" : "licitacao";
+  const scope = year === null ? tipo : `${tipo}:${year}`;
+  const { data: logEntry, error: logError } = await supabase
+    .from("sync_log")
+    .insert({
+      tipo: "sync-licitacoes-prefeitura",
+      status: "running",
+      detalhes: { tipo, scope, source: "nucleogov" },
+    })
+    .select("id")
+    .single();
+  if (logError) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: `sync_log: ${logError.message}`,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
+  }
+  const logId = logEntry?.id;
 
   try {
-    const licits = await centiListAll<NucleoLicit>(REFERER, ACAO, {
+    const result = await centiListAllWithMeta<NucleoLicit>(REFERER, ACAO, {
       base: CENTI_BASE_PREFEITURA,
-      extra: { dispensas: isDispensa ? "1" : "0" },
+      extra: {
+        dispensas: isDispensa ? "1" : "0",
+        ...(year === null ? {} : { ano: String(year) }),
+      },
       pageSize,
       maxPages,
     });
+    const licits = result.dados;
+    if (licits.length === 0 && result.total !== 0) {
+      throw new Error("Fonte retornou vazio sem total zero");
+    }
 
     // Sem `chave` nao ha como fazer upsert idempotente: descarta e reporta.
     const semChave = licits.filter((l) => toInt(l.chave) === null).length;
@@ -153,33 +247,94 @@ Deno.serve(async (req) => {
         .from("licitacoes")
         .upsert(lote, { onConflict: "chave" });
       if (error) {
-        if (erros.length < 3) erros.push(`lote ${i / CHUNK + 1}: ${error.message}`);
+        if (erros.length < 3) {
+          erros.push(`lote ${i / CHUNK + 1}: ${error.message}`);
+        }
       } else {
         upserted += lote.length;
       }
     }
 
-    const ok = erros.length === 0;
+    const persistedAll = result.total === 0 ||
+      (rows.length > 0 && upserted === rows.length);
+    const complete = result.complete && semChave === 0 &&
+      erros.length === 0 && persistedAll;
+    const ok = erros.length === 0 && complete;
+    const status = erros.length > 0
+      ? "error"
+      : complete
+      ? "success"
+      : "partial";
+    const details = {
+      tipo,
+      scope,
+      source: "nucleogov",
+      source_total: result.total,
+      total_fetched: licits.length,
+      pages_fetched: result.pagesFetched,
+      max_pages_reached: result.maxPagesReached,
+      source_complete: result.complete,
+      complete,
+      duplicadas_ignoradas: validas.length - porChave.size,
+      sem_chave_descartadas: semChave,
+      upserted,
+      erros,
+      duration_ms: Date.now() - startedAt,
+    };
+    const { error: stateError } = await supabase.from("prefeitura_sync_state")
+      .upsert({
+        dataset: tipo,
+        scope,
+        fetched: licits.length,
+        source_total: result.total,
+        complete,
+        checked_at: new Date().toISOString(),
+      }, { onConflict: "dataset,scope" });
+    assertPersistenceSucceeded("prefeitura_sync_state", stateError);
+    if (logId) {
+      const { error: finishError } = await supabase.from("sync_log").update({
+        status,
+        detalhes: details,
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
+      assertPersistenceSucceeded("sync_log finish", finishError);
+    }
     return new Response(
       JSON.stringify({
         success: ok,
-        tipo: isDispensa ? "dispensa" : "licitacao",
-        duration_ms: Date.now() - startedAt,
-        total_fetched: licits.length,
-        duplicadas_ignoradas: validas.length - porChave.size,
-        sem_chave_descartadas: semChave,
-        upserted,
-        erros,
+        status,
+        ...details,
       }),
       {
-        status: ok ? 200 : 500,
+        status: erros.length > 0 ? 500 : complete ? 200 : 206,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );
   } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    if (logId) {
+      await supabase.from("sync_log").update({
+        status: "error",
+        detalhes: {
+          tipo,
+          scope,
+          source: "nucleogov",
+          error,
+          duration_ms: Date.now() - startedAt,
+        },
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
+    }
     return new Response(
-      JSON.stringify({ success: false, error: String(err), duration_ms: Date.now() - startedAt }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      JSON.stringify({
+        success: false,
+        error,
+        duration_ms: Date.now() - startedAt,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });

@@ -1,3 +1,6 @@
+/// <reference lib="deno.ns" />
+
+// deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -38,12 +41,12 @@ interface ScrapedContrato {
 
 function parseContratosHtml(html: string): ScrapedContrato[] {
   const contratos: ScrapedContrato[] = [];
-  
+
   const tbodyMatch = html.match(/<tbody>([\s\S]*?)<\/tbody>/);
   if (!tbodyMatch) return contratos;
-  
+
   const tbody = tbodyMatch[1];
-  const rows = tbody.split("</tr>").filter(r => r.includes("<td"));
+  const rows = tbody.split("</tr>").filter((r) => r.includes("<td"));
 
   for (const row of rows) {
     const cells: string[] = [];
@@ -64,98 +67,14 @@ function parseContratosHtml(html: string): ScrapedContrato[] {
         valor: parseBRL(cells[4]),
         numero: cells[5],
         objeto: null, // will be filled from detail page
-        fonte_url: fonteUrl.startsWith("http") ? fonteUrl : `${BASE_URL}${fonteUrl}`,
+        fonte_url: fonteUrl.startsWith("http")
+          ? fonteUrl
+          : `${BASE_URL}${fonteUrl}`,
       });
     }
   }
 
   return contratos;
-}
-
-// Extract "Objeto" from contract detail page HTML
-function parseContratoDetalhe(html: string): string | null {
-  // Pattern: "Objeto" label followed by the value text
-  // The page has format like: <b>Objeto</b>TEXT or similar patterns
-  const patterns = [
-    /Objeto\s*<\/(?:b|strong|td|th|label|span)>\s*([^<]+)/i,
-    /Objeto\s*([A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ][^<]{10,})/i,
-  ];
-  
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match && match[1]?.trim().length > 5) {
-      return match[1].trim();
-    }
-  }
-  return null;
-}
-
-// Fetch detail for a single contract with retry
-async function fetchContratoDetalhe(url: string): Promise<string | null> {
-  try {
-    const resp = await fetch(url, { headers: { "User-Agent": UA } });
-    if (!resp.ok) return null;
-    const html = await resp.text();
-    return parseContratoDetalhe(html);
-  } catch {
-    return null;
-  }
-}
-
-// ===================== FOLHA DE PAGAMENTO SCRAPER =====================
-
-interface ScrapedServidor {
-  nome: string;
-  cargo: string | null;
-  bruto: number | null;
-  liquido: number | null;
-}
-
-function parseServidoresHtml(html: string): ScrapedServidor[] {
-  const servidores: ScrapedServidor[] = [];
-
-  const tbodyMatch = html.match(/<tbody>([\s\S]*?)<\/tbody>/);
-  if (!tbodyMatch) return servidores;
-
-  const tbody = tbodyMatch[1];
-  const rows = tbody.split("</tr>").filter(r => r.includes("<td"));
-
-  for (const row of rows) {
-    const cells: string[] = [];
-    const cellPattern = /<td[^>]*>([\s\S]*?)<\/td>/g;
-    let cellMatch;
-    while ((cellMatch = cellPattern.exec(row)) !== null) {
-      cells.push(cellMatch[1].replace(/<[^>]*>/g, "").trim());
-    }
-
-    // Typical columns: Nome, Cargo, ..., Bruto, ..., Líquido
-    // We'll try to identify by position - varies by portal config
-    if (cells.length >= 2) {
-      const nome = cells[0];
-      const cargo = cells.length > 1 ? cells[1] : null;
-      
-      // Try to find numeric values (bruto/liquido) in remaining cells
-      let bruto: number | null = null;
-      let liquido: number | null = null;
-      
-      for (let i = 2; i < cells.length; i++) {
-        const val = parseBRL(cells[i]);
-        if (val !== null && val > 0) {
-          if (bruto === null) {
-            bruto = val;
-          } else if (liquido === null) {
-            liquido = val;
-          }
-        }
-      }
-
-      if (nome && nome.length > 2) {
-        servidores.push({ nome, cargo, bruto, liquido });
-      }
-    }
-  }
-
-  return servidores;
 }
 
 // ===================== LICITAÇÕES SCRAPER =====================
@@ -176,7 +95,7 @@ function parseLicitacoesHtml(html: string): ScrapedLicitacao[] {
   if (!tbodyMatch) return licitacoes;
 
   const tbody = tbodyMatch[1];
-  const rows = tbody.split("</tr>").filter(r => r.includes("<td"));
+  const rows = tbody.split("</tr>").filter((r) => r.includes("<td"));
 
   for (const row of rows) {
     const cells: string[] = [];
@@ -213,7 +132,10 @@ Deno.serve(async (req) => {
 
   const reqUrl = new URL(req.url);
   const anoParam = reqUrl.searchParams.get("ano"); // optional: filter to single year
-  const skipLicitacoes = reqUrl.searchParams.get("skip_licitacoes") === "1";
+  // O portal antigo nao fornece a chave oficial agora obrigatoria em licitacoes.
+  // A escrita passou integralmente para sync-licitacoes-prefeitura (NucleoGov).
+  const skipLicitacoes =
+    reqUrl.searchParams.get("include_legacy_licitacoes") !== "1";
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -221,12 +143,16 @@ Deno.serve(async (req) => {
 
   const { data: logEntry } = await supabase
     .from("sync_log")
-    .insert({ tipo: "prefeitura_diaria", status: "running", detalhes: { ano: anoParam } })
+    .insert({
+      tipo: "prefeitura_diaria",
+      status: "running",
+      detalhes: { ano: anoParam },
+    })
     .select()
     .single();
   const logId = logEntry?.id;
 
-  const results: Record<string, any> = {};
+  const results: Record<string, unknown> = {};
   const errors: string[] = [];
 
   try {
@@ -234,19 +160,23 @@ Deno.serve(async (req) => {
     console.log("Scraping contratos...");
     // Range completo 2013..ano atual (era hard-coded 2020-2026, perdia historico)
     const anoAtualPref = new Date().getFullYear();
-    const allAnos = Array.from({ length: anoAtualPref - 2012 }, (_, i) => anoAtualPref - i);
+    const allAnos = Array.from(
+      { length: anoAtualPref - 2012 },
+      (_, i) => anoAtualPref - i,
+    );
     const anosContratos = anoParam ? [parseInt(anoParam)] : allAnos;
     // All municipal organs: Executivo(22), Câmara(23), Educação(55), Saúde(67),
     // Assistência Social(66), Cultura(44), Meio Ambiente(71), Esporte(68),
     // Agricultura(70), Infraestrutura(72), Administração(56)
     const orgaosContratos = [22, 23, 55, 67, 66, 44, 71, 68, 70, 72, 56];
-    let newContratos = 0;
+    const newContratos = 0;
     let updatedContratos = 0;
 
     for (const ano of anosContratos) {
       for (const orgao of orgaosContratos) {
         try {
-          const url = `${BASE_URL}/contratos?ano=${ano}&idorgao=${orgao}&pagina=1&itensporpagina=500`;
+          const url =
+            `${BASE_URL}/contratos?ano=${ano}&idorgao=${orgao}&pagina=1&itensporpagina=500`;
           // Throttle pra nao tomar HTTP 429 do portal Centi
           await new Promise((r) => setTimeout(r, 300));
           let resp = await fetch(url, { headers: { "User-Agent": UA } });
@@ -263,16 +193,18 @@ Deno.serve(async (req) => {
 
           const html = await resp.text();
           const scraped = parseContratosHtml(html);
-          console.log(`Contratos ${ano}/orgao${orgao}: ${scraped.length} encontrados`);
+          console.log(
+            `Contratos ${ano}/orgao${orgao}: ${scraped.length} encontrados`,
+          );
 
           if (scraped.length === 0) continue;
 
           // UPSERT idempotente via constraint contratos_uniq_negocio
           // (numero, vigencia_inicio, empresa, valor). Substitui o dedup
           // manual antigo (`existingKeys` por vigencia_inicio no ano), que
-          // falhava quando vigencia_inicio era null ou de outro ano —
+          // falhava quando vigencia_inicio era null ou de outro ano:
           // causava re-insercao a cada execucao do cron.
-          const toUpsert = scraped.map(c => ({
+          const toUpsert = scraped.map((c) => ({
             numero: c.numero,
             empresa: c.empresa,
             valor: c.valor,
@@ -290,13 +222,18 @@ Deno.serve(async (req) => {
                 ignoreDuplicates: true,
               });
             if (error) {
-              errors.push(`Upsert contratos ${ano}/orgao${orgao}: ${error.message}`);
+              errors.push(
+                `Upsert contratos ${ano}/orgao${orgao}: ${error.message}`,
+              );
             } else {
-              newContratos += toUpsert.length;
+              // O upsert com ignoreDuplicates nao informa quantas linhas eram novas.
+              // Registra somente o volume processado, sem gerar alerta falso.
+              updatedContratos += toUpsert.length;
             }
           }
         } catch (e) {
-          errors.push(`Contratos ${ano}/orgao${orgao}: ${e.message}`);
+          const message = e instanceof Error ? e.message : String(e);
+          errors.push(`Contratos ${ano}/orgao${orgao}: ${message}`);
         }
       }
     }
@@ -313,15 +250,22 @@ Deno.serve(async (req) => {
             "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
           },
           body: JSON.stringify({
-            title: `📋 ${newContratos} novo${newContratos > 1 ? "s" : ""} contrato${newContratos > 1 ? "s" : ""} da Prefeitura`,
-            body: `${newContratos} novo${newContratos > 1 ? "s" : ""} contrato${newContratos > 1 ? "s" : ""} ${newContratos > 1 ? "foram adicionados" : "foi adicionado"} ao portal de transparência.`,
+            title: `📋 ${newContratos} novo${
+              newContratos > 1 ? "s" : ""
+            } contrato${newContratos > 1 ? "s" : ""} da Prefeitura`,
+            body: `${newContratos} novo${newContratos > 1 ? "s" : ""} contrato${
+              newContratos > 1 ? "s" : ""
+            } ${
+              newContratos > 1 ? "foram adicionados" : "foi adicionado"
+            } ao portal de transparência.`,
             topic: "geral",
             url: "/prefeitura",
             dedup_key: `contratos_${today}`,
           }),
         });
       } catch (e) {
-        console.error("Push notification error:", e.message);
+        const message = e instanceof Error ? e.message : String(e);
+        console.error("Push notification error:", message);
       }
     }
 
@@ -330,53 +274,56 @@ Deno.serve(async (req) => {
     let newLicitacoes = 0;
 
     if (!skipLicitacoes && !anoParam) {
-    // Lei 14.133/21 entrou em vigor em 2021 — licitacoes pela nova lei
-    // existem de 2021 em diante. Range dinamico 2021..ano atual.
-    const anosLicitacao = Array.from(
-      { length: anoAtualPref - 2020 },
-      (_, i) => anoAtualPref - i,
-    );
-    for (const ano of anosLicitacao) {
-      try {
-        // Lei 14.133/21 (nova lei)
-        const url = `${BASE_URL}/licitacoes?lei=2&ano=${ano}&idorgao=22&pagina=1&itensporpagina=100`;
-        const resp = await fetch(url, { headers: { "User-Agent": UA } });
+      // Lei 14.133/21 entrou em vigor em 2021: licitacoes pela nova lei
+      // existem de 2021 em diante. Range dinamico 2021..ano atual.
+      const anosLicitacao = Array.from(
+        { length: anoAtualPref - 2020 },
+        (_, i) => anoAtualPref - i,
+      );
+      for (const ano of anosLicitacao) {
+        try {
+          // Lei 14.133/21 (nova lei)
+          const url =
+            `${BASE_URL}/licitacoes?lei=2&ano=${ano}&idorgao=22&pagina=1&itensporpagina=100`;
+          const resp = await fetch(url, { headers: { "User-Agent": UA } });
 
-        if (!resp.ok) {
-          errors.push(`Licitações ${ano}: HTTP ${resp.status}`);
-          continue;
-        }
-
-        const html = await resp.text();
-        const scraped = parseLicitacoesHtml(html);
-        console.log(`Licitações ${ano}: ${scraped.length} encontradas`);
-
-        for (const l of scraped) {
-          if (!l.numero) continue;
-          
-          const { data: existing } = await supabase
-            .from("licitacoes")
-            .select("id")
-            .eq("numero", l.numero)
-            .maybeSingle();
-
-          if (!existing) {
-            const { error } = await supabase.from("licitacoes").insert({
-              numero: l.numero,
-              modalidade: l.modalidade,
-              objeto: l.objeto,
-              status: l.status,
-              data_publicacao: l.data_publicacao,
-              fonte_url: l.fonte_url,
-            });
-            if (error) errors.push(`Insert licitação ${l.numero}: ${error.message}`);
-            else newLicitacoes++;
+          if (!resp.ok) {
+            errors.push(`Licitações ${ano}: HTTP ${resp.status}`);
+            continue;
           }
+
+          const html = await resp.text();
+          const scraped = parseLicitacoesHtml(html);
+          console.log(`Licitações ${ano}: ${scraped.length} encontradas`);
+
+          for (const l of scraped) {
+            if (!l.numero) continue;
+
+            const { data: existing } = await supabase
+              .from("licitacoes")
+              .select("id")
+              .eq("numero", l.numero)
+              .maybeSingle();
+
+            if (!existing) {
+              const { error } = await supabase.from("licitacoes").insert({
+                numero: l.numero,
+                modalidade: l.modalidade,
+                objeto: l.objeto,
+                status: l.status,
+                data_publicacao: l.data_publicacao,
+                fonte_url: l.fonte_url,
+              });
+              if (error) {
+                errors.push(`Insert licitação ${l.numero}: ${error.message}`);
+              } else newLicitacoes++;
+            }
+          }
+        } catch (e) {
+          const message = e instanceof Error ? e.message : String(e);
+          errors.push(`Licitações ${ano}: ${message}`);
         }
-      } catch (e) {
-        errors.push(`Licitações ${ano}: ${e.message}`);
       }
-    }
     } // end skipLicitacoes check
     results.licitacoes = { new: newLicitacoes };
 
@@ -395,21 +342,33 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, ...results, errors }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        success: errors.length === 0,
+        status: finalStatus,
+        ...results,
+        errors,
+      }),
+      {
+        status: errors.length === 0 ? 200 : 206,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   } catch (error) {
-    console.error("Erro sync diária:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Erro sync diária:", message);
     if (logId) {
       await supabase.from("sync_log").update({
         status: "error",
-        detalhes: { error: error.message, errors, ...results },
+        detalhes: { error: message, errors, ...results },
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ success: false, error: message }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });
