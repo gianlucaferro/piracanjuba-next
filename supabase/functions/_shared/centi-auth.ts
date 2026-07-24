@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 // Helper de auth compartilhado pras edges Centi
 export function checkCentiAuth(req: Request): boolean {
   const SR = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
