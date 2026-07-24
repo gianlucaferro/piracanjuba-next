@@ -16,7 +16,7 @@ import {
   ExternalLink, Phone, Mail, MapPin, Clock, Building2,
   Users, DollarSign, FileText, Gavel, Briefcase, HardHat,
   Search, Info, BarChart3, RefreshCw, Settings, CheckCircle2,
-  AlertCircle, AlertTriangle, Loader2, Sparkles, Truck
+  AlertCircle, AlertTriangle, Loader2, Sparkles, Truck, Landmark
 } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
@@ -32,6 +32,7 @@ import PullToRefresh from "@/components/PullToRefresh";
 import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
+import FunprepiTab from "@/components/prefeitura/FunprepiTab";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 import GrupoEconomicoBadge from "@/components/transparencia/GrupoEconomicoBadge";
 import GruposContratosAviso from "@/components/transparencia/GruposContratosAviso";
@@ -3238,6 +3239,7 @@ const tabs = [
   { value: "secretarias", label: "Secretarias", icon: Building2 },
   { value: "contratos", label: "Contratos", icon: FileText },
   { value: "servidores", label: "Servidores", icon: Users },
+  { value: "funprepi", label: "FUNPREPI", icon: Landmark },
   { value: "despesas", label: "Despesas", icon: DollarSign },
   { value: "prestacao-contas", label: "Prestação de Contas", icon: FileBarChart },
   { value: "tcm-go", label: "TCM-GO", icon: Gavel },
@@ -3324,6 +3326,7 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
           <TabsContent value="prestacao-contas"><PrestacaoContasTab poder="prefeitura" /></TabsContent>
           <TabsContent value="tcm-go"><TCMTab /></TabsContent>
           <TabsContent value="servidores"><ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
+          <TabsContent value="funprepi"><FunprepiTab /></TabsContent>
           <TabsContent value="decretos"><DecretosTab /></TabsContent>
           <TabsContent value="portarias"><PortariasTab /></TabsContent>
           <TabsContent value="leis"><LeisMunicipaisTab initialSearch={activeTab === "leis" ? initialBusca : undefined} /></TabsContent>
