@@ -1,205 +1,141 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  createClient,
+  type SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
+import { checkCentiAuth } from "../_shared/centi-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-cron-secret, x-centi-ingest-secret",
 };
 
-const IBGE_CODE = "5217104"; // Piracanjuba-GO
+const jsonHeaders = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
+};
+
+const IBGE_CODE = "5217104";
 const API_BASE = "https://api.portaldatransparencia.gov.br/api-de-dados";
 
-async function fetchAPI(endpoint: string, params: Record<string, string>, apiKey: string) {
-  const url = new URL(`${API_BASE}/${endpoint}`);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  
-  const res = await fetch(url.toString(), {
-    headers: { "chave-api-dados": apiKey, Accept: "application/json" },
+interface ConvenioPortal {
+  id?: number | string;
+  numero?: number | string;
+  orgaoSuperior?: { nome?: string };
+  orgaoConcedente?: { nome?: string };
+  objeto?: string;
+  valorConvenio?: number;
+  valor?: number;
+  valorLiberado?: number;
+  valorEmpenhado?: number;
+  situacao?: { descricao?: string } | string;
+  dataInicioVigencia?: string;
+  dataPublicacao?: string;
+  dataFimVigencia?: string;
+}
+
+function message(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function extractYear(value?: string): number {
+  const match = value?.match(/(?:19|20)\d{2}/);
+  return match ? Number(match[0]) : new Date().getUTCFullYear();
+}
+
+async function fetchPortalPage(
+  page: number,
+  apiKey: string,
+): Promise<ConvenioPortal[]> {
+  const url = new URL(`${API_BASE}/convenios`);
+  url.searchParams.set("codigoIBGE", IBGE_CODE);
+  url.searchParams.set("pagina", String(page));
+
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      "chave-api-dados": apiKey,
+    },
   });
-  
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API ${endpoint} retornou ${res.status}: ${text}`);
+
+  if (response.status !== 200) {
+    const body = (await response.text()).slice(0, 500);
+    throw new Error(
+      `Portal da Transparencia retornou HTTP ${response.status} em convenios${
+        body ? `: ${body}` : ""
+      }`,
+    );
   }
-  
-  return res.json();
+
+  const payload: unknown = await response.json();
+  if (!Array.isArray(payload)) {
+    throw new Error("Resposta invalida de convenios: era esperada uma lista");
+  }
+
+  return payload as ConvenioPortal[];
 }
 
-async function syncConvenios(supabase: any, apiKey: string) {
-  let page = 1;
+async function syncConvenios(
+  supabase: SupabaseClient,
+  apiKey: string,
+): Promise<{ upserted: number; pagesFetched: number }> {
   let total = 0;
-  
-  while (true) {
-    const data = await fetchAPI("convenios", {
-      codigoIBGE: IBGE_CODE,
-      pagina: String(page),
-    }, apiKey);
-    
-    if (!data || !Array.isArray(data) || data.length === 0) break;
-    
-    for (const c of data) {
-      const record = {
+  let pagesFetched = 0;
+
+  for (let page = 1; page <= 500; page++) {
+    const data = await fetchPortalPage(page, apiKey);
+    pagesFetched++;
+    if (data.length === 0) break;
+
+    const records = data.flatMap((convenio) => {
+      const portalId = convenio.id ?? convenio.numero;
+      if (portalId == null || String(portalId).trim() === "") return [];
+
+      const inicio = convenio.dataInicioVigencia ?? convenio.dataPublicacao;
+      const situacao = typeof convenio.situacao === "string"
+        ? convenio.situacao
+        : convenio.situacao?.descricao;
+
+      return [{
         tipo: "convenio",
-        portal_id: String(c.id || c.numero),
-        numero: c.numero || null,
-        orgao_concedente: c.orgaoSuperior?.nome || c.orgaoConcedente?.nome || null,
-        objeto: c.objeto || null,
-        valor_total: c.valorConvenio || c.valor || null,
-        valor_liberado: c.valorLiberado || null,
-        valor_empenhado: c.valorEmpenhado || null,
-        situacao: c.situacao?.descricao || c.situacao || null,
-        data_inicio: c.dataInicioVigencia || c.dataPublicacao || null,
-        data_fim: c.dataFimVigencia || null,
-        fonte_url: `https://portaldatransparencia.gov.br/convenios/${c.id || ""}`,
+        portal_id: String(portalId),
+        numero: convenio.numero == null ? null : String(convenio.numero),
+        orgao_concedente: convenio.orgaoSuperior?.nome ??
+          convenio.orgaoConcedente?.nome ??
+          null,
+        objeto: convenio.objeto ?? null,
+        valor_total: convenio.valorConvenio ?? convenio.valor ?? null,
+        valor_liberado: convenio.valorLiberado ?? null,
+        valor_empenhado: convenio.valorEmpenhado ?? null,
+        situacao: situacao ?? null,
+        data_inicio: inicio ?? null,
+        data_fim: convenio.dataFimVigencia ?? null,
+        fonte_url: `https://portaldatransparencia.gov.br/convenios/${
+          convenio.id ?? ""
+        }`,
         fonte_api: "portal_transparencia",
-        ano: c.dataInicioVigencia ? parseInt(c.dataInicioVigencia.slice(0, 4)) : new Date().getFullYear(),
-      };
-      
-      await supabase.from("transferencias_federais").upsert(record, {
-        onConflict: "portal_id,tipo",
-      });
-      total++;
-    }
-    
-    if (data.length < 15) break; // default page size
-    page++;
-    // Rate limiting
-    await new Promise(r => setTimeout(r, 500));
-  }
-  
-  return total;
-}
+        ano: extractYear(inicio),
+      }];
+    });
 
-async function syncBolsaFamilia(supabase: any, apiKey: string) {
-  let total = 0;
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
-  
-  // Sync last 6 months
-  for (let i = 0; i < 6; i++) {
-    let month = currentMonth - i;
-    let year = currentYear;
-    if (month <= 0) { month += 12; year--; }
-    
-    const mesAno = `${year}${String(month).padStart(2, "0")}`;
-    
-    try {
-      const data = await fetchAPI("novo-bolsa-familia-por-municipio", {
-        codigoIbge: IBGE_CODE,
-        mesAno,
-        pagina: "1",
-      }, apiKey);
-      
-      if (data && Array.isArray(data) && data.length > 0) {
-        const item = data[0];
-        const competencia = `${year}-${String(month).padStart(2, "0")}`;
-        
-        await supabase.from("beneficios_sociais").upsert({
-          programa: "Bolsa Família",
-          competencia,
-          municipio: "Piracanjuba-GO",
-          beneficiarios: item.quantidadeBeneficiados || null,
-          valor_pago: item.valor || null,
-          fonte_nome: "Portal da Transparência - API Federal",
-          fonte_url: `https://portaldatransparencia.gov.br/beneficios/bolsa-familia?municipio=${IBGE_CODE}`,
-        }, { onConflict: "programa,competencia,municipio" });
-        total++;
+    if (records.length > 0) {
+      const { error } = await supabase.from("transferencias_federais").upsert(
+        records,
+        { onConflict: "portal_id,tipo" },
+      );
+      if (error) {
+        throw new Error(
+          `Falha no upsert da pagina ${page} de convenios: ${error.message}`,
+        );
       }
-    } catch (e) {
-      console.error(`Erro BF ${mesAno}:`, e.message);
+      total += records.length;
     }
-    
-    await new Promise(r => setTimeout(r, 300));
-  }
-  
-  return total;
-}
 
-async function syncBPC(supabase: any, apiKey: string) {
-  let total = 0;
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
-  
-  for (let i = 0; i < 6; i++) {
-    let month = currentMonth - i;
-    let year = currentYear;
-    if (month <= 0) { month += 12; year--; }
-    
-    const mesAno = `${year}${String(month).padStart(2, "0")}`;
-    
-    try {
-      const data = await fetchAPI("bpc-por-municipio", {
-        codigoIbge: IBGE_CODE,
-        mesAno,
-        pagina: "1",
-      }, apiKey);
-      
-      if (data && Array.isArray(data) && data.length > 0) {
-        const item = data[0];
-        const competencia = `${year}-${String(month).padStart(2, "0")}`;
-        
-        await supabase.from("beneficios_sociais").upsert({
-          programa: "BPC - Benefício de Prestação Continuada",
-          competencia,
-          municipio: "Piracanjuba-GO",
-          beneficiarios: item.quantidadeBeneficiados || null,
-          valor_pago: item.valor || null,
-          fonte_nome: "Portal da Transparência - API Federal",
-          fonte_url: `https://portaldatransparencia.gov.br/beneficios/bpc?municipio=${IBGE_CODE}`,
-        }, { onConflict: "programa,competencia,municipio" });
-        total++;
-      }
-    } catch (e) {
-      console.error(`Erro BPC ${mesAno}:`, e.message);
-    }
-    
-    await new Promise(r => setTimeout(r, 300));
+    if (data.length < 15) break;
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  
-  return total;
-}
 
-async function syncGarantiaSafra(supabase: any, apiKey: string) {
-  let total = 0;
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
-  
-  for (let i = 0; i < 6; i++) {
-    let month = currentMonth - i;
-    let year = currentYear;
-    if (month <= 0) { month += 12; year--; }
-    
-    const mesAno = `${year}${String(month).padStart(2, "0")}`;
-    
-    try {
-      const data = await fetchAPI("safra-por-municipio", {
-        codigoIbge: IBGE_CODE,
-        mesAno,
-        pagina: "1",
-      }, apiKey);
-      
-      if (data && Array.isArray(data) && data.length > 0) {
-        const item = data[0];
-        const competencia = `${year}-${String(month).padStart(2, "0")}`;
-        
-        await supabase.from("beneficios_sociais").upsert({
-          programa: "Garantia-Safra",
-          competencia,
-          municipio: "Piracanjuba-GO",
-          beneficiarios: item.quantidadeBeneficiados || null,
-          valor_pago: item.valor || null,
-          fonte_nome: "Portal da Transparência - API Federal",
-          fonte_url: `https://portaldatransparencia.gov.br/beneficios/garantia-safra?municipio=${IBGE_CODE}`,
-        }, { onConflict: "programa,competencia,municipio" });
-        total++;
-      }
-    } catch (e) {
-      console.error(`Erro Safra ${mesAno}:`, e.message);
-    }
-    
-    await new Promise(r => setTimeout(r, 300));
-  }
-  
-  return total;
+  return { upserted: total, pagesFetched };
 }
 
 Deno.serve(async (req) => {
@@ -207,59 +143,88 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (!checkCentiAuth(req)) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Unauthorized" }),
+      { status: 401, headers: jsonHeaders },
+    );
+  }
+
   const apiKey = Deno.env.get("PORTAL_TRANSPARENCIA_API_KEY");
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: "PORTAL_TRANSPARENCIA_API_KEY não configurada" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "PORTAL_TRANSPARENCIA_API_KEY not configured",
+      }),
+      { status: 500, headers: jsonHeaders },
+    );
   }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
+  const logId = crypto.randomUUID();
+  const { error: logError } = await supabase.from("sync_log").insert({
+    id: logId,
+    tipo: "transferencias_federais",
+    status: "running",
+    detalhes: {
+      version: 2,
+      escopo: "convenios",
+      observacao: "Beneficios sociais sao sincronizados por rotina dedicada",
+    },
+  });
+
+  if (logError) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: `Falha ao iniciar log: ${logError.message}`,
+      }),
+      { status: 500, headers: jsonHeaders },
+    );
+  }
 
   try {
-    const resultados: Record<string, string> = {};
+    const convenios = await syncConvenios(supabase, apiKey);
+    const details = {
+      version: 2,
+      escopo: "convenios",
+      convenios,
+      beneficios_escritos: 0,
+    };
 
-    // Sync convênios
-    try {
-      const n = await syncConvenios(supabase, apiKey);
-      resultados.convenios = `${n} registros`;
-    } catch (e) {
-      resultados.convenios = `Erro: ${e.message}`;
+    const { error: finishError } = await supabase.from("sync_log").update({
+      status: "success",
+      finished_at: new Date().toISOString(),
+      detalhes: details,
+    }).eq("id", logId);
+
+    if (finishError) {
+      throw new Error(`Falha ao finalizar log: ${finishError.message}`);
     }
 
-    // Sync Bolsa Família
-    try {
-      const n = await syncBolsaFamilia(supabase, apiKey);
-      resultados.bolsa_familia = `${n} meses`;
-    } catch (e) {
-      resultados.bolsa_familia = `Erro: ${e.message}`;
-    }
-
-    // Sync BPC
-    try {
-      const n = await syncBPC(supabase, apiKey);
-      resultados.bpc = `${n} meses`;
-    } catch (e) {
-      resultados.bpc = `Erro: ${e.message}`;
-    }
-
-    // Sync Garantia-Safra
-    try {
-      const n = await syncGarantiaSafra(supabase, apiKey);
-      resultados.garantia_safra = `${n} meses`;
-    } catch (e) {
-      resultados.garantia_safra = `Erro: ${e.message}`;
-    }
-
-    return new Response(JSON.stringify({ success: true, resultados }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ success: true, ...details }),
+      { headers: jsonHeaders },
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const errorText = message(error);
+    await supabase.from("sync_log").update({
+      status: "error",
+      finished_at: new Date().toISOString(),
+      detalhes: {
+        version: 2,
+        escopo: "convenios",
+        error: errorText,
+      },
+    }).eq("id", logId);
+
+    return new Response(
+      JSON.stringify({ success: false, error: errorText }),
+      { status: 500, headers: jsonHeaders },
+    );
   }
 });
