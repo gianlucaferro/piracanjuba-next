@@ -12,7 +12,7 @@ values (
   2099,
   date '2099-06-30',
   1,
-  100,
+  999999999,
   'https://example.invalid/funprepi-test',
   current_date
 )
@@ -47,10 +47,10 @@ values
     '12345678901',
     44,
     'SERVICOS ADMINISTRATIVOS',
-    100,
+    999999999,
     0,
-    100,
-    100,
+    999999999,
+    999999999,
     0,
     '{}'::jsonb,
     'https://example.invalid/funprepi-test'
@@ -172,7 +172,7 @@ values
     'TESTE_FUNPREPI',
     'teste',
     'informativa',
-    1,
+    100,
     'Indício sintético do órgão 44',
     'Fixture transacional',
     -209944,
@@ -187,7 +187,7 @@ values
     'TESTE_FUNPREPI',
     'teste',
     'informativa',
-    1,
+    100,
     'Indício sintético fora do escopo',
     'Fixture transacional',
     -209945,
@@ -230,7 +230,7 @@ begin
 
   if ano_teste->>'status' is distinct from 'reconciliado'
     or (ano_teste->>'empenhos_novo')::integer <> 1
-    or (ano_teste->>'pago_novo')::numeric <> 100
+    or (ano_teste->>'pago_novo')::numeric <> 999999999
   then
     raise exception
       'reconciliacao incluiu registros posteriores ao corte: %',
@@ -255,6 +255,16 @@ begin
        or coalesce(item->>'chave', '') ~ '^\d{11}$'
   ) then
     raise exception 'o payload publico expos CPF integral';
+  end if;
+
+  if not exists (
+    select 1
+    from jsonb_array_elements(painel->'fornecedores_externos') item
+    where item->>'nome' = 'FORNECEDOR CPF TESTE'
+      and item->>'documento' is null
+      and item->>'chave' = 'FORNECEDOR CPF TESTE'
+  ) then
+    raise exception 'fixture de CPF do fornecedor nao exercitou a sanitizacao';
   end if;
 
   if not exists (
