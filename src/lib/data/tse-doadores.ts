@@ -27,7 +27,7 @@ export type TseResumoCandidato = {
 export type DoadoresResult = { resumo: TseResumoCandidato | null; topDoadores: TseDoador[] };
 
 const COLS =
-  "id, ano_eleicao, ds_cargo, cpf_cnpj_doador, nome_doador, tipo_doador, vr_receita, ds_recurso, dt_receita";
+  "id, ano_eleicao, ds_cargo, cpf_cnpj_doador:documento_doador_publico, nome_doador, tipo_doador, vr_receita, ds_recurso, dt_receita";
 
 function ehPj(d: { tipo_doador: string | null; cpf_cnpj_doador: string | null }): boolean {
   if ((d.tipo_doador ?? "").toLowerCase().includes("jurid")) return true;

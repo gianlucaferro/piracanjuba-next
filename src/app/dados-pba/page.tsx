@@ -12,6 +12,7 @@ import {
   Trees,
   TrendingUp as IndicadoresIcon,
   Trophy,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
@@ -33,6 +34,15 @@ type Card = {
 };
 
 const cards: Card[] = [
+  {
+    href: "/investigacoes",
+    titulo: "Investigações públicas",
+    descricao:
+      "Indícios em contratos, aditivos, empenhos, pagamentos, empresas, sócios e fiscais.",
+    icon: Search,
+    iconBg: "bg-red-500/10",
+    iconColor: "text-red-600",
+  },
   {
     href: "/saude",
     titulo: "Saúde",
@@ -162,7 +172,7 @@ export default function DadosPBAPage() {
       </div>
 
       <p className="text-sm text-muted-foreground italic mt-8 text-center">
-        Iniciativa cidadã independente — sem vínculo com a Prefeitura, Câmara ou qualquer órgão público.
+        Iniciativa cidadã independente, sem vínculo com a Prefeitura, Câmara ou qualquer órgão público.
         Cada dado tem link direto para a fonte oficial de origem.
       </p>
     </div>
