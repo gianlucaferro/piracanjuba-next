@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
   title: "Prefeitura de Piracanjuba GO",
   description:
-    "Dados da Prefeitura de Piracanjuba: prefeito, vice, secretarias, servidores, contratos, despesas, obras, licitações, decretos e portarias.",
+    "Dados da Prefeitura de Piracanjuba: prefeito, secretarias, servidores, FUNPREPI, contratos, despesas, obras, licitações, decretos e portarias.",
   path: "/prefeitura",
 });
 
@@ -85,6 +85,31 @@ const datasets = [
       "lotação",
       "remuneração bruta",
       "remuneração líquida",
+    ],
+  }),
+  datasetJsonLd({
+    name: "FUNPREPI, Fundo de Previdência Social de Piracanjuba",
+    description:
+      "Série histórica de despesas, pagamentos, benefícios previdenciários, fornecedores, contratos, cobertura da sincronização e evidências atuariais do Fundo de Previdência Social de Piracanjuba. O painel separa valores documentados de lacunas ainda não publicadas pelas fontes oficiais.",
+    url: `${SITE_URL}/prefeitura/funprepi`,
+    creatorId: SCHEMA_IDS.prefeitura,
+    dateModified: today,
+    keywords: [
+      "FUNPREPI",
+      "previdência municipal",
+      "Piracanjuba",
+      "RPPS",
+      "déficit atuarial",
+      "transparência",
+    ],
+    variableMeasured: [
+      "quantidade de empenhos",
+      "valor pago",
+      "aposentadorias",
+      "pensões",
+      "fornecedores externos",
+      "contratos",
+      "cobertura da sincronização",
     ],
   }),
   datasetJsonLd({

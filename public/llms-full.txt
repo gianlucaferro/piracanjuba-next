@@ -63,6 +63,12 @@ Dados de servidores da Câmara e da Prefeitura incluindo:
 - Contratos vigentes com empresa, valor e objeto
 - Licitações com modalidade, status e resultados
 
+### FUNPREPI e Previdência Municipal
+- Série histórica de despesas e pagamentos do Fundo de Previdência Social de Piracanjuba
+- Benefícios previdenciários, fornecedores externos e contratos relacionados
+- Comparação entre dados sincronizados e totais publicados pela fonte oficial
+- Evidências atuariais do TCM-GO, com separação explícita entre valores documentados e lacunas ainda não publicadas
+
 ### Obras Públicas
 Acompanhamento de obras municipais com status, valor e empresa responsável.
 
@@ -142,7 +148,7 @@ Emendas parlamentares federais e estaduais destinadas ao município:
 Todas as informações são obtidas de fontes oficiais públicas:
 
 1. **Portal da Transparência da Câmara Municipal de Piracanjuba** — Projetos de lei, votações, remunerações, atuação parlamentar
-2. **Portal da Transparência da Prefeitura de Piracanjuba** — Servidores, contratos, licitações, despesas, decretos, portarias
+2. **Portal da Transparência da Prefeitura de Piracanjuba** — Servidores, FUNPREPI, contratos, licitações, despesas, decretos, portarias
 3. **IBGE Cidades** — Indicadores demográficos, econômicos e sociais
 4. **Portal da Transparência do Governo Federal** — Bolsa Família, BPC, emendas parlamentares
 5. **DATASUS / CNES** — Estabelecimentos de saúde, equipes, indicadores epidemiológicos

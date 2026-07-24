@@ -14,7 +14,7 @@ Piracanjuba.ai é uma plataforma independente que utiliza inteligência artifici
 - [Câmara Municipal](https://piracanjuba.ai/camara): Vereadores, projetos de lei, votações, remunerações e atuação parlamentar.
 - [Vereadores](https://piracanjuba.ai/vereadores): Perfil individual de cada vereador com projetos, votações e remuneração.
 - [Atuação Parlamentar](https://piracanjuba.ai/atuacao-parlamentar): Indicações, requerimentos e moções dos vereadores.
-- [Prefeitura](https://piracanjuba.ai/prefeitura): Secretarias, servidores, contratos, licitações, obras, decretos, portarias e leis municipais.
+- [Prefeitura](https://piracanjuba.ai/prefeitura): Secretarias, servidores, FUNPREPI, contratos, licitações, despesas, obras, decretos, portarias e leis municipais.
 - [Saúde](https://piracanjuba.ai/saude): Estabelecimentos de saúde, equipes, indicadores epidemiológicos e repasses do SUS.
 - [Educação](https://piracanjuba.ai/educacao): Escolas, IDEB, matrículas, investimentos e programas educacionais.
 - [Benefícios Sociais](https://piracanjuba.ai/beneficios-sociais): Bolsa Família, BPC, Pé-de-Meia e outros programas sociais.
@@ -27,6 +27,7 @@ Piracanjuba.ai é uma plataforma independente que utiliza inteligência artifici
 - Remuneração de vereadores e servidores públicos
 - Emendas parlamentares federais e estaduais destinadas ao município
 - Contratos, licitações e obras públicas
+- FUNPREPI: despesas, benefícios, fornecedores, contratos, cobertura dos dados e evidências atuariais
 - Decretos, portarias e leis municipais
 - Indicadores de saúde, educação e benefícios sociais
 - Arrecadação e receitas municipais

@@ -119,7 +119,7 @@ const faqJsonLd = {
       name: "Que tipo de dados o Piracanjuba.ai mostra?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura (contratos, licitações, servidores, salários, despesas, obras, decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos), educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais, arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão, coleta de lixo, contatos úteis, marketplace local).",
+        text: "Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura (contratos, licitações, servidores, salários, FUNPREPI, despesas, obras, decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos), educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais, arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão, coleta de lixo, contatos úteis, marketplace local).",
       },
     },
     {
@@ -283,8 +283,8 @@ export default function SobrePage() {
                   Prefeitura Municipal
                 </h3>
                 <p className="text-sm text-foreground/85 leading-relaxed">
-                  Prefeito, secretarias, contratos, servidores, despesas, obras, decretos,
-                  portarias, leis municipais, frota e dados do TCM-GO.
+                  Prefeito, secretarias, contratos, servidores, FUNPREPI e previdência
+                  municipal, despesas, obras, decretos, portarias, leis, frota e TCM-GO.
                 </p>
               </div>
             </div>
@@ -478,8 +478,8 @@ export default function SobrePage() {
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
               Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura
-              (contratos, licitações, servidores, salários, despesas, obras, decretos,
-              portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos),
+              (contratos, licitações, servidores, salários, FUNPREPI, despesas, obras,
+              decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos),
               educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais,
               arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão,
               coleta de lixo, contatos úteis, marketplace local).
