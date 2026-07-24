@@ -20,6 +20,10 @@ import {
 } from "lucide-react";
 import { fetchBeneficiosSociais, type BeneficioSocial } from "@/data/beneficiosSociaisApi";
 import { fetchCdeSubsidios, type CdeSubsidio } from "@/data/cdeApi";
+import {
+  calcularTotalOficialAnual,
+  gerarCsvBeneficios,
+} from "@/lib/beneficios-sociais";
 import { useState, useMemo } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -31,8 +35,10 @@ const PROGRAMA_LABELS: Record<string, string> = {
   "gas_do_povo": "Gás do Povo",
   "auxilio_gas": "Auxílio Gás",
   "bpc": "BPC (Benefício de Prestação Continuada)",
+  "garantia_safra": "Garantia-Safra",
+  "peti": "Programa de Erradicação do Trabalho Infantil",
+  "seguro_defeso": "Seguro Defeso",
   "tarifa_social": "Luz Social (Tarifa Social de Energia)",
-  
 };
 
 const PROGRAMA_ICONS: Record<string, any> = {
@@ -40,8 +46,10 @@ const PROGRAMA_ICONS: Record<string, any> = {
   "gas_do_povo": Flame,
   "auxilio_gas": Flame,
   "bpc": Users,
+  "garantia_safra": Heart,
+  "peti": Users,
+  "seguro_defeso": Users,
   "tarifa_social": Zap,
-  
 };
 
 const PROGRAMA_CORES: Record<string, string> = {
@@ -49,8 +57,10 @@ const PROGRAMA_CORES: Record<string, string> = {
   "gas_do_povo": "hsl(25, 90%, 55%)",
   "auxilio_gas": "hsl(25, 90%, 55%)",
   "bpc": "hsl(152, 55%, 38%)",
+  "garantia_safra": "hsl(92, 45%, 38%)",
+  "peti": "hsl(278, 45%, 48%)",
+  "seguro_defeso": "hsl(198, 65%, 42%)",
   "tarifa_social": "hsl(45, 80%, 50%)",
-  
 };
 
 function formatCompetencia(c: string) {
@@ -188,10 +198,16 @@ function VisaoGeralSection({ dados }: { dados: BeneficioSocial[] }) {
                     {d.fonte_url && (
                       <p className="text-xs text-muted-foreground mt-2">
                         <a href={d.fonte_url} target="_blank" rel="noopener noreferrer" className="hover:underline inline-flex items-center gap-0.5">
-                          Fonte oficial <ExternalLink className="w-2.5 h-2.5" />
+                          {d.natureza_dado === "oficial" ? "Fonte oficial" : "Metodologia da estimativa"} <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       </p>
                     )}
+                    <Badge
+                      variant={d.natureza_dado === "oficial" ? "secondary" : "outline"}
+                      className="text-xs mt-2"
+                    >
+                      {d.natureza_dado === "oficial" ? "Dado oficial" : "Estimativa"}
+                    </Badge>
                     {d.observacoes && (
                       <p className="text-xs text-destructive mt-1 flex items-center gap-1">
                         <AlertTriangle className="w-2.5 h-2.5" /> {d.observacoes}
@@ -374,6 +390,11 @@ function SerieHistoricaSection({ dados }: { dados: BeneficioSocial[] }) {
                     type="monotone"
                     dataKey={PROGRAMA_LABELS[p] || p}
                     stroke={PROGRAMA_CORES[p] || `hsl(${i * 60}, 50%, 50%)`}
+                    strokeDasharray={
+                      dados.find(d => d.programa === p)?.natureza_dado === "oficial"
+                        ? undefined
+                        : "6 4"
+                    }
                     strokeWidth={2}
                     dot={{ r: 2 }}
                     connectNulls
@@ -403,12 +424,11 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
   }, [dados, filtroPrograma]);
 
   const exportCSV = () => {
-    const bom = "\uFEFF";
-    const header = "Programa;Competência;Beneficiários;Valor Pago (R$);Unidade;Fonte;Observações\n";
-    const rows = filtrados.map(d =>
-      `"${PROGRAMA_LABELS[d.programa] || d.programa}";"${d.competencia}";"${d.beneficiarios ?? ""}";"${d.valor_pago ?? ""}";"${d.unidade_medida || ""}";"${d.fonte_url || ""}";"${d.observacoes || ""}"`
-    ).join("\n");
-    const blob = new Blob([bom + header + rows], { type: "text/csv;charset=utf-8;" });
+    const csv = gerarCsvBeneficios(
+      filtrados,
+      (programa) => PROGRAMA_LABELS[programa] || programa,
+    );
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -442,7 +462,10 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        <Select value={filtroPrograma} onValueChange={setFiltroPrograma}>
+        <Select
+          value={filtroPrograma}
+          onValueChange={(value) => value && setFiltroPrograma(value)}
+        >
           <SelectTrigger className="w-[200px] h-9 text-sm">
             <SelectValue placeholder="Filtrar programa" />
           </SelectTrigger>
@@ -464,6 +487,7 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
                 <TableHead className="text-sm">Competência</TableHead>
                 <TableHead className="text-sm text-right">Beneficiários</TableHead>
                 <TableHead className="text-sm text-right">Valor Pago</TableHead>
+                <TableHead className="text-sm">Natureza</TableHead>
                 <TableHead className="text-sm">Fonte</TableHead>
                 <TableHead className="text-sm">Obs.</TableHead>
               </TableRow>
@@ -471,7 +495,7 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
             <TableBody>
               {filtrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-8">
                     Nenhum dado disponível
                   </TableCell>
                 </TableRow>
@@ -485,6 +509,11 @@ function TabelaDetalhadaSection({ dados }: { dados: BeneficioSocial[] }) {
                     </TableCell>
                     <TableCell className="text-sm text-right">
                       {d.valor_pago != null ? formatCurrency(d.valor_pago) : <span className="text-muted-foreground">N/D</span>}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      <Badge variant={d.natureza_dado === "oficial" ? "secondary" : "outline"}>
+                        {d.natureza_dado === "oficial" ? "Oficial" : "Estimativa"}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-sm">
                       {d.fonte_url ? (
@@ -520,16 +549,12 @@ function ContextoSection({ dados }: { dados: BeneficioSocial[] }) {
   const bfPctPop = bfBenef > 0 ? ((bfBenef / populacao) * 100).toFixed(1) : null;
   const bfPerCapita = latestBF?.valor_pago ? (latestBF.valor_pago / populacao).toFixed(2) : null;
 
-  // Total anual recebido de todos os programas
+  // Total anual apenas de programas oficiais do Portal. Estimativas ficam fora.
   const anoAtual = new Date().getFullYear();
-  const totalAnual = dados
-    .filter(d => d.competencia?.startsWith(String(anoAtual)))
-    .reduce((s, d) => s + (d.valor_pago || 0), 0);
-  const totalAnualAnterior = dados
-    .filter(d => d.competencia?.startsWith(String(anoAtual - 1)))
-    .reduce((s, d) => s + (d.valor_pago || 0), 0);
+  const totalAnual = calcularTotalOficialAnual(dados, anoAtual);
+  const totalAnualAnterior = calcularTotalOficialAnual(dados, anoAtual - 1);
 
-  const shareText = `Piracanjuba recebeu ${formatCurrency(totalAnual > 0 ? totalAnual : totalAnualAnterior)} em benefícios sociais em ${totalAnual > 0 ? anoAtual : anoAtual - 1}. ${bfPctPop}% da população recebe Bolsa Família (${bfBenef.toLocaleString("pt-BR")} famílias).`;
+  const shareText = `Piracanjuba recebeu ${formatCurrency(totalAnual > 0 ? totalAnual : totalAnualAnterior)} em benefícios federais oficiais em ${totalAnual > 0 ? anoAtual : anoAtual - 1}.${bfPctPop ? ` ${bfPctPop}% da população recebe Bolsa Família (${bfBenef.toLocaleString("pt-BR")} famílias).` : ""}`;
 
   return (
     <div className="space-y-4">
@@ -554,7 +579,7 @@ function ContextoSection({ dados }: { dados: BeneficioSocial[] }) {
               {formatCurrency(totalAnual > 0 ? totalAnual : totalAnualAnterior)}
             </p>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Soma de Bolsa Família, BPC, Gás do Povo e outros programas federais que entraram no município.
+              Soma apenas de registros oficiais do Portal da Transparência. Estimativas, como Tarifa Social e Gás do Povo, não entram neste total.
             </p>
           </CardContent>
         </Card>
@@ -742,7 +767,7 @@ function MetodologiaSection() {
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-1">Periodicidade</h3>
             <p className="text-sm text-muted-foreground">
-              Os dados são atualizados automaticamente todo dia 5 de cada mês (ou no primeiro dia útil posterior).
+              A rotina consulta novamente os seis meses mais recentes nos dias 5 e 20 de cada mês.
             </p>
           </div>
 
@@ -751,6 +776,7 @@ function MetodologiaSection() {
             <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
               <li>A Tarifa Social de Energia (CDE/ANEEL) só disponibiliza dados por distribuidora, não por município.</li>
               <li>Dados de BPC podem ter atraso de 1-2 meses.</li>
+              <li>Auxílio Gás e Pé-de-Meia não possuem endpoint municipal na versão atual da API. Nenhum 404 é tratado como dado válido.</li>
               <li>Mudanças metodológicas nos programas federais podem afetar a comparabilidade histórica.</li>
             </ul>
           </div>

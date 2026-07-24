@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:sync": "deno test supabase/functions/_shared/*test.ts",
-    "test:funprepi": "node --test tests/funprepi.test.ts"
+    "test:funprepi": "node --test tests/funprepi.test.ts",
+    "test:beneficios": "node --test tests/beneficios-sociais.test.ts"
   },
   "browserslist": [
     "Chrome >= 90",

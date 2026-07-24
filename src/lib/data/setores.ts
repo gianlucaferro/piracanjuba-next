@@ -168,9 +168,9 @@ export const fetchBeneficiosData = unstable_cache(
     const supabase = createPublicSupabaseClient();
     const [{ data }, { data: cde }] = await Promise.all([
       supabase
-        .from("beneficios_sociais")
+        .from("v_beneficios_sociais_canonicos")
         .select("*")
-        .ilike("municipio", "Piracanjuba%")
+        .eq("municipio_ibge", "5217104")
         .order("competencia", { ascending: false }),
       supabase.from("cde_subsidios").select("*").order("ano", { ascending: true }),
     ]);

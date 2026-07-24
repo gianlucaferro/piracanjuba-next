@@ -69,8 +69,8 @@ const DATASETS: DatasetConfig[] = [
   {
     key: "beneficios",
     label: "Benefícios Sociais",
-    fonte: "beneficios_sociais",
-    table: "beneficios_sociais",
+    fonte: "beneficios_sociais_v2",
+    table: "v_beneficios_sociais_canonicos",
     latestColumn: "updated_at",
     periodColumn: "competencia",
     periodLabel: "Competência",
