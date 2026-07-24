@@ -320,13 +320,15 @@ export async function fetchContratos(): Promise<Contrato[]> {
  */
 export async function fetchLicitacoes(): Promise<Licitacao[]> {
   const PAGINA = 1000;
-  const TETO = 6000; // trava de segurança: a base de dispensas ainda cresce
+  const TETO = 7000; // acima do total oficial atual, sem truncar dispensas
+  const COLS =
+    "id,numero,modalidade,objeto,status,data_publicacao,data_resultado,secretaria_id,fonte_url,updated_at";
   const todas: Licitacao[] = [];
 
   for (let inicio = 0; inicio < TETO; inicio += PAGINA) {
     const { data, error } = await supabase
       .from("licitacoes")
-      .select("*")
+      .select(COLS)
       .order("data_publicacao", { ascending: false })
       .range(inicio, inicio + PAGINA - 1);
     if (error) throw error;

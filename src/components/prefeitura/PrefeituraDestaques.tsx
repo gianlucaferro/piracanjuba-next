@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, Users, TrendingUp, Trophy, Share2, BarChart3, PieChart, Building2, Wallet } from "lucide-react";
+import { DollarSign, Trophy, Share2, BarChart3, PieChart, Building2, Wallet } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { formatCurrency } from "@/lib/formatters";
@@ -101,7 +100,11 @@ async function fetchTopSalarios() {
         atipico:
           Number(r.bruto) > mediana * 5 ||
           (((r as { tipo_folha?: string | null }).tipo_folha || null) &&
-            ((r as { tipo_folha?: string | null }).tipo_folha as string) !== "NORMAL"),
+            !["NORMAL", "MENSAL"].includes(
+              ((r as { tipo_folha?: string | null }).tipo_folha as string)
+                .trim()
+                .toUpperCase(),
+            )),
       };
     }),
   };
@@ -305,7 +308,10 @@ export default function PrefeituraDestaques() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
                     <p className="text-sm font-medium text-foreground truncate">{s.nome}</p>
-                    {s.tipo_folha && s.tipo_folha !== "NORMAL" ? (
+                    {s.tipo_folha &&
+                        !["NORMAL", "MENSAL"].includes(
+                          s.tipo_folha.trim().toUpperCase(),
+                        ) ? (
                       <span className="shrink-0 text-xs px-1 py-0.5 rounded bg-destructive/15 text-destructive font-semibold">{s.tipo_folha}</span>
                     ) : s.atipico ? (
                       <span className="shrink-0 text-xs px-1 py-0.5 rounded bg-warning/15 text-warning font-semibold">Atípico</span>

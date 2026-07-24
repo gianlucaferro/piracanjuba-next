@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -25,7 +25,7 @@ import {
   fetchDespesas, fetchContratos, fetchLicitacoes,
   fetchDiarias, fetchObras, fetchSecretariosRemuneracao,
   fetchProcuradores, fetchExecutivoRemuneracao,
-  type Executivo, type Contrato, type Licitacao
+  type Contrato, type Licitacao
 } from "@/data/prefeituraApi";
 import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -453,7 +453,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
       {!isLoading && !servidores.length && (
         <EmptyState icon={Users} title="Sem dados de servidores"
           description="Os dados de servidores e remuneração serão adicionados quando disponíveis no portal de transparência."
-          fonteUrl="https://piracanjuba.centi.com.br/" />
+          fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />
       )}
       {servidores.length > 0 && (
         <div className="space-y-2">
@@ -542,7 +542,7 @@ function GastosTab() {
   if (!data?.length) {
     return <EmptyState icon={DollarSign} title="Sem dados de despesas"
       description="Os dados de gastos serão adicionados quando disponíveis no portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
   return (
     <>
@@ -784,7 +784,7 @@ function ContratosTab() {
   if (!data?.length) {
     return <EmptyState icon={FileText} title="Sem dados de contratos"
       description="Os dados de contratos serão adicionados quando disponíveis no portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
 
   // Extract available years from data
@@ -1066,7 +1066,7 @@ function LicitacoesTab() {
   if (!data?.length) {
     return <EmptyState icon={Gavel} title="Sem dados de licitações"
       description="Os dados de licitações serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
   return (
     <>
@@ -1205,7 +1205,7 @@ function DiariasTab() {
   if (!data?.length) {
     return <EmptyState icon={Briefcase} title="Sem dados de diárias"
       description="Os dados de diárias e viagens serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
   return (
     <div className="space-y-4">
@@ -1303,7 +1303,7 @@ function ObrasTab() {
   if (!data?.length) {
     return <EmptyState icon={HardHat} title="Sem dados de obras"
       description="Os dados de obras públicas serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
   const statusColors: Record<string, string> = {
     em_andamento: "bg-info/15 text-info",
@@ -1414,8 +1414,6 @@ function ObrasTab() {
 // ===== ADMIN PANEL =====
 
 function AdminPanel() {
-  const queryClient = useQueryClient();
-
   // Buscar últimos sync logs da prefeitura
   const { data: syncLogs, isLoading: logsLoading } = useQuery({
     queryKey: ["sync-logs-prefeitura"],
@@ -1423,16 +1421,18 @@ function AdminPanel() {
       const { data, error } = await supabase
         .from("sync_log")
         .select("*")
-        .in("tipo", ["prefeitura_mensal", "prefeitura_diaria"])
+        .in("tipo", [
+          "sync-folha-prefeitura-nucleogov",
+          "sync-contratos-prefeitura-nucleogov",
+          "sync-licitacoes-prefeitura",
+          "sync-empenhos-prefeitura-nucleogov",
+        ])
         .order("started_at", { ascending: false })
         .limit(10);
       if (error) throw error;
       return data;
     },
   });
-
-  const lastMensal = syncLogs?.find((l: any) => l.tipo === "prefeitura_mensal");
-  const lastDiaria = syncLogs?.find((l: any) => l.tipo === "prefeitura_diaria");
 
   // Última competência carregada — SEMPRE filtrada por orgao_tipo='prefeitura'
   // para evitar mostrar competência da Câmara como se fosse da Prefeitura
@@ -1447,30 +1447,6 @@ function AdminPanel() {
         .limit(1)
         .maybeSingle();
       return data?.competencia || null;
-    },
-  });
-
-  // Trigger manual sync
-  const syncMensal = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("sync-prefeitura-mensal");
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sync-logs-prefeitura"] });
-      queryClient.invalidateQueries({ queryKey: ["last-competencia"] });
-    },
-  });
-
-  const syncDiaria = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("sync-prefeitura-diaria");
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sync-logs-prefeitura"] });
     },
   });
 
@@ -1499,51 +1475,17 @@ function AdminPanel() {
         </div>
         <div className="stat-card">
           <p className="text-sm text-muted-foreground mb-1">Próxima atualização mensal</p>
-          <p className="text-sm font-medium text-foreground">Dia 5 do próximo mês, 04:00 BRT</p>
+          <p className="text-sm font-medium text-foreground">Diariamente, 04:20 BRT</p>
         </div>
         <div className="stat-card">
           <p className="text-sm text-muted-foreground mb-1">Próxima atualização diária</p>
-          <p className="text-sm font-medium text-foreground">Amanhã, 03:30 BRT</p>
+          <p className="text-sm font-medium text-foreground">Diariamente, a partir de 02:40 BRT</p>
         </div>
       </div>
 
-      {/* Botões de ação */}
-      <div className="flex flex-wrap gap-3">
-        <Button
-          onClick={() => syncMensal.mutate()}
-          disabled={syncMensal.isPending}
-          variant="outline"
-          className="gap-2"
-        >
-          {syncMensal.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-          Atualizar folha mensal agora
-        </Button>
-        <Button
-          onClick={() => syncDiaria.mutate()}
-          disabled={syncDiaria.isPending}
-          variant="outline"
-          className="gap-2"
-        >
-          {syncDiaria.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-          Executar sync diária agora
-        </Button>
-      </div>
-
-      {syncMensal.isSuccess && (
-        <div className="stat-card bg-accent/5 border-accent/20">
-          <p className="text-sm text-accent font-medium">Sync mensal executada com sucesso</p>
-          <pre className="text-sm text-muted-foreground mt-1 overflow-auto max-h-32">
-            {JSON.stringify(syncMensal.data, null, 2)}
-          </pre>
-        </div>
-      )}
-
-      {syncMensal.isError && (
-        <div className="stat-card bg-destructive/5 border-destructive/20">
-          <p className="text-sm text-destructive font-medium">Erro na sync mensal</p>
-          <p className="text-sm text-muted-foreground">{(syncMensal.error as Error).message}</p>
-        </div>
-      )}
+      <p className="text-sm text-muted-foreground">
+        As execuções manuais são restritas ao backend para proteger as credenciais de ingestão.
+      </p>
 
       {/* Histórico de syncs */}
       <div>
@@ -1560,7 +1502,7 @@ function AdminPanel() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="text-sm">
-                      {log.tipo === "prefeitura_mensal" ? "Mensal" : "Diária"}
+                      {log.tipo.includes("folha") ? "Folha" : "Diária"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">{log.status}</span>
                   </div>
@@ -2900,7 +2842,7 @@ function ProcuradoriaTab() {
   if (!procuradores?.length) {
     return <EmptyState icon={Gavel} title="Sem dados da Procuradoria"
       description="Nenhum servidor com cargo de Procurador encontrado no portal de transparência."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
   }
 
   return (
@@ -2956,7 +2898,7 @@ function ProcuradoriaTab() {
         })}
       </div>
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
         </a>
