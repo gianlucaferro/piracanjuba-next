@@ -2927,6 +2927,27 @@ export type Database = {
       }
     }
     Views: {
+      v_beneficios_sociais_canonicos: {
+        Row: {
+          beneficiarios: number | null
+          competencia: string | null
+          data_coleta: string | null
+          fonte_codigo: string | null
+          fonte_nome: string | null
+          fonte_url: string | null
+          id: string | null
+          municipio: string | null
+          municipio_ibge: string | null
+          natureza_dado: string | null
+          observacoes: string | null
+          programa: string | null
+          source_hash: string | null
+          unidade_medida: string | null
+          updated_at: string | null
+          valor_pago: number | null
+        }
+        Relationships: []
+      }
       v_sync_dashboard: {
         Row: {
           cron_expression: string | null
