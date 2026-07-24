@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
       supabase.from("executivo").select("nome, tipo, partido, mandato_inicio, mandato_fim").limit(5),
       supabase.from("educacao_indicadores").select("categoria, chave, valor_texto, ano_referencia").limit(30),
       supabase.from("saude_indicadores").select("categoria, indicador, valor_texto, ano").order("ano", { ascending: false }).limit(30),
-      supabase.from("beneficios_sociais").select("programa, beneficiarios, valor_pago, competencia").order("competencia", { ascending: false }).limit(20),
+      supabase.from("v_beneficios_sociais_canonicos").select("programa, beneficiarios, valor_pago, competencia, natureza_dado, fonte_nome").eq("municipio_ibge", "5217104").order("competencia", { ascending: false }).limit(20),
       supabase.from("arrecadacao_municipal").select("categoria, tipo, valor, competencia, ano").order("ano", { ascending: false }).limit(30),
       supabase.from("secretarias").select("nome, secretario_nome, subsidio, email, telefone").limit(30),
       supabase.from("servidores").select("nome, cargo, lotacao").limit(50),
@@ -55,6 +56,8 @@ Deno.serve(async (req) => {
     // Specific query-based data (hybrid approach)
     let extraContext = "";
     const qLower = question.toLowerCase();
+    const beneficiosContext =
+      buildBenefitContextRows(beneficios || []).join("\n") || "Sem dados";
 
     if (qLower.includes("projeto") || qLower.includes("lei")) {
       const { data: projetos } = await supabase.from("projetos").select("numero, tipo, ementa, autor_texto, status, data").order("data", { ascending: false }).limit(15);
@@ -186,7 +189,7 @@ ${educIndicadores?.map(e => `- [${e.categoria}] ${e.chave}: ${e.valor_texto} (${
 ${saudeIndicadores?.map(s => `- [${s.categoria}] ${s.indicador}: ${s.valor_texto} (${s.ano})`).join("\n") || "Sem dados"}
 
 ### Benefícios Sociais (últimos registros):
-${beneficios?.map(b => `- ${b.programa}: ${b.beneficiarios} beneficiários, R$ ${b.valor_pago?.toLocaleString("pt-BR")} (${b.competencia})`).join("\n") || "Sem dados"}
+${beneficiosContext}
 
 ### Arrecadação:
 ${arrecadacao?.map(a => `- [${a.tipo}] ${a.categoria}: R$ ${a.valor?.toLocaleString("pt-BR")} (${a.competencia})`).join("\n") || "Sem dados"}

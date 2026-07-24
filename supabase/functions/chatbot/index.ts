@@ -10,6 +10,7 @@ import {
   geminiErrorToResponse,
   jsonError,
 } from "../_shared/ai.ts";
+import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
 
 // Chatbot público do Piracanjuba.ai.
 // Responde perguntas sobre o município usando SOMENTE os dados públicos do banco
@@ -429,16 +430,31 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
-    keys: ["beneficio", "bolsa familia", "auxilio", "cadunico", "programa social", "assistencia", "cras"],
+    keys: [
+      "beneficio",
+      "bolsa familia",
+      "bpc",
+      "garantia safra",
+      "garantia-safra",
+      "peti",
+      "seguro defeso",
+      "seguro-defeso",
+      "tarifa social",
+      "luz social",
+      "auxilio",
+      "cadunico",
+      "programa social",
+      "assistencia",
+      "cras",
+    ],
     run: async (sb) => {
-      const [ben, bf] = await Promise.all([
-        sb.from("beneficios_sociais").select("programa, competencia, beneficiarios, valor_pago").order("competencia", { ascending: false }).limit(15),
-        sb.from("bolsa_familia_municipio").select("mes_ano, valor, beneficiados").order("mes_ano", { ascending: false }).limit(6),
-      ]);
-      const rows = [
-        ...(ben.data || []).map((b) => `- ${b.programa} (${b.competencia}): ${b.beneficiarios} beneficiários, ${cur(b.valor_pago)}`),
-        ...(bf.data || []).map((b) => `- Bolsa Família (${b.mes_ano}): ${b.beneficiados} famílias, ${cur(b.valor)}`),
-      ];
+      const { data } = await sb
+        .from("v_beneficios_sociais_canonicos")
+        .select("programa, competencia, beneficiarios, valor_pago, natureza_dado, fonte_nome")
+        .eq("municipio_ibge", "5217104")
+        .order("competencia", { ascending: false })
+        .limit(60);
+      const rows = buildBenefitContextRows(data || []);
       return fmtList("Benefícios sociais", rows);
     },
   },
