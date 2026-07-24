@@ -1,138 +1,5 @@
--- Painel publico do FUNPREPI, com reconciliacao entre o portal historico e
--- a carga canonica do NucleoGov. Nenhum valor de divida e inferido.
-
-create table if not exists public.funprepi_referencia_anual (
-  ano integer primary key check (ano between 2000 and 2100),
-  periodo_fim date not null,
-  quantidade_empenhos integer not null check (quantidade_empenhos >= 0),
-  valor_pago numeric not null check (valor_pago >= 0),
-  fonte_url text not null,
-  verificado_em date not null
-);
-
-create table if not exists public.funprepi_evidencias (
-  chave text primary key,
-  titulo text not null,
-  tipo text not null,
-  data_referencia date,
-  valor numeric,
-  unidade text,
-  situacao text not null,
-  descricao text not null,
-  orgao_emissor text not null,
-  fonte_url text not null,
-  verificado_em date not null,
-  updated_at timestamptz not null default now()
-);
-
-alter table public.funprepi_referencia_anual enable row level security;
-alter table public.funprepi_evidencias enable row level security;
-
-drop policy if exists funprepi_referencia_select_public
-  on public.funprepi_referencia_anual;
-create policy funprepi_referencia_select_public
-  on public.funprepi_referencia_anual
-  for select
-  to anon, authenticated
-  using (true);
-
-drop policy if exists funprepi_evidencias_select_public
-  on public.funprepi_evidencias;
-create policy funprepi_evidencias_select_public
-  on public.funprepi_evidencias
-  for select
-  to anon, authenticated
-  using (true);
-
-grant select on public.funprepi_referencia_anual to anon, authenticated;
-grant select on public.funprepi_evidencias to anon, authenticated;
-
-insert into public.funprepi_referencia_anual (
-  ano,
-  periodo_fim,
-  quantidade_empenhos,
-  valor_pago,
-  fonte_url,
-  verificado_em
-)
-values
-  (2011, date '2011-12-31', 211,  3304311.94, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2012, date '2012-12-31', 221,  4951031.87, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2013, date '2013-12-31', 216,  6237186.21, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2014, date '2014-12-31', 183,  6482938.50, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2015, date '2015-12-31', 168,  7536288.72, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2016, date '2016-12-31', 186,  9127166.33, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2017, date '2017-12-31', 212, 11322968.53, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2018, date '2018-12-31', 190, 12773421.40, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2019, date '2019-12-31', 159, 13454083.89, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2020, date '2020-12-31', 142, 14048627.67, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2021, date '2021-12-31',  88, 15298593.47, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2022, date '2022-12-31',  58, 20379398.01, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2023, date '2023-12-31',  59, 21895905.02, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2024, date '2024-12-31',  65, 25616657.76, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2025, date '2025-12-31',  51, 25915991.10, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24'),
-  (2026, date '2026-06-30',  24, 14162219.41, 'https://piracanjuba.centi.com.br/despesas/orgao', date '2026-07-24')
-on conflict (ano) do update
-set
-  periodo_fim = excluded.periodo_fim,
-  quantidade_empenhos = excluded.quantidade_empenhos,
-  valor_pago = excluded.valor_pago,
-  fonte_url = excluded.fonte_url,
-  verificado_em = excluded.verificado_em;
-
-insert into public.funprepi_evidencias (
-  chave,
-  titulo,
-  tipo,
-  data_referencia,
-  valor,
-  unidade,
-  situacao,
-  descricao,
-  orgao_emissor,
-  fonte_url,
-  verificado_em
-)
-values
-  (
-    'tcm-acordao-consulta-15-2019',
-    'Déficit atuarial e plano de amortização confirmados',
-    'acordao',
-    date '2019-08-01',
-    null,
-    null,
-    'deficit_atuarial_confirmado',
-    'A consulta do Município ao TCM-GO trata de aportes periódicos e contribuição suplementar para cobertura do déficit atuarial do RPPS. O acórdão não informa o saldo atual da dívida.',
-    'Tribunal de Contas dos Municípios do Estado de Goiás',
-    'https://www.tcm.go.gov.br/site/wp-content/uploads/2019/08/AC-CONS-015-2019-processo-17680-18-Piracanjuba-CONSULTA.-REQUISITOS-DE-ADMISSIBILIDADE-ATENDIDOS.-RPPS.-PLANO-DE-AMORTIZA%C3%87%C3%83O.-APORTE-PER%C3%8DODO-DE-RECURSOS.pdf',
-    date '2026-07-24'
-  ),
-  (
-    'saldo-divida-atual-nao-publicado',
-    'Saldo atual da dívida não localizado',
-    'lacuna_documental',
-    date '2026-07-24',
-    null,
-    null,
-    'nao_publicado',
-    'As fontes consultadas confirmam o déficit atuarial, mas não oferecem um documento recente com o saldo atual da obrigação da Prefeitura, data-base e metodologia.',
-    'Piracanjuba.ai',
-    'https://piracanjuba.go.gov.br/',
-    date '2026-07-24'
-  )
-on conflict (chave) do update
-set
-  titulo = excluded.titulo,
-  tipo = excluded.tipo,
-  data_referencia = excluded.data_referencia,
-  valor = excluded.valor,
-  unidade = excluded.unidade,
-  situacao = excluded.situacao,
-  descricao = excluded.descricao,
-  orgao_emissor = excluded.orgao_emissor,
-  fonte_url = excluded.fonte_url,
-  verificado_em = excluded.verificado_em,
-  updated_at = now();
+-- Compara cada fotografia historica somente ate a data final declarada pela
+-- propria referencia. Os demais agregados continuam usando toda a carga nova.
 
 create or replace function public.funprepi_dashboard()
 returns jsonb
@@ -184,21 +51,29 @@ resumo as (
 ),
 anual_novo as (
   select
-    extract(year from data)::integer as ano,
+    extract(year from b.data)::integer as ano,
     count(*) as empenhos,
-    coalesce(sum(valor_empenhado), 0) as empenhado,
-    coalesce(sum(valor_anulacao), 0) as anulado,
-    coalesce(sum(valor_liquidado), 0) as liquidado,
-    coalesce(sum(valor_pago), 0) as pago,
-    coalesce(sum(saldo_pagar), 0) as saldo_pagar
-  from base
-  where data is not null
+    coalesce(sum(b.valor_empenhado), 0) as empenhado,
+    coalesce(sum(b.valor_anulacao), 0) as anulado,
+    coalesce(sum(b.valor_liquidado), 0) as liquidado,
+    coalesce(sum(b.valor_pago), 0) as pago,
+    coalesce(sum(b.saldo_pagar), 0) as saldo_pagar
+  from base b
+  left join public.funprepi_referencia_anual referencia
+    on referencia.ano = extract(year from b.data)::integer
+  where b.data is not null
+    and (
+      referencia.ano is null
+      or b.data <= referencia.periodo_fim
+    )
   group by 1
 ),
 anos as (
   select ano from public.funprepi_referencia_anual
   union
-  select ano from anual_novo
+  select extract(year from data)::integer as ano
+  from base
+  where data is not null
 ),
 serie_anual as (
   select
@@ -411,25 +286,3 @@ $$;
 
 revoke all on function public.funprepi_dashboard() from public;
 grant execute on function public.funprepi_dashboard() to anon, authenticated;
-
--- A serie historica do portal comeca em 2011. As quatro janelas entram na
--- mesma fila idempotente e serao processadas pelo cron existente, sem
--- sobrepor chamadas ao portal.
-insert into public.prefeitura_empenhos_backfill_fila (
-  scope,
-  data_inicio,
-  data_fim,
-  prioridade
-)
-values
-  ('01/01/2011:31/03/2011', date '2011-01-01', date '2011-03-31', 110),
-  ('01/04/2011:30/06/2011', date '2011-04-01', date '2011-06-30', 110),
-  ('01/07/2011:30/09/2011', date '2011-07-01', date '2011-09-30', 110),
-  ('01/10/2011:31/12/2011', date '2011-10-01', date '2011-12-31', 110)
-on conflict (scope) do update
-set
-  prioridade = greatest(
-    public.prefeitura_empenhos_backfill_fila.prioridade,
-    excluded.prioridade
-  ),
-  updated_at = now();
