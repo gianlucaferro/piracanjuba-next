@@ -498,21 +498,27 @@ function ExpenseChart({
             label: "Empenhado",
             value: latest.valor_empenhado,
             color: "text-amber-700 dark:text-amber-400",
+            description:
+              "Compromisso assumido: verba reservada no orçamento para uma compra, obra ou serviço.",
           },
           {
             label: "Liquidado",
             value: latest.valor_liquidado,
             color: "text-blue-700 dark:text-blue-400",
+            description:
+              "Entrega conferida: a Prefeitura verificou a entrega do produto ou a execução da obra ou do serviço.",
           },
           {
             label: "Pago",
             value: latest.valor_pago,
             color: "text-emerald-700 dark:text-emerald-400",
+            description:
+              "Dinheiro transferido: valor que já saiu dos cofres públicos para a pessoa ou empresa que tinha direito a receber.",
           },
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-xl border border-border bg-muted/40 px-4 py-3"
+            className="flex h-full flex-col rounded-xl border border-border bg-muted/40 px-4 py-3"
           >
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {item.label} em {formatFullMonth(latest.competencia)}
@@ -520,6 +526,9 @@ function ExpenseChart({
             </p>
             <p className={`mt-1 text-lg font-bold ${item.color}`}>
               {formatCurrency(item.value)}
+            </p>
+            <p className="mt-3 border-t border-border/70 pt-2 text-xs leading-relaxed text-muted-foreground">
+              {item.description}
             </p>
           </div>
         ))}
