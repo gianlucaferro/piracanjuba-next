@@ -102,6 +102,9 @@ export default async function VereadorPage({
   if (!result) notFound();
 
   const { vereador, remuneracoes, atuacoes, projetos, presencas, custoTotal } = result;
+  // o rótulo separa PLs das demais proposições (resoluções/decretos legislativos)
+  const projetosDeLei = projetos.filter((p) => p.tipo === "Projeto de Lei").length;
+  const outrasProposicoes = projetos.length - projetosDeLei;
   const ultimaRemuneracao = remuneracoes[0];
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
@@ -248,7 +251,12 @@ export default async function VereadorPage({
         <section>
           <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
             <FileText className="w-5 h-5 text-primary" />
-            Projetos de Lei ({projetos.length})
+            Projetos de Lei ({projetosDeLei})
+            {outrasProposicoes > 0 && (
+              <span className="text-sm font-normal text-muted-foreground">
+                + {outrasProposicoes} outras proposições (resoluções e decretos)
+              </span>
+            )}
           </h2>
           <div className="space-y-2">
             {projetos.map((p) => (
