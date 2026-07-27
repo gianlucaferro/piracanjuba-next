@@ -2163,6 +2163,48 @@ export type Database = {
           },
         ]
       }
+      despesas_mensais: {
+        Row: {
+          competencia: string
+          data_coleta: string
+          escopo: string
+          fonte_nome: string
+          fonte_url: string
+          id: string
+          metodologia: string
+          updated_at: string
+          valor_empenhado: number
+          valor_liquidado: number
+          valor_pago: number
+        }
+        Insert: {
+          competencia: string
+          data_coleta?: string
+          escopo: string
+          fonte_nome: string
+          fonte_url: string
+          id?: string
+          metodologia: string
+          updated_at?: string
+          valor_empenhado?: number
+          valor_liquidado?: number
+          valor_pago?: number
+        }
+        Update: {
+          competencia?: string
+          data_coleta?: string
+          escopo?: string
+          fonte_nome?: string
+          fonte_url?: string
+          id?: string
+          metodologia?: string
+          updated_at?: string
+          valor_empenhado?: number
+          valor_liquidado?: number
+          valor_pago?: number
+        }
+        Relationships: []
+      }
       receitas_mensais: {
         Row: {
           categoria: string

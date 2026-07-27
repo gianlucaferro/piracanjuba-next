@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   BarChart3,
   Building2,
+  CircleDollarSign,
   ExternalLink,
   Landmark,
   WalletCards,
@@ -14,11 +15,17 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  fetchDespesasMensais,
+  type DespesaMensal,
+} from "@/data/despesasMensaisApi";
 import {
   fetchReceitasMensais,
   type EsferaReceita,
@@ -168,6 +175,41 @@ function variation(current: number, previous: number): string | null {
   })}%`;
 }
 
+function PeriodSelector({
+  monthLimit,
+  onChange,
+  label,
+}: {
+  monthLimit: number;
+  onChange: (months: number) => void;
+  label: string;
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-1 text-xs font-medium text-muted-foreground">
+        {label}
+      </legend>
+      <div className="inline-flex rounded-lg border border-border bg-background p-1">
+        {[12, 24, 60].map((months) => (
+          <button
+            key={months}
+            type="button"
+            onClick={() => onChange(months)}
+            aria-pressed={monthLimit === months}
+            className={`min-h-8 min-w-12 rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              monthLimit === months
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            {months} meses
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function RevenueChart({
   config,
   allRows,
@@ -271,6 +313,7 @@ function RevenueChart({
                 dataKey="label"
                 tick={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                 interval={0}
+                padding={{ left: 8, right: 8 }}
               />
               <YAxis
                 width={56}
@@ -395,11 +438,269 @@ function RevenueChart({
   );
 }
 
+function ExpenseChart({
+  allRows,
+  monthLimit,
+}: {
+  allRows: DespesaMensal[];
+  monthLimit: number;
+}) {
+  const rows = useMemo(
+    () => allRows.slice(0, monthLimit).map((row) => ({
+      ...row,
+      label: formatMonth(row.competencia),
+      valor_empenhado: Number(row.valor_empenhado) || 0,
+      valor_liquidado: Number(row.valor_liquidado) || 0,
+      valor_pago: Number(row.valor_pago) || 0,
+    })),
+    [allRows, monthLimit],
+  );
+  const latest = rows[0];
+  const latestIsPartial = latest ? isCurrentMonth(latest.competencia) : false;
+  const minWidth = Math.max(720, rows.length * 48);
+
+  if (!latest) {
+    return (
+      <section className="stat-card" aria-labelledby="despesas-mensais-title">
+        <h3
+          id="despesas-mensais-title"
+          className="flex items-center gap-2 font-semibold text-foreground"
+        >
+          <CircleDollarSign className="h-4 w-4 text-primary" aria-hidden />
+          Gastos por mês do empenho
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Ainda não há competências mensais publicadas para esta série.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="stat-card" aria-labelledby="despesas-mensais-title">
+      <div>
+        <h3
+          id="despesas-mensais-title"
+          className="flex items-center gap-2 font-semibold text-foreground"
+        >
+          <CircleDollarSign className="h-4 w-4 text-primary" aria-hidden />
+          Gastos por mês do empenho
+        </h3>
+        <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          Compromissos emitidos em cada mês e quanto deles já foi liquidado e
+          pago até a coleta.
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {[
+          {
+            label: "Empenhado",
+            value: latest.valor_empenhado,
+            color: "text-amber-700 dark:text-amber-400",
+          },
+          {
+            label: "Liquidado",
+            value: latest.valor_liquidado,
+            color: "text-blue-700 dark:text-blue-400",
+          },
+          {
+            label: "Pago",
+            value: latest.valor_pago,
+            color: "text-emerald-700 dark:text-emerald-400",
+          },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl border border-border bg-muted/40 px-4 py-3"
+          >
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {item.label} em {formatFullMonth(latest.competencia)}
+              {latestIsPartial ? " (parcial)" : ""}
+            </p>
+            <p className={`mt-1 text-lg font-bold ${item.color}`}>
+              {formatCurrency(item.value)}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-4 text-xs font-medium text-muted-foreground">
+        Ordem do gráfico: mês mais recente à esquerda, meses anteriores à
+        direita. {latestIsPartial
+          ? "O asterisco identifica o mês atual, ainda parcial."
+          : ""}
+      </p>
+      <div className="mt-2 overflow-x-auto pb-2">
+        <div
+          className="h-80"
+          style={{ minWidth }}
+          role="img"
+          aria-label={`Gastos por mês do empenho, de ${
+            formatFullMonth(latest.competencia)
+          } até ${formatFullMonth(rows[rows.length - 1].competencia)}. No mês mais recente foram empenhados ${
+            formatCurrency(latest.valor_empenhado)
+          }, liquidados ${formatCurrency(latest.valor_liquidado)} e pagos ${
+            formatCurrency(latest.valor_pago)
+          }.`}
+        >
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={0}
+            initialDimension={{ width: minWidth, height: 320 }}
+          >
+            <LineChart
+              data={rows}
+              margin={{ top: 12, right: 12, bottom: 4, left: 4 }}
+              accessibilityLayer
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
+              <XAxis
+                dataKey="label"
+                tick={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
+                interval={0}
+                padding={{ left: 8, right: 8 }}
+              />
+              <YAxis
+                width={56}
+                tick={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
+                tickFormatter={(value) => formatCompact(Number(value))}
+              />
+              <Tooltip
+                formatter={(value, name) => [
+                  formatCurrency(Number(value)),
+                  String(name),
+                ]}
+                labelFormatter={(_label, payload) => {
+                  const row = payload?.[0]?.payload as
+                    | (DespesaMensal & { label: string })
+                    | undefined;
+                  return row ? formatFullMonth(row.competencia) : "";
+                }}
+                contentStyle={{
+                  background: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: 10,
+                  color: "hsl(var(--foreground))",
+                }}
+              />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Line
+                type="monotone"
+                dataKey="valor_empenhado"
+                name="Empenhado"
+                stroke="#b45309"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="valor_liquidado"
+                name="Liquidado"
+                stroke="#2563eb"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="valor_pago"
+                name="Pago"
+                stroke="#047857"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+        As três linhas representam etapas do mesmo gasto e não devem ser
+        somadas. O mês identifica a data do empenho, não a data em que o
+        dinheiro saiu do caixa.
+      </div>
+
+      <details className="mt-3">
+        <summary className="min-h-6 cursor-pointer text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Ver valores mês a mês
+        </summary>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[680px] text-left text-sm">
+            <caption className="sr-only">
+              Gastos por competência do empenho, do mês mais recente ao mais
+              antigo
+            </caption>
+            <thead>
+              <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+                <th className="px-2 py-2 font-medium">Mês do empenho</th>
+                <th className="px-2 py-2 text-right font-medium">Empenhado</th>
+                <th className="px-2 py-2 text-right font-medium">Liquidado</th>
+                <th className="px-2 py-2 text-right font-medium">Pago</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr
+                  key={row.competencia}
+                  className="border-b border-border/60"
+                >
+                  <td className="px-2 py-2.5 font-medium text-foreground">
+                    {formatFullMonth(row.competencia)}
+                    {isCurrentMonth(row.competencia) ? " (parcial)" : ""}
+                  </td>
+                  <td className="px-2 py-2.5 text-right text-foreground">
+                    {formatCurrency(row.valor_empenhado)}
+                  </td>
+                  <td className="px-2 py-2.5 text-right text-foreground">
+                    {formatCurrency(row.valor_liquidado)}
+                  </td>
+                  <td className="px-2 py-2.5 text-right font-semibold text-foreground">
+                    {formatCurrency(row.valor_pago)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <div className="mt-3 flex flex-col gap-1 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <a
+          href={latest.fonte_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-6 items-center gap-1 text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Fonte oficial: Portal da Transparência de Piracanjuba
+          <ExternalLink className="h-3 w-3" aria-hidden />
+        </a>
+        <span>
+          Atualização automática mensal. Coleta mais recente:{" "}
+          {new Date(latest.data_coleta).toLocaleDateString("pt-BR")}
+        </span>
+      </div>
+    </section>
+  );
+}
+
 export default function ReceitasMensaisCharts() {
   const [monthLimit, setMonthLimit] = useState(24);
   const { data = [], isLoading, isError } = useQuery({
     queryKey: ["receitas-mensais"],
     queryFn: fetchReceitasMensais,
+    staleTime: 30 * 60 * 1000,
+  });
+  const {
+    data: expenseRows = [],
+    isLoading: expensesLoading,
+    isError: expensesError,
+  } = useQuery({
+    queryKey: ["despesas-mensais"],
+    queryFn: fetchDespesasMensais,
     staleTime: 30 * 60 * 1000,
   });
 
@@ -417,28 +718,11 @@ export default function ReceitasMensaisCharts() {
               governamentais com a arrecadação gerada pelo próprio Município.
             </p>
           </div>
-          <fieldset>
-            <legend className="mb-1 text-xs font-medium text-muted-foreground">
-              Período exibido
-            </legend>
-            <div className="inline-flex rounded-lg border border-border bg-background p-1">
-              {[12, 24, 60].map((months) => (
-                <button
-                  key={months}
-                  type="button"
-                  onClick={() => setMonthLimit(months)}
-                  aria-pressed={monthLimit === months}
-                  className={`min-h-8 min-w-12 rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                    monthLimit === months
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                >
-                  {months} meses
-                </button>
-              ))}
-            </div>
-          </fieldset>
+          <PeriodSelector
+            monthLimit={monthLimit}
+            onChange={setMonthLimit}
+            label="Período exibido nas receitas"
+          />
         </div>
       </section>
 
@@ -474,6 +758,49 @@ export default function ReceitasMensaisCharts() {
           monthLimit={monthLimit}
         />
       ))}
+
+      <section className="stat-card border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
+              <CircleDollarSign className="h-5 w-5 text-primary" aria-hidden />
+              Quanto o Município gasta?
+            </h2>
+            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+              Histórico mensal das despesas empenhadas e da evolução das fases
+              de liquidação e pagamento.
+            </p>
+          </div>
+          <PeriodSelector
+            monthLimit={monthLimit}
+            onChange={setMonthLimit}
+            label="Período exibido nos gastos"
+          />
+        </div>
+      </section>
+
+      {expensesLoading && (
+        <div aria-live="polite">
+          <p className="sr-only">Carregando histórico mensal de gastos.</p>
+          <div className="stat-card h-96 animate-pulse bg-muted/40" />
+        </div>
+      )}
+
+      {expensesError && (
+        <section className="stat-card" role="status">
+          <h3 className="font-semibold text-foreground">
+            Histórico mensal de gastos temporariamente indisponível
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Os demais dados da Visão Geral continuam disponíveis. Tente
+            novamente em alguns instantes.
+          </p>
+        </section>
+      )}
+
+      {!expensesLoading && !expensesError && (
+        <ExpenseChart allRows={expenseRows} monthLimit={monthLimit} />
+      )}
     </div>
   );
 }
