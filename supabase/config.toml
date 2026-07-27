@@ -217,6 +217,9 @@ verify_jwt = false
 [functions.sync-transferencias-federais]
 verify_jwt = false
 
+[functions.sync-receitas-mensais]
+verify_jwt = false
+
 [functions.sync-licitacoes-prefeitura]
 verify_jwt = false
 

@@ -2163,6 +2163,57 @@ export type Database = {
           },
         ]
       }
+      receitas_mensais: {
+        Row: {
+          categoria: string
+          categoria_ordem: number
+          competencia: string
+          data_coleta: string
+          deducoes: number
+          esfera: string
+          fonte_nome: string
+          fonte_url: string
+          id: string
+          metodologia: string
+          registros_fonte: number
+          updated_at: string
+          valor_bruto: number
+          valor_liquido: number
+        }
+        Insert: {
+          categoria: string
+          categoria_ordem?: number
+          competencia: string
+          data_coleta?: string
+          deducoes?: number
+          esfera: string
+          fonte_nome: string
+          fonte_url: string
+          id?: string
+          metodologia: string
+          registros_fonte?: number
+          updated_at?: string
+          valor_bruto?: number
+          valor_liquido?: number
+        }
+        Update: {
+          categoria?: string
+          categoria_ordem?: number
+          competencia?: string
+          data_coleta?: string
+          deducoes?: number
+          esfera?: string
+          fonte_nome?: string
+          fonte_url?: string
+          id?: string
+          metodologia?: string
+          registros_fonte?: number
+          updated_at?: string
+          valor_bruto?: number
+          valor_liquido?: number
+        }
+        Relationships: []
+      }
       resolucoes: {
         Row: {
           ano: number

@@ -5,6 +5,7 @@ import { DollarSign, Trophy, Share2, BarChart3, PieChart, Building2, Wallet } fr
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { formatCurrency } from "@/lib/formatters";
+import ReceitasMensaisCharts from "./ReceitasMensaisCharts";
 
 const POPULACAO = 25373;
 
@@ -258,6 +259,8 @@ export default function PrefeituraDestaques() {
 
   return (
     <div className="space-y-4">
+      <ReceitasMensaisCharts />
+
       {/* Card 1: Custo per capita */}
       {custoPerCapitaMensal && (
         <div className="stat-card border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
