@@ -28,6 +28,7 @@ import DataSUSTab from "@/components/saude/DataSUSTab";
 import MortalidadeTab from "@/components/saude/MortalidadeTab";
 import DengueSazonalidadeChart from "@/components/saude/DengueSazonalidadeChart";
 import ArbovirosesComparativoChart from "@/components/saude/ArbovirosesComparativoChart";
+import IndicadoresSaudePanel from "@/components/saude/IndicadoresSaudePanel";
 
 function formatCurrency(val: number | null) {
   if (val === null || val === undefined) return "—";
@@ -1381,6 +1382,7 @@ function DespesasSaudeTab() {
 
 // ========== MAIN PAGE ==========
 const tabs = [
+  { value: "indicadores", label: "Indicadores", icon: TrendingUp },
   { value: "epidemiologia", label: "Epidemiologia", icon: Bug },
   { value: "mortalidade", label: "Mortalidade", icon: Heart },
   { value: "estabelecimentos", label: "Estabelecimentos", icon: Building2 },
@@ -1406,7 +1408,7 @@ export default function Saude() {
 
         <SaudeResumo />
 
-        <Tabs defaultValue="epidemiologia" className="w-full">
+        <Tabs defaultValue="indicadores" className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6 scrollbar-hide">
             <TabsList className="inline-flex w-max md:w-full md:flex-wrap h-auto gap-1 bg-transparent p-0">
               {tabs.map((tab) => (
@@ -1422,6 +1424,7 @@ export default function Saude() {
             </TabsList>
           </div>
 
+          <TabsContent value="indicadores"><IndicadoresSaudePanel /></TabsContent>
           <TabsContent value="epidemiologia"><EpidemiologiaTab /></TabsContent>
           <TabsContent value="mortalidade"><MortalidadeTab /></TabsContent>
           <TabsContent value="estabelecimentos"><EstabelecimentosTab /></TabsContent>
