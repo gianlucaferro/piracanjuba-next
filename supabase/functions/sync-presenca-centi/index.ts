@@ -1,265 +1,317 @@
+/// <reference lib="deno.ns" />
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
-
+import {
+  baixarPdfPresenca,
+  type ListaPresenca,
+  parseListasPresenca,
+  parsePedidoPresencas,
+  parseResultadoPresencas,
+  type PresencaExistente,
+  PRESENCAS_CENTI_URL,
+  PRESENCAS_UA,
+  protegerPresencasConfirmadas,
+  resolverVereadoresPresenca,
+  selecionarLotePresencas,
+  sessaoJaVerificada,
+  urlPresenca,
+  type VereadorPresenca,
+} from "../_shared/presencas-centi.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, x-cron-secret",
 };
-
-const UA = "piracanjuba.ai/1.0 (transparencia legislativa)";
-const CENTI_URL = "https://camarapiracanjuba.centi.com.br/transparencia/atosadministrativos/10";
-
-const VEREADORES = [
-  "Fernando Abraão Magalhães Silva",
-  "Douglas Miranda Silva",
-  "Reginaldo Moreira da Silva",
-  "Aparecida Divani Rocha Cordeiro",
-  "Adriana Dias Pinheiro",
-  "Edimar Lopes Machado",
-  "Marco Antonio Antunes da Cruz",
-  "Sirley de Fatima Menezes Wehbe",
-  "Welton Eterno da Silva",
-  "Wennder Trindade e Silva",
-  "Yuri Santiago Alves",
-];
-
-function parseDate(dateStr: string): string | null {
-  const m = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (!m) return null;
-  return `${m[3]}-${m[2]}-${m[1]}`;
-}
-
-async function analyzePresencaPDF(pdfBase64: string, apiKey: string): Promise<{ nome: string; presente: boolean }[]> {
-  // Use Gemini Vision to analyze the scanned PDF image
-  const prompt = `Analise esta lista de presença de sessão da Câmara Municipal de Piracanjuba.
-Para cada vereador listado abaixo, determine se está PRESENTE ou AUSENTE com base nas assinaturas e anotações visíveis.
-
-Vereadores da legislatura atual:
-1. Fernando Abraão Magalhães Silva
-2. Douglas Miranda Silva
-3. Reginaldo Moreira da Silva
-4. Aparecida Divani Rocha Cordeiro
-5. Adriana Dias Pinheiro
-6. Edimar Lopes Machado
-7. Marco Antonio Antunes da Cruz
-8. Sirley de Fatima Menezes Wehbe
-9. Welton Eterno da Silva
-10. Wennder Trindade e Silva
-11. Yuri Santiago Alves
-
-Responda APENAS em formato JSON array, sem markdown, sem explicações:
-[{"nome":"Nome Completo","presente":true},{"nome":"Nome Completo","presente":false}]
-
-Se houver indicação de "Ausente", "Justificad" ou sem assinatura ao lado do nome, marque como presente=false.
-Se houver assinatura ou marca de presença, marque como presente=true.`;
-
-  const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
+const message = (error: unknown): string =>
+  error && typeof error === "object" && "message" in error
+    ? String(error.message)
+    : String(error);
+async function analisarPdf(
+  pdf: Uint8Array,
+  apiKey: string,
+  lista: ListaPresenca,
+  vereadores: VereadorPresenca[],
+) {
+  if (!apiKey) {
+    throw new Error(
+      "GEMINI_API_KEY não configurada; nenhuma presença presumida",
+    );
+  }
+  const prompt =
+    `Analise exclusivamente a lista de presença anexada da Câmara Municipal de Piracanjuba. Extraia a data da sessão escrita no documento e a situação de cada vereador. Não use a data de publicação para inventar a data da sessão. Assinatura identificável comprova presença. Anotação explícita de ausência comprova ausência. Se estiver ilegível ou a evidência for insuficiente, use presente:null, nunca presuma presença. Não trate nomes apenas impressos como assinaturas. Os nomes esperados são: ${
+      vereadores.map((v) => v.nomeCompleto).join("; ")
+    }. Responda somente JSON: {"sessao_data":"YYYY-MM-DD","presencas":[{"nome":"nome completo","presente":true}]}, com todos os vereadores e sem outros nomes.`;
+  const response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gemini-2.5-flash",
+        messages: [{
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:application/pdf;base64,${encodeBase64(pdf)}`,
+              },
+            },
+          ],
+        }],
+        max_tokens: 2000,
+      }),
+      signal: AbortSignal.timeout(45_000),
     },
-    body: JSON.stringify({
-      model: "gemini-2.5-flash",
-      messages: [{
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          { type: "image_url", image_url: { url: `data:application/pdf;base64,${pdfBase64}` } },
-        ],
-      }],
-      max_tokens: 1000,
-    }),
-  });
-
-  if (!resp.ok) {
-    const errText = await resp.text();
-    console.error(`AI API error ${resp.status}: ${errText}`);
-    throw new Error(`AI API error ${resp.status}`);
+  );
+  if (!response.ok) throw new Error(`IA de presenças HTTP ${response.status}`);
+  const result = await response.json();
+  const content = result.choices?.[0]?.message?.content;
+  if (typeof content !== "string") {
+    throw new Error("IA de presenças não retornou conteúdo válido");
   }
-
-  const result = await resp.json();
-  const content = result.choices?.[0]?.message?.content || "";
-  console.log(`AI response: ${content.substring(0, 300)}`);
-
-  // Parse JSON from response
-  const jsonMatch = content.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) {
-    console.error("No JSON found in AI response");
-    return VEREADORES.map(n => ({ nome: n, presente: true }));
-  }
-
-  try {
-    return JSON.parse(jsonMatch[0]);
-  } catch {
-    console.error("Failed to parse AI JSON response");
-    return VEREADORES.map(n => ({ nome: n, presente: true }));
-  }
+  return parseResultadoPresencas(content, lista, vereadores);
 }
-
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const apiKey = Deno.env.get("GEMINI_API_KEY");
-  
-  const { data: log } = await sb.from("sync_log")
-    .insert({ tipo: "presenca-centi", status: "running", detalhes: {} })
-    .select("id").single();
-  const logId = log?.id;
-
-  const errors: string[] = [];
-  let newCount = 0;
-
-  try {
-    // Get vereadores from DB for ID mapping
-    const { data: dbVereadores } = await sb.from("vereadores").select("id, nome");
-    const vereadorIdMap = new Map<string, string>();
-    for (const v of dbVereadores || []) {
-      vereadorIdMap.set(v.nome.toLowerCase(), v.id);
-    }
-
-    // Fetch the Centi page to get PDF links
-    const pageResp = await fetch(CENTI_URL, { headers: { "User-Agent": UA } });
-    if (!pageResp.ok) throw new Error(`Centi page HTTP ${pageResp.status}`);
-    const pageHtml = await pageResp.text();
-
-    // Extract all download links
-    const linkRegex = /href="(https:\/\/camarapiracanjuba\.centi\.com\.br\/download\/[^"]+\.PDF)"/gi;
-    const links: string[] = [];
-    let lm;
-    while ((lm = linkRegex.exec(pageHtml)) !== null) links.push(lm[1]);
-
-    // Extract table cells for metadata
-    const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
-    const cells: string[] = [];
-    let cm;
-    while ((cm = cellRegex.exec(pageHtml)) !== null) {
-      cells.push(cm[1].replace(/<[^>]*>/g, "").trim());
-    }
-
-    // Build entries from table data
-    const entries: { descricao: string; data: string; pdfUrl: string }[] = [];
-    let li = 0;
-    for (let i = 0; i < cells.length - 3; i++) {
-      if (/LISTA\s+(?:DE\s+)?PRESEN/i.test(cells[i])) {
-        // Find the date cell (DD/MM/YYYY pattern) nearby
-        let dateStr = "";
-        for (let j = i + 1; j < Math.min(i + 5, cells.length); j++) {
-          if (/\d{2}\/\d{2}\/\d{4}/.test(cells[j])) {
-            dateStr = cells[j].match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || "";
-            break;
-          }
-        }
-        if (li < links.length) {
-          entries.push({ descricao: cells[i], data: dateStr, pdfUrl: links[li] });
-          li++;
-        }
-      }
-    }
-
-    // Fallback if table parsing didn't work
-    if (entries.length === 0) {
-      const dateRegex = /(\d{2}\/\d{2}\/\d{4})/g;
-      const dates: string[] = [];
-      let dm;
-      while ((dm = dateRegex.exec(pageHtml)) !== null) dates.push(dm[1]);
-
-      const descRegex = /LISTA\s+(?:DE\s+)?PRESEN[ÇC]A[^<]*/gi;
-      const descs: string[] = [];
-      let ddm;
-      while ((ddm = descRegex.exec(pageHtml)) !== null) descs.push(ddm[0].trim());
-
-      for (let i = 0; i < Math.min(descs.length, links.length); i++) {
-        entries.push({ descricao: descs[i], data: dates[i] || "", pdfUrl: links[i] });
-      }
-    }
-
-    console.log(`Encontradas ${entries.length} listas de presença`);
-
-    for (const entry of entries) {
-      try {
-        console.log(`Processando: ${entry.descricao}`);
-
-        // Download PDF as base64
-        const pdfResp = await fetch(entry.pdfUrl, { headers: { "User-Agent": UA } });
-        if (!pdfResp.ok) { errors.push(`PDF HTTP ${pdfResp.status}`); continue; }
-        const pdfBuffer = new Uint8Array(await pdfResp.arrayBuffer());
-        // Use chunked base64 encoding to avoid stack overflow on large PDFs
-        const pdfBase64 = encodeBase64(pdfBuffer);
-
-        // Use AI to analyze presence
-        let presencaResults: { nome: string; presente: boolean }[];
-        if (apiKey) {
-          presencaResults = await analyzePresencaPDF(pdfBase64, apiKey);
-        } else {
-          console.log("No GEMINI_API_KEY, marking all as present");
-          presencaResults = VEREADORES.map(n => ({ nome: n, presente: true }));
-        }
-
-        // Parse session metadata
-        const tipoSessao = /extraordin/i.test(entry.descricao) ? "extraordinária" : "ordinária";
-        const sessaoData = parseDate(entry.data) || null;
-        const anoMatch = entry.data.match(/(\d{4})/);
-        const ano = anoMatch ? parseInt(anoMatch[1]) : new Date().getFullYear();
-        const titulo = entry.descricao.replace(/\s+/g, " ").trim() || `Sessão ${sessaoData || ""}`;
-
-        for (const p of presencaResults) {
-          // Match nome to known vereadores
-          const matchedNome = VEREADORES.find(v => 
-            v.toLowerCase() === p.nome.toLowerCase() ||
-            v.toLowerCase().includes(p.nome.toLowerCase().split(" ")[0])
-          ) || p.nome;
-
-          const vereadorId = vereadorIdMap.get(matchedNome.toLowerCase()) || null;
-
-          const { error } = await sb.from("presenca_sessoes").upsert({
-            sessao_titulo: titulo,
-            sessao_data: sessaoData,
-            tipo_sessao: tipoSessao,
-            ano,
-            vereador_id: vereadorId,
-            vereador_nome: matchedNome,
-            presente: p.presente,
-            fonte_url: entry.pdfUrl,
-          }, { onConflict: "sessao_titulo,vereador_nome" });
-
-          if (error) errors.push(`${matchedNome}: ${error.message}`);
-          else newCount++;
-        }
-
-        // Delay between PDFs to avoid rate limiting
-        await new Promise(r => setTimeout(r, 1000));
-      } catch (e) {
-        errors.push(`PDF error: ${e.message}`);
-      }
-    }
-
-    // Clean up placeholder records
-    await sb.from("presenca_sessoes").delete().eq("vereador_nome", "SESSÃO");
-
-    const result = { entries: entries.length, records: newCount, errors: errors.slice(0, 10) };
-    if (logId) {
-      await sb.from("sync_log").update({
-        status: errors.length > 0 ? "partial" : "success",
-        detalhes: result, finished_at: new Date().toISOString(),
-      }).eq("id", logId);
-    }
-
-    return new Response(JSON.stringify({ success: true, ...result }), {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (
+    !hasCronOrServiceRoleAuth(req, serviceRoleKey, Deno.env.get("CRON_SECRET"))
+  ) {
+    return json({ success: false, error: "Não autorizado" }, 401);
+  }
+  let dryRun: boolean;
+  let batchSize: number;
+  try {
+    ({ dryRun, batchSize } = parsePedidoPresencas(
+      req.method === "POST" ? await req.text() : "",
+    ));
   } catch (error) {
-    console.error("Erro:", error);
+    return json({ success: false, error: message(error) }, 400);
+  }
+  const sb = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    serviceRoleKey!,
+  );
+  let logId: string | null = null;
+  let cursorPrevious: string | null = null;
+  let cursorLastAttempted: string | null = null;
+  const started = Date.now();
+  const errors: { titulo: string; pdf_url: string; error: string }[] = [];
+  try {
+    if (!dryRun) {
+      const { data, error } = await sb.from("sync_log").insert({
+        tipo: "presenca-centi",
+        status: "running",
+        detalhes: { fonte_url: PRESENCAS_CENTI_URL },
+      }).select("id").single();
+      if (error) throw error;
+      logId = data.id;
+    }
+    let cursorQuery = sb.from("sync_log").select("detalhes")
+      .eq("tipo", "presenca-centi")
+      .not("detalhes->>cursor_last_attempted", "is", null)
+      .order("started_at", { ascending: false }).limit(1);
+    if (logId) cursorQuery = cursorQuery.neq("id", logId);
+    const { data: previousLogs, error: cursorError } = await cursorQuery;
+    if (cursorError) throw cursorError;
+    const previousCursor = previousLogs?.[0]?.detalhes?.cursor_last_attempted;
+    if (previousCursor !== undefined && previousCursor !== null) {
+      if (typeof previousCursor !== "string") {
+        throw new Error("Cursor de presenças inválido");
+      }
+      cursorPrevious = urlPresenca(previousCursor);
+      cursorLastAttempted = cursorPrevious;
+    }
+    const page = await fetch(PRESENCAS_CENTI_URL, {
+      headers: { "User-Agent": PRESENCAS_UA },
+      signal: AbortSignal.timeout(25_000),
+    });
+    if (!page.ok) throw new Error(`Página de presenças HTTP ${page.status}`);
+    const entries = parseListasPresenca(await page.text());
+    const { data: dbVereadores, error: vereadorError } = await sb.from(
+      "vereadores",
+    ).select("id,nome");
+    if (vereadorError) throw vereadorError;
+    const vereadores = resolverVereadoresPresenca(dbVereadores || []);
+    const existing: PresencaExistente[] = [];
+    let total: number | null = null;
+    for (let offset = 0;; offset += 1000) {
+      const { data, count, error } = await sb.from("presenca_sessoes")
+        .select(
+          "id,sessao_titulo,sessao_data,vereador_nome,vereador_id,fonte_url,status_verificacao",
+          { count: "exact" },
+        ).order("id").range(offset, offset + 999);
+      if (error) throw error;
+      if (count === null || (total !== null && count !== total)) {
+        throw new Error("Cadastro de presenças mudou durante leitura");
+      }
+      total = count;
+      existing.push(...(data || []));
+      if (existing.length === total) break;
+      if (!data?.length || data.length < 1000) {
+        throw new Error("Leitura incompleta das presenças existentes");
+      }
+    }
+    const pendentes = entries.filter((lista) =>
+      !sessaoJaVerificada(lista, existing, vereadores)
+    );
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    if (!dryRun && pendentes.length && !apiKey) {
+      throw new Error(
+        "GEMINI_API_KEY não configurada; nenhuma presença presumida",
+      );
+    }
+    const selected = selecionarLotePresencas(
+      entries,
+      pendentes,
+      cursorPrevious,
+      batchSize,
+    );
+    let records = 0;
+    let sessoesProcessadas = 0;
+    let protectedCount = 0;
+    const pdfs: {
+      titulo: string;
+      data: string;
+      pdf_url: string;
+      bytes: number;
+      ja_verificada: boolean;
+    }[] = [];
+    // O ensaio verifica todos os PDFs desta página, sem IA e sem qualquer gravação.
+    for (const lista of dryRun ? entries : selected) {
+      if (!dryRun && logId) {
+        cursorLastAttempted = lista.pdfUrl;
+        // Salvar antes da tentativa também permite avançar após interrupção abrupta.
+        const { error } = await sb.from("sync_log").update({
+          detalhes: {
+            fonte_url: PRESENCAS_CENTI_URL,
+            cursor_last_attempted: cursorLastAttempted,
+            last_attempt_started_at: new Date().toISOString(),
+            pending: pendentes.length,
+          },
+        }).eq("id", logId);
+        if (error) throw error;
+      }
+      try {
+        const pdf = await baixarPdfPresenca(lista.pdfUrl);
+        pdfs.push({
+          titulo: lista.titulo,
+          data: lista.data,
+          pdf_url: lista.pdfUrl,
+          bytes: pdf.length,
+          ja_verificada: sessaoJaVerificada(lista, existing, vereadores),
+        });
+        if (!sessaoJaVerificada(lista, existing, vereadores)) {
+          // Recusar duplicatas ambíguas antes de gastar com IA ou escrever outra linha.
+          protegerPresencasConfirmadas(
+            lista,
+            vereadores.map((v) => ({
+              vereador_id: v.id,
+              vereador_nome: v.nome,
+            })),
+            existing,
+            vereadores,
+          );
+        }
+        if (dryRun) continue;
+        const extraction = await analisarPdf(pdf, apiKey!, lista, vereadores);
+        const writable = protegerPresencasConfirmadas(
+          lista,
+          extraction,
+          existing,
+          vereadores,
+        );
+        protectedCount += extraction.length - writable.length;
+        if (writable.length) {
+          const { error } = await sb.from("presenca_sessoes").upsert(
+            writable.map((row) => ({
+              ...row,
+              sessao_titulo: row.sessao_titulo ?? lista.titulo,
+              sessao_data: lista.data,
+              tipo_sessao: lista.tipo,
+              ano: Number(lista.data.slice(0, 4)),
+              fonte_url: lista.pdfUrl,
+              fonte_tipo: "centi-ia",
+              status_verificacao: "ia",
+            })),
+            { onConflict: "sessao_titulo,vereador_nome" },
+          );
+          if (error) throw error;
+          records += writable.length;
+        }
+        sessoesProcessadas++;
+      } catch (error) {
+        errors.push({
+          titulo: lista.titulo,
+          pdf_url: lista.pdfUrl,
+          error: message(error),
+        });
+      }
+    }
+    const result = {
+      success: errors.length === 0,
+      dry_run: dryRun,
+      source_scope: "primeira_pagina_listas_ordinarias",
+      source_total: null,
+      fonte_url: PRESENCAS_CENTI_URL,
+      entries: entries.length,
+      pending: pendentes.length,
+      batch_size: batchSize,
+      cursor_previous: cursorPrevious,
+      cursor_last_attempted: cursorLastAttempted,
+      selected_pdf_urls: selected.map((lista) => lista.pdfUrl),
+      deferred: dryRun ? 0 : pendentes.length - selected.length,
+      sessoes_processadas: sessoesProcessadas,
+      remaining: pendentes.length - sessoesProcessadas,
+      complete: !dryRun && pendentes.length === sessoesProcessadas,
+      already_verified: entries.length - pendentes.length,
+      records,
+      confirmed_preserved: protectedCount,
+      pdfs,
+      errors,
+      duration_ms: Date.now() - started,
+    };
     if (logId) {
-      await sb.from("sync_log").update({
-        status: "error", detalhes: { error: error.message, errors },
+      const { error } = await sb.from("sync_log").update({
+        status: errors.length ? "partial" : "success",
+        detalhes: result,
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
+      if (error) throw error;
     }
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json(result, errors.length ? 502 : 200);
+  } catch (error) {
+    const detail = message(error);
+    if (logId) {
+      const { error: logError } = await sb.from("sync_log").update({
+        status: "error",
+        detalhes: {
+          error: detail,
+          errors,
+          cursor_last_attempted: cursorLastAttempted,
+        },
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
+      if (logError) {
+        console.error("Falha ao concluir log de presenças:", message(logError));
+      }
+    }
+    return json(
+      { success: false, dry_run: dryRun, error: detail, errors },
+      500,
+    );
   }
 });
