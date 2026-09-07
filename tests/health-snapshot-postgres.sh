@@ -32,6 +32,6 @@ create table public.sync_log (
 SQL
 # Testa o RPC integral; o footer cron depende da definicao/agenda de producao
 # e tem seus hashes verificados pelo proprio cutover, sem acesso neste teste.
-awk '/-- HEALTH_SNAPSHOT_CRON_CUTOVER/ {exit} {print}' "$test_root/supabase/migrations/20260907070400_saude_snapshot_atomico.sql" |
+awk '/-- HEALTH_SNAPSHOT_CRON_CUTOVER/ {exit} {print}' "$test_root/supabase/migrations/20260907155303_saude_snapshot_atomico.sql" |
   docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < "$test_root/tests/health-snapshot-postgres.sql"

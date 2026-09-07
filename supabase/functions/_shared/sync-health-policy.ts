@@ -121,12 +121,24 @@ export function createSyncHealthHandler(deps: SyncHealthDependencies) {
         job.health_status === "failing" && (job.errors_7d ?? 0) >= 3
       );
       const retried: string[] = [];
+      const invocationFailures: {
+        phase: "retry" | "alert";
+        function: string;
+        error: string;
+      }[] = [];
       if (!dryRun) {
         for (const job of candidates) {
           try {
             await store.invoke(job.function_name, {});
             retried.push(job.function_name);
           } catch (error) {
+            invocationFailures.push({
+              phase: "retry",
+              function: job.function_name,
+              error: error instanceof Error
+                ? error.message
+                : "Falha ao invocar função",
+            });
             console.error(
               `Retry falhou para ${job.function_name}:`,
               (error as Error).message,
@@ -144,6 +156,13 @@ export function createSyncHealthHandler(deps: SyncHealthDependencies) {
               url: "/admin",
             });
           } catch (error) {
+            invocationFailures.push({
+              phase: "alert",
+              function: "send-push",
+              error: error instanceof Error
+                ? error.message
+                : "Falha ao enviar alerta",
+            });
             console.error(
               "Falha no alerta de sincronização:",
               (error as Error).message,
@@ -151,8 +170,14 @@ export function createSyncHealthHandler(deps: SyncHealthDependencies) {
           }
         }
       }
+      const status =
+        !dryRun && (critical.length > 0 || invocationFailures.length > 0)
+          ? "partial"
+          : "success";
       const summary = {
         dry_run: dryRun,
+        status,
+        invocation_failures: invocationFailures,
         total_jobs: jobs.length,
         healthy: healthy.length,
         unhealthy: unhealthy.length,
@@ -200,11 +225,14 @@ export function createSyncHealthHandler(deps: SyncHealthDependencies) {
       if (logId) {
         await store.updateLog(
           logId,
-          critical.length ? "partial" : "success",
+          status,
           summary,
         );
       }
-      return healthJson({ success: true, ...summary });
+      return healthJson(
+        { success: invocationFailures.length === 0, ...summary },
+        invocationFailures.length ? 207 : 200,
+      );
     } catch (error) {
       const message = error instanceof Error
         ? error.message

@@ -8,6 +8,7 @@
 // hora com a media corrente; rows historicas (ontem, anteontem...) tem
 // fechamento do dia.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { fetchWeatherSnapshot, WeatherFetchError, type WeatherAttempt } from "../_shared/open-meteo-fetch.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +32,8 @@ Deno.serve(async (req) => {
     .insert({ tipo: "inmet_clima", status: "running", detalhes: { fonte: "open-meteo-forecast", lat: LAT, lng: LNG, estacao: ESTACAO } })
     .select("id").single();
 
+  let attempts: WeatherAttempt[] = [];
+  let upserted = 0;
   try {
     // Forecast API: current + daily (hoje + proximos 7 dias)
     const params = new URLSearchParams({
@@ -42,34 +45,15 @@ Deno.serve(async (req) => {
       past_days: "2", // pra cobrir gaps caso cron tenha falhado
       forecast_days: "7",
     });
-    const r = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
-    if (!r.ok) throw new Error(`Open-Meteo HTTP ${r.status}`);
-    const json = await r.json() as {
-      current?: {
-        time: string;
-        temperature_2m: number;
-        relative_humidity_2m: number;
-        precipitation: number;
-        wind_speed_10m: number;
-        weather_code: number;
-      };
-      daily?: {
-        time: string[];
-        temperature_2m_max: (number|null)[];
-        temperature_2m_min: (number|null)[];
-        temperature_2m_mean: (number|null)[];
-        precipitation_sum: (number|null)[];
-        wind_speed_10m_max: (number|null)[];
-        relative_humidity_2m_mean: (number|null)[];
-      };
-    };
+    const fetched = await fetchWeatherSnapshot(`https://api.open-meteo.com/v1/forecast?${params}`);
+    attempts = fetched.attempts;
+    const json = fetched.data;
 
     const cur = json.current;
     const d = json.daily;
     if (!d || !cur) throw new Error("Resposta Open-Meteo sem current/daily");
 
     // Upsert dia a dia (past_days + hoje + forecast_days = 9 rows max)
-    let upserted = 0;
     const today = isoDate(new Date());
     for (let i = 0; i < d.time.length; i++) {
       const dia = d.time[i];
@@ -107,7 +91,8 @@ Deno.serve(async (req) => {
       };
       if (dryRun) { upserted++; continue; }
       const { error } = await sb.from("inmet_clima_diario").upsert(row, { onConflict: "data,estacao_codigo" });
-      if (!error) upserted++;
+      if (error) throw new Error(`Falha ao gravar clima diário (${error.code ?? "erro banco"})`);
+      upserted++;
     }
 
     const result = {
@@ -118,12 +103,14 @@ Deno.serve(async (req) => {
       precipitacao_acumulada_dia: cur.precipitation,
       dias_processados: d.time.length,
       upserted,
+      tentativas: attempts,
     };
     if (log?.id) await sb.from("sync_log").update({ status: "success", detalhes: result, finished_at: new Date().toISOString() }).eq("id", log.id);
     return new Response(JSON.stringify({ success: true, dry_run: dryRun, ...result }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
-    const msg = (e as Error).message;
-    if (log?.id) await sb.from("sync_log").update({ status: "error", detalhes: { error: msg }, finished_at: new Date().toISOString() }).eq("id", log.id);
+    const msg = e instanceof Error ? e.message : "Falha na sincronização de clima";
+    if (e instanceof WeatherFetchError) attempts = e.attempts;
+    if (log?.id) await sb.from("sync_log").update({ status: "error", detalhes: { error: msg, tentativas: attempts, upserted }, finished_at: new Date().toISOString() }).eq("id", log.id);
     return new Response(JSON.stringify({ success: false, error: msg }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

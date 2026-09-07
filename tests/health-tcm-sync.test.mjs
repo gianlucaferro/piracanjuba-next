@@ -51,13 +51,13 @@ function clientFor(seed = {}, failure = () => null) {
   };
 }
 
-async function load(slug, client, fetcher = () => { throw new Error("rede não esperada"); }) {
+async function load(slug, client, fetcher = () => { throw new Error("rede não esperada"); }, envOverrides = {}) {
   const source = await readFile(`${root}supabase/functions/${slug}/index.ts`, "utf8");
   const compiled = stripTypeScriptTypes(source.replace(/^import[\s\S]*?;\n/gm, ""));
   const calls = [];
   const sandbox = {
     console, Request, Response, Headers, URL, AbortSignal, btoa, Date,
-    Deno: { env: { get: key => key === "SUPABASE_URL" ? "https://example.test" : "fixture" }, serve: handler => { sandbox.handler = handler; } },
+    Deno: { env: { get: key => Object.hasOwn(envOverrides, key) ? envOverrides[key] : key === "SUPABASE_URL" ? "https://example.test" : "fixture" }, serve: handler => { sandbox.handler = handler; } },
     createClient: () => client,
     fetch: async (url, options) => { calls.push({ url, options }); return await fetcher(url, options); },
   };
@@ -69,7 +69,7 @@ async function load(slug, client, fetcher = () => { throw new Error("rede não e
 
 const json = (data, status = 200, headers = {}) => new Response(JSON.stringify(data), { status, headers });
 const callback = () => new Request("https://example.test?action=fetch", { method: "POST", headers: { "x-tcm-secret": "fixture" }, body: JSON.stringify({ resource: { id: "Run1", status: "SUCCEEDED" } }) });
-const provider = (items, status = "SUCCEEDED") => url => url.includes("/actor-runs/") ? json({ data: { id: "Run1", status, defaultDatasetId: "Dataset1" } }) : json(items);
+const provider = (items, status = "SUCCEEDED", headers = { "x-apify-pagination-total": String(items.length) }) => url => url.includes("/actor-runs/") ? json({ data: { id: "Run1", status, defaultDatasetId: "Dataset1" } }) : json(items, 200, headers);
 
 for (const empty of [null, 0]) {
   test(`saúde atualiza identidade anual com mes=${empty} sem alterar semana`, async () => {
@@ -262,3 +262,93 @@ test("TCM segredo de webhook não autoriza iniciar novo crawler", async () => {
   assert.equal(client.traces.length, 0);
   assert.equal(calls.length, 0);
 });
+
+test("TCM compara cobertura bruta incluindo vazios sem inventar processos", async () => {
+  const client = clientFor({ sync_log: [log] });
+  const { handler, calls } = await load("sync-tcm-go-piracanjuba", client, provider([{}, null, document]));
+  const body = await (await handler(callback())).json();
+  assert.equal(body.status, "success");
+  assert.equal(body.crawled, 3);
+  assert.equal(body.relevantes_piracanjuba, 1);
+  assert.equal(body.upserted, 1);
+  assert.equal(client.tables.tcm_go_apontamentos.length, 1);
+  const query = new URL(calls.find(call => call.url.includes("/datasets/")).url).searchParams;
+  assert.equal(query.get("clean"), "false");
+  assert.equal(query.get("skipEmpty"), "false");
+  assert.equal(query.get("offset"), "0");
+});
+
+for (const total of [undefined, "NaN", "-1", "0", "2"]) {
+  test(`TCM rejeita cobertura não comprovada com total ${String(total)}`, async () => {
+    const client = clientFor({ sync_log: [log] });
+    const { handler } = await load("sync-tcm-go-piracanjuba", client, provider([document], "SUCCEEDED", total === undefined ? {} : { "x-apify-pagination-total": total }));
+    const body = await (await handler(callback())).json();
+    assert.equal(body.status, "error");
+    assert.equal(client.tables.tcm_go_apontamentos.length, 0);
+    assert.equal(client.tables.sync_log[0].status, "error");
+  });
+}
+
+test("TCM dataset somente vazio continua parcial, sem documento inferido", async () => {
+  const client = clientFor({ sync_log: [log] });
+  const { handler } = await load("sync-tcm-go-piracanjuba", client, provider([{}, null]));
+  const result = await handler(callback());
+  assert.equal(result.status, 207);
+  assert.equal((await result.json()).relevantes_piracanjuba, 0);
+  assert.equal(client.tables.tcm_go_apontamentos.length, 0);
+});
+
+for (const size of [1000, 1001]) {
+  test(`TCM mantém limite de download sem rejeitar total exato ${size}`, async () => {
+    const client = clientFor({ sync_log: [log] });
+    const items = [...Array.from({ length: size - 1 }, () => ({})), document];
+    const { handler } = await load("sync-tcm-go-piracanjuba", client, provider(items));
+    const body = await (await handler(callback())).json();
+    assert.equal(body.status, size === 1000 ? "success" : "error");
+    assert.equal(client.tables.tcm_go_apontamentos.length, size === 1000 ? 1 : 0);
+  });
+}
+
+for (const secret of [undefined, "", "   "]) {
+  test(`TCM não inicia crawler sem segredo dedicado (${JSON.stringify(secret)})`, async () => {
+    const client = clientFor();
+    const { handler, calls } = await load("sync-tcm-go-piracanjuba", client, undefined, { APIFY_WEBHOOK_SECRET: secret });
+    const result = await handler(new Request("https://example.test?action=trigger", { headers: { "x-cron-secret": "fixture" } }));
+    assert.equal(result.status, 502);
+    assert.match((await result.json()).error, /APIFY_WEBHOOK_SECRET missing/);
+    assert.equal(calls.length, 0);
+    assert.equal(client.tables.sync_log[0].status, "error");
+    assert.ok(client.tables.sync_log[0].finished_at);
+  });
+}
+
+test("TCM chave privilegiada em x-tcm-secret não substitui segredo dedicado ausente", async () => {
+  const client = clientFor();
+  const { handler, calls } = await load("sync-tcm-go-piracanjuba", client, undefined, { APIFY_WEBHOOK_SECRET: undefined });
+  assert.equal((await handler(callback())).status, 401);
+  assert.equal(client.traces.length, 0);
+  assert.equal(calls.length, 0);
+});
+
+test("TCM envia ao webhook somente o segredo dedicado da fixture", async () => {
+  const client = clientFor();
+  const { handler, calls } = await load("sync-tcm-go-piracanjuba", client, () => json({}, 402), { APIFY_WEBHOOK_SECRET: "webhook-fixture-distinct" });
+  await handler(new Request("https://example.test?action=trigger", { headers: { "x-cron-secret": "fixture" } }));
+  const webhooks = JSON.parse(Buffer.from(new URL(calls[0].url).searchParams.get("webhooks"), "base64").toString());
+  assert.equal(JSON.parse(webhooks[0].headersTemplate)["x-tcm-secret"], "webhook-fixture-distinct");
+});
+
+for (const configured of [true, false]) {
+  test(`TCM reconcile informa presença do segredo: ${configured}, sem crawler`, async () => {
+    const client = clientFor();
+    const { handler, calls } = await load("sync-tcm-go-piracanjuba", client, undefined, { APIFY_WEBHOOK_SECRET: configured ? "private-webhook-fixture" : undefined });
+    const result = await handler(new Request("https://example.test", { method: "POST", headers: { "x-cron-secret": "fixture" }, body: JSON.stringify({ action: "reconcile" }) }));
+    const body = await result.json();
+    assert.equal(body.webhook_configured, configured);
+    assert.equal(body.success, configured);
+    assert.equal(result.status, configured ? 200 : 207);
+    if (!configured) assert.match(body.configuration_error, /APIFY_WEBHOOK_SECRET missing/);
+    assert.ok(!JSON.stringify(body).includes("private-webhook-fixture"));
+    assert.equal(calls.length, 0);
+  });
+}

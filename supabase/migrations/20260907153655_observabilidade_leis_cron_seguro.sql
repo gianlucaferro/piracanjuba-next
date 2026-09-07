@@ -1,4 +1,4 @@
--- Dependencia: 20260907070200_autentica_crons_monitoramento.sql.
+-- Dependencia: 20260907151848_autentica_crons_monitoramento.sql.
 -- Adiciona somente sync-leis-municipais ao dispatcher seguro e troca apenas
 -- o comando do seu cron existente, preservando agenda e estado ativo.
 do $cutover$

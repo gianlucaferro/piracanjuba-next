@@ -160,8 +160,10 @@ Deno.test("autenticacao exige service-role exata ou segredo de cron explicito", 
 function handlerFixture(
   jobs: SyncHealthJob[] = [job({ errors_7d: 3 })],
   readError = false,
+  failInvocations: string[] = [],
 ) {
   const calls: string[] = [];
+  const logs: { status: string; details: unknown }[] = [];
   const handler = createSyncHealthHandler({
     getServiceRoleKey: () => "mock-service-role",
     getCronSecret: () => "mock-cron",
@@ -177,11 +179,15 @@ function handlerFixture(
           calls.push("insert");
           return "mock-log";
         },
-        async updateLog() {
+        async updateLog(_id, status, details) {
           calls.push("update");
+          logs.push({ status, details });
         },
         async invoke(name) {
           calls.push(`invoke:${name}`);
+          if (failInvocations.includes(name)) {
+            throw new Error("mock invoke failure");
+          }
         },
       };
     },
@@ -189,7 +195,7 @@ function handlerFixture(
       calls.push("wait");
     },
   });
-  return { handler, calls };
+  return { handler, calls, logs };
 }
 function healthRequest(
   body = "",
@@ -315,4 +321,88 @@ Deno.test("novos estados ficam visiveis no canario sem retry automatico", async 
   equal(body.planned_retries, []);
   equal(body.retried, []);
   equal(calls, ["create", "read"]);
+});
+
+Deno.test("retry que falha fica parcial e o proximo candidato ainda e tentado", async () => {
+  const { handler, calls, logs } = handlerFixture(
+    [
+      job({
+        function_name: "sync-falha",
+        health_status: "stale",
+        errors_7d: 0,
+      }),
+      job({ function_name: "sync-ok", errors_7d: 1 }),
+    ],
+    false,
+    ["sync-falha"],
+  );
+  const response = await handler(
+    healthRequest("{}", { "x-cron-secret": "mock-cron" }),
+  );
+  const body = await response.json();
+  equal(response.status, 207);
+  equal(body.success, false);
+  equal(body.status, "partial");
+  equal(body.retried, ["sync-ok"]);
+  equal(body.invocation_failures, [{
+    phase: "retry",
+    function: "sync-falha",
+    error: "mock invoke failure",
+  }]);
+  equal(logs[0].status, "partial");
+  equal(
+    logs[0].details,
+    Object.fromEntries(
+      Object.entries(body).filter(([key]) => key !== "success"),
+    ),
+  );
+  equal(calls, [
+    "create",
+    "insert",
+    "read",
+    "invoke:sync-falha",
+    "wait",
+    "invoke:sync-ok",
+    "wait",
+    "update",
+  ]);
+});
+
+Deno.test("falha de alerta e registrada no resultado e log parcial", async () => {
+  const { handler, logs } = handlerFixture([job({ errors_7d: 3 })], false, [
+    "send-push",
+  ]);
+  const response = await handler(
+    healthRequest("{}", { apikey: "mock-service-role" }),
+  );
+  const body = await response.json();
+  equal(response.status, 207);
+  equal(body.success, false);
+  equal(body.status, "partial");
+  equal(body.retried, ["sync-exemplo"]);
+  equal(body.invocation_failures, [{
+    phase: "alert",
+    function: "send-push",
+    error: "mock invoke failure",
+  }]);
+  equal(logs[0].status, "partial");
+});
+
+Deno.test("dry_run nao tenta invocacoes nem grava falhas planejadas", async () => {
+  const { handler, calls, logs } = handlerFixture(
+    [job({ errors_7d: 3 })],
+    false,
+    ["sync-exemplo", "send-push"],
+  );
+  const response = await handler(
+    healthRequest('{"dry_run":true}', { "x-cron-secret": "mock-cron" }),
+  );
+  const body = await response.json();
+  equal(response.status, 200);
+  equal(body.success, true);
+  equal(body.status, "success");
+  equal(body.invocation_failures, []);
+  equal(body.retried, []);
+  equal(calls, ["create", "read"]);
+  equal(logs, []);
 });

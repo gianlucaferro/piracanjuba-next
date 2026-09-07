@@ -213,7 +213,7 @@ revoke all on function public.replace_saude_snapshot(text, uuid, jsonb, jsonb) f
 grant execute on function public.replace_saude_snapshot(text, uuid, jsonb, jsonb) to service_role;
 
 -- HEALTH_SNAPSHOT_CRON_CUTOVER
--- Dependencia: 20260907070300_observabilidade_leis_cron_seguro.sql.
+-- Dependencia: 20260907153655_observabilidade_leis_cron_seguro.sql.
 -- Base confirmada apos aplicacao, sem alterar agenda ou estado dos jobs.
 do $cutover$
 declare

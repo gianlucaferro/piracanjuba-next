@@ -89,11 +89,15 @@ async function processRun(sb: any, token: string, runId: string, knownLog?: Sync
     const datasetId = run.defaultDatasetId;
     if (typeof datasetId !== "string" || !/^[a-zA-Z0-9]+$/.test(datasetId)) throw new Error("dataset Apify ausente");
     if (log.detalhes.datasetId && log.detalhes.datasetId !== datasetId) throw new Error("dataset diverge do registro da execução");
-    const downloaded = await apifyJson(`/datasets/${datasetId}/items?format=json&clean=true&limit=1000`, token);
+    // clean=true remove itens vazios; o total do cabecalho e do dataset bruto.
+    // Ler sem filtros permite conferir cobertura antes de selecionar documentos.
+    const downloaded = await apifyJson(`/datasets/${datasetId}/items?format=json&clean=false&skipEmpty=false&offset=0&limit=1000`, token);
     const items = downloaded.data;
     if (!Array.isArray(items)) throw new Error("dataset Apify não é uma lista");
-    const advertised = Number(downloaded.headers.get("x-apify-pagination-total") ?? items.length);
-    if (advertised > items.length || items.length >= 1000) throw new Error("dataset incompleto, limite de paginação atingido");
+    const totalHeader = downloaded.headers.get("x-apify-pagination-total");
+    if (totalHeader === null || !/^\d+$/.test(totalHeader)) throw new Error("total de paginação Apify ausente ou inválido");
+    const advertised = Number(totalHeader);
+    if (!Number.isSafeInteger(advertised) || advertised !== items.length || items.length > 1000) throw new Error("dataset incompleto ou total de paginação divergente");
     const relevant = items.filter((item: DatasetItem) => /\bpiracanjuba\b/i.test(`${item?.title ?? ""} ${item?.text ?? ""} ${item?.markdown ?? ""}`));
     const errors: string[] = [];
     let written = 0, existing = 0, rejected = 0;
@@ -129,7 +133,8 @@ async function actionTrigger(req: Request, sb: any, token: string | undefined) {
   const log = created.data as SyncLog;
   try {
     if (!token) throw new Error("APIFY_TOKEN missing");
-    const webhookSecret = Deno.env.get("APIFY_WEBHOOK_SECRET") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const webhookSecret = Deno.env.get("APIFY_WEBHOOK_SECRET");
+    if (!webhookSecret?.trim()) throw new Error("APIFY_WEBHOOK_SECRET missing; configure um segredo dedicado antes de iniciar o crawler");
     const webhooks = btoa(JSON.stringify([{
       eventTypes: ["ACTOR.RUN.SUCCEEDED", "ACTOR.RUN.FAILED", "ACTOR.RUN.TIMED_OUT", "ACTOR.RUN.ABORTED"],
       requestUrl: `${Deno.env.get("SUPABASE_URL")}/functions/v1/sync-tcm-go-piracanjuba?action=fetch`,
@@ -161,8 +166,9 @@ async function actionTrigger(req: Request, sb: any, token: string | undefined) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const privileged = hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"));
-  const expected = Deno.env.get("APIFY_WEBHOOK_SECRET") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const webhookAuthorized = Boolean(expected && req.headers.get("x-tcm-secret") === expected);
+  const expected = Deno.env.get("APIFY_WEBHOOK_SECRET");
+  const webhookConfigured = Boolean(expected?.trim());
+  const webhookAuthorized = Boolean(webhookConfigured && req.headers.get("x-tcm-secret") === expected);
   if (!privileged && !webhookAuthorized) return response({ error: "unauthorized" }, 401);
   let bodyAction: unknown;
   if (req.method === "POST" && !new URL(req.url).searchParams.has("action")) {
@@ -199,9 +205,13 @@ Deno.serve(async (req) => {
           results.push({ status: "error", error: "runId ausente" });
         } else results.push(await processRun(sb, token, runId, log));
       }
-      const success = results.length === (found.data?.length ?? 0) && results.every(result => result.status === "success");
-      return response({ success, processed: results.length, pendingInBatch: (found.data?.length ?? 0) - results.length, results }, success ? 200 : 207);
+      const success = webhookConfigured && results.length === (found.data?.length ?? 0) && results.every(result => result.status === "success");
+      return response({
+        success, webhook_configured: webhookConfigured,
+        ...(!webhookConfigured ? { configuration_error: "APIFY_WEBHOOK_SECRET missing; novos crawlers ficam bloqueados até configurar segredo dedicado" } : {}),
+        processed: results.length, pendingInBatch: (found.data?.length ?? 0) - results.length, results,
+      }, success ? 200 : 207);
     }
     return response({ error: "unknown action" }, 400);
-  } catch (error) { return response({ success: false, action, error: message(error) }, 500); }
+  } catch (error) { return response({ success: false, action, ...(action === "reconcile" ? { webhook_configured: webhookConfigured } : {}), error: message(error) }, 500); }
 });

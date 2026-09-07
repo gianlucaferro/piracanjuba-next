@@ -1,20 +1,20 @@
 /// <reference lib="deno.ns" />
 import type { LawSourceResult, MunicipalLaw } from "./municipal-laws.ts";
 const originalServe = Deno.serve;
-let module: typeof import("../sync-leis-municipais/index.ts");
+let handlerModule: typeof import("../sync-leis-municipais/index.ts");
 try {
   Object.defineProperty(Deno, "serve", {
     configurable: true,
     value: () => ({}),
   });
-  module = await import("../sync-leis-municipais/index.ts");
+  handlerModule = await import("../sync-leis-municipais/index.ts");
 } finally {
   Object.defineProperty(Deno, "serve", {
     configurable: true,
     value: originalServe,
   });
 }
-const { createLeisMunicipaisHandler } = module!;
+const { createLeisMunicipaisHandler } = handlerModule!;
 type Row = Record<string, unknown>;
 type ErrorValue = { message: string } | null;
 type Result = { data: unknown; error: ErrorValue };
