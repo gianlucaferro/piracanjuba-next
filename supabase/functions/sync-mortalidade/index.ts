@@ -1,14 +1,18 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+import {
+  failHealthSnapshot, healthError, readHealthSource, saveHealthSnapshot,
+  startHealthSnapshot, strictHealthNumber, strictHealthYear,
+  type HealthSnapshotRow,
+} from "../_shared/health-snapshot.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "x-cron-secret, authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CKAN_BASE = "https://dadosabertos.go.gov.br/api/3/action/datastore_search";
 const MUNICIPIO = "Piracanjuba";
-const PAGE_SIZE = 100;
 
 const RESOURCES = {
   mortalidade_geral: "0d520c63-7e6b-4a79-97c3-bf145d05a1c1",
@@ -26,35 +30,8 @@ type MortRecord = {
   "Total obitos infantil"?: number | string;
 };
 
-async function fetchAllRecords(resourceId: string): Promise<MortRecord[]> {
-  const all: MortRecord[] = [];
-  let offset = 0;
-
-  while (true) {
-    const filters = JSON.stringify({ "Municipio residencia": MUNICIPIO });
-    const url = `${CKAN_BASE}?resource_id=${resourceId}&filters=${encodeURIComponent(filters)}&limit=${PAGE_SIZE}&offset=${offset}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`CKAN error ${resp.status}`);
-    const json = await resp.json();
-    const records = json.result?.records || [];
-    all.push(...records);
-    if (records.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  return all;
-}
-
-function parseYear(val: number | string): number | null {
-  const n = typeof val === "string" ? parseFloat(val) : val;
-  if (!n || isNaN(n)) return null;
-  return Math.floor(n);
-}
-
 function getObitos(r: MortRecord): number {
-  const v = r["total obitos"] ?? r["Total obitos infantil"];
-  if (typeof v === "number") return v;
-  return parseInt(String(v), 10) || 0;
+  return strictHealthNumber(r["total obitos"] ?? r["Total obitos infantil"], "óbitos", true);
 }
 
 // CID-10 chapter labels
@@ -86,21 +63,32 @@ const CID_CHAPTERS: Record<string, string> = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+  if (!hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"))) {
+    return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
+  let logId: string | null = null;
   try {
+    logId = await startHealthSnapshot(supabase, "sync-mortalidade");
     console.log("Fetching mortality data from Dados Abertos GO...");
 
-    const [geralRecords, infantilRecords] = await Promise.all([
-      fetchAllRecords(RESOURCES.mortalidade_geral),
-      fetchAllRecords(RESOURCES.mortalidade_infantil),
+    const deadline = Date.now() + 90_000;
+    const [geralSource, infantilSource] = await Promise.all([
+      readHealthSource<MortRecord>(RESOURCES.mortalidade_geral, "Municipio residencia", MUNICIPIO, fetch, deadline),
+      readHealthSource<MortRecord>(RESOURCES.mortalidade_infantil, "Municipio residencia", MUNICIPIO, fetch, deadline),
     ]);
+    const geralRecords = geralSource.records;
+    const infantilRecords = infantilSource.records;
+    if (!geralRecords.length || !infantilRecords.length) throw new Error("Fonte de mortalidade vazia; snapshot anterior preservado");
 
     console.log(`Fetched: ${geralRecords.length} geral, ${infantilRecords.length} infantil`);
 
-    const rows: any[] = [];
+    const rows: HealthSnapshotRow[] = [];
     const fonte = "SES-GO / Dados Abertos Goiás (SIM)";
     const fonteUrl = "https://dadosabertos.go.gov.br/dataset/mortalidade";
 
@@ -112,8 +100,7 @@ Deno.serve(async (req) => {
     const geralByCause = new Map<string, number>();
 
     for (const r of geralRecords) {
-      const year = parseYear(r.ano);
-      if (!year) continue;
+      const year = strictHealthYear(r.ano);
       const obitos = getObitos(r);
       geralByYear.set(year, (geralByYear.get(year) || 0) + obitos);
 
@@ -173,8 +160,7 @@ Deno.serve(async (req) => {
     const infantilByCause = new Map<string, number>();
 
     for (const r of infantilRecords) {
-      const year = parseYear(r.ano);
-      if (!year) continue;
+      const year = strictHealthYear(r.ano);
       const obitos = getObitos(r);
       infantilByYear.set(year, (infantilByYear.get(year) || 0) + obitos);
 
@@ -243,41 +229,30 @@ Deno.serve(async (req) => {
     const totalInfantil = infantilRecords.reduce((s, r) => s + getObitos(r), 0);
     rows.push({ categoria: "mortalidade_infantil", indicador: "total_obitos", ano: latestInfantilYear, valor: totalInfantil, fonte, fonte_url: fonteUrl });
 
-    // Clear existing mortality data (preserve taxa_mortalidade_infantil from IBGE)
-    console.log("Deleting existing mortality indicators (preserving IBGE taxa)...");
-    await supabase.from("saude_indicadores").delete().eq("categoria", "mortalidade_geral");
-    await supabase.from("saude_indicadores").delete().eq("categoria", "mortalidade_infantil").neq("indicador", "taxa_mortalidade_infantil");
-
-    console.log(`Inserting ${rows.length} mortality indicators...`);
-    const CHUNK = 50;
-    let inserted = 0;
-    for (let i = 0; i < rows.length; i += CHUNK) {
-      const chunk = rows.slice(i, i + CHUNK);
-      const { error } = await supabase.from("saude_indicadores").insert(chunk);
-      if (error) {
-        console.error("Insert error:", error.message);
-      } else {
-        inserted += chunk.length;
-      }
-    }
-
-    console.log(`Done: ${inserted} mortality indicators inserted`);
+    // O RPC limita o escopo aos indicadores SIM. Taxas do IBGE ficam fora.
+    const saved = await saveHealthSnapshot(supabase, "mortalidade", logId, rows, [geralSource.receipt, infantilSource.receipt]);
 
     return new Response(
       JSON.stringify({
         success: true,
         mortalidade_geral_records: geralRecords.length,
         mortalidade_infantil_records: infantilRecords.length,
-        indicadores_inseridos: inserted,
+        indicadores_inseridos: saved.inserted,
+        indicadores_confirmados: saved.total,
+        indicadores_atualizados: saved.updated,
+        indicadores_preservados: saved.unchanged,
+        indicadores_removidos: saved.removed,
+        historicos_fora_do_payload_preservados: saved.preserved_missing,
         anos_geral: geralByYear.size,
         anos_infantil: infantilByYear.size,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error:", error);
+    await failHealthSnapshot(supabase, logId, error);
+    console.error("Falha na sincronização:", healthError(error));
     return new Response(
-      JSON.stringify({ error: error.message || "Erro interno" }),
+      JSON.stringify({ success: false, error: healthError(error), log_id: logId }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

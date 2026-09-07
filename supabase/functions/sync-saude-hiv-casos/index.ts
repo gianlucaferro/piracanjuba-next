@@ -1,14 +1,18 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+import {
+  failHealthSnapshot, healthDateYear, healthError, readHealthSource, saveHealthSnapshot,
+  startHealthSnapshot, strictHealthNumber, strictHealthYear,
+  type HealthSnapshotRow,
+} from "../_shared/health-snapshot.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "x-cron-secret, authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CKAN_BASE = "https://dadosabertos.go.gov.br/api/3/action/datastore_search";
 const MUNICIPIO = "Piracanjuba";
-const PAGE_SIZE = 100;
 
 // Resource IDs from dadosabertos.go.gov.br/dataset/ist-aids
 const RESOURCES = {
@@ -31,37 +35,11 @@ type RawRecord = {
   classificacao: string;
 };
 
-async function fetchAllRecords(resourceId: string): Promise<RawRecord[]> {
-  const all: RawRecord[] = [];
-  let offset = 0;
-
-  while (true) {
-    const url = `${CKAN_BASE}?resource_id=${resourceId}&filters=${encodeURIComponent(JSON.stringify({ municipio: MUNICIPIO }))}&limit=${PAGE_SIZE}&offset=${offset}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`CKAN error ${resp.status}`);
-    const json = await resp.json();
-    const records = json.result?.records || [];
-    all.push(...records);
-    if (records.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  return all;
-}
-
-function extractYear(dateStr: string | undefined): number | null {
-  if (!dateStr) return null;
-  // Format: DD/MM/YYYY
-  const parts = dateStr.split("/");
-  if (parts.length === 3) return parseInt(parts[2], 10);
-  return null;
-}
-
 function aggregateByYear(records: RawRecord[], dateField: "data_diagnostico" | "data_obito"): Map<number, number> {
   const byYear = new Map<number, number>();
   for (const r of records) {
-    const year = extractYear(r[dateField]);
-    if (year) byYear.set(year, (byYear.get(year) || 0) + 1);
+    const year = healthDateYear(r[dateField]);
+    byYear.set(year, (byYear.get(year) || 0) + 1);
   }
   return byYear;
 }
@@ -69,8 +47,7 @@ function aggregateByYear(records: RawRecord[], dateField: "data_diagnostico" | "
 function aggregateBySexAndYear(records: RawRecord[], dateField: "data_diagnostico" | "data_obito"): Map<string, number> {
   const result = new Map<string, number>();
   for (const r of records) {
-    const year = extractYear(r[dateField]);
-    if (!year) continue;
+    const year = healthDateYear(r[dateField]);
     const key = `${year}|${r.sexo}`;
     result.set(key, (result.get(key) || 0) + 1);
   }
@@ -80,8 +57,7 @@ function aggregateBySexAndYear(records: RawRecord[], dateField: "data_diagnostic
 function aggregateByAgeAndYear(records: RawRecord[], dateField: "data_diagnostico" | "data_obito"): Map<string, number> {
   const result = new Map<string, number>();
   for (const r of records) {
-    const year = extractYear(r[dateField]);
-    if (!year) continue;
+    const year = healthDateYear(r[dateField]);
     const key = `${year}|${r.faixa_etaria}`;
     result.set(key, (result.get(key) || 0) + 1);
   }
@@ -91,20 +67,33 @@ function aggregateByAgeAndYear(records: RawRecord[], dateField: "data_diagnostic
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+  if (!hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"))) {
+    return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
+  let logId: string | null = null;
   try {
+    logId = await startHealthSnapshot(supabase, "sync-saude-hiv-casos");
     console.log("Fetching HIV/AIDS data from Dados Abertos GO...");
 
-    // Fetch all datasets in parallel
-    const [adultoRecords, obitosRecords, criancaRecords, gestanteRecords] = await Promise.all([
-      fetchAllRecords(RESOURCES.adulto),
-      fetchAllRecords(RESOURCES.obitos),
-      fetchAllRecords(RESOURCES.crianca),
-      fetchAllRecords(RESOURCES.gestante),
+    const deadline = Date.now() + 90_000;
+    const [adultoSource, obitosSource, criancaSource, gestanteSource, taxaSource] = await Promise.all([
+      readHealthSource<RawRecord>(RESOURCES.adulto, "municipio", MUNICIPIO, fetch, deadline),
+      readHealthSource<RawRecord>(RESOURCES.obitos, "municipio", MUNICIPIO, fetch, deadline),
+      readHealthSource<RawRecord>(RESOURCES.crianca, "municipio", MUNICIPIO, fetch, deadline),
+      readHealthSource<RawRecord>(RESOURCES.gestante, "municipio", MUNICIPIO, fetch, deadline),
+      readHealthSource(RESOURCES.gestante_taxa, "LOCAL", "PIRACANJUBA", fetch, deadline),
     ]);
+    const adultoRecords = adultoSource.records;
+    const obitosRecords = obitosSource.records;
+    const criancaRecords = criancaSource.records;
+    const gestanteRecords = gestanteSource.records;
+    if (!adultoRecords.length) throw new Error("Fonte principal de HIV vazia; snapshot anterior preservado");
 
     console.log(`Fetched: ${adultoRecords.length} adulto, ${obitosRecords.length} óbitos, ${criancaRecords.length} criança, ${gestanteRecords.length} gestante`);
 
@@ -117,7 +106,7 @@ Deno.serve(async (req) => {
     const diagBySex = aggregateBySexAndYear(allDiagnosticos, "data_diagnostico");
     const diagByAge = aggregateByAgeAndYear(allDiagnosticos, "data_diagnostico");
 
-    const rows: any[] = [];
+    const rows: HealthSnapshotRow[] = [];
     const fonte = "SES-GO / Dados Abertos Goiás (SINAN)";
     const fonteUrl = "https://dadosabertos.go.gov.br/dataset/ist-aids";
 
@@ -192,30 +181,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Also fetch gestante_taxa (pre-aggregated rates by municipality)
-    try {
-      const taxaUrl = `${CKAN_BASE}?resource_id=${RESOURCES.gestante_taxa}&filters=${encodeURIComponent(JSON.stringify({ LOCAL: "PIRACANJUBA" }))}&limit=100`;
-      const taxaResp = await fetch(taxaUrl);
-      if (taxaResp.ok) {
-        const taxaJson = await taxaResp.json();
-        const taxaRecords = taxaJson.result?.records || [];
-        for (const r of taxaRecords) {
-          const year = parseInt(r.ano, 10);
-          if (!year) continue;
-          rows.push({
-            categoria: "hiv",
-            indicador: "gestantes_taxa_deteccao",
-            ano: year,
-            valor: parseFloat(r.taxa) || 0,
-            valor_texto: `${r.qtde} casos em ${r.qtd_nasc} nascidos vivos`,
-            fonte: "SES-GO / Dados Abertos Goiás (SINAN)",
-            fonte_url: fonteUrl,
-          });
-        }
-        console.log(`Gestante taxa records for Piracanjuba: ${taxaRecords.length}`);
-      }
-    } catch (e) {
-      console.warn("Could not fetch gestante_taxa:", e);
+    // As taxas só entram após leitura completa, sem converter ausência em zero.
+    for (const r of taxaSource.records) {
+      rows.push({
+        categoria: "hiv", indicador: "gestantes_taxa_deteccao",
+        ano: strictHealthYear(r.ano), valor: strictHealthNumber(r.taxa, "taxa"),
+        valor_texto: `${strictHealthNumber(r.qtde, "casos", true)} casos em ${strictHealthNumber(r.qtd_nasc, "nascidos vivos", true)} nascidos vivos`,
+        fonte, fonte_url: fonteUrl,
+      });
     }
 
     // Totals
@@ -248,24 +221,8 @@ Deno.serve(async (req) => {
       fonte_url: fonteUrl,
     });
 
-    // Clear existing HIV data and insert new
-    console.log(`Deleting existing HIV indicators...`);
-    await supabase.from("saude_indicadores").delete().eq("categoria", "hiv");
-
-    console.log(`Inserting ${rows.length} HIV indicators...`);
-    const CHUNK = 50;
-    let inserted = 0;
-    for (let i = 0; i < rows.length; i += CHUNK) {
-      const chunk = rows.slice(i, i + CHUNK);
-      const { error } = await supabase.from("saude_indicadores").insert(chunk);
-      if (error) {
-        console.error("Insert error:", error.message);
-      } else {
-        inserted += chunk.length;
-      }
-    }
-
-    console.log(`Done: ${inserted} HIV indicators inserted`);
+    const saved = await saveHealthSnapshot(supabase, "hiv_casos", logId, rows,
+      [adultoSource.receipt, obitosSource.receipt, criancaSource.receipt, gestanteSource.receipt, taxaSource.receipt]);
 
     return new Response(
       JSON.stringify({
@@ -274,14 +231,20 @@ Deno.serve(async (req) => {
         diagnosticos_crianca: criancaRecords.length,
         diagnosticos_gestante: gestanteRecords.length,
         obitos: obitosRecords.length,
-        indicadores_inseridos: inserted,
+        indicadores_inseridos: saved.inserted,
+        indicadores_confirmados: saved.total,
+        indicadores_atualizados: saved.updated,
+        indicadores_preservados: saved.unchanged,
+        indicadores_removidos: saved.removed,
+        historicos_fora_do_payload_preservados: saved.preserved_missing,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error:", error);
+    await failHealthSnapshot(supabase, logId, error);
+    console.error("Falha na sincronização:", healthError(error));
     return new Response(
-      JSON.stringify({ error: error.message || "Erro interno" }),
+      JSON.stringify({ success: false, error: healthError(error), log_id: logId }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
