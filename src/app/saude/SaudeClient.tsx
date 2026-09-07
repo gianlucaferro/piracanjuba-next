@@ -2,6 +2,7 @@
 "use client";
 
 import Layout from "@/components/Layout";
+import { FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import SEO from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1243,7 +1244,7 @@ function ServidoresSaudeTab() {
   if (!data?.data?.length) {
     return <EmptyState icon={Users} title="Sem dados de servidores da saúde"
       description="Nenhum servidor com cargo relacionado à saúde encontrado."
-      fonteUrl="https://piracanjuba.centi.com.br/" />;
+      fonteUrl={FONTES_PREFEITURA.folhas} />;
   }
 
   return (
@@ -1293,7 +1294,7 @@ function ServidoresSaudeTab() {
       )}
 
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.folhas} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
         </a>
@@ -1336,7 +1337,7 @@ function DespesasSaudeTab() {
       {!despesas?.length ? (
         <EmptyState icon={DollarSign} title={`Sem despesas da saúde em ${ano}`}
           description="Dados de despesas da Secretaria de Saúde não disponíveis para este período."
-          fonteUrl="https://piracanjuba.centi.com.br/" />
+          fonteUrl={FONTES_PREFEITURA.despesas} />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
@@ -1370,7 +1371,7 @@ function DespesasSaudeTab() {
       )}
 
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.centi.com.br/" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.despesas} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
         </a>

@@ -44,3 +44,7 @@ next-env.d.ts
 supabase/migrations/*_lovable_data_dump.sql
 scripts/scrape-centi/out/
 scripts/scrape-centi/node_modules/
+
+# Local investigation artifacts and restricted backups
+/work/
+*.env

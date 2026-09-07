@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
+import { FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import SEO from "@/components/SEO";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -454,7 +455,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
       {!isLoading && !servidores.length && (
         <EmptyState icon={Users} title="Sem dados de servidores"
           description="Os dados de servidores e remuneração serão adicionados quando disponíveis no portal de transparência."
-          fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />
+          fonteUrl={FONTES_PREFEITURA.folhas} />
       )}
       {servidores.length > 0 && (
         <div className="space-y-2">
@@ -543,7 +544,7 @@ function GastosTab() {
   if (!data?.length) {
     return <EmptyState icon={DollarSign} title="Sem dados de despesas"
       description="Os dados de gastos serão adicionados quando disponíveis no portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      fonteUrl={FONTES_PREFEITURA.despesas} />;
   }
   return (
     <>
@@ -785,7 +786,7 @@ function ContratosTab() {
   if (!data?.length) {
     return <EmptyState icon={FileText} title="Sem dados de contratos"
       description="Os dados de contratos serão adicionados quando disponíveis no portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      fonteUrl={FONTES_PREFEITURA.contratos} />;
   }
 
   // Extract available years from data
@@ -1067,7 +1068,7 @@ function LicitacoesTab() {
   if (!data?.length) {
     return <EmptyState icon={Gavel} title="Sem dados de licitações"
       description="Os dados de licitações serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      fonteUrl={FONTES_PREFEITURA.licitacoes} />;
   }
   return (
     <>
@@ -1206,7 +1207,7 @@ function DiariasTab() {
   if (!data?.length) {
     return <EmptyState icon={Briefcase} title="Sem dados de diárias"
       description="Os dados de diárias e viagens serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      fonteUrl={FONTES_PREFEITURA.diarias} />;
   }
   return (
     <div className="space-y-4">
@@ -1303,8 +1304,8 @@ function ObrasTab() {
   if (isLoading) return <div className="stat-card animate-pulse h-40" />;
   if (!data?.length) {
     return <EmptyState icon={HardHat} title="Sem dados de obras"
-      description="Os dados de obras públicas serão sincronizados automaticamente do portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      description="O cadastro oficial de obras está em atualização. Consulte os registros publicados pela Prefeitura."
+      fonteUrl={FONTES_PREFEITURA.obras} />;
   }
   const statusColors: Record<string, string> = {
     em_andamento: "bg-info/15 text-info",
@@ -1314,6 +1315,9 @@ function ObrasTab() {
   const totalValorObras = (data || []).reduce((s, o) => s + (o.valor || 0), 0);
   return (
     <>
+      <p className="text-sm text-muted-foreground mb-4">
+        Cadastro oficial de obras. A situação segue a declaração do órgão responsável.
+      </p>
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         <div className="stat-card text-center">
@@ -1754,7 +1758,7 @@ function ArtigosSubTab() {
             )}
           </Button>
           <p className="text-sm text-muted-foreground">
-            Fonte: <a href="https://piracanjuba.go.gov.br/downloads/lei_organica_atualizada_2020.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Prefeitura de Piracanjuba — Dezembro de 2020</a>
+            Fonte: <a href={LEI_ORGANICA_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Acervo da Lei Orgânica na Câmara Municipal</a>
           </p>
         </div>
       </div>
@@ -2361,7 +2365,7 @@ function DecretosTab() {
       )}
 
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#decretos" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.decretos} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
         </a>
@@ -2573,7 +2577,7 @@ function PortariasTab() {
       )}
 
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#portarias" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.portarias} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
         </a>
@@ -2824,7 +2828,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
       )}
 
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://piracanjuba.go.gov.br/acesso-a-legislacao/#leis-municipais" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.leis} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
         </a>
@@ -2843,7 +2847,7 @@ function ProcuradoriaTab() {
   if (!procuradores?.length) {
     return <EmptyState icon={Gavel} title="Sem dados da Procuradoria"
       description="Nenhum servidor com cargo de Procurador encontrado no portal de transparência."
-      fonteUrl="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" />;
+      fonteUrl={FONTES_PREFEITURA.folhas} />;
   }
 
   return (
@@ -2899,7 +2903,7 @@ function ProcuradoriaTab() {
         })}
       </div>
       <p className="text-sm text-muted-foreground">
-        Fonte: <a href="https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia" target="_blank" rel="noopener noreferrer"
+        Fonte: <a href={FONTES_PREFEITURA.folhas} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal de Transparência
         </a>

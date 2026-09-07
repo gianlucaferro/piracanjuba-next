@@ -1,6 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
 
+const OFFICIAL_WORKS_PREFIX = "prefeitura:nucleogov:obra:%";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
@@ -74,9 +76,15 @@ Deno.serve(async (req) => {
     }
 
     if (qLower.includes("obra")) {
-      const { data: obras } = await supabase.from("obras").select("nome, status, valor, empresa, local").limit(10);
-      if (obras?.length) {
-        extraContext += "\n\nObras:\n" + obras.map(o => `- ${o.nome} (${o.status}) — R$ ${o.valor?.toLocaleString("pt-BR")} — ${o.empresa || "N/D"}`).join("\n");
+      const { data: obras, count, error } = await supabase.from("obras")
+        .select("nome, status, valor, empresa, local, fonte_url", { count: "exact" })
+        .like("origem_chave", OFFICIAL_WORKS_PREFIX).order("nome").limit(10);
+      if (error) {
+        extraContext += "\n\nObras: consulta ao cadastro oficial indisponível. Não há dados confirmados para responder sobre quantidade ou situação.";
+      } else if (obras?.length) {
+        extraContext += `\n\nObras no cadastro oficial municipal (${count ?? "N/D"} registros; amostra de ${obras.length}):\n` + obras.map(o => `- ${o.nome} (situação declarada: ${o.status || "não informada"}) - ${o.valor == null ? "Valor não informado" : `R$ ${o.valor.toLocaleString("pt-BR")}`} - ${o.empresa || "N/D"}${o.fonte_url ? ` - Fonte: ${o.fonte_url}` : ""}`).join("\n");
+      } else {
+        extraContext += "\n\nCadastro oficial de obras em coleta. Ausência de registros importados não significa ausência de obras no município.";
       }
     }
 

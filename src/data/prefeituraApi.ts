@@ -1,3 +1,4 @@
+import { obrasOficiais } from "@/lib/obras-fontes";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 
@@ -110,6 +111,7 @@ export type Diaria = {
 
 export type Obra = {
   id: string;
+  origem_chave?: string | null;
   nome: string;
   local: string | null;
   valor: number | null;
@@ -355,7 +357,7 @@ export async function fetchObras(): Promise<Obra[]> {
     .select("*")
     .order("nome");
   if (error) throw error;
-  return (data || []) as Obra[];
+  return obrasOficiais((data || []) as Obra[]);
 }
 
 export async function fetchProcuradores() {

@@ -26,7 +26,8 @@ export const fetchPrefeituraOverview = unstable_cache(
       (async () => {
         const { count } = await supabase
           .from("obras")
-          .select("*", { count: "exact", head: true });
+          .select("*", { count: "exact", head: true })
+          .like("origem_chave", "prefeitura:nucleogov:obra:%");
         return count ?? 0;
       })(),
       (async () => {
