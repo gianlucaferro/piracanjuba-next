@@ -1,344 +1,217 @@
-// TCM-GO via Apify Website Content Crawler — padrao ASYNC
-//
-// Por que async (e nao run-sync):
-// - Edge function Supabase tem ~150s idle timeout no run-sync.
-// - Crawler precisa de 5-10 min pra walk depth=2 a partir do mural+DOEl.
-// - run-sync com timeout=140 deu TIMED-OUT consistente (so 5 paginas).
-//
-// Arquitetura (2 acoes):
-// 1. POST /functions/v1/sync-tcm-go-piracanjuba?action=trigger
-//    -> POST /v2/acts/.../runs (sem run-sync) configurando webhook de callback
-//    -> Salva runId em sync_log.detalhes, retorna em ~1s
-//    -> Apify roda em background ate 10min, dispara webhook ao terminar
-//
-// 2. POST /functions/v1/sync-tcm-go-piracanjuba?action=fetch (chamado pelo Apify)
-//    -> Header x-tcm-secret valida origem do webhook
-//    -> Le runId/datasetId/status do payload, baixa items do dataset
-//    -> Filtra por Piracanjuba, parseia, faz upsert em tcm_go_apontamentos
-//    -> Atualiza sync_log com resultado
-//
-// Memoria: 2048MB (default actor e' 8192MB = pool inteiro do FREE tier).
-// Webhook secret: env APIFY_WEBHOOK_SECRET (fallback service_role_key).
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+// TCM-GO via Apify Website Content Crawler, execução assíncrona.
+// O callback e a reconciliação consultam o estado real da execução no Apify.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-tcm-secret",
 };
-
 const APIFY_BASE = "https://api.apify.com/v2";
 const ACTOR_ID = "apify~website-content-crawler";
-
 const START_URLS = [
-  "https://www.tcm.go.gov.br/site/?p=mural-de-licitacoes",
-  "https://www.tcm.go.gov.br/site/?p=diario-oficial-eletronico",
-  "https://www.tcm.go.gov.br/site/?s=Piracanjuba",
-  "https://www.tcm.go.gov.br/cidadao/?s=Piracanjuba",
-  "https://www.tcm.go.gov.br/site/?p=consulta-de-decisoes",
+  "https://www.tcmgo.tc.br/site/processos/",
+  "https://www.tcmgo.tc.br/site/jurisprudencia/",
+  "https://www.tcmgo.tc.br/ecs/s/tcmjuris?guest=true&pesquisa=Piracanjuba",
+  "https://www.tcmgo.tc.br/doc/",
+  "https://www.tcmgo.tc.br/site/?s=Piracanjuba",
 ];
 
-interface DatasetItem {
-  url: string;
-  title?: string;
-  text?: string;
-  markdown?: string;
-  metadata?: Record<string, unknown>;
+interface DatasetItem { url: string; title?: string; text?: string; markdown?: string; }
+interface SyncLog { id: string; status: string; detalhes: Record<string, unknown>; }
+
+function response(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+}
+
+function message(error: unknown) { return error instanceof Error ? error.message : "falha não identificada"; }
+
+async function apifyJson(path: string, token: string, init: RequestInit = {}) {
+  // Não guardar a URL autenticada nem o corpo de erros do provedor em logs.
+  const url = `${APIFY_BASE}${path}${path.includes("?") ? "&" : "?"}token=${encodeURIComponent(token)}`;
+  const result = await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
+  if (!result.ok) throw new Error(`Apify HTTP ${result.status}`);
+  return { data: await result.json(), headers: result.headers };
 }
 
 function parseApontamento(item: DatasetItem) {
-  const md = item.markdown ?? item.text ?? "";
-  const tit = item.title ?? "";
-  const fullText = `${tit}\n${md}`;
-
-  const numMatch =
-    fullText.match(/(?:processo|proc\.?\s*n[º°.]?)\s*[:\-]?\s*([\d./]{4,20})/i) ||
-    fullText.match(/\b(\d{4,6}[\/.-]\d{2,4})\b/);
-  const numero_processo = numMatch
-    ? numMatch[1].replace(/\.+$/, "")
-    : `tcm_apify_${Date.now()}_${item.url.slice(-12)}`;
-
-  const anoMatch = fullText.match(/\b(20\d{2})\b/);
-  const ano = anoMatch ? parseInt(anoMatch[1]) : null;
-
-  const tipoMatch = fullText.match(
-    /\b(ac[oó]rd[aã]o|parecer|decis[aã]o|notifica[çc][aã]o|inspe[çc][aã]o|relat[oó]rio|tomada\s+de\s+contas)\b/i,
-  );
-  const tipo = tipoMatch ? tipoMatch[1].toLowerCase() : null;
-
-  const statusMatch = fullText.match(
-    /\b(aprovad[oa]|reprovad[oa]|julgad[oa]\s+regular|julgad[oa]\s+irregular|pendente|em\s+an[áa]lise|arquivad[oa])\b/i,
-  );
-  const status = statusMatch ? statusMatch[1].toLowerCase() : null;
-
-  const orgaoMatch = fullText.match(
-    /\b(prefeitura|c[âa]mara|munic[íi]pio|secretaria|fundo)\s+(?:municipal\s+)?(?:de\s+)?piracanjuba/i,
-  );
-  const orgao_alvo = orgaoMatch ? orgaoMatch[1].toLowerCase() : "prefeitura";
-
-  const ementa = (
-    md.split(/\n+/).find((l) => l.trim().length > 50) ??
-    md.slice(0, 500)
-  ).slice(0, 500);
-
-  const valorMatch = fullText.match(/r\$\s*([\d.,]+)/i);
-  const valor_envolvido = valorMatch
-    ? parseFloat(valorMatch[1].replace(/\./g, "").replace(",", "."))
-    : null;
-
-  const dataMatch = fullText.match(/\b(\d{2})\/(\d{2})\/(\d{4})\b/);
-  const data_publicacao = dataMatch
-    ? `${dataMatch[3]}-${dataMatch[2]}-${dataMatch[1]}`
-    : null;
-
+  const url = new URL(item.url);
+  if (url.protocol !== "https:" || !["www.tcmgo.tc.br", "tcmgo.tc.br", "www.tcm.go.gov.br", "virtual.tcmgo.tc.br"].includes(url.hostname)) return null;
+  const text = `${item.title ?? ""}\n${item.markdown ?? item.text ?? ""}`;
+  if (!/\bpiracanjuba\b/i.test(text)) return null;
+  // Uma página de pesquisa não é um processo. Exigir identidade explícita e única.
+  const numbers = [...text.matchAll(/\b(?:processo|proc\.)\s*(?:n[º°.o]?\s*)?[:#-]?\s*(\d{4,8}\/\d{2,4})\b/gi)].map(match => match[1]);
+  if (new Set(numbers).size !== 1) return null;
+  const numero_processo = numbers[0];
+  const orgao = text.match(/\b(prefeitura|c[âa]mara|munic[íi]pio|secretaria|fundo)\s+(?:municipal\s+)?(?:de\s+)?piracanjuba\b/i)?.[1].toLowerCase();
+  // Data, status e valor só são importados de campos declarados do documento.
+  const date = text.match(/\b(?:data\s+(?:de\s+)?publica[çc][aã]o|publicad[oa]\s+em)\s*[:\-]?\s*(\d{2})\/(\d{2})\/(\d{4})\b/i);
+  const data_publicacao = date ? `${date[3]}-${date[2]}-${date[1]}` : null;
+  if (!data_publicacao) return null;
+  if (data_publicacao && (Number.isNaN(Date.parse(data_publicacao)) || new Date(data_publicacao).toISOString().slice(0, 10) !== data_publicacao)) return null;
+  const status = text.match(/\b(?:situa[çc][aã]o|status)\s*:\s*(aprovad[oa]|reprovad[oa]|julgad[oa]\s+(?:irregular|regular)|pendente|em\s+an[áa]lise|arquivad[oa])\b/i)?.[1].toLowerCase() ?? null;
+  const tipo = text.match(/\b(?:tipo|natureza)\s*:\s*(ac[oó]rd[aã]o|parecer|decis[aã]o|notifica[çc][aã]o|inspe[çc][aã]o|relat[oó]rio|tomada\s+de\s+contas)\b/i)?.[1].toLowerCase() ?? null;
+  const amount = text.match(/\bvalor\s+envolvido\s*:\s*r\$\s*(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})\b/i)?.[1];
+  const ementa = text.match(/\bementa\s*:\s*([^\n]+)/i)?.[1].trim().slice(0, 2000) ?? null;
+  if (!ementa || !orgao) return null;
+  const processYear = numero_processo.split("/")[1];
   return {
-    numero_processo,
-    ano,
-    orgao_alvo,
-    tipo,
-    status,
-    ementa,
-    data_publicacao,
-    valor_envolvido,
+    numero_processo, ano: processYear.length === 4 ? Number(processYear) : null,
+    orgao_alvo: orgao, tipo, status, ementa, data_publicacao,
+    valor_envolvido: amount ? Number(amount.replace(/\./g, "").replace(",", ".")) : null,
     fonte_url: item.url,
   };
 }
 
-// ===== ACTION: trigger =====
-async function actionTrigger(req: Request, sb: any, apifyToken: string) {
-  const url = new URL(req.url);
-  const maxPages = parseInt(url.searchParams.get("max") || "50");
-
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const webhookUrl = `${supabaseUrl}/functions/v1/sync-tcm-go-piracanjuba?action=fetch`;
-  const webhookSecret =
-    Deno.env.get("APIFY_WEBHOOK_SECRET") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-  const apifyInput = {
-    startUrls: START_URLS.map((u) => ({ url: u })),
-    crawlerType: "playwright:adaptive",
-    maxCrawlDepth: 2,
-    maxCrawlPages: maxPages,
-    maxResults: maxPages,
-    saveMarkdown: true,
-    removeCookieWarnings: true,
-    blockMedia: true,
-    htmlTransformer: "readableText",
-    proxyConfiguration: { useApifyProxy: true },
-    requestTimeoutSecs: 30,
-    maxRequestRetries: 2,
-    saveContentTypes: "application/pdf",
-    includeUrlGlobs: [
-      "https://www.tcm.go.gov.br/**",
-    ],
-  };
-
-  // Webhooks ad-hoc devem vir como query param ?webhooks=<URL-encoded base64 JSON>.
-  // Pôr no body (apifyInput.webhooks) NAO funciona — a primeira tentativa retornou
-  // run com webhooks: 0. Docs: https://docs.apify.com/api/v2/actor-runs-post
-  const webhooksJson = JSON.stringify([{
-    eventTypes: [
-      "ACTOR.RUN.SUCCEEDED",
-      "ACTOR.RUN.FAILED",
-      "ACTOR.RUN.TIMED_OUT",
-      "ACTOR.RUN.ABORTED",
-    ],
-    requestUrl: webhookUrl,
-    headersTemplate: `{"x-tcm-secret": "${webhookSecret}", "Content-Type": "application/json"}`,
-    // Apify default payload contem resource (com defaultDatasetId, status, id).
-  }]);
-  const webhooksB64 = btoa(webhooksJson);
-
-  // Async kick-off: timeout=600s (10min) e' grace pro crawl, NAO bloqueia
-  // a edge function pq usa /runs e nao /run-sync-get-dataset-items.
-  // memory=2048 cabe no FREE pool de 8192MB.
-  const apifyR = await fetch(
-    `${APIFY_BASE}/acts/${ACTOR_ID}/runs?token=${apifyToken}&memory=2048&timeout=600&webhooks=${encodeURIComponent(webhooksB64)}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(apifyInput),
-    },
-  );
-
-  if (!apifyR.ok) {
-    const txt = await apifyR.text();
-    throw new Error(`Apify HTTP ${apifyR.status}: ${txt.slice(0, 300)}`);
-  }
-  const apifyJson = await apifyR.json();
-  const runId = apifyJson?.data?.id;
-  const datasetId = apifyJson?.data?.defaultDatasetId;
-
-  const { data: log } = await sb.from("sync_log").insert({
-    tipo: "tcm_go",
-    status: "running",
-    detalhes: {
-      fonte: "apify-async",
-      runId,
-      datasetId,
-      start_urls: START_URLS,
-      maxPages,
-    },
-  }).select("id").single();
-
-  return new Response(JSON.stringify({
-    success: true,
-    mode: "async",
-    runId,
-    datasetId,
-    syncLogId: log?.id,
-    message: "Run iniciada. Apify chamara webhook em 1-10min ao terminar.",
-  }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+async function finishLog(sb: any, log: SyncLog, status: string, details: Record<string, unknown>) {
+  const result = await sb.from("sync_log").update({
+    status, detalhes: { ...log.detalhes, ...details }, finished_at: new Date().toISOString(),
+  }).eq("id", log.id).select("id");
+  if (result.error || result.data?.length !== 1) throw new Error("não foi possível finalizar sync_log do TCM");
 }
 
-// ===== ACTION: fetch (chamado pelo webhook do Apify) =====
-async function actionFetch(req: Request, sb: any, apifyToken: string) {
-  // Auth via header — Apify nao manda Authorization, entao usamos custom header
-  const expected =
-    Deno.env.get("APIFY_WEBHOOK_SECRET") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const incoming = req.headers.get("x-tcm-secret");
-  if (incoming !== expected) {
-    return new Response(JSON.stringify({ error: "unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+async function processRun(sb: any, token: string, runId: string, knownLog?: SyncLog) {
+  let log = knownLog;
+  if (!log) {
+    const result = await sb.from("sync_log").select("id,status,detalhes").eq("tipo", "tcm_go")
+      .filter("detalhes->>runId", "eq", runId).order("started_at", { ascending: false }).limit(1).maybeSingle();
+    if (result.error) throw new Error("consulta do log TCM falhou");
+    if (!result.data) throw new Error("execução TCM sem log correspondente");
+    log = result.data as SyncLog;
   }
-
-  let body: any = {};
+  if (log.status === "success") return { success: true, status: "success", runId, replay: true };
   try {
-    body = await req.json();
-  } catch {
-    body = {};
-  }
-
-  // Apify default webhook payload: { userId, createdAt, eventType, eventData, resource }
-  const resource = body?.resource ?? body;
-  const runId = resource?.id ?? body?.runId;
-  const status = resource?.status ?? body?.status;
-  const datasetId = resource?.defaultDatasetId ?? body?.datasetId;
-
-  if (!runId || !datasetId) {
-    return new Response(JSON.stringify({
-      error: "missing runId or datasetId",
-      received: { runId, status, datasetId },
-    }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  // Localiza sync_log dessa run
-  const { data: log } = await sb.from("sync_log")
-    .select("id, detalhes")
-    .eq("tipo", "tcm_go")
-    .filter("detalhes->>runId", "eq", runId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Run nao terminou bem — registra erro e sai
-  if (status !== "SUCCEEDED") {
-    if (log?.id) {
-      await sb.from("sync_log").update({
-        status: "error",
-        detalhes: { ...log.detalhes, error: `run ${status}` },
-        finished_at: new Date().toISOString(),
-      }).eq("id", log.id);
+    const { data: payload } = await apifyJson(`/actor-runs/${encodeURIComponent(runId)}`, token);
+    const run = payload?.data;
+    if (run?.id !== runId || typeof run.status !== "string") throw new Error("resposta inválida do estado Apify");
+    if (["READY", "RUNNING", "TIMING-OUT", "ABORTING"].includes(run.status)) return { success: false, status: "running", runId };
+    if (run.status !== "SUCCEEDED") throw new Error(`execução Apify terminou ${run.status}`);
+    const datasetId = run.defaultDatasetId;
+    if (typeof datasetId !== "string" || !/^[a-zA-Z0-9]+$/.test(datasetId)) throw new Error("dataset Apify ausente");
+    if (log.detalhes.datasetId && log.detalhes.datasetId !== datasetId) throw new Error("dataset diverge do registro da execução");
+    // clean=true remove itens vazios; o total do cabecalho e do dataset bruto.
+    // Ler sem filtros permite conferir cobertura antes de selecionar documentos.
+    const downloaded = await apifyJson(`/datasets/${datasetId}/items?format=json&clean=false&skipEmpty=false&offset=0&limit=1000`, token);
+    const items = downloaded.data;
+    if (!Array.isArray(items)) throw new Error("dataset Apify não é uma lista");
+    const totalHeader = downloaded.headers.get("x-apify-pagination-total");
+    if (totalHeader === null || !/^\d+$/.test(totalHeader)) throw new Error("total de paginação Apify ausente ou inválido");
+    const advertised = Number(totalHeader);
+    if (!Number.isSafeInteger(advertised) || advertised !== items.length || items.length > 1000) throw new Error("dataset incompleto ou total de paginação divergente");
+    const relevant = items.filter((item: DatasetItem) => /\bpiracanjuba\b/i.test(`${item?.title ?? ""} ${item?.text ?? ""} ${item?.markdown ?? ""}`));
+    const errors: string[] = [];
+    let written = 0, existing = 0, rejected = 0;
+    for (const item of relevant) {
+      let row;
+      try { row = typeof item?.url === "string" ? parseApontamento(item) : null; } catch { row = null; }
+      if (!row) { rejected++; continue; }
+      // A restrição com data NULL não deduplica. A fonte também precisa ser verificada.
+      const found = await sb.from("tcm_go_apontamentos").select("id").eq("fonte_url", row.fonte_url).limit(2);
+      if (found.error) { errors.push("falha ao consultar apontamento existente"); continue; }
+      if (found.data?.length) { existing++; continue; }
+      const saved = await sb.from("tcm_go_apontamentos").upsert(row, { onConflict: "numero_processo,data_publicacao" }).select("id");
+      if (saved.error || saved.data?.length !== 1) { errors.push("falha ao gravar apontamento"); continue; }
+      written++;
     }
-    return new Response(JSON.stringify({ success: false, runId, status }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    if (!written && !existing) errors.push("nenhum processo municipal verificável no conteúdo coletado; revisar integração com a consulta processual/Diário Oficial do TCM");
+    if (rejected) errors.push(`${rejected} páginas municipais sem documento individual identificável`);
+    const status = errors.length ? "partial" : "success";
+    const result = { coverage: "amostra de navegação pública, não exaustiva", crawled: items.length, relevantes_piracanjuba: relevant.length, upserted: written, existing, rejected, errorCount: errors.length, errors: errors.slice(0, 20) };
+    await finishLog(sb, log, status, { datasetId, providerStatus: run.status, result });
+    return { success: status === "success", status, runId, ...result };
+  } catch (error) {
+    await finishLog(sb, log, "error", { error: message(error) });
+    return { success: false, status: "error", runId, error: message(error) };
+  }
+}
+
+async function actionTrigger(req: Request, sb: any, token: string | undefined) {
+  const maxPages = Number(new URL(req.url).searchParams.get("max") ?? 50);
+  if (!Number.isInteger(maxPages) || maxPages < 1 || maxPages > 50) return response({ success: false, error: "max deve estar entre 1 e 50" }, 400);
+  const created = await sb.from("sync_log").insert({ tipo: "tcm_go", status: "running", detalhes: { fonte: "apify-async", start_urls: START_URLS, maxPages } }).select("id,status,detalhes").single();
+  if (created.error || !created.data) throw new Error("não foi possível iniciar sync_log do TCM");
+  const log = created.data as SyncLog;
+  try {
+    if (!token) throw new Error("APIFY_TOKEN missing");
+    const webhookSecret = Deno.env.get("APIFY_WEBHOOK_SECRET");
+    if (!webhookSecret?.trim()) throw new Error("APIFY_WEBHOOK_SECRET missing; configure um segredo dedicado antes de iniciar o crawler");
+    const webhooks = btoa(JSON.stringify([{
+      eventTypes: ["ACTOR.RUN.SUCCEEDED", "ACTOR.RUN.FAILED", "ACTOR.RUN.TIMED_OUT", "ACTOR.RUN.ABORTED"],
+      requestUrl: `${Deno.env.get("SUPABASE_URL")}/functions/v1/sync-tcm-go-piracanjuba?action=fetch`,
+      headersTemplate: JSON.stringify({ "x-tcm-secret": webhookSecret, "Content-Type": "application/json" }),
+    }]));
+    const input = {
+      startUrls: START_URLS.map(url => ({ url })), crawlerType: "playwright:adaptive",
+      maxCrawlDepth: 2, maxCrawlPages: maxPages, maxResults: maxPages, saveMarkdown: true,
+      removeCookieWarnings: true, blockMedia: true, htmlTransformer: "readableText",
+      proxyConfiguration: { useApifyProxy: true }, requestTimeoutSecs: 30, maxRequestRetries: 2,
+      saveContentTypes: "application/pdf", includeUrlGlobs: ["https://www.tcmgo.tc.br/**", "https://tcmgo.tc.br/**", "https://www.tcm.go.gov.br/**", "https://virtual.tcmgo.tc.br/**"],
+    };
+    // Preserva memória, tempo máximo e limites de custo da execução existente.
+    const { data } = await apifyJson(`/acts/${ACTOR_ID}/runs?memory=2048&timeout=600&webhooks=${encodeURIComponent(webhooks)}`, token, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
     });
+    const runId = data?.data?.id, datasetId = data?.data?.defaultDatasetId;
+    if (typeof runId !== "string" || typeof datasetId !== "string") throw new Error("Apify não confirmou os identificadores da execução");
+    log.detalhes = { ...log.detalhes, runId, datasetId };
+    const updated = await sb.from("sync_log").update({ detalhes: log.detalhes }).eq("id", log.id).select("id");
+    if (updated.error || updated.data?.length !== 1) throw new Error("execução iniciada, mas não foi possível vincular o runId ao log");
+    return response({ success: true, status: "running", mode: "async", runId, datasetId, syncLogId: log.id }, 202);
+  } catch (error) {
+    await finishLog(sb, log, "error", { error: message(error) });
+    return response({ success: false, status: "error", error: message(error) }, 502);
   }
-
-  // Run SUCCEEDED — baixa dataset e processa
-  const itemsR = await fetch(
-    `${APIFY_BASE}/datasets/${datasetId}/items?token=${apifyToken}&format=json&clean=true&limit=1000`,
-  );
-  if (!itemsR.ok) {
-    const txt = await itemsR.text();
-    throw new Error(`Apify dataset HTTP ${itemsR.status}: ${txt.slice(0, 200)}`);
-  }
-  const items = (await itemsR.json()) as DatasetItem[];
-
-  const relevantes = items.filter((it) => {
-    const haystack = `${it.title ?? ""} ${it.text ?? ""} ${it.markdown ?? ""}`.toLowerCase();
-    return haystack.includes("piracanjuba");
-  });
-
-  const urls = relevantes.map((r) => r.url).filter(Boolean);
-  let existingSet = new Set<string>();
-  if (urls.length) {
-    const { data: existing } = await sb
-      .from("tcm_go_apontamentos")
-      .select("fonte_url")
-      .in("fonte_url", urls);
-    existingSet = new Set((existing ?? []).map((r: any) => r.fonte_url));
-  }
-  const novas = relevantes.filter((r) => r.url && !existingSet.has(r.url));
-
-  const upserted: string[] = [];
-  for (const item of novas) {
-    const row = parseApontamento(item);
-    const { error } = await sb
-      .from("tcm_go_apontamentos")
-      .upsert(row, { onConflict: "numero_processo,data_publicacao" });
-    if (!error) upserted.push(row.numero_processo);
-  }
-
-  const result = {
-    crawled: items.length,
-    relevantes_piracanjuba: relevantes.length,
-    novas: novas.length,
-    upserted: upserted.length,
-    sample: upserted.slice(0, 5),
-  };
-
-  if (log?.id) {
-    await sb.from("sync_log").update({
-      status: "success",
-      detalhes: { ...log.detalhes, result },
-      finished_at: new Date().toISOString(),
-    }).eq("id", log.id);
-  }
-
-  return new Response(JSON.stringify({ success: true, runId, ...result }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  const url = new URL(req.url);
-  const action = url.searchParams.get("action") ?? "trigger";
-
-  const sb = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
-  const apifyToken = Deno.env.get("APIFY_TOKEN");
-  if (!apifyToken) {
-    return new Response(JSON.stringify({ success: false, error: "APIFY_TOKEN missing" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  const privileged = hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"));
+  const expected = Deno.env.get("APIFY_WEBHOOK_SECRET");
+  const webhookConfigured = Boolean(expected?.trim());
+  const webhookAuthorized = Boolean(webhookConfigured && req.headers.get("x-tcm-secret") === expected);
+  if (!privileged && !webhookAuthorized) return response({ error: "unauthorized" }, 401);
+  let bodyAction: unknown;
+  if (req.method === "POST" && !new URL(req.url).searchParams.has("action")) {
+    try { bodyAction = (await req.clone().json())?.action; }
+    catch { return response({ error: "invalid JSON body" }, 400); }
   }
-
+  const action = new URL(req.url).searchParams.get("action") ?? bodyAction ?? "trigger";
+  if (action === "trigger" && !privileged) return response({ error: "unauthorized" }, 401);
+  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const token = Deno.env.get("APIFY_TOKEN");
   try {
-    if (action === "trigger") return await actionTrigger(req, sb, apifyToken);
-    if (action === "fetch") return await actionFetch(req, sb, apifyToken);
-    return new Response(JSON.stringify({ error: `unknown action: ${action}` }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (e) {
-    const msg = (e as Error).message;
-    return new Response(JSON.stringify({ success: false, action, error: msg }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
+    if (action === "trigger") return await actionTrigger(req, sb, token);
+    if (!token) throw new Error("APIFY_TOKEN missing");
+    if (action === "fetch") {
+      const body = await req.json();
+      const runId = body?.resource?.id ?? body?.runId;
+      if (typeof runId !== "string" || !/^[a-zA-Z0-9]+$/.test(runId)) return response({ error: "missing or invalid runId" }, 400);
+      const result = await processRun(sb, token, runId);
+      // Erro do provedor já está registrado. Falha ao gravar o log gera 500 e retry.
+      return response(result, result.status === "running" ? 202 : result.status === "partial" ? 207 : 200);
+    }
+    if (action === "reconcile") {
+      // Recupera callbacks perdidos sem iniciar um novo crawler ou ampliar gastos.
+      const found = await sb.from("sync_log").select("id,status,detalhes").eq("tipo", "tcm_go").eq("status", "running")
+        .lt("started_at", new Date(Date.now() - 15 * 60 * 1000).toISOString()).order("started_at", { ascending: true }).limit(25);
+      if (found.error) throw new Error("consulta dos logs pendentes falhou");
+      const results = [];
+      const deadline = Date.now() + 90000;
+      for (const log of (found.data ?? []) as SyncLog[]) {
+        if (Date.now() > deadline) break;
+        const runId = log.detalhes?.runId;
+        if (typeof runId !== "string" || !/^[a-zA-Z0-9]+$/.test(runId)) {
+          await finishLog(sb, log, "error", { error: "execução antiga sem runId verificável" });
+          results.push({ status: "error", error: "runId ausente" });
+        } else results.push(await processRun(sb, token, runId, log));
+      }
+      const success = webhookConfigured && results.length === (found.data?.length ?? 0) && results.every(result => result.status === "success");
+      return response({
+        success, webhook_configured: webhookConfigured,
+        ...(!webhookConfigured ? { configuration_error: "APIFY_WEBHOOK_SECRET missing; novos crawlers ficam bloqueados até configurar segredo dedicado" } : {}),
+        processed: results.length, pendingInBatch: (found.data?.length ?? 0) - results.length, results,
+      }, success ? 200 : 207);
+    }
+    return response({ error: "unknown action" }, 400);
+  } catch (error) { return response({ success: false, action, ...(action === "reconcile" ? { webhook_configured: webhookConfigured } : {}), error: message(error) }, 500); }
 });

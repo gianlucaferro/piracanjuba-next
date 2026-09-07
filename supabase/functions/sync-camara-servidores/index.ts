@@ -146,9 +146,9 @@ async function fetchFolha(
   };
 }
 
-function previousMonth(now = new Date()) {
+function currentMonth(now = new Date()) {
   const date = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1),
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
   );
   return {
     ano: date.getUTCFullYear(),
@@ -209,7 +209,7 @@ Deno.serve(async (req) => {
       },
     );
   }
-  const fallback = previousMonth();
+  const fallback = currentMonth();
   const requestedMonth = mesParam
     ? Number.parseInt(mesParam, 10)
     : fallback.mes;
@@ -404,6 +404,8 @@ Deno.serve(async (req) => {
     remCriadas = remResults.reduce((a, b) => a + b, 0);
 
     const result = {
+      requested_competencia: requestedCompetencia,
+      fallback_used: competencia !== requestedCompetencia,
       competencia,
       ano,
       mes,
