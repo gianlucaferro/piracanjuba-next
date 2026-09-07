@@ -91,7 +91,7 @@ export function normalizeContrato(row: JsonRecord) {
     anexos: Array.isArray(row.anexos) ? row.anexos : [],
     raw_payload: rawPayload(row),
     fonte_url:
-      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia/contratos_cnt",
+      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/informacao/contratos_cnt",
     updated_at: new Date().toISOString(),
   };
 }
@@ -117,7 +117,7 @@ export function normalizeAditivo(row: JsonRecord) {
     documentos: Array.isArray(row.documentos) ? row.documentos : [],
     raw_payload: rawPayload(row),
     fonte_url:
-      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia/aditivos_cnt",
+      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/informacao/aditivos_cnt",
     updated_at: new Date().toISOString(),
   };
 }
@@ -140,7 +140,7 @@ export function normalizeFiscalContrato(row: JsonRecord) {
     vigencia_inicio: parseDate(row.inicio_vigencia),
     raw_payload: rawPayload(row),
     fonte_url:
-      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia/fiscais_contratos_sg",
+      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/informacao/fiscais_contratos_sg",
     updated_at: new Date().toISOString(),
   };
 }
@@ -177,7 +177,7 @@ export function normalizePagamento(row: JsonRecord) {
     justificativa: row.justificativa ? String(row.justificativa) : null,
     raw_payload: rawPayload(row),
     fonte_url:
-      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia/ordem_cronologica_pagamentos_cnt",
+      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/informacao/ordem_cronologica_pagamentos_cnt",
     updated_at: new Date().toISOString(),
   };
 }
@@ -263,6 +263,14 @@ export function normalizeFolha(row: JsonRecord) {
 
 export function normalizeAto(row: JsonRecord) {
   if (!row.chave) return null;
+  const tipo = String(row.tipo ?? "").toUpperCase();
+  const modulo = tipo.startsWith("DECRETO")
+    ? "decretos_cnt"
+    : tipo.startsWith("PORTARIA")
+    ? "portarias_cnt"
+    : tipo.startsWith("LEI")
+    ? "leis_cnt"
+    : null;
   return {
     chave: String(row.chave),
     numero: row.numero ? String(row.numero) : null,
@@ -273,8 +281,9 @@ export function normalizeAto(row: JsonRecord) {
     documento_url: row.url ? String(row.url) : null,
     arquivo_nome: row.file_name ? String(row.file_name) : null,
     raw_payload: rawPayload(row),
-    fonte_url:
-      "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/transparencia/atos_cnt",
+    fonte_url: modulo
+      ? `https://acessoainformacao.piracanjuba.go.gov.br/cidadao/legislacao/${modulo}`
+      : "https://acessoainformacao.piracanjuba.go.gov.br/",
     updated_at: new Date().toISOString(),
   };
 }

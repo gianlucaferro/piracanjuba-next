@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, CalendarCheck, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
 import Layout from "@/components/Layout";
+import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import SEO from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VereadoresContent } from "@/components/camara/VereadoresContent";
@@ -141,7 +142,7 @@ function ServidoresCamaraTab() {
           <p className="text-sm text-muted-foreground mt-1">
             Os dados serão sincronizados automaticamente do portal de transparência legislativo.
           </p>
-          <a href="https://camarapiracanjuba.centi.com.br/servidor/remuneracao" target="_blank" rel="noopener noreferrer"
+          <a href={FONTES_CAMARA.folhas} target="_blank" rel="noopener noreferrer"
             className="text-sm text-primary hover:underline mt-2 inline-block">
             Ver fonte original →
           </a>

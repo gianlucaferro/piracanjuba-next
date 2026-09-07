@@ -198,6 +198,16 @@ Deno.test("ato preserva tipo, publicacao e documento", () => {
   assertEquals(row?.chave, "kRYP$Z58teX", "chave ato");
   assertEquals(row?.data_publicacao, "2026-07-20", "data ato");
   assertEquals(row?.tipo, "DECRETOS", "tipo ato");
+  assertEquals(
+    row?.fonte_url,
+    "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/legislacao/decretos_cnt",
+    "fonte oficial de decretos",
+  );
+  assertEquals(
+    normalizeAto({ chave: "portaria", tipo: "PORTARIAS" })?.fonte_url,
+    "https://acessoainformacao.piracanjuba.go.gov.br/cidadao/legislacao/portarias_cnt",
+    "portaria não aponta para decretos",
+  );
   assertEquals(normalizeAto({ numero: "1" }), null, "ato sem chave");
 });
 

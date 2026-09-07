@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FONTES_CAMARA, FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import {
   ExternalLink,
   Sparkles,
@@ -135,11 +136,19 @@ const faqJsonLd = {
 
 const fontes = [
   {
-    label: "Portal Centi — Câmara de Piracanjuba",
+    label: "Portal de Transparência da Câmara de Piracanjuba",
+    url: FONTES_CAMARA.transparencia,
+  },
+  {
+    label: "Portal de Transparência da Prefeitura de Piracanjuba",
+    url: FONTES_PREFEITURA.transparencia,
+  },
+  {
+    label: "Acervo histórico Centi da Câmara de Piracanjuba",
     url: "https://camarapiracanjuba.centi.com.br/",
   },
   {
-    label: "Portal Centi — Prefeitura de Piracanjuba",
+    label: "Acervo histórico Centi da Prefeitura de Piracanjuba",
     url: "https://piracanjuba.centi.com.br/",
   },
   {

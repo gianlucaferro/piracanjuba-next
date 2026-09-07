@@ -21,11 +21,20 @@ import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
 // blocos por assunto (DOMAINS) acionados por palavra-chave. Assim o bot tem acesso
 // a todo o mapa de dados do portal sem inflar cada chamada.
 
+const OFFICIAL_WORKS_PREFIX = "prefeitura:nucleogov:obra:%";
 const RATE_MAX_PER_MIN = 12;
 const MAX_PERGUNTA = 500;
 const MAX_DOMAINS = 9; // teto de blocos por assunto por pergunta (custo/latência)
 
 type SB = ReturnType<typeof createClient>;
+type OfficialWorkContextRow = {
+  nome: string | null;
+  local: string | null;
+  valor: number | null;
+  empresa: string | null;
+  status: string | null;
+  fonte_url: string | null;
+};
 type Msg = { role: "user" | "assistant"; content: string };
 type DomainBlock = { keys: string[]; run: (sb: SB) => Promise<string | null> };
 
@@ -117,8 +126,11 @@ const DOMAINS: DomainBlock[] = [
       const countOf = async (tbl: string, col?: string, val?: string): Promise<number | null> => {
         let q = sb.from(tbl).select("*", { count: "exact", head: true });
         if (col && val) q = q.eq(col, val);
+        if (tbl === "obras") q = q.like("origem_chave", OFFICIAL_WORKS_PREFIX);
         const { count, error } = await q;
-        return error ? null : count ?? 0;
+        // Sem ingestão oficial, não transformar ausência de dados em zero obras.
+        if (error || (tbl === "obras" && !count)) return null;
+        return count ?? 0;
       };
       const [
         servPref, servCam, vers, secs, contrPref, contrCam, licPref, licCam,
@@ -153,7 +165,7 @@ const DOMAINS: DomainBlock[] = [
         line("Contratos da Câmara cadastrados", contrCam),
         line("Licitações da Prefeitura cadastradas", licPref),
         line("Licitações da Câmara cadastradas", licCam),
-        line("Obras cadastradas", obras),
+        line("Obras no cadastro oficial municipal importado", obras),
         line("Leis municipais cadastradas", leis),
         line("Decretos cadastrados", decretos),
         line("Portarias cadastradas", portarias),
@@ -340,8 +352,13 @@ const DOMAINS: DomainBlock[] = [
   {
     keys: ["obra", "reforma", "construc", "pavimenta", "asfalto", "praca", "ponte", "calcamento"],
     run: async (sb) => {
-      const { data } = await sb.from("obras").select("nome, local, valor, empresa, status").limit(15);
-      return fmtList("Obras", (data || []).map((o) => `- ${o.nome} (${o.status || "N/D"})${o.local ? ` em ${o.local}` : ""} - ${cur(o.valor)} - ${o.empresa || "N/D"}`));
+      const { data, count, error } = await sb.from("obras")
+        .select("nome, local, valor, empresa, status, fonte_url", { count: "exact" })
+        .like("origem_chave", OFFICIAL_WORKS_PREFIX).order("nome").limit(15);
+      if (error) return "### Obras\nConsulta ao cadastro oficial de obras indisponível. Não há dados confirmados para responder sobre quantidade ou situação.";
+      if (!data?.length) return "### Obras\nCadastro oficial de obras em coleta. Ausência de registros importados não significa ausência de obras no município.";
+      return fmtList(`Obras no cadastro oficial municipal (${count ?? "N/D"} registros; amostra de ${data.length})`,
+        data.map((o: OfficialWorkContextRow) => `- ${o.nome} (situação declarada: ${o.status || "não informada"})${o.local ? ` em ${o.local}` : ""} - ${cur(o.valor)} - ${o.empresa || "N/D"}${o.fonte_url ? ` - Fonte: ${o.fonte_url}` : ""}`));
     },
   },
   {

@@ -1,3 +1,4 @@
+import { FONTES_CAMARA, FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import type { Metadata } from "next";
 
 const SITE_URL = "https://piracanjuba.ai";
@@ -86,13 +87,13 @@ const ENTITY_DATA: Record<string, SchemaEntityRef> = {
     "@type": "GovernmentOrganization",
     "@id": ID.prefeitura,
     name: "Prefeitura Municipal de Piracanjuba",
-    url: "https://piracanjuba.go.gov.br",
+    url: FONTES_PREFEITURA.institucional,
   },
   [ID.camara]: {
     "@type": "GovernmentOrganization",
     "@id": ID.camara,
     name: "Câmara Municipal de Piracanjuba",
-    url: "https://camarapiracanjuba.centi.com.br",
+    url: FONTES_CAMARA.institucional,
   },
   [ID.tcmGo]: {
     "@type": "GovernmentOrganization",
@@ -214,7 +215,7 @@ export function siteIdentityGraph() {
         "@type": "GovernmentOrganization",
         "@id": ID.prefeitura,
         name: "Prefeitura Municipal de Piracanjuba",
-        url: "https://piracanjuba.go.gov.br",
+        url: FONTES_PREFEITURA.institucional,
         areaServed: { "@id": ID.municipio },
       },
       // 6. A CAMARA (entidade governamental SEPARADA — referencia)
@@ -222,7 +223,7 @@ export function siteIdentityGraph() {
         "@type": "GovernmentOrganization",
         "@id": ID.camara,
         name: "Câmara Municipal de Piracanjuba",
-        url: "https://camarapiracanjuba.centi.com.br",
+        url: FONTES_CAMARA.institucional,
         areaServed: { "@id": ID.municipio },
       },
       // 7. TCM-GO (entidade governamental estadual — referencia pra Datasets)

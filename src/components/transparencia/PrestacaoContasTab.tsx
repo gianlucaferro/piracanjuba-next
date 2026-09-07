@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCamaraOrcamento, type CamaraOrcamento } from "@/data/camaraApi";
 import { fetchPrestacaoContasFiscal } from "@/data/prestacaoContasApi";
 import { formatCurrency } from "@/lib/formatters";
+import { FONTES_CAMARA, FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import {
   ExternalLink, BookOpen, ChevronDown, Scale, FileBarChart, Receipt,
   CalendarRange, FileText, TrendingUp, ScrollText, ClipboardCheck, Landmark, Wallet,
@@ -38,16 +39,17 @@ function brlCompact(v: number | null): string {
 function buildGrupos(poder: Poder): DocGroup[] {
   const base = poder === "prefeitura" ? CENTI_PREF : CENTI_CAM;
   const ente = poder === "prefeitura" ? "do município" : "da Câmara";
+  const fontes = poder === "prefeitura" ? FONTES_PREFEITURA : FONTES_CAMARA;
   const grupos: DocGroup[] = [
     {
       titulo: "Planejamento orçamentário",
       desc: "Onde o dinheiro público é planejado antes de ser gasto: metas, prioridades e o orçamento do ano.",
       itens: [
-        { nome: "Plano Plurianual", sigla: "PPA", icon: CalendarRange, url: `${base}/prestacaocontas/ppa`,
+        { nome: "Plano Plurianual", sigla: "PPA", icon: CalendarRange, url: poder === "prefeitura" ? FONTES_PREFEITURA.planejamento : `${base}/prestacaocontas/ppa`,
           desc: "Planejamento de 4 anos: diretrizes, objetivos e metas da administração para o período." },
-        { nome: "Lei de Diretrizes Orçamentárias", sigla: "LDO", icon: ScrollText, url: `${base}/prestacaocontas/ldo`,
+        { nome: "Lei de Diretrizes Orçamentárias", sigla: "LDO", icon: ScrollText, url: poder === "prefeitura" ? FONTES_PREFEITURA.planejamento : `${base}/prestacaocontas/ldo`,
           desc: "Define prioridades e metas para o ano seguinte e orienta a elaboração do orçamento." },
-        { nome: "Lei Orçamentária Anual", sigla: "LOA", icon: FileText, url: `${base}/prestacaocontas/loa`,
+        { nome: "Lei Orçamentária Anual", sigla: "LOA", icon: FileText, url: poder === "prefeitura" ? FONTES_PREFEITURA.planejamento : `${base}/prestacaocontas/loa`,
           desc: "O orçamento do ano: estima as receitas e fixa as despesas autorizadas para cada área." },
       ],
     },
@@ -55,11 +57,11 @@ function buildGrupos(poder: Poder): DocGroup[] {
       titulo: "Execução e responsabilidade fiscal",
       desc: "Relatórios periódicos que mostram como o orçamento está sendo executado e se os limites da Lei de Responsabilidade Fiscal (LRF) são respeitados.",
       itens: [
-        { nome: "Relatório Resumido da Execução Orçamentária", sigla: "RREO", icon: TrendingUp, url: `${base}/prestacaocontas/relatorioresumido`,
+        { nome: "Relatório Resumido da Execução Orçamentária", sigla: "RREO", icon: TrendingUp, url: poder === "prefeitura" ? FONTES_PREFEITURA.rreo : `${base}/prestacaocontas/relatorioresumido`,
           desc: "Publicado a cada bimestre. Mostra quanto foi arrecadado e gasto frente ao previsto." },
-        { nome: "Relatório de Gestão Fiscal", sigla: "RGF", icon: Scale, url: `${base}/prestacaocontas/relatoriogestaofiscal`,
+        { nome: "Relatório de Gestão Fiscal", sigla: "RGF", icon: Scale, url: fontes.rgf,
           desc: "Publicado a cada quadrimestre. Acompanha os limites da LRF, com destaque para a despesa com pessoal." },
-        { nome: "Balancete Mensal", icon: Receipt, url: `${base}/prestacaocontas/balancetemensal`,
+        { nome: "Balancete Mensal", icon: Receipt, url: poder === "camara" ? FONTES_CAMARA.balanceteMensal : `${base}/prestacaocontas/balancetemensal`,
           desc: "Resumo mensal das receitas e despesas contabilizadas." },
       ],
     },
@@ -67,7 +69,7 @@ function buildGrupos(poder: Poder): DocGroup[] {
       titulo: "Contas anuais",
       desc: "O fechamento do exercício e o julgamento das contas pelos órgãos de controle.",
       itens: [
-        { nome: "Balanço Anual", icon: FileBarChart, url: `${base}/prestacaocontas/balancoanual`,
+        { nome: "Balanço Anual", icon: FileBarChart, url: fontes.balancoAnual,
           desc: `Demonstrações contábeis do ano fechado ${ente}: balanço orçamentário, financeiro e patrimonial.` },
       ],
     },
@@ -347,7 +349,7 @@ export default function PrestacaoContasTab({ poder }: { poder: Poder }) {
 
       <p className="text-xs text-muted-foreground border-t border-border pt-3">
         Indicadores fiscais: SICONFI / Tesouro Nacional (declarações oficiais {orgao === "Prefeitura" ? "do município" : "da Câmara"}).
-        Documentos: portal de transparência {poder === "prefeitura" ? "da Prefeitura" : "da Câmara"} de Piracanjuba. A versão oficial e mais atual está sempre na fonte de origem.
+        Documentos: portal de transparência {poder === "prefeitura" ? "da Prefeitura" : "da Câmara"} de Piracanjuba. Os links Centi mantidos nesta lista permitem consultar o acervo histórico.
       </p>
     </div>
   );

@@ -11,6 +11,14 @@ import {
 } from "./centi-client.ts";
 import { checkCentiAuth } from "./centi-auth.ts";
 import {
+  type ContratosOrgaoCoverage,
+  fetchContratosPrefeitura,
+} from "./nucleogov-contratos.ts";
+import {
+  fetchFolhaPrefeitura,
+  type FolhaOrgaoCoverage,
+} from "./nucleogov-folha.ts";
+import {
   type JsonRecord,
   normalizeAditivo,
   normalizeAto,
@@ -51,19 +59,19 @@ const DATASET_CONFIG: Record<
   { referer: string; action: string }
 > = {
   contratos: {
-    referer: "/cidadao/transparencia/contratos_cnt",
+    referer: "/cidadao/informacao/contratos_cnt",
     action: "contratos_cnt/listar",
   },
   aditivos: {
-    referer: "/cidadao/transparencia/aditivos_cnt",
+    referer: "/cidadao/informacao/aditivos_cnt",
     action: "aditivos_cnt/listar",
   },
   fiscais: {
-    referer: "/cidadao/transparencia/fiscais_contratos_sg",
+    referer: "/cidadao/informacao/fiscais_contratos_sg",
     action: "sg_fiscais_contratos/buscaAvancada",
   },
   pagamentos: {
-    referer: "/cidadao/transparencia/ordem_cronologica_pagamentos_cnt",
+    referer: "/cidadao/informacao/ordem_cronologica_pagamentos_cnt",
     action: "ordem_cronologica_pagamentos_cnt/listar",
   },
   diarias: {
@@ -75,7 +83,7 @@ const DATASET_CONFIG: Record<
     action: "servidores_cnt/listar",
   },
   atos: {
-    referer: "/cidadao/transparencia/atos_cnt",
+    referer: "/cidadao/legislacao/decretos_cnt",
     action: "atos_cnt/listar",
   },
 };
@@ -213,7 +221,12 @@ function ensureUsableResult(
 async function syncPagedDataset(
   dataset: "contratos" | "aditivos" | "fiscais" | "folha" | "atos",
   body: JsonRecord,
-): Promise<CentiListResult<JsonRecord> & { scope: string }> {
+): Promise<
+  CentiListResult<JsonRecord> & {
+    scope: string;
+    by_orgao?: FolhaOrgaoCoverage[] | ContratosOrgaoCoverage[];
+  }
+> {
   const config = DATASET_CONFIG[dataset];
   const pageSize = boundedInteger(body.pageSize, 250, 25, 500);
   const maxPages = boundedInteger(body.maxPages, 10, 1, 40);
@@ -233,6 +246,16 @@ async function syncPagedDataset(
     }
   }
 
+  if (dataset === "contratos" || dataset === "aditivos") {
+    return await fetchContratosPrefeitura({
+      dataset,
+      year: body.allYears === true ? undefined : Number(extra.ano),
+      allYears: body.allYears === true,
+      pageSize,
+      maxPages,
+    });
+  }
+
   if (dataset === "folha") {
     const requestedYear = body.year === undefined
       ? currentYear()
@@ -241,40 +264,13 @@ async function syncPagedDataset(
       ? new Date().getUTCMonth() + 1
       : boundedInteger(body.month, 1, 1, 12);
 
-    for (let fallback = 0; fallback < 4; fallback++) {
-      const date = new Date(
-        Date.UTC(requestedYear, requestedMonth - 1 - fallback, 1),
-      );
-      const year = date.getUTCFullYear();
-      const month = date.getUTCMonth() + 1;
-      const result = await centiListAllWithMeta<JsonRecord>(
-        config.referer,
-        config.action,
-        {
-          base: CENTI_BASE_PREFEITURA,
-          extra: { ano: String(year), mes: String(month) },
-          pageSize,
-          maxPages,
-        },
-      );
-      if (
-        result.dados.length > 0 ||
-        result.total === 0 && body.month !== undefined
-      ) {
-        return {
-          ...result,
-          scope: `${year}-${String(month).padStart(2, "0")}`,
-        };
-      }
-    }
-    return {
-      dados: [],
-      total: null,
-      pagesFetched: 0,
-      complete: false,
-      maxPagesReached: false,
-      scope: `${requestedYear}-${String(requestedMonth).padStart(2, "0")}`,
-    };
+    return await fetchFolhaPrefeitura({
+      year: requestedYear,
+      month: requestedMonth,
+      forced: body.month !== undefined,
+      pageSize,
+      maxPages,
+    });
   }
 
   const result = await centiListAllWithMeta<JsonRecord>(
@@ -733,6 +729,14 @@ export function createNucleoGovSyncHandler(
           : await writeDiarias(supabase, result.dados);
       } else {
         const result = await syncPagedDataset(dataset, body);
+        if (
+          (dataset === "contratos" || dataset === "aditivos") &&
+          !result.complete
+        ) {
+          throw new Error(
+            `${dataset}: coleta por orgao incompleta, limite de paginas atingido`,
+          );
+        }
         fetched = result.dados.length;
         sourceTotal = result.total;
         complete = result.complete;
@@ -741,6 +745,7 @@ export function createNucleoGovSyncHandler(
         extra = {
           pages_fetched: result.pagesFetched,
           max_pages_reached: result.maxPagesReached,
+          ...(result.by_orgao ? { by_orgao: result.by_orgao } : {}),
         };
         switch (dataset) {
           case "contratos":
