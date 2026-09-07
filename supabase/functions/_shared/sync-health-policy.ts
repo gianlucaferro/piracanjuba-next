@@ -181,6 +181,13 @@ export function createSyncHealthHandler(deps: SyncHealthDependencies) {
             unhealthy.filter((job) => job.health_status === "stale").length,
           stuck:
             unhealthy.filter((job) => job.health_status === "stuck").length,
+          running:
+            unhealthy.filter((job) => job.health_status === "running").length,
+          incomplete:
+            unhealthy.filter((job) => job.health_status === "incomplete")
+              .length,
+          unknown:
+            unhealthy.filter((job) => job.health_status === "unknown").length,
           degraded:
             unhealthy.filter((job) => job.health_status === "degraded").length,
           unobserved:

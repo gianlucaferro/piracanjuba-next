@@ -295,3 +295,24 @@ Deno.test("preflight nao produz efeitos e GET autenticado nao executa sincroniza
   );
   equal(calls, []);
 });
+
+Deno.test("novos estados ficam visiveis no canario sem retry automatico", async () => {
+  const { handler, calls } = handlerFixture(
+    ["running", "incomplete", "unknown"].map((health_status) =>
+      job({ health_status })
+    ),
+  );
+  const response = await handler(
+    healthRequest('{"dry_run":true}', { "x-cron-secret": "mock-cron" }),
+  );
+  equal(response.status, 200);
+  const body = await response.json();
+  equal(body.total_jobs, 3);
+  equal(body.healthy, 0);
+  equal(body.by_status.running, 1);
+  equal(body.by_status.incomplete, 1);
+  equal(body.by_status.unknown, 1);
+  equal(body.planned_retries, []);
+  equal(body.retried, []);
+  equal(calls, ["create", "read"]);
+});
