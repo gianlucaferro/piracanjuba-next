@@ -6,25 +6,27 @@ export interface Farmacia {
 
 export interface SemanaPlantao {
   inicio: string; // "YYYY-MM-DD"
-  farmacia24h: Farmacia;
+  farmacia24h: Farmacia | null;
   demais: Farmacia[];
 }
 
-function f(nome: string, telefone: string): Farmacia {
-  const tipo = telefone.includes("3405") ? "fixo" : "whatsapp";
+function f(nome: string, telefone = ""): Farmacia {
+  const tipo = !telefone || telefone.includes("3405") ? "fixo" : "whatsapp";
   return { nome, telefone, tipo };
 }
 
+// Fonte: docs/fontes/plantao-farmacias/escala-2026-2027-atualizada-2026-09-07.pdf
+// O documento imprime 2016 em 2026-04-04 e não informa 24h em 2026-03-14.
 export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   {
     inicio: "2026-03-14",
-    farmacia24h: f("Drogaria São Sebastião", "(64) 3405-1734"),
-    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    farmacia24h: null,
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-03-21",
     farmacia24h: f("Drogaria do Povo", "(64) 99218-0444"),
-    demais: [f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    demais: [f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-03-28",
@@ -39,17 +41,17 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   {
     inicio: "2026-04-11",
     farmacia24h: f("Drogaria Marina", "(64) 99334-3139"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-04-18",
     farmacia24h: f("Drogaria São Sebastião", "(64) 3405-1734"),
-    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-04-25",
     farmacia24h: f("Drogaria Santa Luzia", "(64) 3405-3028"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-05-02",
@@ -64,17 +66,17 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   {
     inicio: "2026-05-16",
     farmacia24h: f("Drogaria Piracanjuba", "(64) 3405-1441"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Aliança", "(64) 3405-2252")],
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-05-23",
     farmacia24h: f("Drogamais", "(64) 99265-4341"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-05-30",
     farmacia24h: f("Farma Vidda", "(64) 99237-3232"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Drogaria Machado", "(64) 3405-1859")],
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-06-06",
@@ -89,17 +91,17 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   {
     inicio: "2026-06-20",
     farmacia24h: f("Drogaria Aliança", "(64) 3405-2252"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441")],
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-06-27",
     farmacia24h: f("Drogaria Do Lar", "(64) 3405-1448"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-07-04",
     farmacia24h: f("Drogaria Machado", "(64) 3405-1859"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232")],
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-07-11",
@@ -113,18 +115,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2026-07-25",
-    farmacia24h: f("Drogaria Bem Estar", "(64) 99280-9691"),
-    demais: [f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Hiper Pop"),
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
   },
   {
     inicio: "2026-08-01",
     farmacia24h: f("Drogaria JM Popular", "(64) 99203-0312"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448")],
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-08-08",
-    farmacia24h: f("Drogaria do Povo", "(64) 99218-0444"),
-    demais: [f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    farmacia24h: f("Drogaria São Marcos"),
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
   },
   {
     inicio: "2026-08-15",
@@ -138,18 +140,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2026-08-29",
-    farmacia24h: f("Drogaria Marina", "(64) 99334-3139"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Bem Estar", "(64) 99280-9691"),
+    demais: [f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-09-05",
-    farmacia24h: f("Drogaria São Sebastião", "(64) 3405-1734"),
-    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    farmacia24h: f("Drogaria Vitae"),
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
   },
   {
     inicio: "2026-09-12",
-    farmacia24h: f("Drogaria Santa Luzia", "(64) 3405-3028"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    farmacia24h: f("Drogaria do Povo", "(64) 99218-0444"),
+    demais: [f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-09-19",
@@ -163,18 +165,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2026-10-03",
-    farmacia24h: f("Drogaria Piracanjuba", "(64) 3405-1441"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Marina", "(64) 99334-3139"),
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-10-10",
-    farmacia24h: f("Drogamais", "(64) 99265-4341"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    farmacia24h: f("Drogaria São Sebastião", "(64) 3405-1734"),
+    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-10-17",
-    farmacia24h: f("Farma Vidda", "(64) 99237-3232"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Drogaria Machado", "(64) 3405-1859")],
+    farmacia24h: f("Drogaria Santa Luzia", "(64) 3405-3028"),
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-10-24",
@@ -188,18 +190,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2026-11-07",
-    farmacia24h: f("Drogaria Aliança", "(64) 3405-2252"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441")],
+    farmacia24h: f("Drogaria Piracanjuba", "(64) 3405-1441"),
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-11-14",
-    farmacia24h: f("Drogaria Do Lar", "(64) 3405-1448"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    farmacia24h: f("Drogamais", "(64) 99265-4341"),
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-11-21",
-    farmacia24h: f("Drogaria Machado", "(64) 3405-1859"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232")],
+    farmacia24h: f("Farma Vidda", "(64) 99237-3232"),
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Drogaria Machado", "(64) 3405-1859"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2026-11-28",
@@ -213,18 +215,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2026-12-12",
-    farmacia24h: f("Drogaria Bem Estar", "(64) 99280-9691"),
-    demais: [f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Aliança", "(64) 3405-2252"),
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Hiper Pop")],
   },
   {
     inicio: "2026-12-19",
-    farmacia24h: f("Drogaria JM Popular", "(64) 99203-0312"),
-    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448")],
+    farmacia24h: f("Drogaria Do Lar", "(64) 3405-1448"),
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria JM Popular", "(64) 99203-0312"), f("Drogaria Vitae")],
   },
   {
     inicio: "2026-12-26",
-    farmacia24h: f("Drogaria do Povo", "(64) 99218-0444"),
-    demais: [f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    farmacia24h: f("Drogaria Machado", "(64) 3405-1859"),
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria São Marcos")],
   },
   {
     inicio: "2027-01-02",
@@ -238,18 +240,18 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2027-01-16",
-    farmacia24h: f("Drogaria Marina", "(64) 99334-3139"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Hiper Pop"),
+    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252")],
   },
   {
     inicio: "2027-01-23",
-    farmacia24h: f("Drogaria São Sebastião", "(64) 3405-1734"),
-    demais: [f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria JM Popular", "(64) 99203-0312")],
+    farmacia24h: f("Drogaria JM Popular", "(64) 99203-0312"),
+    demais: [f("Drogaria São Sebastião", "(64) 3405-1734"), f("Drogamais", "(64) 99265-4341"), f("Drogaria Do Lar", "(64) 3405-1448"), f("Drogaria Vitae")],
   },
   {
     inicio: "2027-01-30",
-    farmacia24h: f("Drogaria Santa Luzia", "(64) 3405-3028"),
-    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
+    farmacia24h: f("Drogaria São Marcos"),
+    demais: [f("Drogaria do Povo", "(64) 99218-0444"), f("Drogaria Santa Luzia", "(64) 3405-3028"), f("Farma Vidda", "(64) 99237-3232"), f("Drogaria Machado", "(64) 3405-1859")],
   },
   {
     inicio: "2027-02-06",
@@ -263,8 +265,8 @@ export const PLANTAO_FARMACIAS: SemanaPlantao[] = [
   },
   {
     inicio: "2027-02-20",
-    farmacia24h: f("Drogaria Piracanjuba", "(64) 3405-1441"),
-    demais: [f("Drogaria Bem Estar", "(64) 99280-9691"), f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Aliança", "(64) 3405-2252")],
+    farmacia24h: f("Drogaria Bem Estar", "(64) 99280-9691"),
+    demais: [f("Drogaria Marina", "(64) 99334-3139"), f("Drogaria Piracanjuba", "(64) 3405-1441"), f("Drogaria Aliança", "(64) 3405-2252"), f("Drogaria Hiper Pop")],
   },
 ];
 
@@ -307,8 +309,9 @@ export function getMesAno(semana: SemanaPlantao): string {
   return `${MESES[d.getMonth()].charAt(0).toUpperCase() + MESES[d.getMonth()].slice(1)} ${d.getFullYear()}`;
 }
 
-export function getTelefoneLink(farmacia: Farmacia): string {
+export function getTelefoneLink(farmacia: Farmacia): string | null {
   const num = farmacia.telefone.replace(/\D/g, "");
+  if (!num) return null;
   if (farmacia.tipo === "whatsapp") {
     const msg = encodeURIComponent("Olá, vim pelo Piracanjuba.ai. Estou precisando de ");
     return `https://wa.me/55${num}?text=${msg}`;
@@ -345,24 +348,27 @@ export function getWazeLink(farmacia: Farmacia): string | null {
   return `https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes&zoom=17`;
 }
 
+function formatFarmaciaCompartilhamento(farmacia: Farmacia): string {
+  return farmacia.telefone ? `${farmacia.nome}: ${farmacia.telefone}` : farmacia.nome;
+}
+
 export function gerarTextoCompartilhamento(semana: SemanaPlantao, nextSemana?: SemanaPlantao): string {
   const p = getPeriodo(semana, nextSemana);
-  const icon24 = "🕐";
-  const iconFarm = "💊";
   const lines = [
-    `${iconFarm} *Plantão de Farmácias em Piracanjuba*`,
+    "💊 *Plantão de Farmácias em Piracanjuba*",
     `📅 ${p.de} a ${p.ate}`,
     "",
-    `${icon24} *Farmácia 24h:*`,
-    `${semana.farmacia24h.nome} — ${semana.farmacia24h.telefone}`,
+    ...(semana.farmacia24h
+      ? ["🕐 *Farmácia 24h:*", formatFarmaciaCompartilhamento(semana.farmacia24h)]
+      : ["Farmácia 24h não informada nesta escala."]),
     "",
-    `${iconFarm} *Demais farmácias de plantão:*`,
-    ...semana.demais.map((f) => `• ${f.nome} — ${f.telefone}`),
+    semana.farmacia24h ? "💊 *Demais farmácias de plantão:*" : "💊 *Farmácias de plantão:*",
+    ...semana.demais.map((farmacia) => `• ${formatFarmaciaCompartilhamento(farmacia)}`),
     "",
-    `Veja o calendário completo:`,
-    `https://piracanjuba.ai/plantao-farmacias`,
+    "Veja o calendário completo:",
+    "https://piracanjuba.ai/plantao-farmacias",
     "",
-    `_Fonte: Piracanjuba.ai_`,
+    "_Fonte: Piracanjuba.ai_",
   ];
   return lines.join("\n");
 }

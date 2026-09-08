@@ -1,0 +1,486 @@
+{
+  "fonte": "docs/fontes/plantao-farmacias/escala-2026-2027-atualizada-2026-09-07.pdf",
+  "semanas": [
+    {
+      "inicio": "2026-03-14",
+      "farmacia24h": null,
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-03-21",
+      "farmacia24h": "Drogaria do Povo",
+      "demais": [
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-03-28",
+      "farmacia24h": "Drogaria Nacional",
+      "demais": [
+        "Drogaria Central",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-04-04",
+      "farmacia24h": "Drogaria São José",
+      "demais": [
+        "Drogaria Preço Popular",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-04-11",
+      "farmacia24h": "Drogaria Marina",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-04-18",
+      "farmacia24h": "Drogaria São Sebastião",
+      "demais": [
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-04-25",
+      "farmacia24h": "Drogaria Santa Luzia",
+      "demais": [
+        "Drogaria do Povo",
+        "Farma Vidda",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-05-02",
+      "farmacia24h": "Drogaria Central",
+      "demais": [
+        "Drogaria Nacional",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-05-09",
+      "farmacia24h": "Drogaria Preço Popular",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-05-16",
+      "farmacia24h": "Drogaria Piracanjuba",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-05-23",
+      "farmacia24h": "Drogamais",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-05-30",
+      "farmacia24h": "Farma Vidda",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-06-06",
+      "farmacia24h": "Droganova",
+      "demais": [
+        "Drogaria Nacional",
+        "Drogaria Central",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-06-13",
+      "farmacia24h": "Drogaria Santa Rita",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Preço Popular",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-06-20",
+      "farmacia24h": "Drogaria Aliança",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-06-27",
+      "farmacia24h": "Drogaria Do Lar",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-07-04",
+      "farmacia24h": "Drogaria Machado",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-07-11",
+      "farmacia24h": "Drogaria Oriental",
+      "demais": [
+        "Drogaria Nacional",
+        "Drogaria Central",
+        "Droganova"
+      ]
+    },
+    {
+      "inicio": "2026-07-18",
+      "farmacia24h": "Drogaria São Pedro",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Preço Popular",
+        "Drogaria Santa Rita"
+      ]
+    },
+    {
+      "inicio": "2026-07-25",
+      "farmacia24h": "Drogaria Hiper Pop",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança"
+      ]
+    },
+    {
+      "inicio": "2026-08-01",
+      "farmacia24h": "Drogaria JM Popular",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-08-08",
+      "farmacia24h": "Drogaria São Marcos",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria Machado"
+      ]
+    },
+    {
+      "inicio": "2026-08-15",
+      "farmacia24h": "Drogaria Nacional",
+      "demais": [
+        "Drogaria Central",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-08-22",
+      "farmacia24h": "Drogaria São José",
+      "demais": [
+        "Drogaria Preço Popular",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-08-29",
+      "farmacia24h": "Drogaria Bem Estar",
+      "demais": [
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-09-05",
+      "farmacia24h": "Drogaria Vitae",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular"
+      ]
+    },
+    {
+      "inicio": "2026-09-12",
+      "farmacia24h": "Drogaria do Povo",
+      "demais": [
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-09-19",
+      "farmacia24h": "Drogaria Central",
+      "demais": [
+        "Drogaria Nacional",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-09-26",
+      "farmacia24h": "Drogaria Preço Popular",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-10-03",
+      "farmacia24h": "Drogaria Marina",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-10-10",
+      "farmacia24h": "Drogaria São Sebastião",
+      "demais": [
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-10-17",
+      "farmacia24h": "Drogaria Santa Luzia",
+      "demais": [
+        "Drogaria do Povo",
+        "Farma Vidda",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-10-24",
+      "farmacia24h": "Droganova",
+      "demais": [
+        "Drogaria Nacional",
+        "Drogaria Central",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2026-10-31",
+      "farmacia24h": "Drogaria Santa Rita",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Preço Popular",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2026-11-07",
+      "farmacia24h": "Drogaria Piracanjuba",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-11-14",
+      "farmacia24h": "Drogamais",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogaria Do Lar",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-11-21",
+      "farmacia24h": "Farma Vidda",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Drogaria Machado",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2026-11-28",
+      "farmacia24h": "Drogaria Oriental",
+      "demais": [
+        "Drogaria Nacional",
+        "Drogaria Central",
+        "Droganova"
+      ]
+    },
+    {
+      "inicio": "2026-12-05",
+      "farmacia24h": "Drogaria São Pedro",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Preço Popular",
+        "Drogaria Santa Rita"
+      ]
+    },
+    {
+      "inicio": "2026-12-12",
+      "farmacia24h": "Drogaria Aliança",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Hiper Pop"
+      ]
+    },
+    {
+      "inicio": "2026-12-19",
+      "farmacia24h": "Drogaria Do Lar",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria JM Popular",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2026-12-26",
+      "farmacia24h": "Drogaria Machado",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria São Marcos"
+      ]
+    },
+    {
+      "inicio": "2027-01-02",
+      "farmacia24h": "Drogaria Nacional",
+      "demais": [
+        "Drogaria Central",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2027-01-09",
+      "farmacia24h": "Drogaria São José",
+      "demais": [
+        "Drogaria Preço Popular",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2027-01-16",
+      "farmacia24h": "Drogaria Hiper Pop",
+      "demais": [
+        "Drogaria Bem Estar",
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança"
+      ]
+    },
+    {
+      "inicio": "2027-01-23",
+      "farmacia24h": "Drogaria JM Popular",
+      "demais": [
+        "Drogaria São Sebastião",
+        "Drogamais",
+        "Drogaria Do Lar",
+        "Drogaria Vitae"
+      ]
+    },
+    {
+      "inicio": "2027-01-30",
+      "farmacia24h": "Drogaria São Marcos",
+      "demais": [
+        "Drogaria do Povo",
+        "Drogaria Santa Luzia",
+        "Farma Vidda",
+        "Drogaria Machado"
+      ]
+    },
+    {
+      "inicio": "2027-02-06",
+      "farmacia24h": "Drogaria Central",
+      "demais": [
+        "Drogaria Nacional",
+        "Droganova",
+        "Drogaria Oriental"
+      ]
+    },
+    {
+      "inicio": "2027-02-13",
+      "farmacia24h": "Drogaria Preço Popular",
+      "demais": [
+        "Drogaria São José",
+        "Drogaria Santa Rita",
+        "Drogaria São Pedro"
+      ]
+    },
+    {
+      "inicio": "2027-02-20",
+      "farmacia24h": "Drogaria Bem Estar",
+      "demais": [
+        "Drogaria Marina",
+        "Drogaria Piracanjuba",
+        "Drogaria Aliança",
+        "Drogaria Hiper Pop"
+      ]
+    }
+  ]
+}
