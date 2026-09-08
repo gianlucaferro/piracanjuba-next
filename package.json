@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test:sync": "deno test supabase/functions/_shared/*test.ts",
     "test:funprepi": "node --test tests/funprepi.test.ts",
-    "test:beneficios": "node --test tests/beneficios-sociais.test.ts"
+    "test:beneficios": "node --test tests/beneficios-sociais.test.ts",
+    "test:onibus": "node --test tests/bus-schedules.test.ts",
+    "typecheck:onibus": "tsc --project tests/tsconfig.bus.json"
   },
   "browserslist": [
     "Chrome >= 90",

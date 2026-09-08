@@ -22,6 +22,7 @@ import {
   Trees,
   Trophy,
   Network,
+  BusFront,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { NOTA_PNTP } from "@/data/notaTransparencia";
@@ -268,6 +269,16 @@ export default async function HomePage() {
               <p className="text-sm text-muted-foreground">Fornecedores que dividem os mesmos sócios</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-violet-500 transition-colors" />
+          </Link>
+          <Link href="/horarios-onibus" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-teal-500/10 flex items-center justify-center shrink-0">
+              <BusFront className="w-5 h-5 text-teal-600 dark:text-teal-400" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Horários ônibus rodoviária</p>
+              <p className="text-sm text-muted-foreground">Saídas, destinos e empresas de ônibus</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-teal-600 transition-colors" aria-hidden />
           </Link>
         </section>
 

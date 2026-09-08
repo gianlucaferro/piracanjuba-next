@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/grupos-economicos`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/investigacoes`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/plantao-farmacias`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${SITE_URL}/horarios-onibus`, lastModified: new Date("2026-09-08"), changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/zap-pba`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/compra-e-venda`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/anuncie`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },

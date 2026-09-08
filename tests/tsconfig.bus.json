@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "../src/app/horarios-onibus/**/*.tsx",
+    "../src/data/horariosOnibus.ts",
+    "../tests/bus-schedules.test.ts"
+  ],
+  "exclude": [
+    "../node_modules"
+  ]
+}

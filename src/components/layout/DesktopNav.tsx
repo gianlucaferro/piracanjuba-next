@@ -17,6 +17,7 @@ import {
   Phone,
   Trash2,
   Pill,
+  BusFront,
   Package,
   Trophy,
 } from "lucide-react";
@@ -40,6 +41,7 @@ const moreNav: NavItem[] = [
   { to: "/contatos", label: "Contatos Úteis", icon: Phone },
   { to: "/coleta-lixo", label: "Coleta de Lixo", icon: Trash2 },
   { to: "/plantao-farmacias", label: "Plantão Farmácias", icon: Pill },
+  { to: "/horarios-onibus", label: "Horários de Ônibus", icon: BusFront },
   { to: "/compra-e-venda", label: "Compra e Venda PBA", icon: Package },
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
