@@ -103,7 +103,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="text-center mt-4 space-y-2">
               <p className="text-xs text-muted-foreground">
-                Dados públicos obtidos de fontes oficiais. Este app não tem vínculo com
+                Informações públicas com fontes identificadas. Este app não tem vínculo com
                 nenhum órgão público.
               </p>
               <p className="text-sm text-foreground/70 font-medium">
