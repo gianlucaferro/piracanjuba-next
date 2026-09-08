@@ -50,3 +50,8 @@ Os 13 testes passaram no Dell, cobrindo calendário, fuso, expiração, filtros,
 Uma compilação completa no Dell passou a etapa de compilação Next, mas a pré-renderização das páginas existentes tentou buscar dados no banco fictício de validação. A execução foi interrompida; isso não valida o build integral. O preview da Vercel usa a configuração própria do projeto e deve ser conferido antes de produção.
 
 Base de produção da implementação: `78bc1f6548ef69e20168d2d145d443718945afab`. Branch `codex/horarios-onibus-2026-09-08`. Nova funcionalidade sem migrations, banco, cron ou credenciais. Antes de publicar, conferir main e deployment atuais. Rollback: reverter o commit de integração desta funcionalidade e republicar pelo Git; não reverter correções anteriores. Não restaurar banco.
+
+
+## Resultado da revisão
+
+PR 24 com preview Vercel pronto. Filtros e conexão conferidos em desktop e celular. Card confirmado visualmente na coluna de Contratos e linha de Grupos Econômicos. Calendário passou a aplicar a data no evento de entrada, validado no navegador interno com estado vazio em 2026-09-11 e histórico em 2026-09-07. A API GitHub confirmou build Vercel concluído do commit inicial; o último ajuste do calendário recebe novo preview antes de produção. Nota canônica no Obsidian: `Sessões/2026-09-08 Codex - Piracanjuba.ai - pagina de horarios de onibus.md`.

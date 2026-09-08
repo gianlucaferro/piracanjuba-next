@@ -324,7 +324,7 @@ export default function HorariosOnibusClient({ serverNow }: { serverNow: string 
           </div>
           <div className="space-y-2">
             <label htmlFor="bus-date" className="block text-sm font-medium text-foreground">Data da viagem</label>
-            <input id="bus-date" type="date" max="9999-12-31" aria-describedby="bus-date-help" aria-invalid={!validDate} value={selectedDate} onChange={(event) => { setDateWasSelected(true); setDateInput(event.target.value); }} className={controlClassName} />
+            <input id="bus-date" type="date" max="9999-12-31" aria-describedby="bus-date-help" aria-invalid={!validDate} value={selectedDate} onInput={(event) => { setDateWasSelected(true); setDateInput(event.currentTarget.value); }} className={controlClassName} />
             <p id="bus-date-help" className={`text-xs ${validDate ? "text-muted-foreground" : "text-destructive"}`}>{validDate ? `Data selecionada: ${selectedDate}` : "Selecione uma data válida no calendário."}</p>
           </div>
           <div className="space-y-2">
