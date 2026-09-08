@@ -21,7 +21,7 @@ export type FarmaciaMeta = {
 };
 
 function resolveFarmacia(farmacia: Farmacia, meta?: FarmaciaMeta): Farmacia {
-  if (!meta?.telefone) return farmacia;
+  if (!meta?.telefone?.trim()) return farmacia;
 
   return {
     ...farmacia,
@@ -47,7 +47,9 @@ export function FarmaciaPlantaoCard({
   const resolved = resolveFarmacia(farmacia, meta);
   const fotoUrl = meta?.foto_url || null;
   const waze = getWazeLink(farmacia);
-  const isWhatsApp = resolved.tipo === "whatsapp";
+  const telefoneLink = getTelefoneLink(resolved);
+  const ContactTag = telefoneLink ? "a" : "div";
+  const isWhatsApp = Boolean(telefoneLink) && resolved.tipo === "whatsapp";
 
   return (
     <div
@@ -94,11 +96,14 @@ export function FarmaciaPlantaoCard({
         </div>
       )}
 
-      <a
-        href={getTelefoneLink(resolved)}
+      <ContactTag
+        href={telefoneLink ?? undefined}
         target={isWhatsApp ? "_blank" : undefined}
         rel={isWhatsApp ? "noopener noreferrer" : undefined}
-        className="min-w-0 flex-1 rounded-md p-1 -m-1 hover:bg-muted/60 transition-colors"
+        className={cn(
+          "min-w-0 flex-1 rounded-md p-1 -m-1",
+          telefoneLink && "hover:bg-muted/60 transition-colors"
+        )}
       >
         <span className="flex items-center gap-2">
           <span
@@ -121,9 +126,9 @@ export function FarmaciaPlantaoCard({
           ) : (
             <Phone className="h-3 w-3 shrink-0" />
           )}
-          {resolved.telefone}
+          {telefoneLink ? resolved.telefone : "Telefone não informado"}
         </span>
-      </a>
+      </ContactTag>
 
       {waze && (
         <a

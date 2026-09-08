@@ -90,12 +90,18 @@ export default async function PlantaoFarmaciasHome() {
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <FarmaciaPlantaoCard
-          farmacia={semana.farmacia24h}
-          meta={getMeta(semana.farmacia24h.nome)}
-          is24h
-          compact
-        />
+        {semana.farmacia24h ? (
+          <FarmaciaPlantaoCard
+            farmacia={semana.farmacia24h}
+            meta={getMeta(semana.farmacia24h.nome)}
+            is24h
+            compact
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground sm:col-span-2">
+            Plantão de 24 horas não informado nesta escala.
+          </p>
+        )}
         {semana.demais.map((farmacia) => (
           <FarmaciaPlantaoCard
             key={farmacia.nome}

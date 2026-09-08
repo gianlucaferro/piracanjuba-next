@@ -5,6 +5,7 @@ import { fetchFarmaciasMeta } from "@/lib/data/listings";
 import {
   PLANTAO_FARMACIAS,
   getSemanaAtual,
+  type Farmacia,
 } from "@/data/plantaoFarmacias";
 import PlantaoFarmaciasClient from "./PlantaoFarmaciasClient";
 import type { FarmaciaMeta } from "@/components/FarmaciaPlantaoCard";
@@ -40,7 +41,9 @@ function normalizeFarmaciaMeta(meta: {
 function SchemaMarkup() {
   const idx = getSemanaAtual();
   const semana = PLANTAO_FARMACIAS[idx];
-  const allFarmacias = [semana.farmacia24h, ...semana.demais];
+  if (!semana) return null;
+  const allFarmacias = [semana.farmacia24h, ...semana.demais]
+    .filter((farmacia): farmacia is Farmacia => farmacia !== null);
 
   const schema = {
     "@context": "https://schema.org",
@@ -48,27 +51,33 @@ function SchemaMarkup() {
     name: "Plantão de Farmácias em Piracanjuba",
     description: "Farmácias de plantão esta semana em Piracanjuba, GO",
     url: "https://piracanjuba.ai/plantao-farmacias",
-    itemListElement: allFarmacias.map((farmacia, position) => ({
-      "@type": "ListItem",
-      position: position + 1,
-      item: {
-        "@type": "Pharmacy",
-        name: farmacia.nome,
-        telephone: `+5564${farmacia.telefone.replace(/\D/g, "").slice(-9)}`,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Piracanjuba",
-          addressRegion: "GO",
-          addressCountry: "BR",
+    itemListElement: allFarmacias.map((farmacia, position) => {
+      const digits = farmacia.telefone.replace(/\D/g, "");
+      const nationalNumber = /^55\d{10,11}$/.test(digits) ? digits.slice(2) : digits;
+      const telephone = /^\d{10,11}$/.test(nationalNumber) ? `+55${nationalNumber}` : null;
+
+      return {
+        "@type": "ListItem",
+        position: position + 1,
+        item: {
+          "@type": "Pharmacy",
+          name: farmacia.nome,
+          ...(telephone ? { telephone } : {}),
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Piracanjuba",
+            addressRegion: "GO",
+            addressCountry: "BR",
+          },
         },
-      },
-    })),
+      };
+    }),
   };
 
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
     />
   );
 }
