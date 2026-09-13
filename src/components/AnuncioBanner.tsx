@@ -133,7 +133,7 @@ export function AnuncioBannerDestaque() {
             type="button"
             aria-label="Anúncio anterior"
             onClick={() => ir(-1)}
-            className="absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:opacity-60 md:group-hover:opacity-100"
+            className="absolute left-2 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:flex md:opacity-60 md:group-hover:opacity-100"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -141,7 +141,7 @@ export function AnuncioBannerDestaque() {
             type="button"
             aria-label="Próximo anúncio"
             onClick={() => ir(1)}
-            className="absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:opacity-60 md:group-hover:opacity-100"
+            className="absolute right-2 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm transition hover:bg-black/45 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:flex md:opacity-60 md:group-hover:opacity-100"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
