@@ -65,9 +65,10 @@ export const fetchVereadorBySlug = unstable_cache(
       supabase
         .from("projetos")
         .select("id, tipo, numero, ano, ementa, status, data, fonte_visualizar_url, resumo_simples")
-        .eq("autor_vereador_id", vereador.id)
+        // inclui coautorias: o vínculo é único (1º autor); autor_texto lista todos
+        .or(`autor_vereador_id.eq.${vereador.id},autor_texto.ilike.*${vereador.nome}*`)
         .order("data", { ascending: false, nullsFirst: false })
-        .limit(20),
+        .limit(60),
       (async () => {
         const { data } = await supabase
           .from("presenca_sessoes")
