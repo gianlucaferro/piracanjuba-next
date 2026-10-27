@@ -3,7 +3,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Instagram, Mail, Phone, Search } from "lucide-react";
+import { ArrowRight, Mail, Phone, Search } from "lucide-react";
+import Instagram from "@/components/icons/InstagramIcon";
 import { Input } from "@/components/ui/input";
 import type { Vereador } from "@/lib/data/vereadores";
 import FundoEleitoralCard from "@/components/vereadores/FundoEleitoralCard";

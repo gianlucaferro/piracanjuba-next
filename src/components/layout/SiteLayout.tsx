@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { HeartHandshake, Instagram } from "lucide-react";
+import { HeartHandshake } from "lucide-react";
+import Instagram from "@/components/icons/InstagramIcon";
 import HeaderControls from "./HeaderControls";
 import DesktopNav from "./DesktopNav";
 import MobileBottomNav from "./MobileBottomNav";
