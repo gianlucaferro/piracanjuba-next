@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   Phone,
   Mail,
-  Instagram,
   ExternalLink,
   Calendar,
   CheckCircle2,
@@ -14,6 +13,7 @@ import {
   Megaphone,
   DollarSign,
 } from "lucide-react";
+import Instagram from "@/components/icons/InstagramIcon";
 import { pageMetadata } from "@/lib/seo";
 import { fetchVereadorBySlug, listVereadorSlugs } from "@/lib/data/vereadores";
 import {

@@ -48,3 +48,6 @@ scripts/scrape-centi/node_modules/
 # Local investigation artifacts and restricted backups
 /work/
 *.env
+
+# Validation reports
+/artifacts/

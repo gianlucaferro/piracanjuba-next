@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, Plus, Sun, Moon, Instagram } from "lucide-react";
+import { Minus, Plus, Sun, Moon } from "lucide-react";
+import Instagram from "@/components/icons/InstagramIcon";
 
 function FontSizeControl() {
   const sizes = ["font-sm", "font-md", "font-lg", "font-xl"] as const;

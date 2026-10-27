@@ -14,10 +14,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   ChevronLeft, ChevronRight, Clock, Eye, MapPin, ArrowLeft,
   Flag, Share2, X, ZoomIn, Heart, Loader2, Package,
-  Home as HomeIcon, Car, Wheat, Smartphone, Wrench, Instagram, User,
+  Home as HomeIcon, Car, Wheat, Smartphone, Wrench, User,
   ChevronRight as ChevronRightBreadcrumb,
   type LucideIcon,
 } from "lucide-react";
+import Instagram from "@/components/icons/InstagramIcon";
 import { toast } from "sonner";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import type { Database } from "@/lib/supabase/types";
