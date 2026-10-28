@@ -117,18 +117,24 @@ export default function MapaAnuncios({
       const list = document.createElement("div");
       list.style.cssText = "margin-top:8px;max-height:120px;overflow-y:auto";
       for (const item of items.slice(0, 5)) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.style.cssText = "display:block;width:100%;text-align:left;padding:4px 0;border-top:1px solid #eee;cursor:pointer";
-        button.addEventListener("click", () => onSelect?.(item.id));
+        const action = onSelect
+          ? document.createElement("button")
+          : document.createElement("a");
+        if (action instanceof HTMLButtonElement && onSelect) {
+          action.type = "button";
+          action.addEventListener("click", () => onSelect(item.id));
+        } else if (action instanceof HTMLAnchorElement) {
+          action.href = `/compra-e-venda/${encodeURIComponent(item.id)}`;
+        }
+        action.style.cssText = "display:block;width:100%;text-align:left;padding:4px 0;border-top:1px solid #eee;cursor:pointer";
         const title = document.createElement("div");
         title.textContent = `${item.titulo.slice(0, 40)}${item.titulo.length > 40 ? "..." : ""}`;
         title.style.cssText = "font-size:11px;font-weight:600";
         const price = document.createElement("div");
         price.textContent = formatPreco(item.preco, item.preco_tipo);
         price.style.cssText = "font-size:10px;color:#25D366;font-weight:bold";
-        button.append(title, price);
-        list.append(button);
+        action.append(title, price);
+        list.append(action);
       }
       if (items.length > 5) {
         const remaining = document.createElement("div");

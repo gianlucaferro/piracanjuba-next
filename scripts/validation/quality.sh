@@ -3,7 +3,10 @@
 set -u
 cd "$(dirname "$0")/../.."
 result_dir="artifacts/${1:-quality}"
-mkdir -p "$result_dir"
+mkdir -p "$result_dir" || exit 1
+for check in quality types lint tests sync-tests compile; do
+  printf '1\n' > "$result_dir/$check.exit" || exit 1
+done
 run_check() {
   local label=$1
   shift

@@ -34,10 +34,10 @@ export default function ClimaClient({
     () =>
       dias.map((d) => ({
         data: shortDate(d.data),
-        chuva: Number(d.precipitacao_mm ?? 0),
-        tmax: Number(d.temperatura_max ?? 0),
-        tmin: Number(d.temperatura_min ?? 0),
-        tmed: Number(d.temperatura_media ?? 0),
+        chuva: d.precipitacao_mm,
+        tmax: d.temperatura_max,
+        tmin: d.temperatura_min,
+        tmed: d.temperatura_media,
         umid: Number(d.umidade_media ?? 0),
       })),
     [dias],

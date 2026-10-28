@@ -190,6 +190,7 @@ async function fetchFolhaTotal() {
       .from("remuneracao_servidores")
       .select("bruto, servidores!inner(orgao_tipo)")
       .eq("competencia", competencia)
+      .order("id", { ascending: true })
       .range(offset, offset + PAGE - 1)
       .returns<RemuneracaoFolha[]>();
     if (!rems || rems.length === 0) break;

@@ -120,32 +120,29 @@ export default function DespesasTab() {
         {paged.map((d) => {
           const elementoTooltip = d.elemento ? getTooltip(d.elemento.trim()) : null;
           return (
-            <button key={d.id} onClick={() => handleClick(d)} className="stat-card card-hover block w-full text-left">
-              <div className="flex items-start justify-between mb-1">
-                <div>
-                  <p className="font-medium text-foreground text-sm">{d.credor || "Sem credor"}</p>
-                  {d.descricao && <p className="text-sm text-muted-foreground line-clamp-2">{d.descricao}</p>}
+            <Tooltip key={d.id} disabled={!elementoTooltip}>
+              <TooltipTrigger type="button" onClick={() => handleClick(d)} className="stat-card card-hover block w-full text-left">
+                <div className="flex items-start justify-between mb-1">
+                  <div>
+                    <p className="font-medium text-foreground text-sm">{d.credor || "Sem credor"}</p>
+                    {d.descricao && <p className="text-sm text-muted-foreground line-clamp-2">{d.descricao}</p>}
+                  </div>
+                  <span className="font-semibold text-foreground text-sm shrink-0 ml-2">{formatCurrency(d.valor)}</span>
                 </div>
-                <span className="font-semibold text-foreground text-sm shrink-0 ml-2">{formatCurrency(d.valor)}</span>
-              </div>
-              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
-                {d.data_pagamento && <span>{new Date(d.data_pagamento + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
-                {d.elemento && (
-                  elementoTooltip ? (
-                    <Tooltip>
-                      <TooltipTrigger render={<span />} className="inline-flex items-center gap-0.5 cursor-help">· {d.elemento} <Info className="w-3 h-3" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs"><p className="text-sm">{elementoTooltip}</p></TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <span>· {d.elemento}</span>
-                  )
-                )}
-              </div>
-              <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
-                <Sparkles className="w-3 h-3" /> Clique para resumo IA
-              </p>
-            </button>
+                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
+                  {d.data_pagamento && <span>{new Date(d.data_pagamento + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
+                  {d.elemento && (
+                    <span className="inline-flex items-center gap-0.5">
+                      · {d.elemento} {elementoTooltip && <Info className="w-3 h-3" aria-hidden="true" />}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
+                  <Sparkles className="w-3 h-3" /> Clique para resumo IA
+                </p>
+              </TooltipTrigger>
+              {elementoTooltip && <TooltipContent className="max-w-xs"><p className="text-sm">{elementoTooltip}</p></TooltipContent>}
+            </Tooltip>
           );
         })}
       </div>
