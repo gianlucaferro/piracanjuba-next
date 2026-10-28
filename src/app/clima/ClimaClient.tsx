@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import { Cloud, CloudRain, Droplets, Sun, Wind, Thermometer } from "lucide-react";
 import {
@@ -143,7 +145,7 @@ export default function ClimaClient({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toFixed(1)} mm`, "Chuva"]}
+                formatter={numericTooltip((v) => [`${v.toFixed(1)} mm`, "Chuva"])}
               />
               <Bar dataKey="chuva" fill="hsl(199, 89%, 48%)" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -169,7 +171,7 @@ export default function ClimaClient({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number, name: string) => [`${v.toFixed(1)}°C`, name === "tmax" ? "Máxima" : name === "tmin" ? "Mínima" : "Média"]}
+                formatter={numericTooltip((v, name) => [`${v.toFixed(1)}°C`, name === "tmax" ? "Máxima" : name === "tmin" ? "Mínima" : "Média"])}
               />
               <ReferenceLine y={28} stroke="hsl(20, 90%, 50%)" strokeDasharray="3 3" opacity={0.4} />
               <Line type="monotone" dataKey="tmax" stroke="hsl(20, 90%, 55%)" strokeWidth={2} dot={false} />

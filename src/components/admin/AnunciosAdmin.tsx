@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import NextImage from "next/image";
+
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
@@ -8,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Upload, Trash2, Loader2, Image, Eye, MousePointerClick,
+  Upload, Trash2, Loader2, Image as ImageIcon, Eye, MousePointerClick,
   Power, PowerOff, Pencil, Save, X, Plus, ExternalLink,
   Info, LayoutTemplate, MonitorSmartphone, ImagePlus
 } from "lucide-react";
 import { toast } from "sonner";
+import { ImageUploadButton } from "./ImageUploadButton";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -82,6 +85,21 @@ async function adminAnuncioAction(payload: Record<string, unknown>): Promise<voi
   if (data?.error) throw new Error(data.error);
 }
 
+const uploadImage = async (nomeEmpresa: string, file: File): Promise<string> => {
+  const slug = nomeEmpresa.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const path = `${slug}-${Date.now()}.webp`;
+  const compressed = await compressToWebP(file);
+  const { error: uploadError } = await supabase.storage
+    .from("anuncios")
+    .upload(path, compressed, { upsert: true, contentType: "image/webp" });
+  if (uploadError) throw uploadError;
+  const { data: urlData } = supabase.storage.from("anuncios").getPublicUrl(path);
+  toast.success(`Imagem comprimida para ${(compressed.size / 1024).toFixed(0)}KB WebP`);
+  return urlData.publicUrl;
+};
+
 export default function AnunciosAdmin() {
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
@@ -96,7 +114,6 @@ export default function AnunciosAdmin() {
   const [editLinkValue, setEditLinkValue] = useState("");
   const [editingWhatsapp, setEditingWhatsapp] = useState<string | null>(null);
   const [editWhatsappValue, setEditWhatsappValue] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: anuncios, isLoading } = useQuery({
     queryKey: ["anuncios-admin"],
@@ -109,21 +126,6 @@ export default function AnunciosAdmin() {
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["anuncios-admin"] });
     queryClient.invalidateQueries({ queryKey: ["anuncios-ativos"] });
-  };
-
-  const uploadImage = async (nomeEmpresa: string, file: File): Promise<string> => {
-    const slug = nomeEmpresa.toLowerCase()
-      .normalize("NFD").replace(/[̀-ͯ]/g, "")
-      .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-    const path = `${slug}-${Date.now()}.webp`;
-    const compressed = await compressToWebP(file);
-    const { error: uploadError } = await supabase.storage
-      .from("anuncios")
-      .upload(path, compressed, { upsert: true, contentType: "image/webp" });
-    if (uploadError) throw uploadError;
-    const { data: urlData } = supabase.storage.from("anuncios").getPublicUrl(path);
-    toast.success(`Imagem comprimida para ${(compressed.size / 1024).toFixed(0)}KB WebP`);
-    return urlData.publicUrl;
   };
 
   const handleNewImageSelect = (file: File) => {
@@ -308,7 +310,7 @@ export default function AnunciosAdmin() {
             </p>
             {newImagePreview ? (
               <div className="relative rounded-lg overflow-hidden border">
-                <img src={newImagePreview} alt="Preview" className="w-full h-auto" />
+                <NextImage unoptimized width={1200} height={300} src={newImagePreview} alt="Prévia do banner do anúncio" className="w-full h-auto" />
                 <button
                   onClick={() => { setNewImageFile(null); setNewImagePreview(null); }}
                   className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm rounded-full p-1 hover:bg-background"
@@ -355,7 +357,7 @@ export default function AnunciosAdmin() {
               {/* Image preview — large */}
               {a.imagem_url ? (
                 <div className="relative rounded-lg overflow-hidden border">
-                  <img src={a.imagem_url} alt={a.nome_empresa} className="w-full h-auto" />
+                  <NextImage unoptimized width={1200} height={300} src={a.imagem_url} alt={a.nome_empresa} className="w-full h-auto" />
                   <Badge variant="secondary" className="absolute bottom-2 right-2 text-xs opacity-70">
                     Patrocinado
                   </Badge>
@@ -466,16 +468,10 @@ export default function AnunciosAdmin() {
               {/* Actions */}
               <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-border">
                 {a.imagem_url && (
-                  <label className="cursor-pointer">
-                    <input type="file" accept="image/*" className="hidden"
-                      onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadImage(a, f); e.target.value = ""; }} />
-                    <Button variant="outline" size="sm" asChild disabled={uploading === a.id}>
-                      <span>
-                        {uploading === a.id ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Upload className="w-3.5 h-3.5 mr-1" />}
-                        Trocar banner
-                      </span>
-                    </Button>
-                  </label>
+                  <ImageUploadButton variant="outline" disabled={uploading === a.id} label={`Trocar banner de ${a.nome_empresa}`} onFileSelect={(file) => handleUploadImage(a, file)}>
+                    {uploading === a.id ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Upload className="w-3.5 h-3.5 mr-1" />}
+                    Trocar banner
+                  </ImageUploadButton>
                 )}
                 <Button variant="outline" size="sm" onClick={() => toggleAtivo(a)}>
                   {a.ativo ? <><PowerOff className="w-3.5 h-3.5 mr-1" /> Desativar</> : <><Power className="w-3.5 h-3.5 mr-1" /> Ativar</>}
@@ -496,14 +492,12 @@ export default function AnunciosAdmin() {
 
       {(!anuncios || anuncios.length === 0) && (
         <div className="stat-card flex flex-col items-center justify-center py-12 text-center">
-          <Image className="w-10 h-10 text-muted-foreground/30 mb-3" />
+          <ImageIcon className="w-10 h-10 text-muted-foreground/30 mb-3" />
           <p className="text-sm font-medium text-foreground">Nenhum anúncio cadastrado</p>
           <p className="text-sm text-muted-foreground mt-1">Clique em &quot;Novo anúncio&quot; para criar o primeiro</p>
         </div>
       )}
 
-      {/* Hidden ref for potential future use */}
-      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
     </div>
   );
 }

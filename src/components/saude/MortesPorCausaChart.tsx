@@ -1,5 +1,7 @@
 "use client";
 
+import { formatChartNumber, numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart,
   Bar,
@@ -110,7 +112,7 @@ export default function MortesPorCausaChart({ rows }: { rows: Row[] }) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number) => [`${value} óbitos`, "Total"]}
+              formatter={numericTooltip((value) => [`${value} óbitos`, "Total"])}
             />
             <Bar dataKey="total" radius={[0, 4, 4, 0]}>
               {data.map((entry, idx) => (
@@ -123,7 +125,7 @@ export default function MortesPorCausaChart({ rows }: { rows: Row[] }) {
                 dataKey="total"
                 position="right"
                 style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
-                formatter={(v: number) => `${v}`}
+                formatter={(v) => formatChartNumber(v, (v) => `${v}`, "")}
               />
             </Bar>
           </BarChart>

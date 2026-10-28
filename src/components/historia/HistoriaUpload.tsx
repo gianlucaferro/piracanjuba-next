@@ -1,5 +1,7 @@
 "use client";
 
+import NextImage from "next/image";
+
 // Envio de fotos da história pelos moradores. Converte QUALQUER formato (inclusive
 // HEIC do iPhone) para WebP no próprio navegador e manda para a edge function
 // historia-fotos, que guarda como pendente para o operador moderar no admin.
@@ -168,7 +170,7 @@ export default function HistoriaUpload() {
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
           {items.map((it) => (
             <div key={it.id} className="relative aspect-square rounded-lg overflow-hidden border border-border">
-              <img src={it.previewUrl} alt={it.name} className="w-full h-full object-cover" />
+              <NextImage unoptimized width={800} height={800} src={it.previewUrl} alt={it.name} className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => remove(it.id)}

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Cloud, CloudRain, Droplets, Sun, ArrowRight } from "lucide-react";
 import { fetchClimaUltimoDia } from "@/lib/data/clima";
 
-function iconForChuva(precip: number | null) {
-  if ((precip ?? 0) > 1) return CloudRain;
-  if ((precip ?? 0) > 0.1) return Cloud;
-  return Sun;
+function ChuvaIcon({ precip, className }: { precip: number | null; className: string }) {
+  if ((precip ?? 0) > 1) return <CloudRain className={className} aria-hidden />;
+  if ((precip ?? 0) > 0.1) return <Cloud className={className} aria-hidden />;
+  return <Sun className={className} aria-hidden />;
 }
 
 function colorForTemp(t: number | null) {
@@ -25,7 +25,6 @@ export default async function ClimaHomeWidget() {
   const dia = await fetchClimaUltimoDia();
   if (!dia) return null;
 
-  const Icon = iconForChuva(dia.precipitacao_mm);
   const tempColor = colorForTemp(dia.temperatura_media);
   const chuva = Number(dia.precipitacao_mm ?? 0);
   const tempMed = Number(dia.temperatura_media ?? 0);
@@ -40,7 +39,7 @@ export default async function ClimaHomeWidget() {
       aria-label="Clima atual em Piracanjuba"
     >
       <div className="w-12 h-12 rounded-full bg-sky-500/10 flex items-center justify-center shrink-0">
-        <Icon className={`w-6 h-6 ${tempColor}`} aria-hidden />
+        <ChuvaIcon precip={dia.precipitacao_mm} className={`w-6 h-6 ${tempColor}`} />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Clima em Piracanjuba</p>

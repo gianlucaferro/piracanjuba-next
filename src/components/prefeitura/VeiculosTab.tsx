@@ -14,7 +14,8 @@
 // PRÉ-REQUISITO: rodar a Edge Function sync-frota-veiculos ao menos uma vez
 // para popular a tabela veiculos_frota no Supabase.
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import {
@@ -112,17 +113,99 @@ function formatarPlaca(placa: string) {
 
 // ─── Componente principal ────────────────────────────────────────────────────
 
+async function carregarCombustivel(totalVeiculos: number) {
+  try {
+    const anoAtual = new Date().getFullYear();
+    // Buscar contratos de combustível do ano atual e anterior
+    const { data: contratos } = await supabase
+      .from("contratos")
+      .select("empresa, valor, vigencia_inicio, objeto")
+      .or(
+        `objeto.ilike.%fornecimento de combust%,empresa.ilike.%posto%`
+      )
+      .gte("vigencia_inicio", `${anoAtual - 1}-01-01`)
+      .order("vigencia_inicio", { ascending: false });
+
+    if (!contratos?.length || totalVeiculos === 0) return null;
+
+    // Agrupar por ano de vigência
+    const porAno: Record<number, { total: number; fornecedores: Set<string> }> = {};
+    for (const c of contratos) {
+      if (!c.valor || c.valor <= 0) continue;
+      // Filtrar apenas contratos que realmente são de combustível
+      const obj = (c.objeto || "").toLowerCase();
+      const emp = (c.empresa || "").toLowerCase();
+      const ehCombustivel = obj.includes("combust") || emp.includes("posto");
+      // Excluir contratos de compra de veículo que mencionam combustível
+      const ehVeiculo = obj.includes("veículo automotor") || obj.includes("veiculo automotor");
+      if (!ehCombustivel || ehVeiculo) continue;
+
+      const ano = new Date(c.vigencia_inicio!).getFullYear();
+      if (!porAno[ano]) porAno[ano] = { total: 0, fornecedores: new Set() };
+      porAno[ano].total += Number(c.valor);
+      if (c.empresa) porAno[ano].fornecedores.add(c.empresa);
+    }
+
+    // Pegar o ano mais recente com dados
+    const anosDisponiveis = Object.keys(porAno).map(Number).sort((a, b) => b - a);
+    if (anosDisponiveis.length === 0) return null;
+
+    const anoRef = anosDisponiveis[0];
+    const dados = porAno[anoRef];
+    const media = dados.total / totalVeiculos;
+    const fornecedor = [...dados.fornecedores].join(", ");
+
+    return {
+      totalContratos: dados.total,
+      mediaPorVeiculo: media,
+      anoReferencia: anoRef,
+      fornecedor,
+    };
+  } catch (e) {
+    console.error("Erro ao carregar dados de combustível:", e);
+    return null;
+  }
+}
+
+async function carregarFrota() {
+  const { data, error } = await supabase
+    .from("veiculos_frota")
+    .select("*")
+    .order("categoria", { ascending: true })
+    .returns<Veiculo[]>();
+  if (error) throw error;
+
+  const veiculos = data ?? [];
+  const ativos = veiculos.filter((veiculo) => veiculo.situacao === "ativo").length;
+  const ultimaAtualizacao = veiculos.reduce<string | null>(
+    (maisRecente, veiculo) => maisRecente === null || veiculo.atualizado_em > maisRecente
+      ? veiculo.atualizado_em
+      : maisRecente,
+    null,
+  );
+  const combustivelInfo = veiculos.length > 0
+    ? await carregarCombustivel(ativos > 0 ? ativos : veiculos.length)
+    : null;
+  return { veiculos, ultimaAtualizacao, combustivelInfo };
+}
+
+const EMPTY_VEICULOS: Veiculo[] = [];
+
 export default function VeiculosTab() {
-  const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState<string | null>(null);
-  const [ultimaAtualizacao, setUltimaAtualizacao] = useState<string | null>(null);
-  const [combustivelInfo, setCombustivelInfo] = useState<{
-    totalContratos: number;
-    mediaPorVeiculo: number;
-    anoReferencia: number;
-    fornecedor: string;
-  } | null>(null);
+  const { data, isPending, isFetching, isError, refetch } = useQuery({
+    queryKey: ["frota-veiculos-painel"],
+    queryFn: carregarFrota,
+    refetchOnWindowFocus: false,
+  });
+  const veiculos = data?.veiculos ?? EMPTY_VEICULOS;
+  const ultimaAtualizacao = data?.ultimaAtualizacao ?? null;
+  const combustivelInfo = data?.combustivelInfo ?? null;
+  const loading = isPending || isFetching;
+  const erro = isError ? "Não foi possível carregar os dados da frota." : null;
+
+  function atualizarVeiculos() {
+    void refetch();
+  }
 
   // Filtros
   const [busca, setBusca] = useState("");
@@ -138,99 +221,8 @@ export default function VeiculosTab() {
   const [pagina, setPagina] = useState(1);
   const POR_PAGINA = 20;
 
-  // ── Carregamento ──────────────────────────────────────────────────────────
-
-  async function carregarVeiculos() {
-    setLoading(true);
-    setErro(null);
-    try {
-      const { data, error } = await supabase
-        .from("veiculos_frota")
-        .select("*")
-        .order("categoria", { ascending: true });
-
-      if (error) throw error;
-      setVeiculos(data || []);
-
-      if (data && data.length > 0) {
-        const mais_recente = data.reduce((a, b) =>
-          a.atualizado_em > b.atualizado_em ? a : b
-        );
-        setUltimaAtualizacao(mais_recente.atualizado_em);
-        const ativos = data.filter((v: Veiculo) => v.situacao === "ativo").length;
-        carregarCombustivel(ativos > 0 ? ativos : data.length);
-      }
-    } catch (e: unknown) {
-      setErro("Não foi possível carregar os dados da frota.");
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function carregarCombustivel(totalVeiculos: number) {
-    try {
-      const anoAtual = new Date().getFullYear();
-      // Buscar contratos de combustível do ano atual e anterior
-      const { data: contratos } = await supabase
-        .from("contratos")
-        .select("empresa, valor, vigencia_inicio, objeto")
-        .or(
-          `objeto.ilike.%fornecimento de combust%,empresa.ilike.%posto%`
-        )
-        .gte("vigencia_inicio", `${anoAtual - 1}-01-01`)
-        .order("vigencia_inicio", { ascending: false });
-
-      if (!contratos?.length || totalVeiculos === 0) return;
-
-      // Agrupar por ano de vigência
-      const porAno: Record<number, { total: number; fornecedores: Set<string> }> = {};
-      for (const c of contratos) {
-        if (!c.valor || c.valor <= 0) continue;
-        // Filtrar apenas contratos que realmente são de combustível
-        const obj = (c.objeto || "").toLowerCase();
-        const emp = (c.empresa || "").toLowerCase();
-        const ehCombustivel = obj.includes("combust") || emp.includes("posto");
-        // Excluir contratos de compra de veículo que mencionam combustível
-        const ehVeiculo = obj.includes("veículo automotor") || obj.includes("veiculo automotor");
-        if (!ehCombustivel || ehVeiculo) continue;
-
-        const ano = new Date(c.vigencia_inicio!).getFullYear();
-        if (!porAno[ano]) porAno[ano] = { total: 0, fornecedores: new Set() };
-        porAno[ano].total += Number(c.valor);
-        if (c.empresa) porAno[ano].fornecedores.add(c.empresa);
-      }
-
-      // Pegar o ano mais recente com dados
-      const anosDisponiveis = Object.keys(porAno).map(Number).sort((a, b) => b - a);
-      if (anosDisponiveis.length === 0) return;
-
-      const anoRef = anosDisponiveis[0];
-      const dados = porAno[anoRef];
-      const media = dados.total / totalVeiculos;
-      const fornecedor = [...dados.fornecedores].join(", ");
-
-      setCombustivelInfo({
-        totalContratos: dados.total,
-        mediaPorVeiculo: media,
-        anoReferencia: anoRef,
-        fornecedor,
-      });
-    } catch (e) {
-      console.error("Erro ao carregar dados de combustível:", e);
-    }
-  }
-
-  useEffect(() => {
-    carregarVeiculos();
-  }, []);
 
   // ── Dados derivados ───────────────────────────────────────────────────────
-
-  const categorias = useMemo(
-    () => ["todas", ...Array.from(new Set(veiculos.map((v) => v.categoria))).sort()],
-    [veiculos]
-  );
 
   const orgaos = useMemo(
     () => ["todos", ...Array.from(new Set(veiculos.map((v) => v.orgao))).sort()],
@@ -325,7 +317,7 @@ export default function VeiculosTab() {
         <AlertTriangle className="w-8 h-8" />
         <p className="text-sm">{erro}</p>
         <button
-          onClick={carregarVeiculos}
+          onClick={atualizarVeiculos}
           className="text-sm underline text-gray-500 hover:text-gray-700"
         >
           Tentar novamente
@@ -380,7 +372,7 @@ export default function VeiculosTab() {
           )}
         </div>
         <button
-          onClick={carregarVeiculos}
+          onClick={atualizarVeiculos}
           className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />

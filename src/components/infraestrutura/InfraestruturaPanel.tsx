@@ -1,5 +1,7 @@
 "use client";
 
+import { formatChartNumber, numericTooltip } from "@/lib/chart-formatters";
+
 import {
   Droplets,
   Trash2,
@@ -28,9 +30,6 @@ import {
   CartesianGrid,
   Cell,
   LabelList,
-  Legend,
-  Line,
-  ComposedChart,
 } from "recharts";
 import {
   getSaneamentoDengue,
@@ -92,7 +91,7 @@ function StatusBadge({
   );
 }
 
-export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
+export default function InfraestruturaPanel({ rows }: Props) {
   // SANEAMENTO
   const aguaCob = findVal(rows, "saneamento", "cobertura_pct", "agua");
   const aguaPopAtend = findVal(rows, "saneamento", "pop_atendida", "agua");
@@ -138,13 +137,6 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
   const conselho = findVal(rows, "saneamento", "conselho_municipal", "politica");
   const fundoMun = findVal(rows, "saneamento", "fundo_municipal", "politica");
 
-  // CRUZAMENTO SANEAMENTO × DENGUE
-  const lixoNaoAtend = lixoPopNao?.valor ?? 0; // 11.309 hab.
-  const denguePicoAno = dengue2024_2026.reduce<{ ano: number; total: number }>(
-    (max, d) => (d.total > max.total ? d : max),
-    { ano: 0, total: 0 },
-  );
-
   // Saneamento bar chart agregado
   const saneamentoChartData = [
     { categoria: "Água", valor: aguaCob?.valor ?? 0, cor: "#0ea5e9" },
@@ -181,7 +173,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toFixed(1)}%`, "Cobertura"]}
+                formatter={numericTooltip((v) => [`${v.toFixed(1)}%`, "Cobertura"])}
               />
               <Bar dataKey="valor" radius={[0, 4, 4, 0]}>
                 {saneamentoChartData.map((d, i) => (
@@ -190,7 +182,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
                 <LabelList
                   dataKey="valor"
                   position="right"
-                  formatter={(v: number) => `${v.toFixed(1)}%`}
+                  formatter={(v) => formatChartNumber(v, (v) => `${v.toFixed(1)}%`, "")}
                   style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
                 />
               </Bar>
@@ -269,7 +261,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
                 Apenas 69% da população tem coleta de esgoto pela rede pública.
-                Demais usam fossas, lançam direto em cursos d'água ou solo.
+                Demais usam fossas, lançam direto em cursos d&apos;água ou solo.
               </p>
             </div>
             <StatusBadge pct={esgotoCob.valor ?? 0} />
@@ -313,7 +305,7 @@ export default function InfraestruturaPanel({ rows, dengue2024_2026 }: Props) {
               </p>
               <p className="text-sm text-foreground mt-1">
                 <strong>{esgotoSemTrat.valor_texto}</strong> de esgoto vai sem tratamento por
-                ano — lançado em cursos d'água ou solo. Impacto direto no Rio Piracanjuba e
+                ano, lançado em cursos d&apos;água ou solo. Impacto direto no Rio Piracanjuba e
                 aquíferos. {esgotoSemTrat.observacao}
               </p>
             </div>

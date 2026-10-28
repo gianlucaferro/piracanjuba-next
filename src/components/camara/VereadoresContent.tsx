@@ -27,7 +27,7 @@ export function VereadoresContent() {
   });
 
   const filtered = useMemo(() => {
-    let list = vereadores.filter((v) =>
+    const list = vereadores.filter((v) =>
       v.nome.toLowerCase().includes(search.toLowerCase())
     );
     if (sort === "nome") list.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -49,7 +49,7 @@ export function VereadoresContent() {
               aria-label="Buscar vereador"
             />
           </div>
-          <Select value={sort} onValueChange={setSort}>
+          <Select value={sort} onValueChange={(value) => { if (value !== null) setSort(value); }}>
             <SelectTrigger className="w-48" aria-label="Ordenar por">
               <SelectValue />
             </SelectTrigger>

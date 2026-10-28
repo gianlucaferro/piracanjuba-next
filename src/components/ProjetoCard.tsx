@@ -20,7 +20,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
     : null;
 
   const projetoTitle = `${p.tipo} nº ${p.numero}/${p.ano}`;
-  const shareText = `${projetoTitle} — ${p.ementa.slice(0, 100)}`;
+  const shareText = `${projetoTitle}: ${p.ementa.slice(0, 100)}`;
 
   return (
     <div className="stat-card card-hover">
@@ -34,7 +34,7 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
           </Badge>
         </div>
         <span className="text-sm text-muted-foreground whitespace-nowrap">
-          {new Date(p.data).toLocaleDateString("pt-BR")}
+          {p.data ? new Date(p.data).toLocaleDateString("pt-BR") : "Data não informada"}
         </span>
       </div>
 
@@ -85,12 +85,14 @@ export default function ProjetoCard({ p, vereadores }: { p: Projeto; vereadores?
           <ShareButton
             title={projetoTitle}
             text={shareText}
-            url={`${window.location.origin}/atuacao-parlamentar`}
+            url={"https://piracanjuba.ai/atuacao-parlamentar"}
           />
         </div>
-        <span className="text-xs text-muted-foreground">
-          Atualizado {new Date(p.updated_at).toLocaleDateString("pt-BR")}
-        </span>
+        {p.updated_at && (
+          <span className="text-xs text-muted-foreground">
+            Atualizado {new Date(p.updated_at).toLocaleDateString("pt-BR")}
+          </span>
+        )}
       </div>
     </div>
   );

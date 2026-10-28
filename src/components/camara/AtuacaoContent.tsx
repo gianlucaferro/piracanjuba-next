@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import PullToRefresh from "@/components/PullToRefresh";
 
 const TIPOS = ["Todos", "Indicação", "Requerimento", "Moção", "Projeto de Lei"] as const;
@@ -105,7 +105,6 @@ function AtuacaoParlamentarPage() {
   const [resumo, setResumo] = useState<string | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
 
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries();
@@ -239,7 +238,7 @@ function AtuacaoParlamentarPage() {
         setResumo(item.ementa || "Sem resumo disponível.");
       }
     } catch {
-      toast({ title: "Erro", description: "Falha ao gerar resumo.", variant: "destructive" });
+      toast.error("Erro", { description: "Falha ao gerar resumo." });
       setResumo("Não foi possível gerar o resumo no momento.");
     } finally {
       setLoadingResumo(false);

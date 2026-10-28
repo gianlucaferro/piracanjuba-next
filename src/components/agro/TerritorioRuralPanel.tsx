@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
@@ -46,7 +48,7 @@ function RankingBar({ rows, cor, unidade, fmtTick }: {
         <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
         <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={fmtTick} />
         <YAxis type="category" dataKey="mun" width={108} tick={{ fontSize: 11 }} />
-        <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [`${nf(v)} ${unidade}`, ""]} />
+        <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={numericTooltip((v) => [`${nf(v)} ${unidade}`, ""])} />
         <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
           {rows.map((r) => <Cell key={r.mun} fill={r.mun === "Piracanjuba" ? cor : COR_OUTRO} />)}
         </Bar>

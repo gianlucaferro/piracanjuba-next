@@ -1,5 +1,7 @@
 "use client";
 
+import { formatChartNumber, numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart,
   Bar,
@@ -47,8 +49,8 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
         </h3>
         <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
           Por que crianças menores de 1 ano morrem em Piracanjuba? Causas agrupadas pelo
-          capítulo da CID-10. Identificar predominância de "afecções perinatais" e
-          "malformações congênitas" indica fragilidade do pré-natal e parto.
+          capítulo da CID-10. Identificar predominância de &quot;afecções perinatais&quot; e
+          &quot;malformações congênitas&quot; indica fragilidade do pré-natal e parto.
         </p>
       </div>
 
@@ -82,7 +84,7 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v: number) => [`${v} óbitos infantis`, "Total"]}
+              formatter={numericTooltip((v) => [`${v} óbitos infantis`, "Total"])}
             />
             <Bar dataKey="total" radius={[0, 4, 4, 0]}>
               {rows.map((entry, idx) => (
@@ -92,7 +94,7 @@ export default function MortInfantilCausasChart({ rows }: { rows: Row[] }) {
                 dataKey="total"
                 position="right"
                 style={{ fontSize: 11, fill: "hsl(var(--foreground))" }}
-                formatter={(v: number) => `${v}`}
+                formatter={(v) => formatChartNumber(v, (v) => `${v}`, "")}
               />
             </Bar>
           </BarChart>

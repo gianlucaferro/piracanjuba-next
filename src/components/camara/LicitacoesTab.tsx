@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchCamaraLicitacoes } from "@/data/camaraApi";
+import { fetchCamaraLicitacoes, type CamaraLicitacao } from "@/data/camaraApi";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search, Gavel, Sparkles, Download, Info } from "lucide-react";
@@ -21,9 +21,9 @@ export default function LicitacoesTab() {
     !search || [l.objeto, l.numero, l.modalidade].some((f) => f?.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const handleClick = (l: any) => {
+  const handleClick = (l: CamaraLicitacao) => {
     const conteudo = `- Número: ${l.numero || "não informado"}\n- Modalidade: ${l.modalidade || "não informada"}\n- Objeto: ${l.objeto || "não informado"}\n- Situação: ${l.situacao || "não informada"}\n- Data abertura: ${l.data_abertura || "não informada"}\n- Valor estimado: ${l.valor_estimado ? formatCurrency(l.valor_estimado) : "não informado"}`;
-    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`, undefined, l.documento_url);
+    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`, undefined, l.documento_url || undefined);
   };
 
   const handleExportCSV = () => {
@@ -76,8 +76,7 @@ export default function LicitacoesTab() {
                 {l.modalidade && (
                   modalidadeTooltip ? (
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex items-center gap-0.5 cursor-help">· {l.modalidade} <Info className="w-3 h-3" /></span>
+                      <TooltipTrigger render={<span />} className="inline-flex items-center gap-0.5 cursor-help">· {l.modalidade} <Info className="w-3 h-3" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>
                     </Tooltip>

@@ -1,5 +1,7 @@
 "use client";
 
+import NextImage from "next/image";
+
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -138,9 +140,9 @@ function Lightbox({
           }
         }}
       >
-        <img
+        <NextImage unoptimized width={800} height={800}
           src={fotos[idx]}
-          alt=""
+          alt={`Foto ${idx + 1} de ${fotos.length}`}
           className="block w-auto h-auto object-contain select-none rounded"
           style={{
             maxWidth: "min(95vw, 900px)",
@@ -359,7 +361,7 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
               className="stat-card overflow-hidden hover:border-primary/30 transition-colors p-0"
             >
               {ad.fotos[0] ? (
-                <img
+                <NextImage unoptimized width={800} height={800}
                   src={ad.fotos[0]}
                   alt={ad.titulo}
                   className="w-full h-28 sm:h-32 object-cover"
@@ -559,7 +561,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
               }
             }}
           >
-            <img
+            <NextImage unoptimized width={800} height={800}
               src={item.fotos[imgIdx]}
               alt={item.titulo}
               className="w-full h-full object-cover cursor-pointer"
@@ -615,7 +617,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
                   i === imgIdx ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
                 }`}
               >
-                <img src={foto} alt="" className="w-full h-full object-cover" />
+                <NextImage unoptimized width={800} height={800} src={foto} alt={`Foto ${i + 1} de ${item.titulo}`} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
@@ -672,7 +674,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
             )}
             <span className="flex items-center gap-1.5">
               {item.foto_perfil ? (
-                <img src={item.foto_perfil} alt="" className="w-5 h-5 rounded-full object-cover" loading="lazy" />
+                <NextImage unoptimized width={800} height={800} src={item.foto_perfil} alt="" className="w-5 h-5 rounded-full object-cover" loading="lazy" />
               ) : (
                 <User className="w-3.5 h-3.5" />
               )}

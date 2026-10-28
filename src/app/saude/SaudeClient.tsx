@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import Layout from "@/components/Layout";
 import { FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import SEO from "@/components/SEO";
@@ -758,7 +760,7 @@ function DDAView({ indicadores }: { indicadores: SaudeIndicador[] }) {
                 <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip
-                  formatter={(value: number) => [value.toLocaleString("pt-BR", { minimumFractionDigits: 1 }), "Internações/100 mil"]}
+                  formatter={numericTooltip((value) => [value.toLocaleString("pt-BR", { minimumFractionDigits: 1 }), "Internações/100 mil"])}
                   labelFormatter={(label) => `Ano: ${label}`}
                   contentStyle={{ fontSize: 12 }}
                 />
@@ -890,7 +892,7 @@ function HivFullView({ indicadores }: { indicadores: SaudeIndicador[] }) {
               <YAxis tick={{ fontSize: 12 }} className="fill-muted-foreground" allowDecimals={false} />
               <Tooltip
                 contentStyle={{ fontSize: 12 }}
-                formatter={(value: number, name: string) => [value, name === "diagnosticos" ? "Diagnósticos" : "Óbitos"]}
+                formatter={numericTooltip((value, name) => [value, name === "diagnosticos" ? "Diagnósticos" : "Óbitos"])}
               />
               <Legend formatter={(value: string) => value === "diagnosticos" ? "Diagnósticos" : "Óbitos"} />
               <Bar dataKey="diagnosticos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
@@ -1079,7 +1081,7 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
           <p className="text-2xl font-bold text-foreground">{taxaIbge.valor?.toFixed(2).replace('.', ',')}</p>
           <p className="text-sm text-muted-foreground">óbitos por mil nascidos vivos ({taxaIbge.ano})</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Fonte: <a href={taxaIbge.fonte_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{taxaIbge.fonte}</a>
+            Fonte: <a href={taxaIbge.fonte_url ?? undefined} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{taxaIbge.fonte}</a>
           </p>
         </div>
       )}
@@ -1128,7 +1130,7 @@ function MortalidadeFullView({ indicadores, categoria }: { indicadores: SaudeInd
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="ano" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
               <YAxis tick={{ fontSize: 12 }} className="fill-muted-foreground" allowDecimals={false} />
-              <Tooltip contentStyle={{ fontSize: 12 }} formatter={(value: number) => [value, "Óbitos"]} />
+              <Tooltip contentStyle={{ fontSize: 12 }} formatter={numericTooltip((value) => [value, "Óbitos"])} />
               <Bar dataKey="obitos" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
 "use client";
 
+import { formatChartNumber } from "@/lib/chart-formatters";
+
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
+  type LucideIcon,
   GraduationCap, School, Users, BookOpen, TrendingUp,
   ExternalLink, BarChart3, Building2, DollarSign,
   Library, Monitor, FlaskConical, Dumbbell, Wifi,
@@ -50,7 +53,7 @@ function getIndicador(indicadores: EducacaoIndicador[], chave: string) {
 }
 
 function IndicadorCard({ icon: Icon, label, valor, sufixo, fonte, fonteUrl, cor }: {
-  icon: any; label: string; valor: string | number | null; sufixo?: string;
+  icon: LucideIcon; label: string; valor: string | number | null | undefined; sufixo?: string;
   fonte?: string | null; fonteUrl?: string | null; cor?: string;
 }) {
   return (
@@ -1073,7 +1076,7 @@ function PeDeMeiaTab({ dados }: { dados: PeDeMeia[] }) {
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="serie" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(v: number) => v.toLocaleString("pt-BR")} />
+                <Tooltip formatter={(v) => formatChartNumber(v, (v) => v.toLocaleString("pt-BR"))} />
                 <Bar dataKey="beneficiarios" name="Beneficiários" fill="hsl(220, 60%, 25%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

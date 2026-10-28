@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -79,7 +81,7 @@ export default function SaneamentoSnisCard() {
             <YAxis tick={{ fontSize: 11 }} width={38} domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} />
             <Tooltip
               contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, n: string) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, n]}
+              formatter={numericTooltip((v, n) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, n])}
               labelFormatter={(a) => `Ano ${a}`}
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />

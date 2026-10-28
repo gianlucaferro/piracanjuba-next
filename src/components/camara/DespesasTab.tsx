@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCamaraDespesas } from "@/data/camaraApi";
+import { fetchCamaraDespesas, type CamaraDespesa } from "@/data/camaraApi";
 import { Search, Receipt, ChevronLeft, ChevronRight, Sparkles, Download, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ export default function DespesasTab() {
     return months.map((v, i) => ({ mes: MESES_SHORT[i], valor: v, pct: (v / max) * 100 }));
   }, [despesas]);
 
-  const handleClick = (d: any) => {
+  const handleClick = (d: CamaraDespesa) => {
     const conteudo = `- Credor: ${d.credor || "não informado"}\n- Descrição: ${d.descricao || "não informada"}\n- Elemento: ${d.elemento || "não informado"}\n- Valor: ${d.valor ? formatCurrency(d.valor) : "não informado"}\n- Data pagamento: ${d.data_pagamento || "não informada"}\n- Ano: ${ano}`;
     requestSummary(d.id, "Despesa da Câmara", conteudo, `Despesa — ${d.credor || "Sem credor"}`);
   };
@@ -74,7 +74,7 @@ export default function DespesasTab() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar despesa..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} className="pl-9" aria-label="Buscar despesa" />
         </div>
-        <Select value={String(ano)} onValueChange={(v) => { setAno(Number(v)); setPage(0); }}>
+        <Select value={String(ano)} onValueChange={(v) => { if (v === null) return; setAno(Number(v)); setPage(0); }}>
           <SelectTrigger className="w-24" aria-label="Filtrar por ano"><SelectValue /></SelectTrigger>
           <SelectContent>{years.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}</SelectContent>
         </Select>
@@ -133,8 +133,7 @@ export default function DespesasTab() {
                 {d.elemento && (
                   elementoTooltip ? (
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex items-center gap-0.5 cursor-help">· {d.elemento} <Info className="w-3 h-3" /></span>
+                      <TooltipTrigger render={<span />} className="inline-flex items-center gap-0.5 cursor-help">· {d.elemento} <Info className="w-3 h-3" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs"><p className="text-sm">{elementoTooltip}</p></TooltipContent>
                     </Tooltip>

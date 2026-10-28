@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
@@ -21,19 +22,23 @@ async function fetchAnunciosAtivos(): Promise<Anuncio[]> {
     .select("id, nome_empresa, plano, imagem_url, link_destino, whatsapp")
     .eq("ativo", true)
     .order("plano", { ascending: false });
-  return (data || []) as Anuncio[];
+  // Sorteio fora da renderização, apenas ao carregar uma nova lista.
+  const anuncios = (data || []) as Anuncio[];
+  for (let i = anuncios.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [anuncios[i], anuncios[j]] = [anuncios[j], anuncios[i]];
+  }
+  return anuncios;
 }
 
 function trackImpression(id: string) {
   const supabase = createBrowserSupabaseClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase.rpc("increment_anuncio_impressao" as any, { anuncio_id: id }).then(() => {});
+  supabase.rpc("increment_anuncio_impressao", { anuncio_id: id }).then(() => {});
 }
 
 function trackClick(id: string) {
   const supabase = createBrowserSupabaseClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase.rpc("increment_anuncio_clique" as any, { anuncio_id: id }).then(() => {});
+  supabase.rpc("increment_anuncio_clique", { anuncio_id: id }).then(() => {});
 }
 
 function AnuncioCard({ anuncio }: { anuncio: Anuncio }) {
@@ -59,8 +64,8 @@ function AnuncioCard({ anuncio }: { anuncio: Anuncio }) {
       }`}
     >
       {anuncio.imagem_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
+          unoptimized
           src={anuncio.imagem_url}
           alt={`Anúncio: ${anuncio.nome_empresa}`}
           className="w-full h-auto rounded-xl"
@@ -94,12 +99,6 @@ export function AnuncioBannerDestaque() {
   const total = destaques.length;
   const [index, setIndex] = useState(0);
   const [pausado, setPausado] = useState(false);
-
-  // Início aleatório: mantém a variedade entre visitas (exposição justa entre
-  // os anunciantes). Só reembaralha quando a quantidade de destaques muda.
-  useEffect(() => {
-    if (total > 0) setIndex(Math.floor(Math.random() * total));
-  }, [total]);
 
   // Intercalação automática na tela: com 2+ destaques, avança sozinho a cada 7s
   // (pausa no hover/foco de teclado abaixo). Respeita prefers-reduced-motion.
@@ -158,7 +157,7 @@ export function AnuncioBannerPadrao() {
   });
   const padroes = anuncios?.filter((a) => a.plano === "padrao") || [];
   if (padroes.length === 0) return null;
-  const anuncio = padroes[Math.floor(Math.random() * padroes.length)];
+  const anuncio = padroes[0];
   return (
     <section aria-label="Anúncio patrocinado">
       <AnuncioCard anuncio={anuncio} />

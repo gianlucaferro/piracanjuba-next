@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
@@ -67,9 +69,9 @@ export default function ContextoEstadualPanel() {
             <YAxis yAxisId="prod" orientation="right" tick={{ fontSize: 11 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(0)}M`} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, name: string) =>
+              formatter={numericTooltip((v, name) =>
                 name === "areaHa" ? [`${nf(v)} ha`, "Área plantada"] : [`${nf(v)} t`, "Produção"]
-              }
+              )}
               labelFormatter={(l) => `Ano ${l}`}
             />
             <Area yAxisId="area" type="monotone" dataKey="areaHa" stroke={COR_AREA} strokeWidth={2.4} fill="url(#gradSojaGo)" />
@@ -99,11 +101,11 @@ export default function ContextoEstadualPanel() {
             <YAxis yAxisId="goias" orientation="right" tick={{ fontSize: 11 }} width={46} tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}bi`} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, name: string) =>
+              formatter={numericTooltip((v, name) =>
                 name === "piraMilL"
                   ? [`${nf(v / 1000)} mi litros`, "Piracanjuba"]
                   : [`${nf(v / 1000)} mi litros`, "Goiás"]
-              }
+              )}
               labelFormatter={(l) => `Ano ${l}`}
             />
             <Legend wrapperStyle={{ fontSize: 12 }} formatter={(v) => (v === "piraMilL" ? "Piracanjuba" : "Goiás")} />

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Briefcase, Building2, ExternalLink, Calendar, DollarSign, MapPin } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, Calendar, DollarSign, MapPin } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchContratosCamara, fetchContratosStats } from "@/lib/data/contratos-camara";
 import AlertaContratosSancao from "@/components/transparencia/AlertaContratosSancao";

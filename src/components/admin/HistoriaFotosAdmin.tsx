@@ -1,10 +1,12 @@
 "use client";
 
+import NextImage from "next/image";
+
 // Moderação das fotos da história enviadas pelos moradores.
 // Lê via edge function historia-fotos (signed URLs), filtra por status,
 // aprova/rejeita/baixa/exclui. Gated pelo admin_token (já dentro da função).
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,35 +39,56 @@ const statusLabel: Record<Filtro, string> = {
   todas: "Todas",
 };
 
+function adminToken(): string {
+  return localStorage.getItem(SESSION_KEY) ?? "";
+}
+
+async function fetchFotos(): Promise<Foto[]> {
+  const { data, error } = await supabase.functions.invoke("historia-fotos", {
+    body: { action: "list", admin_token: adminToken() },
+  });
+  if (error || data?.error) throw new Error(data?.error || "Erro ao carregar.");
+  return (data?.fotos as Foto[]) ?? [];
+}
+
 export default function HistoriaFotosAdmin() {
   const [fotos, setFotos] = useState<Foto[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>("pendente");
   const [busy, setBusy] = useState<string | null>(null);
 
-  const token = () => localStorage.getItem(SESSION_KEY) ?? "";
-
-  const carregar = useCallback(async () => {
+  const carregar = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("historia-fotos", { body: { action: "list", admin_token: token() } });
-      if (error || data?.error) throw new Error(data?.error || "Erro ao carregar.");
-      setFotos((data?.fotos as Foto[]) ?? []);
+      setFotos(await fetchFotos());
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao carregar.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    void carregar();
-  }, [carregar]);
+    let active = true;
+    void fetchFotos().then(
+      (items) => {
+        if (!active) return;
+        setFotos(items);
+        setLoading(false);
+      },
+      (error: unknown) => {
+        if (!active) return;
+        toast.error(error instanceof Error ? error.message : "Erro ao carregar.");
+        setLoading(false);
+      },
+    );
+    return () => { active = false; };
+  }, []);
 
   async function acao(id: string, action: "set_status" | "delete", status?: Status) {
     setBusy(id);
     try {
-      const { data, error } = await supabase.functions.invoke("historia-fotos", { body: { action, id, status, admin_token: token() } });
+      const { data, error } = await supabase.functions.invoke("historia-fotos", { body: { action, id, status, admin_token: adminToken() } });
       if (error || data?.error) throw new Error(data?.error || "Erro.");
       if (action === "delete") setFotos((prev) => prev.filter((f) => f.id !== id));
       else if (status) setFotos((prev) => prev.map((f) => (f.id === id ? { ...f, status } : f)));
@@ -96,7 +119,7 @@ export default function HistoriaFotosAdmin() {
             {statusLabel[s]} ({cont(s)})
           </button>
         ))}
-        <button onClick={() => carregar()} className="ml-auto inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <button onClick={() => { void carregar(); }} className="ml-auto inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <RotateCcw className="w-3.5 h-3.5" /> Atualizar
         </button>
       </div>
@@ -110,7 +133,7 @@ export default function HistoriaFotosAdmin() {
           <div key={f.id} className="stat-card space-y-2">
             <div className="aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center">
               {f.url ? (
-                <img src={f.url} alt={f.descricao || "Foto da história"} className="w-full h-full object-cover" loading="lazy" />
+                <NextImage unoptimized width={800} height={800} src={f.url} alt={f.descricao || "Foto da história"} className="w-full h-full object-cover" loading="lazy" />
               ) : (
                 <ImageOff className="w-6 h-6 text-muted-foreground/40" />
               )}

@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   ComposedChart,
@@ -135,9 +137,7 @@ export default function CovidPiracanjubaChart({ rows }: { rows: CovidRow[] }) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number, name: string) => {
-                return [value, name];
-              }}
+              formatter={numericTooltip((value, name) => [value, name])}
             />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="line" />
             <Bar

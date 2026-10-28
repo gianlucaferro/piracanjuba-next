@@ -6,6 +6,12 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { formatCurrency } from "@/lib/formatters";
 import ReceitasMensaisCharts from "./ReceitasMensaisCharts";
+import type { Database } from "@/lib/supabase/types";
+import { normalizarServidorRemuneracao, somarFolhaPorOrgao, type RelacaoServidor, type RemuneracaoFolha } from "./folha-destaques";
+
+type RemuneracaoDestaque = Pick<Database["public"]["Tables"]["remuneracao_servidores"]["Row"], "bruto" | "liquido" | "servidor_id" | "tipo_folha"> & {
+  servidores: RelacaoServidor;
+};
 
 const POPULACAO = 25373;
 
@@ -80,7 +86,8 @@ async function fetchTopSalarios() {
     .eq("competencia", competencia)
     .eq("servidores.orgao_tipo", "prefeitura")
     .order("bruto", { ascending: false })
-    .limit(10);
+    .limit(10)
+    .returns<RemuneracaoDestaque[]>();
 
   if (!remuneracoes?.length) {
     return { items: [], competencia, mediana };
@@ -90,22 +97,17 @@ async function fetchTopSalarios() {
     competencia,
     mediana,
     items: remuneracoes.map((r, i) => {
-      const srv = (r as { servidores?: { nome?: string; cargo?: string | null } }).servidores;
+      const srv = normalizarServidorRemuneracao(r.servidores);
       return {
         posicao: i + 1,
         nome: srv?.nome || "Não identificado",
         cargo: srv?.cargo || null,
         bruto: r.bruto,
         liquido: r.liquido,
-        tipo_folha: (r as { tipo_folha?: string | null }).tipo_folha || null,
+        tipo_folha: r.tipo_folha || null,
         atipico:
           Number(r.bruto) > mediana * 5 ||
-          (((r as { tipo_folha?: string | null }).tipo_folha || null) &&
-            !["NORMAL", "MENSAL"].includes(
-              ((r as { tipo_folha?: string | null }).tipo_folha as string)
-                .trim()
-                .toUpperCase(),
-            )),
+          Boolean(r.tipo_folha && !["NORMAL", "MENSAL"].includes(r.tipo_folha.trim().toUpperCase())),
       };
     }),
   };
@@ -188,13 +190,14 @@ async function fetchFolhaTotal() {
       .from("remuneracao_servidores")
       .select("bruto, servidores!inner(orgao_tipo)")
       .eq("competencia", competencia)
-      .range(offset, offset + PAGE - 1);
+      .range(offset, offset + PAGE - 1)
+      .returns<RemuneracaoFolha[]>();
     if (!rems || rems.length === 0) break;
-    for (const r of rems as Array<{ bruto: number | null; servidores: { orgao_tipo: string } }>) {
-      const valor = r.bruto || 0;
-      if (r.servidores.orgao_tipo === "prefeitura") { prefTotal += valor; prefCount++; }
-      else if (r.servidores.orgao_tipo === "camara") { camTotal += valor; camCount++; }
-    }
+    const totais = somarFolhaPorOrgao(rems);
+    prefTotal += totais.prefeitura.total;
+    prefCount += totais.prefeitura.count;
+    camTotal += totais.camara.total;
+    camCount += totais.camara.count;
     if (rems.length < PAGE) break;
   }
 
@@ -332,7 +335,7 @@ export default function PrefeituraDestaques() {
                 ⚠️ Atenção
               </p>
               <p className="text-sm text-foreground leading-relaxed">
-                Valores marcados como <strong>"Atípico"</strong> ou <strong>"RESCISÃO"</strong> incluem rescisões contratuais, retroativos, férias acumuladas ou verbas indenizatórias — <strong>não representam o salário mensal regular</strong> do servidor.
+                Valores marcados como <strong>&quot;Atípico&quot;</strong> ou <strong>&quot;RESCISÃO&quot;</strong> incluem rescisões contratuais, retroativos, férias acumuladas ou verbas indenizatórias — <strong>não representam o salário mensal regular</strong> do servidor.
               </p>
             </div>
           )}
@@ -427,7 +430,6 @@ export default function PrefeituraDestaques() {
 
       {/* Card 5: Top 5 fornecedores */}
       {topFornecedores && topFornecedores.length > 0 && (() => {
-        const totalForn = topFornecedores.reduce((s, f) => s + f.valor, 0);
         return (
         <div className="stat-card">
           <div className="flex items-center justify-between mb-2">

@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
@@ -103,7 +105,7 @@ export default function ConcentracaoFundiariaPanel() {
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis type="number" tick={{ fontSize: 11 }} />
             <YAxis type="category" dataKey="faixa" width={104} tick={{ fontSize: 11 }} />
-            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [nf(v), "Estabelecimentos"]} />
+            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={numericTooltip((v) => [nf(v), "Estabelecimentos"])} />
             <Bar dataKey="estab" radius={[0, 5, 5, 0]}>
               {DIST.map((d, i) => <Cell key={i} fill={porteColor(d.porte)} />)}
             </Bar>
@@ -135,7 +137,7 @@ export default function ConcentracaoFundiariaPanel() {
             <YAxis type="category" dataKey="tipo" width={130} tick={{ fontSize: 11 }} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number) => [`${nf(v)} ha`, "Área"]}
+              formatter={numericTooltip((v) => [`${nf(v)} ha`, "Área"])}
             />
             <Bar dataKey="ha" radius={[0, 6, 6, 0]}>
               {condicao.map((c, i) => <Cell key={i} fill={c.cor} />)}

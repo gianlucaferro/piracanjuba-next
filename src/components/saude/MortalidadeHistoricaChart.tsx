@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   ComposedChart,
   Line,
@@ -47,7 +49,6 @@ export default function MortalidadeHistoricaChart({
   const totalInfantil = infantil.reduce((s, r) => s + (r.valor || 0), 0);
   const totalGeral = geral.reduce((s, r) => s + (r.valor || 0), 0);
   const ultimoInfantil = infantil.filter((r) => r.valor > 0).at(-1);
-  const ultimoGeral = geral.filter((r) => r.valor > 0).at(-1);
   const primeiroInfantil = infantil.find((r) => r.valor > 0);
 
   // Trend da mortalidade infantil (compara primeiros 5 anos com ultimos 5)
@@ -135,10 +136,7 @@ export default function MortalidadeHistoricaChart({
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number | null, name: string) => {
-                if (value === null) return ["—", name];
-                return [`${value} óbitos`, name];
-              }}
+              formatter={numericTooltip((value, name) => [`${value} óbitos`, name])}
               labelFormatter={(label) => `Ano ${label}`}
             />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="line" />

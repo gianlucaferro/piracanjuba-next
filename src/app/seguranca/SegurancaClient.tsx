@@ -358,7 +358,7 @@ export default function Seguranca() {
               </p>
             </div>
             {years.length > 0 && (
-              <Select value={String(ano)} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+              <Select value={String(ano)} onValueChange={(value) => { if (value !== null) setSelectedYear(Number(value)); }}>
                 <SelectTrigger className="w-28">
                   <SelectValue />
                 </SelectTrigger>

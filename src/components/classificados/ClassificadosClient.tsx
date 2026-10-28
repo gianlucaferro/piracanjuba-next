@@ -1,7 +1,11 @@
 "use client";
 
+import NextImage from "next/image";
+
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import type { AuthError } from "@supabase/supabase-js";
+import { getErrorMessage } from "@/components/admin/request-error";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -39,6 +43,7 @@ type Classificado = {
   status: string;
   denuncias: number;
   visualizacoes: number;
+  whatsapp_clicks: number | null;
   expira_em: string;
   created_at: string;
   updated_at: string;
@@ -199,8 +204,15 @@ function timeAgo(dateStr: string) {
   return `${days}d`;
 }
 
-function getCatIcon(cat: string) {
-  return CATEGORIAS.find((c) => c.value === cat)?.icon || Package;
+function CategoryIcon({ categoria, className }: { categoria: string; className: string }) {
+  switch (categoria) {
+    case "imoveis": return <HomeIcon className={className} />;
+    case "veiculos": return <Car className={className} />;
+    case "agro": return <Wheat className={className} />;
+    case "eletronicos": return <Smartphone className={className} />;
+    case "servicos": return <Wrench className={className} />;
+    default: return <Package className={className} />;
+  }
 }
 
 function getCatLabel(cat: string) {
@@ -347,9 +359,9 @@ function Lightbox({
           }
         }}
       >
-        <img
+        <NextImage unoptimized width={800} height={800}
           src={fotos[idx]}
-          alt=""
+          alt={`Foto ${idx + 1} de ${fotos.length}`}
           className="block w-auto h-auto object-contain select-none rounded"
           style={{
             maxWidth: "min(95vw, 900px)",
@@ -428,9 +440,9 @@ function LoginPrompt({
   onSkipLogin,
 }: {
   onGoogle: () => void;
-  onEmailLogin: (email: string, password: string) => Promise<{ error: any }>;
-  onEmailSignUp: (email: string, password: string) => Promise<{ error: any }>;
-  onResetPassword: (email: string) => Promise<{ error: any }>;
+  onEmailLogin: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  onEmailSignUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  onResetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   onSkipLogin?: () => void;
 }) {
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
@@ -622,7 +634,7 @@ function GerenciarComCodigo({ onClose }: { onClose: () => void }) {
         descricao: descricao.trim() || null,
         preco: precoTipo === "gratuito" ? 0 : parsePrecoInput(preco),
         preco_tipo: precoTipo,
-      } as any)
+      })
       .eq("id", item.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -664,7 +676,7 @@ function GerenciarComCodigo({ onClose }: { onClose: () => void }) {
           {/* Ad info */}
           <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
             {item.fotos[0] && (
-              <img src={item.fotos[0]} alt="" className="w-16 h-16 rounded-lg object-cover shrink-0" />
+              <NextImage unoptimized width={800} height={800} src={item.fotos[0]} alt={item.titulo} className="w-16 h-16 rounded-lg object-cover shrink-0" />
             )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground">{item.titulo}</p>
@@ -768,14 +780,15 @@ function NovoAnuncioForm({
   const [placaVeiculo, setPlacaVeiculo] = useState("");
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
 
-  // Auto-categorização por keywords ao digitar o título
-  useEffect(() => {
-    if (catManual || !titulo.trim() || titulo.trim().length < 3) return;
-    const suggested = suggestCategory(titulo);
-    if (suggested && suggested !== categoria) {
-      setCategoria(suggested);
+  const handleTituloChange = (value: string) => {
+    const nextTitle = value.slice(0, 90);
+    setTitulo(nextTitle);
+    setFieldErrors((previous) => ({ ...previous, titulo: "" }));
+    if (!catManual && nextTitle.trim().length >= 3) {
+      const suggested = suggestCategory(nextTitle);
+      if (suggested) setCategoria(suggested);
     }
-  }, [titulo, catManual]);
+  };
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
   
   const [submitting, setSubmitting] = useState(false);
@@ -824,8 +837,8 @@ function NovoAnuncioForm({
             setDescricao((prev) => (prev ? prev + " " + data.text : data.text));
             toast.success("Áudio transcrito!");
           }
-        } catch (e: any) {
-          toast.error(e.message || "Erro ao transcrever áudio.");
+        } catch (e: unknown) {
+          toast.error(getErrorMessage(e, "Erro ao transcrever áudio."));
         } finally {
           setTranscribing(false);
         }
@@ -858,8 +871,8 @@ function NovoAnuncioForm({
         setDescricao(data.descricao);
         toast.success("Descrição otimizada com IA!");
       }
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao otimizar descrição.");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao otimizar descrição."));
     } finally {
       setOptimizing(false);
     }
@@ -901,8 +914,8 @@ function NovoAnuncioForm({
           toast.info("Nenhum dado encontrado para esta placa.");
         }
       }
-    } catch (e: any) {
-      const msg = e?.message || "Erro ao consultar placa.";
+    } catch (e: unknown) {
+      const msg = getErrorMessage(e, "Erro ao consultar placa.");
       if (msg.includes("não encontrado")) {
         toast.error("Veículo não encontrado.");
       } else {
@@ -919,7 +932,7 @@ function NovoAnuncioForm({
       const processed = await processFile(file);
       const preview = URL.createObjectURL(processed);
       setFotos((prev) => [...prev, { file, preview }]);
-    } catch (e) {
+    } catch {
       toast.error("Erro ao processar imagem. Tente outro formato.");
     }
   };
@@ -993,7 +1006,7 @@ function NovoAnuncioForm({
         bairro: bairro.trim() || null,
         foto_perfil: fotoPerfilUrl,
         ...(codigo ? { codigo_gestao: codigo } : {}),
-      } as any);
+      });
       if (error) throw error;
 
       if (codigo) {
@@ -1004,8 +1017,8 @@ function NovoAnuncioForm({
       toast.success("Anúncio publicado com sucesso!");
       onSuccess();
       onClose();
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao publicar");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao publicar"));
     } finally {
       setSubmitting(false);
     }
@@ -1103,7 +1116,7 @@ function NovoAnuncioForm({
         <Input
           placeholder="Ex: Casa 3 quartos no centro"
           value={titulo}
-          onChange={(e) => { setTitulo(e.target.value.slice(0, 90)); setFieldErrors((p) => ({ ...p, titulo: "" })); }}
+          onChange={(e) => handleTituloChange(e.target.value)}
           maxLength={90}
           className={fieldErrors.titulo ? "border-destructive" : ""}
         />
@@ -1292,10 +1305,9 @@ function NovoAnuncioForm({
                   return next;
                 });
               }}
-              onTouchStart={(e) => { (e.currentTarget as any)._dragIdx = i; }}
               className="relative w-24 h-20 rounded-lg overflow-hidden border cursor-grab active:cursor-grabbing group"
             >
-              <img src={f.preview} alt="" className="w-full h-full object-cover" />
+              <NextImage unoptimized width={800} height={800} src={f.preview} alt={`Prévia da foto ${i + 1}`} className="w-full h-full object-cover" />
               {i === 0 && (
                 <span className="absolute bottom-0 left-0 right-0 bg-primary/80 text-primary-foreground text-xs text-center py-0.5 font-medium">
                   Capa
@@ -1364,7 +1376,7 @@ function NovoAnuncioForm({
             <div className="stat-card overflow-hidden">
               {fotos.length > 0 && (
                 <div className="relative -mx-4 -mt-4 md:-mx-5 md:-mt-5 mb-3">
-                  <img src={fotos[0].preview} alt="" className="w-full aspect-square object-cover" />
+                  <NextImage unoptimized width={800} height={800} src={fotos[0].preview} alt={titulo || "Prévia da capa do anúncio"} className="w-full aspect-square object-cover" />
                   <Badge variant="secondary" className="absolute top-2 left-2 text-sm">
                     {getCatLabel(categoria)}
                   </Badge>
@@ -1445,7 +1457,6 @@ function MeusAnuncioItem({
   const [fotos, setFotos] = useState<string[]>(item.fotos);
   const [newFotos, setNewFotos] = useState<{ file: File; preview: string }[]>([]);
   const [saving, setSaving] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const marcarVendido = async () => {
@@ -1520,7 +1531,7 @@ function MeusAnuncioItem({
           preco_tipo: precoTipo,
           bairro: bairro.trim() || null,
           fotos: allFotos,
-        } as any)
+        })
         .eq("id", item.id);
       if (error) throw error;
 
@@ -1528,8 +1539,8 @@ function MeusAnuncioItem({
       setEditing(false);
       setNewFotos([]);
       invalidate();
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao salvar");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao salvar"));
     } finally {
       setSaving(false);
     }
@@ -1569,9 +1580,9 @@ function MeusAnuncioItem({
       {/* Header with photo */}
       <div className="flex items-start gap-3 p-4">
         {item.fotos[0] ? (
-          <img
+          <NextImage unoptimized width={800} height={800}
             src={item.fotos[0]}
-            alt=""
+            alt={item.titulo}
             className="w-20 h-20 rounded-xl object-cover shrink-0"
           />
         ) : (
@@ -1605,7 +1616,7 @@ function MeusAnuncioItem({
       {!editing && (
         <div className="flex items-center gap-0 border-t bg-muted/30">
           <button
-            onClick={() => { setEditing(true); setExpanded(true); }}
+            onClick={() => { setEditing(true); }}
             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
           >
             <Pencil className="w-3.5 h-3.5" /> Editar
@@ -1734,7 +1745,7 @@ function MeusAnuncioItem({
             <div className="flex gap-2 flex-wrap">
               {fotos.map((url, i) => (
                 <div key={`existing-${i}`} className="relative w-20 h-16 rounded-lg overflow-hidden border">
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <NextImage unoptimized width={800} height={800} src={url} alt={`Foto ${i + 1} do anúncio`} className="w-full h-full object-cover" />
                   <button
                     onClick={() => removeExistingFoto(i)}
                     className="absolute top-0.5 right-0.5 bg-destructive/90 text-white rounded-full p-0.5"
@@ -1746,7 +1757,7 @@ function MeusAnuncioItem({
               ))}
               {newFotos.map((f, i) => (
                 <div key={`new-${i}`} className="relative w-20 h-16 rounded-lg overflow-hidden border border-primary/30">
-                  <img src={f.preview} alt="" className="w-full h-full object-cover" />
+                  <NextImage unoptimized width={800} height={800} src={f.preview} alt={`Prévia da foto ${i + 1}`} className="w-full h-full object-cover" />
                   <button
                     onClick={() => removeNewFoto(i)}
                     className="absolute top-0.5 right-0.5 bg-destructive/90 text-white rounded-full p-0.5"
@@ -1847,7 +1858,7 @@ function MeusAnuncios({ userId, onNovoAnuncio }: { userId: string; onNovoAnuncio
   const ativos = items.filter((i) => i.status === "ativo").length;
   const vendidos = items.filter((i) => i.status === "vendido").length;
   const totalViews = items.reduce((sum, i) => sum + i.visualizacoes, 0);
-  const totalWaClicks = items.reduce((sum, i) => sum + ((i as any).whatsapp_clicks || 0), 0);
+  const totalWaClicks = items.reduce((sum, i) => sum + (i.whatsapp_clicks || 0), 0);
 
   return (
     <div className="space-y-3">
@@ -1895,28 +1906,26 @@ function AnuncioCard({
 }) {
   const [imgIdx, setImgIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
-  const CatIcon = getCatIcon(item.categoria);
   const isVendido = item.status === "vendido";
   const detailUrl = `/compra-e-venda/${item.id}`;
 
   // Track view
-  const viewed = useRef(false);
-  if (!viewed.current) {
-    viewed.current = true;
-    supabase
-      .rpc("increment_classificado_view" as any, { classificado_id: item.id })
-      .then(() => {});
-  }
+  const viewed = useRef<string | null>(null);
+  useEffect(() => {
+    if (viewed.current === item.id) return;
+    viewed.current = item.id;
+    void supabase.rpc("increment_classificado_view", { classificado_id: item.id }).then(() => {});
+  }, [item.id]);
 
   // ===== MOBILE CARD (compact, OLX-style) =====
-  const MobileCard = () => (
+  const mobileCard = (
     <div className={`stat-card overflow-hidden sm:hidden ${isVendido ? "opacity-70" : ""}`}>
       <div className="flex gap-3">
         {/* Thumbnail */}
         <Link href={detailUrl} className="shrink-0">
           <div className="relative w-28 h-28 rounded-lg overflow-hidden bg-muted">
             {item.fotos.length > 0 ? (
-              <img
+              <NextImage unoptimized width={800} height={800}
                 src={item.fotos[0]}
                 alt={item.titulo}
                 className="w-full h-full object-cover"
@@ -1924,7 +1933,7 @@ function AnuncioCard({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <CatIcon className="w-8 h-8 text-muted-foreground/30" />
+                <CategoryIcon categoria={item.categoria} className="w-8 h-8 text-muted-foreground/30" />
               </div>
             )}
             {isVendido && (
@@ -1963,7 +1972,7 @@ function AnuncioCard({
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1.5 flex-wrap">
             <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4">
-              <CatIcon className="w-2.5 h-2.5 mr-0.5" /> {getCatLabel(item.categoria)}
+              <CategoryIcon categoria={item.categoria} className="w-2.5 h-2.5 mr-0.5" /> {getCatLabel(item.categoria)}
             </Badge>
             {item.bairro && (
               <span className="flex items-center gap-0.5 truncate">
@@ -1980,7 +1989,7 @@ function AnuncioCard({
   );
 
   // ===== DESKTOP/TABLET CARD (grid card with carousel) =====
-  const DesktopCard = () => (
+  const desktopCard = (
     <div className={`stat-card overflow-hidden hidden sm:block ${isVendido ? "opacity-70" : ""}`}>
       {/* Image carousel */}
       {item.fotos.length > 0 ? (
@@ -1988,7 +1997,7 @@ function AnuncioCard({
           className="relative -mx-4 -mt-4 mb-3"
         >
           <Link href={detailUrl}>
-            <img
+            <NextImage unoptimized width={800} height={800}
               src={item.fotos[imgIdx]}
               alt={item.titulo}
               className="w-full aspect-square object-cover select-none"
@@ -2031,7 +2040,7 @@ function AnuncioCard({
             </>
           )}
           <Badge variant="secondary" className="absolute top-2 left-2 text-sm">
-            <CatIcon className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
+            <CategoryIcon categoria={item.categoria} className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
           </Badge>
           <button
             onClick={(e) => { e.stopPropagation(); onToggleFav(); }}
@@ -2044,7 +2053,7 @@ function AnuncioCard({
       ) : (
         <div className="flex items-center justify-between mb-2">
           <Badge variant="secondary" className="text-sm">
-            <CatIcon className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
+            <CategoryIcon categoria={item.categoria} className="w-3 h-3 mr-0.5" /> {getCatLabel(item.categoria)}
           </Badge>
           <button onClick={onToggleFav} className="p-1">
             <Heart className={`w-4 h-4 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
@@ -2084,7 +2093,7 @@ function AnuncioCard({
         )}
         <span className="flex items-center gap-1">
           {item.foto_perfil ? (
-            <img src={item.foto_perfil} alt="" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+            <NextImage unoptimized width={800} height={800} src={item.foto_perfil} alt="" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
           ) : (
             <User className="w-3 h-3" />
           )}
@@ -2107,7 +2116,7 @@ function AnuncioCard({
             onClick={() => {
               supabase
                 .from("classificados")
-                .update({ whatsapp_clicks: ((item as any).whatsapp_clicks || 0) + 1 } as any)
+                .update({ whatsapp_clicks: (item.whatsapp_clicks || 0) + 1 })
                 .eq("id", item.id)
                 .then(() => {});
             }}
@@ -2141,8 +2150,8 @@ function AnuncioCard({
 
   return (
     <>
-      <MobileCard />
-      <DesktopCard />
+      {mobileCard}
+      {desktopCard}
     </>
   );
 }
@@ -2170,24 +2179,25 @@ export default function CompraEVendaPBA() {
   const [buscaTranscribing, setBuscaTranscribing] = useState(false);
   const buscaMediaRef = useRef<MediaRecorder | null>(null);
   const buscaChunksRef = useRef<Blob[]>([]);
-  const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [uploadingProfilePhoto, setUploadingProfilePhoto] = useState(false);
   const profileBarInputRef = useRef<HTMLInputElement>(null);
 
-  // Load profile photo from user's latest ad
-  useEffect(() => {
-    if (!user) { setUserProfilePhoto(null); return; }
-    supabase
-      .from("classificados")
-      .select("foto_perfil")
-      .eq("user_id", user.id)
-      .not("foto_perfil", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .then(({ data: ads }) => {
-        if (ads?.[0]?.foto_perfil) setUserProfilePhoto(ads[0].foto_perfil);
-      });
-  }, [user]);
+  const { data: userProfilePhoto = null } = useQuery({
+    queryKey: ["classificados-profile-photo", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      if (!user) return null;
+      const { data: ads, error } = await supabase
+        .from("classificados")
+        .select("foto_perfil")
+        .eq("user_id", user.id)
+        .not("foto_perfil", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (error) throw error;
+      return (ads?.[0]?.foto_perfil as string | null | undefined) ?? null;
+    },
+  });
 
   const handleProfilePhotoUpload = async (file: File) => {
     if (!user) return;
@@ -2201,11 +2211,11 @@ export default function CompraEVendaPBA() {
       if (upErr) throw upErr;
       const { data: urlData } = supabase.storage.from("classificados").getPublicUrl(path);
       const url = urlData.publicUrl;
-      setUserProfilePhoto(url);
+      queryClient.setQueryData(["classificados-profile-photo", user.id], url);
       // Update all user's ads with new profile photo
       await supabase
         .from("classificados")
-        .update({ foto_perfil: url } as any)
+        .update({ foto_perfil: url })
         .eq("user_id", user.id);
       toast.success("Foto de perfil atualizada!");
     } catch {
@@ -2214,11 +2224,17 @@ export default function CompraEVendaPBA() {
       setUploadingProfilePhoto(false);
     }
   };
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["classificados"],
     queryFn: fetchAnuncios,
     staleTime: 1000 * 60 * 2,
   });
+
+  const [sortTime, setSortTime] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setSortTime(Date.now()), 60 * 60 * 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const bairrosUnicos = useMemo(() => {
     if (!data) return [];
@@ -2296,7 +2312,7 @@ export default function CompraEVendaPBA() {
     } else {
       // Híbrido: agrupa por faixa temporal, shuffle dentro de cada faixa
       // e aplica boost por completude (fotos + descrição + bairro)
-      const now = Date.now();
+      const now = Math.max(sortTime, dataUpdatedAt);
       const DAY = 86400000;
       const getBucket = (ts: number) => {
         const age = now - ts;
@@ -2331,14 +2347,14 @@ export default function CompraEVendaPBA() {
       });
     }
     return items;
-  }, [data, catFiltro, bairroFiltro, busca, ordenacao, showFavs, favoritos]);
+  }, [data, dataUpdatedAt, sortTime, catFiltro, bairroFiltro, busca, ordenacao, showFavs, favoritos]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
   const handleDenunciar = async (id: string) => {
     if (!confirm("Deseja denunciar este anúncio como inapropriado?")) return;
-    await supabase.rpc("denunciar_classificado" as any, { classificado_id: id });
+    await supabase.rpc("denunciar_classificado", { classificado_id: id });
     toast.success("Denúncia registrada. Obrigado por ajudar a manter a comunidade segura.");
     queryClient.invalidateQueries({ queryKey: ["classificados"] });
   };
@@ -2409,14 +2425,14 @@ export default function CompraEVendaPBA() {
                       <Loader2 className="w-5 h-5 animate-spin text-primary" />
                     ) : userProfilePhoto ? (
                       <>
-                        <img src={userProfilePhoto} alt="" className="w-12 h-12 rounded-full object-cover" />
+                        <NextImage unoptimized width={800} height={800} src={userProfilePhoto} alt="" className="w-12 h-12 rounded-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
                           <Camera className="w-4 h-4 text-white" />
                         </div>
                       </>
                     ) : user.user_metadata?.avatar_url ? (
                       <>
-                        <img src={user.user_metadata.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+                        <NextImage unoptimized width={800} height={800} src={user.user_metadata.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
                           <Camera className="w-4 h-4 text-white" />
                         </div>

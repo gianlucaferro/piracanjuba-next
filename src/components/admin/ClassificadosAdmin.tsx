@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import NextImage from "next/image";
+
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
@@ -9,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Trash2, Eye, Flag, CheckCircle2, XCircle, Package, Clock,
-  Search, ShoppingBag, Pencil, Save, X, Loader2, ImagePlus,
+  Search, Pencil, Save, X, Loader2,
   Home as HomeIcon, Car, Wheat, Smartphone, Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
+import { getErrorMessage } from "./request-error";
 
 type Classificado = {
   id: string;
@@ -27,6 +30,7 @@ type Classificado = {
   status: string;
   denuncias: number;
   visualizacoes: number;
+  whatsapp_clicks: number | null;
   expira_em: string;
   created_at: string;
   updated_at: string;
@@ -120,7 +124,6 @@ function AdminEditForm({
   const [whatsapp, setWhatsapp] = useState(item.whatsapp);
   const [fotos, setFotos] = useState<string[]>(item.fotos);
   const [saving, setSaving] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const removeExistingFoto = (idx: number) => {
     setFotos((prev) => prev.filter((_, i) => i !== idx));
@@ -149,8 +152,8 @@ function AdminEditForm({
       toast.success("Anúncio atualizado pelo admin!");
       onSaved();
       onClose();
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao salvar");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao salvar"));
     } finally {
       setSaving(false);
     }
@@ -260,7 +263,7 @@ function AdminEditForm({
         <div className="flex gap-2 flex-wrap">
           {fotos.map((url, i) => (
             <div key={i} className="relative w-20 h-16 rounded-lg overflow-hidden border">
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              <NextImage unoptimized width={800} height={800} src={url} alt={`Foto ${i + 1} do anúncio`} className="w-full h-full object-cover" />
               <button
                 onClick={() => removeExistingFoto(i)}
                 className="absolute top-0.5 right-0.5 bg-destructive/90 text-white rounded-full p-0.5"
@@ -309,7 +312,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
     queryClient.invalidateQueries({ queryKey: ["classificados"] });
   };
 
-  const adminInvoke = async (action: string, id: string, updates?: Record<string, any>) => {
+  const adminInvoke = async (action: string, id: string, updates?: Partial<Classificado>) => {
     // Token vai no BODY (admin_token), nao em Authorization header. O Supabase JS
     // injeta automaticamente o anon key em Authorization e sobrescreve qualquer
     // valor passado em headers — entao a edge function recebia anon key, calculava
@@ -325,13 +328,13 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      const updates: Record<string, any> = { status };
+      const updates: Partial<Classificado> = { status };
       if (status === "ativo") updates.denuncias = 0;
       await adminInvoke("update", id, updates);
       toast.success(`Status atualizado para "${STATUS_LABEL[status] || status}"`);
       invalidate();
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao atualizar status");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao atualizar status"));
     }
   };
 
@@ -341,8 +344,8 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
       await adminInvoke("delete", item.id);
       toast.success("Anúncio excluído");
       invalidate();
-    } catch (e: any) {
-      toast.error(e.message || "Erro ao excluir");
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Erro ao excluir"));
     }
   };
 
@@ -353,7 +356,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
   const ativos = items.filter((i) => i.status === "ativo");
   const vendidos = items.filter((i) => i.status === "vendido");
   const totalViews = items.reduce((sum, i) => sum + i.visualizacoes, 0);
-  const totalWaClicks = items.reduce((sum, i) => sum + ((i as any).whatsapp_clicks || 0), 0);
+  const totalWaClicks = items.reduce((sum, i) => sum + (i.whatsapp_clicks || 0), 0);
 
   const filtered = busca.trim()
     ? items.filter(
@@ -418,7 +421,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
             {denunciados.map((item) => (
               <div key={item.id} className="flex items-start gap-3 p-2 rounded-lg bg-destructive/5">
                 {item.fotos[0] && (
-                  <img src={item.fotos[0]} className="w-16 h-12 rounded object-cover shrink-0" />
+                  <NextImage unoptimized width={800} height={800} src={item.fotos[0]} alt={item.titulo} className="w-16 h-12 rounded object-cover shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{item.titulo}</p>
@@ -452,7 +455,7 @@ export default function ClassificadosAdmin({ adminToken }: { adminToken: string 
               {/* Info row */}
               <div className="flex items-start gap-3 p-3">
                 {item.fotos[0] ? (
-                  <img src={item.fotos[0]} alt="" className="w-20 h-16 rounded-lg object-cover shrink-0" />
+                  <NextImage unoptimized width={800} height={800} src={item.fotos[0]} alt={item.titulo} className="w-20 h-16 rounded-lg object-cover shrink-0" />
                 ) : (
                   <div className="w-20 h-16 rounded-lg bg-muted flex items-center justify-center shrink-0">
                     <Package className="w-5 h-5 text-muted-foreground/30" />

@@ -12,7 +12,7 @@
 // Auditoria: tudo passa por admin-cpf-consulta edge function que valida
 // admin_token e loga em admin_cpf_consulta_log.
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,6 +86,16 @@ function statusBadge(status: LogEntry["status"]) {
   return <Badge className={`${cfg.color} text-white text-xs`}>{cfg.label}</Badge>;
 }
 
+async function fetchHistorico(): Promise<LogEntry[]> {
+  const token = localStorage.getItem(SESSION_KEY) ?? "";
+  const { data, error } = await supabase.functions.invoke("admin-cpf-consulta", {
+    body: { admin_token: token, action: "list_log" },
+  });
+  if (error) throw new Error(error.message || "Erro ao carregar historico");
+  if (data?.error) throw new Error(data.error);
+  return (data?.log as LogEntry[]) ?? [];
+}
+
 export default function ConsultaCpfAdmin() {
   const [cpfInput, setCpfInput] = useState("");
   const [justificativa, setJustificativa] = useState("");
@@ -93,28 +103,35 @@ export default function ConsultaCpfAdmin() {
   const [result, setResult] = useState<ConsultaResult | null>(null);
   const [naoEncontrado, setNaoEncontrado] = useState<string | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
-  const [logLoading, setLogLoading] = useState(false);
+  const [logLoading, setLogLoading] = useState(true);
 
-  const carregarHistorico = useCallback(async () => {
+  const carregarHistorico = async () => {
     setLogLoading(true);
     try {
-      const token = localStorage.getItem(SESSION_KEY) ?? "";
-      const { data, error } = await supabase.functions.invoke("admin-cpf-consulta", {
-        body: { admin_token: token, action: "list_log" },
-      });
-      if (error) throw new Error(error.message || "Erro ao carregar historico");
-      if (data?.error) throw new Error(data.error);
-      setLog((data?.log as LogEntry[]) ?? []);
+      setLog(await fetchHistorico());
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao carregar historico");
     } finally {
       setLogLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    void carregarHistorico();
-  }, [carregarHistorico]);
+    let active = true;
+    void fetchHistorico().then(
+      (entries) => {
+        if (!active) return;
+        setLog(entries);
+        setLogLoading(false);
+      },
+      (error: unknown) => {
+        if (!active) return;
+        toast.error(error instanceof Error ? error.message : "Erro ao carregar historico");
+        setLogLoading(false);
+      },
+    );
+    return () => { active = false; };
+  }, []);
 
   async function consultar() {
     const cpfDigitos = cpfInput.replace(/\D/g, "");

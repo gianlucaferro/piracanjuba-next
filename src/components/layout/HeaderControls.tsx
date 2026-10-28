@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Minus, Plus, Sun, Moon } from "lucide-react";
 import Instagram from "@/components/icons/InstagramIcon";
 
@@ -45,23 +45,24 @@ function FontSizeControl() {
   );
 }
 
-function DarkModeToggle() {
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
+function subscribeTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+const getTheme = () => document.documentElement.classList.contains("dark");
+const getServerTheme = () => null;
 
-  useEffect(() => {
-    setMounted(true);
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
+function DarkModeToggle() {
+  const dark = useSyncExternalStore<boolean | null>(subscribeTheme, getTheme, getServerTheme);
 
   const toggle = () => {
     const next = !dark;
-    setDark(next);
     document.documentElement.classList.toggle("dark", next);
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
-  if (!mounted) {
+  if (dark === null) {
     return <div className="min-w-[44px] min-h-[44px]" />;
   }
 

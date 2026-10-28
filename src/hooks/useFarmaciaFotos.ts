@@ -14,10 +14,10 @@ async function fetchFarmaciaFotos(): Promise<Map<string, FarmaciaInfo>> {
     .select("nome, foto_url, telefone, tipo_telefone");
 
   const map = new Map<string, FarmaciaInfo>();
-  (data || []).forEach((f: any) => map.set(f.nome, {
+  (data || []).forEach((f) => map.set(f.nome, {
     foto_url: f.foto_url || null,
     telefone: f.telefone || null,
-    tipo_telefone: f.tipo_telefone || null,
+    tipo_telefone: f.tipo_telefone === "whatsapp" || f.tipo_telefone === "fixo" ? f.tipo_telefone : null,
   }));
   return map;
 }

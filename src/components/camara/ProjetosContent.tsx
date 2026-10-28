@@ -59,7 +59,7 @@ export function ProjetosContent() {
             aria-label="Buscar projeto"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={(value) => { if (value !== null) setStatusFilter(value); }}>
           <SelectTrigger className="w-44" aria-label="Filtrar por situação">
             <SelectValue />
           </SelectTrigger>
@@ -70,7 +70,7 @@ export function ProjetosContent() {
             <SelectItem value="em_tramitacao">Em tramitação</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={origemFilter} onValueChange={setOrigemFilter}>
+        <Select value={origemFilter} onValueChange={(value) => { if (value !== null) setOrigemFilter(value); }}>
           <SelectTrigger className="w-40" aria-label="Filtrar por origem">
             <SelectValue />
           </SelectTrigger>

@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   ResponsiveContainer,
   AreaChart,
@@ -126,7 +128,7 @@ export default function PibHistoricoCard() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v: number) => [fmtBi(v), "PIB"]}
+              formatter={numericTooltip((v) => [fmtBi(v), "PIB"])}
               labelFormatter={(a) => `Ano ${a}`}
             />
             <Area
@@ -184,7 +186,7 @@ export default function PibHistoricoCard() {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, "Agro no VAB"]}
+                formatter={numericTooltip((v) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, "Agro no VAB"])}
               />
               <Bar dataKey="pct" radius={[0, 5, 5, 0]}>
                 {comparacaoData.map((r) => (
@@ -221,7 +223,7 @@ export default function PibHistoricoCard() {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, "Agro no VAB"]}
+                formatter={numericTooltip((v) => [`${v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, "Agro no VAB"])}
                 labelFormatter={(a) => `Ano ${a}`}
               />
               <Line type="monotone" dataKey="pct" stroke="#d97706" strokeWidth={2.5} dot={false} />

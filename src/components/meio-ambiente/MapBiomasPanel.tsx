@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   AreaChart,
@@ -44,10 +46,6 @@ const CATEGORIAS = [
   { key: "outros",      label: "Outros",            icon: Info,      cor: "#999999" },
 ] as const;
 
-const CAT_COLOR: Record<string, string> = Object.fromEntries(
-  CATEGORIAS.map((c) => [c.key, c.cor]),
-);
-
 function fmt(ha: number): string {
   if (ha >= 1000) return `${(ha / 1000).toFixed(1)} mil ha`;
   return `${Math.round(ha)} ha`;
@@ -58,7 +56,7 @@ function fmtPct(n: number): string {
 }
 
 export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
-  const { chartData, snapshot1985, snapshot2024, totalHa, mudancas } = useMemo(() => {
+  const { chartData, totalHa, mudancas } = useMemo(() => {
     // Agrupa por (ano, categoria)
     const porAnoCategoria: Record<number, Record<string, number>> = {};
     for (const r of rows) {
@@ -90,8 +88,6 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
 
     return {
       chartData,
-      snapshot1985: snap85,
-      snapshot2024: snap24,
       totalHa: total,
       mudancas: mudancasCalc,
     };
@@ -203,10 +199,10 @@ export default function MapBiomasPanel({ rows }: { rows: Row[] }) {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number, name: string) => {
+                  formatter={numericTooltip((value, name) => {
                     const cat = CATEGORIAS.find((c) => c.key === name);
                     return [`${fmt(value)}`, cat?.label || name];
-                  }}
+                  })}
                   labelFormatter={(label) => `Ano ${label}`}
                 />
                 <Legend
