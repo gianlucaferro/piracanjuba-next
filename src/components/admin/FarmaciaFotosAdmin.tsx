@@ -1,13 +1,17 @@
 "use client";
 
+import NextImage from "next/image";
+
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, Check, Loader2, Image, Trash2, Pencil, Save, Phone, X } from "lucide-react";
+import { Upload, Loader2, Image as ImageIcon, Trash2, Pencil, Save, Phone, X } from "lucide-react";
 import { toast } from "sonner";
+import { getErrorMessage } from "./request-error";
+import { ImageUploadButton } from "./ImageUploadButton";
 
 const FARMACIAS = [
   "Drogaria Bem Estar", "Drogaria do Povo", "Drogaria Nacional",
@@ -44,7 +48,7 @@ const DEFAULT_PHONES: Record<string, string> = {
   "Drogaria Piracanjuba": "(64) 3405-1441",
 };
 
-type FarmaciaRow = { id: string; foto_url: string | null; telefone: string | null; tipo_telefone: string | null };
+type FarmaciaRow = { nome: string; id: string; foto_url: string | null; telefone: string | null; tipo_telefone: string | null };
 
 export default function FarmaciaFotosAdmin() {
   const queryClient = useQueryClient();
@@ -57,7 +61,7 @@ export default function FarmaciaFotosAdmin() {
     queryFn: async () => {
       const { data } = await supabase.from("farmacia_fotos").select("*");
       const map = new Map<string, FarmaciaRow>();
-      (data || []).forEach((f: any) => map.set(f.nome, f));
+      ((data || []) as FarmaciaRow[]).forEach((f) => map.set(f.nome, f));
       return map;
     },
   });
@@ -114,8 +118,8 @@ export default function FarmaciaFotosAdmin() {
 
       toast.success(`Foto de ${nome} salva! (${sizeKB}KB WebP)`);
       invalidate();
-    } catch (e: any) {
-      toast.error(`Erro: ${e.message}`);
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
     } finally {
       setUploading(null);
     }
@@ -126,8 +130,8 @@ export default function FarmaciaFotosAdmin() {
       await supabase.from("farmacia_fotos").delete().eq("nome", nome);
       toast.success(`Foto de ${nome} removida`);
       invalidate();
-    } catch (e: any) {
-      toast.error(`Erro: ${e.message}`);
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
     }
   };
 
@@ -148,8 +152,8 @@ export default function FarmaciaFotosAdmin() {
       toast.success(`Telefone de ${nome} atualizado!`);
       setEditing(null);
       invalidate();
-    } catch (e: any) {
-      toast.error(`Erro: ${e.message}`);
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
     }
   };
 
@@ -182,9 +186,9 @@ export default function FarmaciaFotosAdmin() {
                 {/* Preview */}
                 <div className="w-14 h-14 rounded-lg bg-muted overflow-hidden shrink-0 flex items-center justify-center">
                   {row?.foto_url ? (
-                    <img src={row.foto_url} alt={nome} className="w-full h-full object-cover" />
+                    <NextImage unoptimized width={800} height={800} src={row.foto_url} alt={nome} className="w-full h-full object-cover" />
                   ) : (
-                    <Image className="w-6 h-6 text-muted-foreground/30" />
+                    <ImageIcon className="w-6 h-6 text-muted-foreground/30" />
                   )}
                 </div>
 
@@ -201,23 +205,9 @@ export default function FarmaciaFotosAdmin() {
                 </div>
 
                 {/* Upload button */}
-                <label className="cursor-pointer shrink-0">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleUpload(nome, file);
-                      e.target.value = "";
-                    }}
-                  />
-                  <Button variant={row?.foto_url ? "outline" : "default"} size="sm" asChild disabled={isUploading}>
-                    <span>
-                      {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-                    </span>
-                  </Button>
-                </label>
+                <ImageUploadButton variant={row?.foto_url ? "outline" : "default"} disabled={isUploading} label={`Enviar foto de ${nome}`} onFileSelect={(file) => handleUpload(nome, file)}>
+                  {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                </ImageUploadButton>
 
                 {row?.foto_url && (
                   <Button variant="ghost" size="sm" onClick={() => handleRemove(nome)} className="text-destructive shrink-0">

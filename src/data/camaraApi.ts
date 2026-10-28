@@ -3,6 +3,7 @@ const supabase = createBrowserSupabaseClient();
 
 // Types
 export type CamaraLicitacao = {
+  documento_url: string | null;
   id: string;
   ano: number;
   numero: string | null;
@@ -15,6 +16,7 @@ export type CamaraLicitacao = {
 };
 
 export type CamaraContrato = {
+  centi_id: string | null;
   id: string;
   ano: number;
   numero: string | null;

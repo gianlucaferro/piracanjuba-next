@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   ResponsiveContainer,
@@ -322,10 +324,10 @@ export default function AnaliseAmbientalIntegrada({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number, name: string) => [
+                formatter={numericTooltip((v, name) => [
                   `${(v / 1000).toFixed(1)} mil ha`,
-                  name === "v1985" ? "1985" : "2024",
-                ]}
+                  name,
+                ])}
               />
               <Bar dataKey="v1985" name="1985" fill="hsl(215, 20%, 70%)" radius={[2, 2, 0, 0]} />
               <Bar dataKey="v2024" name="2024" radius={[2, 2, 0, 0]}>

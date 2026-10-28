@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   ResponsiveContainer,
@@ -107,11 +109,11 @@ export default function ChuvaDengueChart({
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number, name: string) => {
+              formatter={numericTooltip((value, name) => {
                 if (name === "Chuva (mm)") return [`${value.toFixed(1)} mm`, "Chuva"];
                 if (name === "Casos de Dengue") return [`${value} casos`, "Dengue"];
                 return [value, name];
-              }}
+              })}
               labelFormatter={(label) => `${label}/${ano}`}
             />
             <Legend

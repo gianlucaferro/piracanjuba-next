@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, X } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -66,7 +66,7 @@ export default function MapaAnuncios({
   const mapInstance = useRef<L.Map | null>(null);
   const [visible, setVisible] = useState(false);
 
-  const withBairro = anuncios.filter((a) => a.bairro);
+  const withBairro = useMemo(() => anuncios.filter((a) => a.bairro), [anuncios]);
 
   useEffect(() => {
     if (!visible || !mapRef.current || mapInstance.current) return;
@@ -103,21 +103,46 @@ export default function MapaAnuncios({
 
       const marker = L.marker(coords, { icon }).addTo(map);
 
-      const popupContent = `
-        <div style="max-width:220px">
-          <strong style="font-size:13px">${bairro}</strong>
-          <p style="font-size:11px;color:#666;margin:4px 0 0">${items.length} anúncio(s)</p>
-          <div style="margin-top:8px;max-height:120px;overflow-y:auto">
-            ${items.slice(0, 5).map((a) => `
-              <div style="padding:4px 0;border-top:1px solid #eee;cursor:pointer" onclick="window.__pbaMapSelect && window.__pbaMapSelect('${a.id}')">
-                <div style="font-size:11px;font-weight:600">${a.titulo.slice(0, 40)}${a.titulo.length > 40 ? "..." : ""}</div>
-                <div style="font-size:10px;color:#25D366;font-weight:bold">${formatPreco(a.preco, a.preco_tipo)}</div>
-              </div>
-            `).join("")}
-            ${items.length > 5 ? `<div style="font-size:10px;color:#666;padding-top:4px">+${items.length - 5} mais</div>` : ""}
-          </div>
-        </div>
-      `;
+      // textContent evita interpretar títulos e bairros cadastrados como HTML.
+      const popupContent = document.createElement("div");
+      popupContent.style.maxWidth = "220px";
+      const heading = document.createElement("strong");
+      heading.textContent = bairro;
+      heading.style.fontSize = "13px";
+      popupContent.append(heading);
+      const count = document.createElement("p");
+      count.textContent = `${items.length} anúncio(s)`;
+      count.style.cssText = "font-size:11px;color:#666;margin:4px 0 0";
+      popupContent.append(count);
+      const list = document.createElement("div");
+      list.style.cssText = "margin-top:8px;max-height:120px;overflow-y:auto";
+      for (const item of items.slice(0, 5)) {
+        const action = onSelect
+          ? document.createElement("button")
+          : document.createElement("a");
+        if (action instanceof HTMLButtonElement && onSelect) {
+          action.type = "button";
+          action.addEventListener("click", () => onSelect(item.id));
+        } else if (action instanceof HTMLAnchorElement) {
+          action.href = `/compra-e-venda/${encodeURIComponent(item.id)}`;
+        }
+        action.style.cssText = "display:block;width:100%;text-align:left;padding:4px 0;border-top:1px solid #eee;cursor:pointer";
+        const title = document.createElement("div");
+        title.textContent = `${item.titulo.slice(0, 40)}${item.titulo.length > 40 ? "..." : ""}`;
+        title.style.cssText = "font-size:11px;font-weight:600";
+        const price = document.createElement("div");
+        price.textContent = formatPreco(item.preco, item.preco_tipo);
+        price.style.cssText = "font-size:10px;color:#25D366;font-weight:bold";
+        action.append(title, price);
+        list.append(action);
+      }
+      if (items.length > 5) {
+        const remaining = document.createElement("div");
+        remaining.textContent = `+${items.length - 5} mais`;
+        remaining.style.cssText = "font-size:10px;color:#666;padding-top:4px";
+        list.append(remaining);
+      }
+      popupContent.append(list);
 
       marker.bindPopup(popupContent);
     });
@@ -128,15 +153,7 @@ export default function MapaAnuncios({
       map.remove();
       mapInstance.current = null;
     };
-  }, [visible, withBairro]);
-
-  // Expose select handler to popup onclick
-  useEffect(() => {
-    (window as any).__pbaMapSelect = (id: string) => {
-      if (onSelect) onSelect(id);
-    };
-    return () => { delete (window as any).__pbaMapSelect; };
-  }, [onSelect]);
+  }, [visible, withBairro, onSelect]);
 
   if (withBairro.length === 0) return null;
 

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import type { Database } from "@/lib/supabase/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
@@ -25,8 +27,8 @@ import {
   fetchExecutivo, fetchSecretarias, fetchServidores,
   fetchDespesas, fetchContratos, fetchLicitacoes,
   fetchDiarias, fetchObras, fetchSecretariosRemuneracao,
-  fetchProcuradores, fetchExecutivoRemuneracao,
-  type Contrato, type Licitacao
+  fetchExecutivoRemuneracao,
+  type Contrato, type Licitacao, type Secretaria, type Obra, type RemuneracaoServidor
 } from "@/data/prefeituraApi";
 import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -46,6 +48,11 @@ import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
 
+type Decreto = Database["public"]["Tables"]["decretos"]["Row"];
+type Portaria = Database["public"]["Tables"]["portarias"]["Row"];
+type LeiMunicipal = Database["public"]["Tables"]["leis_municipais"]["Row"];
+type SyncLog = Database["public"]["Tables"]["sync_log"]["Row"];
+
 /**
  * Foto de pessoa com fallback gracioso: se a URL for nula OU falhar ao carregar,
  * mostra o ícone de pessoa em vez de deixar uma caixa vazia.
@@ -59,7 +66,11 @@ function FotoComFallback({ src, alt, className }: { src: string | null; alt: str
       </div>
     );
   }
-  return <img src={src} alt={alt} className={className} onError={() => setErro(true)} />;
+  return (
+    <div className="relative w-full h-full">
+      <Image src={src} alt={alt} fill unoptimized className={className} onError={() => setErro(true)} />
+    </div>
+  );
 }
 
 function EmptyState({ icon: Icon, title, description, fonteUrl }: {
@@ -208,12 +219,12 @@ function SecretariasTab() {
     queryFn: () => fetchSecretariosRemuneracao(data!),
     enabled: !!data?.length,
   });
-  const [selectedSecretaria, setSelectedSecretaria] = useState<any>(null);
+  const [selectedSecretaria, setSelectedSecretaria] = useState<Secretaria | null>(null);
   const [resumo, setResumo] = useState<string | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
   const cacheSecretaria = useRef<Record<string, string>>({});
 
-  const handleClick = async (s: any) => {
+  const handleClick = async (s: Secretaria) => {
     setSelectedSecretaria(s);
     if (cacheSecretaria.current[s.id]) {
       setResumo(cacheSecretaria.current[s.id]);
@@ -387,9 +398,9 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const [selectedServidor, setSelectedServidor] = useState<{ id: string; nome: string; cargo: string | null } | null>(null);
-  const [resumoData, setResumoData] = useState<{ resumo: string; remuneracoes: any[] } | null>(null);
+  const [resumoData, setResumoData] = useState<{ resumo: string; remuneracoes: RemuneracaoServidor[] } | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
-  const cacheServidor = useRef<Record<string, { resumo: string; remuneracoes: any[] }>>({});
+  const cacheServidor = useRef<Record<string, { resumo: string; remuneracoes: RemuneracaoServidor[] }>>({});
 
   const handleClickServidor = async (s: { id: string; nome: string; cargo: string | null }) => {
     setSelectedServidor(s);
@@ -401,13 +412,13 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
     setResumoData(null);
     setLoadingResumo(true);
     try {
-      const { data, error } = await supabase.functions.invoke("summarize-servidor", {
+      const { data, error } = await supabase.functions.invoke<{ error?: string; resumo?: string; remuneracoes?: RemuneracaoServidor[] }>("summarize-servidor", {
         body: { servidor_id: s.id },
       });
       if (error) throw error;
       const r = data?.error
         ? { resumo: data.error, remuneracoes: [] }
-        : { resumo: data.resumo, remuneracoes: data.remuneracoes || [] };
+        : { resumo: data?.resumo || "Não foi possível gerar o resumo no momento.", remuneracoes: data?.remuneracoes || [] };
       cacheServidor.current[s.id] = r;
       setResumoData(r);
     } catch {
@@ -504,7 +515,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
             {resumoData?.remuneracoes && resumoData.remuneracoes.length > 0 && (
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Remuneração recente</p>
-                {resumoData.remuneracoes.map((r: any) => (
+                {resumoData.remuneracoes.map((r) => (
                   <div key={r.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
                     <span className="text-sm text-muted-foreground">{r.competencia}</span>
                     <div className="flex items-center gap-3">
@@ -1102,8 +1113,8 @@ function LicitacoesTab() {
                 {l.modalidade && (
                   modalidadeTooltip ? (
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span><Badge variant="secondary" className="text-sm cursor-help">{l.modalidade} <Info className="w-3 h-3 inline ml-0.5" /></Badge></span>
+                      <TooltipTrigger className="cursor-help">
+                        <Badge variant="secondary" className="text-sm cursor-help">{l.modalidade} <Info className="w-3 h-3 inline ml-0.5" /></Badge>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>
                     </Tooltip>
@@ -1251,13 +1262,13 @@ function DiariasTab() {
 
 function ObrasTab() {
   const { data, isLoading } = useQuery({ queryKey: ["obras"], queryFn: fetchObras });
-  const [selectedObra, setSelectedObra] = useState<any>(null);
+  const [selectedObra, setSelectedObra] = useState<Obra | null>(null);
   const [resumo, setResumo] = useState<string | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
   const cacheObra = useRef<Record<string, string>>({});
   const [searchObras, setSearchObras] = useState("");
 
-  const handleClick = async (obra: any) => {
+  const handleClick = async (obra: Obra) => {
     setSelectedObra(obra);
     if (cacheObra.current[obra.id]) {
       setResumo(cacheObra.current[obra.id]);
@@ -1433,7 +1444,8 @@ function AdminPanel() {
           "sync-empenhos-prefeitura-nucleogov",
         ])
         .order("started_at", { ascending: false })
-        .limit(10);
+        .limit(10)
+        .returns<SyncLog[]>();
       if (error) throw error;
       return data;
     },
@@ -1501,7 +1513,7 @@ function AdminPanel() {
         )}
         {syncLogs && syncLogs.length > 0 && (
           <div className="space-y-2">
-            {syncLogs.map((log: any) => (
+            {syncLogs.map((log) => (
               <div key={log.id} className="stat-card flex items-start gap-3">
                 {statusIcon(log.status)}
                 <div className="flex-1 min-w-0">
@@ -1572,7 +1584,7 @@ function LeiOrganicaTab() {
           <div className="flex-1">
             <h3 className="text-lg font-bold text-foreground">Lei Orgânica de Piracanjuba</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              A "constituição municipal" — norma máxima do município. Navegue pelos artigos, busque termos e veja resumos de IA.
+              A &quot;constituição municipal&quot; — norma máxima do município. Navegue pelos artigos, busque termos e veja resumos de IA.
             </p>
           </div>
         </div>
@@ -1873,7 +1885,7 @@ function ArtigosSubTab() {
       {!isLoading && filtered.length === 0 && artigos.length > 0 && (
         <div className="stat-card text-center py-6">
           <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Nenhum artigo encontrado para "{search}"</p>
+          <p className="text-muted-foreground">Nenhum artigo encontrado para &quot;{search}&quot;</p>
         </div>
       )}
 
@@ -2088,7 +2100,7 @@ function EmendasSubTab() {
       {!isLoading && docs.length > 0 && filtered.length === 0 && (
         <div className="stat-card text-center py-6">
           <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Nenhuma emenda para "{search}"</p>
+          <p className="text-muted-foreground">Nenhuma emenda para &quot;{search}&quot;</p>
         </div>
       )}
 
@@ -2179,7 +2191,8 @@ function DecretosTab() {
       const { data, error } = await supabase
         .from("decretos")
         .select("*")
-        .order("data_publicacao", { ascending: false });
+        .order("data_publicacao", { ascending: false })
+        .returns<Decreto[]>();
       if (error) throw error;
       return data || [];
     },
@@ -2206,7 +2219,7 @@ function DecretosTab() {
     }
   };
 
-  const handleResumo = async (decreto: any) => {
+  const handleResumo = async (decreto: Decreto) => {
     if (expandedId === decreto.id) { setExpandedId(null); return; }
     setExpandedId(decreto.id);
     if (resumoCache[decreto.id] || decreto.resumo_ia) {
@@ -2274,7 +2287,7 @@ function DecretosTab() {
         <div className="stat-card text-center py-8 space-y-3">
           <ScrollText className="w-12 h-12 text-muted-foreground mx-auto" />
           <p className="text-muted-foreground">Nenhum decreto cadastrado.</p>
-          <p className="text-sm text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
+          <p className="text-sm text-muted-foreground">Clique em &quot;Atualizar&quot; para importar do portal da prefeitura.</p>
           <Button onClick={handleSync} disabled={syncing}>
             <RefreshCw className={`w-4 h-4 mr-1 ${syncing ? "animate-spin" : ""}`} /> Importar Decretos
           </Button>
@@ -2284,7 +2297,7 @@ function DecretosTab() {
       {!isLoading && (decretos?.length || 0) > 0 && filtered.length === 0 && (
         <div className="stat-card text-center py-6">
           <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Nenhum decreto encontrado para "{search}"</p>
+          <p className="text-muted-foreground">Nenhum decreto encontrado para &quot;{search}&quot;</p>
         </div>
       )}
 
@@ -2391,13 +2404,14 @@ function PortariasTab() {
       const { data, error } = await supabase
         .from("portarias")
         .select("*")
-        .order("data_publicacao", { ascending: false });
+        .order("data_publicacao", { ascending: false })
+        .returns<Portaria[]>();
       if (error) throw error;
       return data || [];
     },
   });
 
-  const filtered = (portarias || []).filter((p: any) => {
+  const filtered = (portarias || []).filter((p) => {
     const q = search.toLowerCase();
     return !q || p.numero.toLowerCase().includes(q) || p.ementa.toLowerCase().includes(q);
   });
@@ -2418,7 +2432,7 @@ function PortariasTab() {
     }
   };
 
-  const handleResumo = async (portaria: any) => {
+  const handleResumo = async (portaria: Portaria) => {
     if (expandedId === portaria.id) { setExpandedId(null); return; }
     setExpandedId(portaria.id);
     if (resumoCache[portaria.id] || portaria.resumo_ia) {
@@ -2465,7 +2479,7 @@ function PortariasTab() {
             <p className="text-sm text-muted-foreground">Portarias</p>
           </div>
           <div className="stat-card text-center">
-            <p className="text-2xl font-bold text-primary">{portarias?.filter((p: any) => p.resumo_ia).length}</p>
+            <p className="text-2xl font-bold text-primary">{portarias?.filter((p) => p.resumo_ia).length}</p>
             <p className="text-sm text-muted-foreground">Com resumo IA</p>
           </div>
           <div className="stat-card text-center">
@@ -2486,7 +2500,7 @@ function PortariasTab() {
         <div className="stat-card text-center py-8 space-y-3">
           <FileText className="w-12 h-12 text-muted-foreground mx-auto" />
           <p className="text-muted-foreground">Nenhuma portaria cadastrada.</p>
-          <p className="text-sm text-muted-foreground">Clique em "Atualizar" para importar do portal da prefeitura.</p>
+          <p className="text-sm text-muted-foreground">Clique em &quot;Atualizar&quot; para importar do portal da prefeitura.</p>
           <Button onClick={handleSync} disabled={syncing}>
             <RefreshCw className={`w-4 h-4 mr-1 ${syncing ? "animate-spin" : ""}`} /> Importar Portarias
           </Button>
@@ -2496,12 +2510,12 @@ function PortariasTab() {
       {!isLoading && (portarias?.length || 0) > 0 && filtered.length === 0 && (
         <div className="stat-card text-center py-6">
           <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Nenhuma portaria encontrada para "{search}"</p>
+          <p className="text-muted-foreground">Nenhuma portaria encontrada para &quot;{search}&quot;</p>
         </div>
       )}
 
       <div className="space-y-3">
-        {paged.map((portaria: any) => {
+        {paged.map((portaria: Portaria) => {
           const isExpanded = expandedId === portaria.id;
           const resumo = resumoCache[portaria.id] || portaria.resumo_ia;
           const isLoadingThis = loadingResumo === portaria.id;
@@ -2589,11 +2603,12 @@ function PortariasTab() {
 // ===== LEIS MUNICIPAIS TAB =====
 
 function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState(initialSearch || "");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 20;
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [resumoCache, setResumoCache] = useState<Record<string, { resumo: string; categoria?: string }>>({});
+  const [resumoCache, setResumoCache] = useState<Record<string, { resumo: string; categoria?: string | null }>>({});
   const [loadingResumo, setLoadingResumo] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todas");
@@ -2619,20 +2634,21 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
       const { data, error } = await supabase
         .from("leis_municipais")
         .select("*")
-        .order("data_publicacao", { ascending: false });
+        .order("data_publicacao", { ascending: false })
+        .returns<LeiMunicipal[]>();
       if (error) throw error;
       return data || [];
     },
   });
 
-  const filtered = (leis || []).filter((l: any) => {
+  const filtered = (leis || []).filter((l) => {
     const q = search.toLowerCase();
     const matchSearch = !q || l.numero.toLowerCase().includes(q) || l.ementa.toLowerCase().includes(q);
     const matchCat = categoriaFilter === "todas" || l.categoria === categoriaFilter;
     return matchSearch && matchCat;
   });
 
-  const categorias = [...new Set((leis || []).map((l: any) => l.categoria).filter(Boolean))].sort() as string[];
+  const categorias = [...new Set((leis || []).map((l) => l.categoria).filter((categoria): categoria is string => Boolean(categoria)))].sort();
 
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -2650,7 +2666,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
     }
   };
 
-  const handleResumo = async (lei: any) => {
+  const handleResumo = async (lei: LeiMunicipal) => {
     if (expandedId === lei.id) { setExpandedId(null); return; }
     setExpandedId(lei.id);
     if (resumoCache[lei.id] || (lei.resumo_ia && lei.categoria)) {
@@ -2659,7 +2675,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
     }
     setLoadingResumo(lei.id);
     try {
-      const { data, error } = await supabase.functions.invoke("summarize-lei-municipal", {
+      const { data, error } = await supabase.functions.invoke<{ resumo?: string; categoria?: string | null }>("summarize-lei-municipal", {
         body: { lei_id: lei.id },
       });
       if (error) throw error;
@@ -2670,9 +2686,11 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
           categoria: data?.categoria,
         },
       }));
-      // Update local lei data to reflect new categoria
       if (data?.categoria) {
-        lei.categoria = data.categoria;
+        const categoria = data.categoria;
+        queryClient.setQueryData<LeiMunicipal[]>(["leis_municipais"], (anteriores) =>
+          anteriores?.map((item) => item.id === lei.id ? { ...item, categoria } : item),
+        );
       }
     } catch (e) {
       console.error(e);
@@ -2714,7 +2732,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
               className={`px-2.5 py-1 rounded-full text-sm font-medium transition-colors ${categoriaFilter === cat ? "bg-primary text-primary-foreground" : CATEGORIA_COLORS[cat] || "bg-muted text-muted-foreground"} hover:opacity-80`}
               onClick={() => { setCategoriaFilter(categoriaFilter === cat ? "todas" : cat); setPage(0); }}
             >
-              {cat} ({(leis || []).filter((l: any) => l.categoria === cat).length})
+              {cat} ({(leis || []).filter((l) => l.categoria === cat).length})
             </button>
           ))}
         </div>
@@ -2727,7 +2745,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
             <p className="text-sm text-muted-foreground">Leis Municipais</p>
           </div>
           <div className="stat-card text-center">
-            <p className="text-2xl font-bold text-primary">{leis?.filter((l: any) => l.categoria).length}</p>
+            <p className="text-2xl font-bold text-primary">{leis?.filter((l) => l.categoria).length}</p>
             <p className="text-sm text-muted-foreground">Categorizadas</p>
           </div>
           <div className="stat-card text-center">
@@ -2743,7 +2761,7 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
         <EmptyState icon={Gavel} title="Nenhuma lei municipal" description="Clique em 'Atualizar' para importar do portal." />
       ) : (
         <div className="space-y-3">
-          {paged.map((lei: any) => {
+          {paged.map((lei: LeiMunicipal) => {
             const isExpanded = expandedId === lei.id;
             const isLoadingThis = loadingResumo === lei.id;
             const cached = resumoCache[lei.id];
@@ -2831,81 +2849,6 @@ function LeisMunicipaisTab({ initialSearch }: { initialSearch?: string }) {
         Fonte: <a href={FONTES_PREFEITURA.leis} target="_blank" rel="noopener noreferrer"
           className="text-primary hover:underline inline-flex items-center gap-1">
           <ExternalLink className="w-3 h-3" /> Portal da Prefeitura
-        </a>
-      </p>
-    </div>
-  );
-}
-
-function ProcuradoriaTab() {
-  const { data: procuradores, isLoading } = useQuery({
-    queryKey: ["procuradores"],
-    queryFn: fetchProcuradores,
-  });
-
-  if (isLoading) return <div className="stat-card animate-pulse h-40" />;
-  if (!procuradores?.length) {
-    return <EmptyState icon={Gavel} title="Sem dados da Procuradoria"
-      description="Nenhum servidor com cargo de Procurador encontrado no portal de transparência."
-      fonteUrl={FONTES_PREFEITURA.folhas} />;
-  }
-
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Servidores que integram o quadro da Procuradoria Municipal, com informações de remuneração.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {procuradores.map((p) => {
-          const latestRem = p.remuneracoes?.[0];
-          return (
-            <div key={p.id} className="stat-card space-y-3">
-              <div>
-                <h3 className="font-semibold text-foreground">{p.nome}</h3>
-                <Badge variant="secondary" className="mt-1">{p.cargo}</Badge>
-              </div>
-
-              {latestRem && (
-                <div className="space-y-2 pt-2 border-t border-border">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-accent" />
-                    <span className="font-bold text-foreground">
-                      {formatCurrency(latestRem.bruto)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">bruto ({latestRem.competencia})</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-primary" />
-                    <span className="font-semibold text-primary">
-                      {formatCurrency(latestRem.liquido)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">líquido</span>
-                  </div>
-                </div>
-              )}
-
-              {p.remuneracoes && p.remuneracoes.length > 1 && (
-                <div className="space-y-1 pt-2 border-t border-border">
-                  <p className="text-sm font-medium text-muted-foreground">Histórico recente</p>
-                  {p.remuneracoes.slice(1).map((r: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{r.competencia}</span>
-                      <div className="flex gap-3">
-                        <span>Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
-                        <span>Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <p className="text-sm text-muted-foreground">
-        Fonte: <a href={FONTES_PREFEITURA.folhas} target="_blank" rel="noopener noreferrer"
-          className="text-primary hover:underline inline-flex items-center gap-1">
-          <ExternalLink className="w-3 h-3" /> Portal de Transparência
         </a>
       </p>
     </div>
@@ -3060,9 +3003,9 @@ function TCMTab() {
 
   // Stats agregados
   const total = apontamentos.length;
-  const valorTotal = apontamentos.reduce((s, a: any) => s + Number(a.valor_envolvido ?? 0), 0);
+  const valorTotal = apontamentos.reduce((s, a) => s + Number(a.valor_envolvido ?? 0), 0);
   const porTipo: Record<string, number> = {};
-  for (const a of apontamentos as any[]) {
+  for (const a of apontamentos) {
     const t = a.tipo || "Outros";
     porTipo[t] = (porTipo[t] ?? 0) + 1;
   }

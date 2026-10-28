@@ -1,4 +1,4 @@
-import { Plane, Calendar, MapPin, ExternalLink, CircleAlert } from "lucide-react";
+import { Plane, Calendar, MapPin, CircleAlert } from "lucide-react";
 import type { DiariaCamara } from "@/lib/data/diarias-camara";
 
 function fmtBRL(n: number | null) {

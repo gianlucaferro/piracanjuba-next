@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCamaraDiarias } from "@/data/camaraApi";
+import { fetchCamaraDiarias, type CamaraDiaria } from "@/data/camaraApi";
 import { Search, Plane, Sparkles, Download, Users, List } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +17,9 @@ export default function DiariasTab() {
   const { data: diarias, isLoading } = useQuery({ queryKey: ["camara-diarias"], queryFn: fetchCamaraDiarias });
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
-  const filtered = (diarias || []).filter((d) =>
+  const filtered = useMemo(() => (diarias || []).filter((d) =>
     !search || [d.beneficiario, d.destino, d.motivo].some((f) => f?.toLowerCase().includes(search.toLowerCase()))
-  );
+  ), [diarias, search]);
 
   const totalValor = filtered.reduce((s, d) => s + (d.valor || 0), 0);
 
@@ -35,7 +35,7 @@ export default function DiariasTab() {
     return Array.from(map.values()).sort((a, b) => b.total - a.total);
   }, [filtered]);
 
-  const handleClick = (d: any) => {
+  const handleClick = (d: CamaraDiaria) => {
     const conteudo = `- Beneficiário: ${d.beneficiario || "não informado"}\n- Cargo: ${d.cargo || "não informado"}\n- Destino: ${d.destino || "não informado"}\n- Motivo: ${d.motivo || "não informado"}\n- Valor: ${d.valor ? formatCurrency(d.valor) : "não informado"}\n- Data: ${d.data || "não informada"}`;
     requestSummary(d.id, "Diária da Câmara", conteudo, `Diária — ${d.beneficiario || "Sem beneficiário"}`);
   };

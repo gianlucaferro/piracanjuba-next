@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   LineChart,
@@ -11,7 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Bug, ExternalLink } from "lucide-react";
+import { Bug } from "lucide-react";
 
 const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
@@ -107,10 +109,10 @@ export default function DengueSazonalidadeChart({
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number, name: string) => {
+              formatter={numericTooltip((value, name) => {
                 const ano = name.replace("ano_", "");
                 return [`${value} casos`, ano];
-              }}
+              })}
             />
             <Legend
               wrapperStyle={{ fontSize: 12, paddingTop: 4 }}

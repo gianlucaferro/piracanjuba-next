@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { DollarSign, Vote, Wallet, Info, ArrowRight, HandCoins } from "lucide-react";
 import type { Vereador } from "@/data/api";
 import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador, fetchDoacoesCampanhaPorVereador } from "@/data/api";
@@ -16,7 +16,6 @@ const NUM_VEREADORES = 11;
 
 export default function VereadorCard({ v }: { v: Vereador }) {
   const initials = getInitials(v.nome);
-  const router = useRouter();
 
   const { data: counts } = useQuery({
     // nome no queryKey + queryFn pra incluir coautorias (autor_texto lista todos os autores)
@@ -73,15 +72,16 @@ export default function VereadorCard({ v }: { v: Vereador }) {
     : null;
 
   return (
-    <Link
-      href={`/vereadores/${v.slug}`}
-      className="group block stat-card card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-      aria-label={`Saiba mais sobre ${v.nome}`}
-    >
+    <article className="group relative isolate stat-card card-hover">
+      <Link
+        href={`/vereadores/${v.slug}`}
+        className="absolute inset-0 z-10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+        aria-label={`Saiba mais sobre ${v.nome}`}
+      />
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
           {v.foto_url ? (
-            <img src={v.foto_url} alt={`Foto de ${v.nome}`} loading="lazy" className="w-14 h-14 rounded-full object-cover" />
+            <Image unoptimized width={56} height={56} src={v.foto_url} alt={`Foto de ${v.nome}`} loading="lazy" className="w-14 h-14 rounded-full object-cover" />
           ) : (
             <span className="text-primary font-bold text-lg">{initials}</span>
           )}
@@ -158,10 +158,8 @@ export default function VereadorCard({ v }: { v: Vereador }) {
               <span className="text-xs font-normal text-muted-foreground">/ano</span>
             </p>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <p className="text-xs text-muted-foreground inline-flex items-center gap-0.5 cursor-help">
-                  Custo total para o contribuinte <Info className="w-3 h-3" />
-                </p>
+              <TooltipTrigger type="button" className="relative z-20 text-xs text-muted-foreground inline-flex items-center gap-0.5 cursor-help text-left rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                Custo total para o contribuinte <Info className="w-3 h-3" />
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
                 <p className="text-sm">
@@ -187,12 +185,11 @@ export default function VereadorCard({ v }: { v: Vereador }) {
           </div>
         </div>
       )}
-      {/* Doações de campanha (TSE) — leva à seção de doadores no perfil */}
+      {/* Doações de campanha (TSE), leva à seção de doadores no perfil */}
       {totalDoacoes > 0 && (
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/vereadores/${v.slug}#financiadores`); }}
-          className="mt-2 w-full flex items-center gap-2 rounded-md bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-left hover:bg-emerald-500/20 transition-colors"
+        <Link
+          href={`/vereadores/${v.slug}#financiadores`}
+          className="relative z-20 mt-2 w-full flex items-center gap-2 rounded-md bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-left hover:bg-emerald-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Ver doadores de campanha de ${v.nome}`}
         >
           <HandCoins className="w-4 h-4 text-emerald-600 flex-shrink-0" />
@@ -201,7 +198,7 @@ export default function VereadorCard({ v }: { v: Vereador }) {
             <p className="text-xs text-muted-foreground">Doações de campanha 2024 · ver doadores</p>
           </div>
           <ArrowRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-        </button>
+        </Link>
       )}
 
       <div className="mt-3 flex items-center justify-between gap-2 pt-3 border-t border-border">
@@ -214,10 +211,11 @@ export default function VereadorCard({ v }: { v: Vereador }) {
         <ShareButton
           title={v.nome}
           text={`Veja o perfil de ${v.nome}, vereador(a) de Piracanjuba`}
-          url={`${window.location.origin}/vereadores/${v.slug}`}
+          url={`https://piracanjuba.ai/vereadores/${v.slug}`}
           variant="icon"
+          className="relative z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
-    </Link>
+    </article>
   );
 }

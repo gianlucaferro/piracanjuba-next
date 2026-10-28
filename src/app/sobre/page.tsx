@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FONTES_CAMARA, FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import {
   ExternalLink,

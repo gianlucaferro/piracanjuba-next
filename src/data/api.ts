@@ -193,11 +193,6 @@ export type AtuacaoFilters = {
 
 const PAGE_SIZE = 30;
 
-// Map camara_atos tipo_codigo to atuação tipo labels
-const CENTI_TIPO_MAP: Record<number, string> = {
-  24: "Indicação",
-};
-
 // Fetch supplementary Indicações from camara_atos (Centi source, has 2026+ data)
 async function fetchCentiAtuacao(filters: AtuacaoFilters): Promise<AtuacaoParlamentar[]> {
   // Only fetch Indicações from Centi when relevant

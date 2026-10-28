@@ -2,8 +2,6 @@
 // Docs: https://www.cnj.jus.br/dadosabertos/
 // Não há REST padronizada; expomos placeholders pros dados disponíveis via portal.
 
-const PORTAL_DADOS_ABERTOS = "https://www.cnj.jus.br/dadosabertos-api";
-
 /**
  * Estatística processual por tribunal/comarca. Dataset principal:
  *  - "Justiça em Números" — relatórios anuais (PDF + CSV)

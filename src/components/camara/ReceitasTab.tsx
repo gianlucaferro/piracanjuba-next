@@ -8,6 +8,8 @@ import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDial
 import { formatCurrency } from "@/lib/formatters";
 import { downloadCSV } from "@/lib/csvExport";
 
+const EMPTY_ORCAMENTOS: CamaraOrcamento[] = [];
+
 export default function ReceitasTab() {
   const { data: orcamentos, isLoading } = useQuery({
     queryKey: ["camara-orcamento"],
@@ -15,7 +17,7 @@ export default function ReceitasTab() {
   });
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
-  const linhas = orcamentos || [];
+  const linhas = orcamentos ?? EMPTY_ORCAMENTOS;
 
   const maxVal = useMemo(() => {
     let max = 0;

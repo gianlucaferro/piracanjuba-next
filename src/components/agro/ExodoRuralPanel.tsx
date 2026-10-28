@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -73,7 +75,7 @@ export default function ExodoRuralPanel() {
             <YAxis tick={{ fontSize: 11 }} width={44} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
             <Tooltip
               contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, n: string) => [`${nf(v)} hab.`, n]}
+              formatter={numericTooltip((v, n) => [`${nf(v)} hab.`, n])}
               labelFormatter={(a) => `Censo ${a}`}
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />

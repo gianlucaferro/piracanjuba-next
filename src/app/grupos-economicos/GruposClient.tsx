@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchGrupos, type GrupoEconomico, type GrupoMembro } from "@/data/gruposApi";
-import { Network, Users, Building2, Loader2, Info, ArrowRight } from "lucide-react";
+import { Network, Users, Building2, Loader2, Info } from "lucide-react";
 
 const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 

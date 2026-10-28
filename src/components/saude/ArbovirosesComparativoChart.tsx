@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   ComposedChart,
@@ -122,7 +124,7 @@ export default function ArbovirosesComparativoChart({
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v: number, name: string) => [`${v} casos`, name]}
+              formatter={numericTooltip((v, name) => [`${v} casos`, name])}
             />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="rect" />
             <Bar

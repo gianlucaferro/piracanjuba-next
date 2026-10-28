@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, react-hooks/preserve-manual-memoization, react/no-unescaped-entities */
 "use client";
 
+import { formatChartNumber } from "@/lib/chart-formatters";
+
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -337,7 +339,7 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
-                <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 <Legend />
                 <Bar dataKey="Receita Própria" stackId="total" fill="hsl(220, 60%, 50%)" radius={[0, 0, 0, 0]} />
                 <Bar dataKey="Repasses" stackId="total" fill="hsl(152, 55%, 45%)" radius={[4, 4, 0, 0]} />
@@ -350,7 +352,7 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000_000).toFixed(1)}M`} />
-                <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 <Legend />
                 <Bar dataKey="Receita Própria" fill="hsl(220, 60%, 50%)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Cota-parte IPVA" fill="hsl(152, 55%, 45%)" radius={[4, 4, 0, 0]} />
@@ -366,13 +368,13 @@ function GraficosSection({ dados, anoSelecionado }: { dados: ArrecadacaoMunicipa
                     cy="50%"
                     outerRadius={100}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => percent == null ? name : `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {chartPie.map((_, i) => (
                       <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                  <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -440,7 +442,7 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+        <Select value={filtroTipo} onValueChange={(value) => { if (value !== null) setFiltroTipo(value); }}>
           <SelectTrigger className="w-[180px] h-9 text-sm">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
@@ -451,7 +453,7 @@ function TabelaDetalhada({ dados }: { dados: ArrecadacaoMunicipal[] }) {
             <SelectItem value="outro_repasse">Outros repasses</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
+        <Select value={filtroCategoria} onValueChange={(value) => { if (value !== null) setFiltroCategoria(value); }}>
           <SelectTrigger className="w-[180px] h-9 text-sm">
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
@@ -569,7 +571,7 @@ function SecaoIPVA({ dados }: { dados: ArrecadacaoMunicipal[] }) {
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `R$ ${(v / 1_000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 <Bar dataKey="valor" fill="hsl(152, 55%, 45%)" radius={[4, 4, 0, 0]} name="Cota-parte IPVA" />
               </BarChart>
             </ResponsiveContainer>
@@ -721,7 +723,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
           Comparativo Per Capita — Municípios GO de Mesmo Porte
         </h2>
         {anos.length > 1 && (
-          <Select value={String(anoAtivo)} onValueChange={v => setAnoComp(Number(v))}>
+          <Select value={String(anoAtivo)} onValueChange={(value) => { if (value !== null) setAnoComp(Number(value)); }}>
             <SelectTrigger className="w-[100px] h-8 text-sm">
               <SelectValue />
             </SelectTrigger>
@@ -782,7 +784,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={70} />
-                <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="Piracanjuba" fill="hsl(220, 60%, 50%)" radius={[0, 4, 4, 0]} />
                 <Bar dataKey="Média GO (mesmo porte)" fill="hsl(25, 80%, 55%)" radius={[0, 4, 4, 0]} />
@@ -806,7 +808,7 @@ function ComparativoPerCapita({ comparativo }: { comparativo: ArrecadacaoCompara
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="ano" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${v.toFixed(0)}`} />
-                <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                <Tooltip formatter={(value) => formatChartNumber(value, formatCurrency)} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Line type="monotone" dataKey="Piracanjuba" stroke="hsl(220, 60%, 50%)" strokeWidth={2} dot={{ r: 4 }} />
                 <Line type="monotone" dataKey="Média GO" stroke="hsl(25, 80%, 55%)" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} />
@@ -942,7 +944,7 @@ export default function Arrecadacao() {
             </div>
             <div className="flex items-center gap-2">
               {anos.length > 0 && (
-                <Select value={String(anoAtivo)} onValueChange={v => setAnoSelecionado(Number(v))}>
+                <Select value={String(anoAtivo)} onValueChange={(value) => { if (value !== null) setAnoSelecionado(Number(value)); }}>
                   <SelectTrigger className="w-[120px] h-9 text-sm">
                     <SelectValue />
                   </SelectTrigger>

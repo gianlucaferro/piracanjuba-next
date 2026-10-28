@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-28",
+  "base": "07141069ba99ed4de847e4085beff8017da1d329",
+  "branch": "codex/corrigir-tipos-lint-2026-10-28",
+  "baseline": {
+    "typescript_errors": 88,
+    "eslint_errors": 105,
+    "eslint_warnings": 93
+  },
+  "validation": {
+    "app_and_node_tests_types": "passed",
+    "next_app_and_node_tests_lint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "node_tests": 112,
+    "deno_tests": 161,
+    "dell_compile": "passed",
+    "exit_codes": {
+      "tests": 0,
+      "quality": 0,
+      "types": 0,
+      "sync-tests": 0,
+      "lint": 0,
+      "compile": 0
+    }
+  },
+  "scope": {
+    "production_database_changes": false,
+    "cron_changes": false,
+    "preview_and_production": "pending"
+  },
+  "audit": {
+    "low": 3,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "note": "Advisory GHSA-gcqx-w48m-w2h4 em deepmerge via shadcn CLI. Sem fix compatível informado pelo npm. Não executar downgrade automático para shadcn 1."
+  },
+  "rollback": {
+    "production_sha": "07141069ba99ed4de847e4085beff8017da1d329",
+    "vercel_deployment": "dpl_5t8z4HR147cUZd9e9dJeiRRemFZ2",
+    "github_deployment": 7357078518,
+    "procedure": "Promover deployment anterior na Vercel ou reverter o merge via commit/PR. Sem reversão de banco necessária."
+  }
+}

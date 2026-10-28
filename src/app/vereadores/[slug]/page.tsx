@@ -7,8 +7,6 @@ import {
   Mail,
   ExternalLink,
   Calendar,
-  CheckCircle2,
-  XCircle,
   FileText,
   Megaphone,
   DollarSign,
@@ -101,7 +99,7 @@ export default async function VereadorPage({
   const requerimentos = atos.filter((a) => a.tipo === "REQUERIMENTO");
   if (!result) notFound();
 
-  const { vereador, remuneracoes, atuacoes, projetos, presencas, custoTotal } = result;
+  const { vereador, remuneracoes, atuacoes, projetos, custoTotal } = result;
   const ultimaRemuneracao = remuneracoes[0];
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;

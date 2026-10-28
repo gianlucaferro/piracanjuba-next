@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import { Cloud, CloudRain, Droplets, Sun, Wind, Thermometer } from "lucide-react";
 import {
@@ -32,10 +34,10 @@ export default function ClimaClient({
     () =>
       dias.map((d) => ({
         data: shortDate(d.data),
-        chuva: Number(d.precipitacao_mm ?? 0),
-        tmax: Number(d.temperatura_max ?? 0),
-        tmin: Number(d.temperatura_min ?? 0),
-        tmed: Number(d.temperatura_media ?? 0),
+        chuva: d.precipitacao_mm,
+        tmax: d.temperatura_max,
+        tmin: d.temperatura_min,
+        tmed: d.temperatura_media,
         umid: Number(d.umidade_media ?? 0),
       })),
     [dias],
@@ -137,15 +139,16 @@ export default function ClimaClient({
               <XAxis dataKey="data" fontSize={11} />
               <YAxis fontSize={11} unit=" mm" />
               <Tooltip
+                filterNull={false}
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toFixed(1)} mm`, "Chuva"]}
+                formatter={numericTooltip((v) => [`${v.toFixed(1)} mm`, "Chuva"])}
               />
-              <Bar dataKey="chuva" fill="hsl(199, 89%, 48%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="chuva" name="Chuva" fill="hsl(199, 89%, 48%)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -163,18 +166,19 @@ export default function ClimaClient({
               <XAxis dataKey="data" fontSize={11} />
               <YAxis fontSize={11} unit="°C" domain={["dataMin - 2", "dataMax + 2"]} />
               <Tooltip
+                filterNull={false}
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number, name: string) => [`${v.toFixed(1)}°C`, name === "tmax" ? "Máxima" : name === "tmin" ? "Mínima" : "Média"]}
+                formatter={numericTooltip((v, name) => [`${v.toFixed(1)}°C`, name])}
               />
               <ReferenceLine y={28} stroke="hsl(20, 90%, 50%)" strokeDasharray="3 3" opacity={0.4} />
-              <Line type="monotone" dataKey="tmax" stroke="hsl(20, 90%, 55%)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tmed" stroke="hsl(160, 60%, 45%)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tmin" stroke="hsl(199, 89%, 48%)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="tmax" name="Máxima" stroke="hsl(20, 90%, 55%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
+              <Line type="monotone" dataKey="tmed" name="Média" stroke="hsl(160, 60%, 45%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
+              <Line type="monotone" dataKey="tmin" name="Mínima" stroke="hsl(199, 89%, 48%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

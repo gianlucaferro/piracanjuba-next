@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { pageMetadata, datasetJsonLd, SCHEMA_IDS } from "@/lib/seo";
+import { pageMetadata, datasetJsonLd } from "@/lib/seo";
 import { fetchAgroData } from "@/lib/data/setores";
 import {
   fetchChuvaHistoricaMensal,

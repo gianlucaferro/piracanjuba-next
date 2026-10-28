@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, CalendarCheck, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
+import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import SEO from "@/components/SEO";
@@ -10,7 +10,7 @@ import { VereadoresContent } from "@/components/camara/VereadoresContent";
 import { AtuacaoContent } from "@/components/camara/AtuacaoContent";
 import { ProjetosContent } from "@/components/camara/ProjetosContent";
 import { useQuery } from "@tanstack/react-query";
-import { fetchServidores } from "@/data/prefeituraApi";
+import { fetchServidores, type RemuneracaoServidor } from "@/data/prefeituraApi";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { Input } from "@/components/ui/input";
@@ -68,9 +68,9 @@ function ServidoresCamaraTab() {
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const [selectedServidor, setSelectedServidor] = useState<{ id: string; nome: string; cargo: string | null } | null>(null);
-  const [resumoData, setResumoData] = useState<{ resumo: string; remuneracoes: any[] } | null>(null);
+  const [resumoData, setResumoData] = useState<{ resumo: string; remuneracoes: RemuneracaoServidor[] } | null>(null);
   const [loadingResumo, setLoadingResumo] = useState(false);
-  const cacheServidor = useRef<Record<string, { resumo: string; remuneracoes: any[] }>>({});
+  const cacheServidor = useRef<Record<string, { resumo: string; remuneracoes: RemuneracaoServidor[] }>>({});
 
   const handleClickServidor = async (s: { id: string; nome: string; cargo: string | null }) => {
     setSelectedServidor(s);
@@ -82,13 +82,13 @@ function ServidoresCamaraTab() {
     setResumoData(null);
     setLoadingResumo(true);
     try {
-      const { data, error } = await supabase.functions.invoke("summarize-servidor", {
+      const { data, error } = await supabase.functions.invoke<{ error?: string; resumo?: string; remuneracoes?: RemuneracaoServidor[] }>("summarize-servidor", {
         body: { servidor_id: s.id },
       });
       if (error) throw error;
       const r = data?.error
         ? { resumo: data.error, remuneracoes: [] }
-        : { resumo: data.resumo, remuneracoes: data.remuneracoes || [] };
+        : { resumo: data?.resumo || "Não foi possível gerar o resumo no momento.", remuneracoes: data?.remuneracoes || [] };
       cacheServidor.current[s.id] = r;
       setResumoData(r);
     } catch {
@@ -195,7 +195,7 @@ function ServidoresCamaraTab() {
             {resumoData?.remuneracoes && resumoData.remuneracoes.length > 0 && (
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Remuneração recente</p>
-                {resumoData.remuneracoes.map((r: any) => (
+                {resumoData.remuneracoes.map((r) => (
                   <div key={r.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
                     <span className="text-sm text-muted-foreground">{r.competencia}</span>
                     <div className="flex items-center gap-3">

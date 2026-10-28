@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchCamaraLicitacoes } from "@/data/camaraApi";
+import { fetchCamaraLicitacoes, type CamaraLicitacao } from "@/data/camaraApi";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search, Gavel, Sparkles, Download, Info } from "lucide-react";
@@ -21,9 +21,9 @@ export default function LicitacoesTab() {
     !search || [l.objeto, l.numero, l.modalidade].some((f) => f?.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const handleClick = (l: any) => {
+  const handleClick = (l: CamaraLicitacao) => {
     const conteudo = `- Número: ${l.numero || "não informado"}\n- Modalidade: ${l.modalidade || "não informada"}\n- Objeto: ${l.objeto || "não informado"}\n- Situação: ${l.situacao || "não informada"}\n- Data abertura: ${l.data_abertura || "não informada"}\n- Valor estimado: ${l.valor_estimado ? formatCurrency(l.valor_estimado) : "não informado"}`;
-    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`, undefined, l.documento_url);
+    requestSummary(l.id, "Licitação da Câmara", conteudo, `Licitação ${l.numero || ""}`, undefined, l.documento_url || undefined);
   };
 
   const handleExportCSV = () => {
@@ -66,32 +66,28 @@ export default function LicitacoesTab() {
         {filtered.map((l) => {
           const modalidadeTooltip = l.modalidade ? getTooltip(l.modalidade) : null;
           return (
-            <button key={l.id} onClick={() => handleClick(l)} className="stat-card card-hover block w-full text-left">
-              <div className="flex items-start justify-between mb-1">
-                <p className="font-medium text-foreground text-sm">{l.objeto || "Sem descrição"}</p>
-                {l.situacao && <Badge variant="outline" className="text-sm shrink-0 ml-2">{l.situacao}</Badge>}
-              </div>
-              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
-                {l.numero && <span>Nº {l.numero}</span>}
-                {l.modalidade && (
-                  modalidadeTooltip ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex items-center gap-0.5 cursor-help">· {l.modalidade} <Info className="w-3 h-3" /></span>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <span>· {l.modalidade}</span>
-                  )
-                )}
-                {l.data_abertura && <span>· {new Date(l.data_abertura + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
-                {l.valor_estimado && <span>· {formatCurrency(l.valor_estimado)}</span>}
-              </div>
-              <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
-                <Sparkles className="w-3 h-3" /> Clique para resumo IA
-              </p>
-            </button>
+            <Tooltip key={l.id} disabled={!modalidadeTooltip}>
+              <TooltipTrigger type="button" onClick={() => handleClick(l)} className="stat-card card-hover block w-full text-left">
+                <div className="flex items-start justify-between mb-1">
+                  <p className="font-medium text-foreground text-sm">{l.objeto || "Sem descrição"}</p>
+                  {l.situacao && <Badge variant="outline" className="text-sm shrink-0 ml-2">{l.situacao}</Badge>}
+                </div>
+                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground items-center">
+                  {l.numero && <span>Nº {l.numero}</span>}
+                  {l.modalidade && (
+                    <span className="inline-flex items-center gap-0.5">
+                      · {l.modalidade} {modalidadeTooltip && <Info className="w-3 h-3" aria-hidden="true" />}
+                    </span>
+                  )}
+                  {l.data_abertura && <span>· {new Date(l.data_abertura + "T12:00:00").toLocaleDateString("pt-BR")}</span>}
+                  {l.valor_estimado && <span>· {formatCurrency(l.valor_estimado)}</span>}
+                </div>
+                <p className="text-xs text-primary/70 flex items-center gap-1 mt-1">
+                  <Sparkles className="w-3 h-3" /> Clique para resumo IA
+                </p>
+              </TooltipTrigger>
+              {modalidadeTooltip && <TooltipContent className="max-w-xs"><p className="text-sm">{modalidadeTooltip}</p></TooltipContent>}
+            </Tooltip>
           );
         })}
       </div>

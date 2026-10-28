@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ShieldCheck, ExternalLink, Info } from "lucide-react";
 import type { CamaraDeclaracao } from "@/lib/data/camara-declaracoes";
 
@@ -75,7 +74,7 @@ export default function CotasParlamentaresCard({
       </div>
 
       <blockquote className="border-l-4 border-emerald-500 pl-4 py-2 italic text-sm text-foreground/90 leading-relaxed">
-        "{declaracao.texto}"
+        &quot;{declaracao.texto}&quot;
       </blockquote>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

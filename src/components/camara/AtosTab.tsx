@@ -3,11 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
-import { Search, FileText, ExternalLink, Download, Sparkles } from "lucide-react";
+import { Search, FileText, Download, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
+
+import type { Database } from "@/lib/supabase/types";
+
+// resumo_ia foi acrescentado pela migração 20260617120000.
+type CamaraAto = Database["public"]["Tables"]["camara_atos"]["Row"] & {
+  resumo_ia: string | null;
+};
 
 interface AtosTabProps {
   tipoCodigo: number;
@@ -20,7 +27,8 @@ async function fetchAtos(tipoCodigo: number) {
     .from("camara_atos")
     .select("*")
     .eq("tipo_codigo", tipoCodigo)
-    .order("data_publicacao", { ascending: false });
+    .order("data_publicacao", { ascending: false })
+    .returns<CamaraAto[]>();
   if (error) throw error;
   return data;
 }
@@ -38,7 +46,7 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
     !search || [a.descricao, a.numero].some((f) => f?.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const handleClick = (a: any) => {
+  const handleClick = (a: CamaraAto) => {
     const conteudo = `- Tipo: ${tipoNome}\n- Número: ${a.numero || "não informado"}\n- Ano: ${a.ano}\n- Data: ${a.data_publicacao || "não informada"}\n- Descrição: ${a.descricao || "não informada"}`;
     requestSummary(a.id, tipoNome, conteudo, `${tipoNome} ${a.numero ? `Nº ${a.numero}` : ""}`, undefined, a.documento_url || undefined);
   };

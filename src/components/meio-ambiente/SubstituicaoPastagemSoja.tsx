@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
@@ -65,7 +67,7 @@ export default function SubstituicaoPastagemSoja({ rows }: { rows: Row[] }) {
             <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={42} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, name: string) => [fmt(v), name === "pastagem" ? "Pastagem" : "Soja"]}
+              formatter={numericTooltip((v, name) => [fmt(v), name === "pastagem" ? "Pastagem" : "Soja"])}
               labelFormatter={(l) => `Ano ${l}`}
             />
             <Legend

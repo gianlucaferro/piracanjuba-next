@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -78,7 +80,7 @@ export default function InternacoesSihCard() {
             <YAxis tick={{ fontSize: 11 }} width={38} tickFormatter={(v: number) => `${(v / 1000).toFixed(1).replace(".", ",")}k`} />
             <Tooltip
               contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, n: string) => [`${nf(v)}`, n]}
+              formatter={numericTooltip((v, n) => [`${nf(v)}`, n])}
               labelFormatter={(a) => `Ano ${a}`}
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />

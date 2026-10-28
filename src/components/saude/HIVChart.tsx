@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   LineChart,
   Line,
@@ -15,7 +17,6 @@ import {
 import { Activity, Users, ExternalLink } from "lucide-react";
 
 type AnoRow = { ano: number; valor: number };
-type AggRow = { sexo?: string; faixa?: string; total: number };
 
 /**
  * Painel HIV em Piracanjuba — 3 visões: temporal, por sexo, por faixa etária.
@@ -94,7 +95,7 @@ export default function HIVChart({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v} diagnósticos`, "HIV"]}
+                formatter={numericTooltip((v) => [`${v} diagnósticos`, "HIV"])}
                 labelFormatter={(ano) => `Ano ${ano}`}
               />
               <Line
@@ -124,7 +125,7 @@ export default function HIVChart({
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(v: number) => [`${v} casos`, "Total"]}
+                  formatter={numericTooltip((v) => [`${v} casos`, "Total"])}
                 />
                 <Bar dataKey="total" radius={[0, 4, 4, 0]}>
                   {porFaixa.map((_, idx) => (

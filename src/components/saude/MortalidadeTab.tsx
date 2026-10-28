@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Activity, Wind, Droplets } from "lucide-react";
+import { Wind, Droplets } from "lucide-react";
 import MortalidadeHistoricaChart from "./MortalidadeHistoricaChart";
 import CovidPiracanjubaChart from "./CovidPiracanjubaChart";
 import MortesPorCausaChart from "./MortesPorCausaChart";
@@ -18,7 +18,6 @@ type CovidRow = {
   internacoes_srag: number;
 };
 type CausaRow = { causa: string; total: number };
-type AggRow = { sexo?: string; faixa?: string; total: number };
 
 export default function MortalidadeTab() {
   const { data: infantil = [] } = useQuery<Row[]>({

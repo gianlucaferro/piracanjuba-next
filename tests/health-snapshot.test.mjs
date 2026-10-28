@@ -49,7 +49,7 @@ async function load(slug, fetcher = () => { throw new Error("rede inesperada"); 
   return { sandbox, calls, log, handler: sandbox.handler };
 }
 const request = (headers = { "x-cron-secret": "fixture" }) => new Request("https://example.test", { method: "POST", headers, body: "{}" });
-const mortality = url => ckan([{ _id: 1, "Municipio residencia": "Piracanjuba", ano: 2024, sexo: "MASCULINO", faixa_etaria: "0 A 6 DIAS", dcid_capitulo: "I", "total obitos": 2 }]);
+const mortality = () => ckan([{ _id: 1, "Municipio residencia": "Piracanjuba", ano: 2024, sexo: "MASCULINO", faixa_etaria: "0 A 6 DIAS", dcid_capitulo: "I", "total obitos": 2 }]);
 const hiv = url => {
   const id = url.searchParams.get("resource_id");
   if (id === "9cac6ec3-47f5-4e85-9a2f-ae7acbe94810") return ckan([{ _id: 1, municipio: "Piracanjuba", data_diagnostico: "02/01/2024", sexo: "MASCULINO", faixa_etaria: "20 A 29 ANOS" }]);

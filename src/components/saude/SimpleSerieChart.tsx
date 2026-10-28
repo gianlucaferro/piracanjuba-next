@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   LineChart,
   Line,
@@ -116,7 +118,7 @@ export default function SimpleSerieChart({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v.toFixed(1)} ${unidade}`, titulo]}
+                formatter={numericTooltip((v) => [`${v.toFixed(1)} ${unidade}`, titulo])}
                 labelFormatter={(ano) => `Ano ${ano}`}
               />
               <Area
@@ -140,7 +142,7 @@ export default function SimpleSerieChart({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`${v} ${unidade}`, titulo]}
+                formatter={numericTooltip((v) => [`${v} ${unidade}`, titulo])}
                 labelFormatter={(ano) => `Ano ${ano}`}
               />
               <Line

@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   ResponsiveContainer,
@@ -237,10 +239,7 @@ export default function ChuvaSafraPanel({
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number | null, name: string) => {
-                if (value === null) return ["—", name];
-                return [`${value.toFixed(1)} mm`, name];
-              }}
+              formatter={numericTooltip((value, name) => [`${value.toFixed(1)} mm`, name])}
             />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} iconType="line" />
             <Area

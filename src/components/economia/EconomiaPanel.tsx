@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,13 +15,11 @@ import {
   Cell,
   Legend,
   LabelList,
-  LineChart,
   Line,
   ComposedChart,
 } from "recharts";
 import {
   TrendingUp,
-  TrendingDown,
   Wheat,
   Factory,
   Store,
@@ -145,8 +145,6 @@ const SETOR_CORES: Record<string, string> = {
   comercio: "#f59e0b",
 };
 
-const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-
 function fmtMilhoes(milReais: number) {
   if (milReais >= 1000000) return `R$ ${(milReais / 1000000).toFixed(2)} bi`;
   if (milReais >= 1000) return `R$ ${(milReais / 1000).toFixed(0)} mi`;
@@ -243,7 +241,7 @@ export default function EconomiaPanel({
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number) => [`R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, "PIB per capita"]}
+                formatter={numericTooltip((v) => [`R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, "PIB per capita"])}
               />
               <Bar dataKey="pib_per_capita" radius={[0, 4, 4, 0]}>
                 {pibPCSorted.map((c) => (
@@ -331,10 +329,10 @@ export default function EconomiaPanel({
                       borderRadius: 8,
                       fontSize: 12,
                     }}
-                    formatter={(v: number) => [
+                    formatter={numericTooltip((v) => [
                       `${fmtMilhoes(v)} (${((v / compTotal) * 100).toFixed(1)}%)`,
                       "VAB",
-                    ]}
+                    ])}
                   />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
@@ -456,8 +454,8 @@ export default function EconomiaPanel({
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(v: number, _name: string) => [`${v.toFixed(1)} SM`, "Salário médio"]}
-                  labelFormatter={(l: string) => SETOR_LABEL[l] || l}
+                  formatter={numericTooltip((v) => [`${v.toFixed(1)} SM`, "Salário médio"])}
+                  labelFormatter={(label) => typeof label === "string" ? SETOR_LABEL[label] || label : label}
                 />
                 <Bar dataKey="sm" radius={[0, 4, 4, 0]}>
                   {salariosPorSetor.map((s) => (
@@ -724,7 +722,7 @@ export default function EconomiaPanel({
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(v: number) => [`${v} empregos`, "Total"]}
+                  formatter={numericTooltip((v) => [`${v} empregos`, "Total"])}
                 />
                 <Bar dataKey="empregos" radius={[0, 4, 4, 0]}>
                   {topOcupacoes.map((o) => (
@@ -788,8 +786,8 @@ export default function EconomiaPanel({
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(v: number, name: string) => [`${v} empregos`, name]}
-                  labelFormatter={(l: string) => SETOR_LABEL[l] || l}
+                  formatter={numericTooltip((v, name) => [`${v} empregos`, name])}
+                  labelFormatter={(label) => typeof label === "string" ? SETOR_LABEL[label] || label : label}
                 />
                 <Legend wrapperStyle={{ fontSize: 12, paddingTop: 4 }} />
                 <Bar
@@ -915,7 +913,7 @@ export default function EconomiaPanel({
                 <XAxis type="number" hide />
                 <YAxis type="category" dataKey="cat" hide />
                 <Tooltip
-                  formatter={(v: number, n: string) => [`${v} CNPJs`, n]}
+                  formatter={numericTooltip((v, n) => [`${v} CNPJs`, n])}
                 />
                 <Bar dataKey="Centro" stackId="a" fill="#f59e0b" />
                 <Bar dataKey="Demais Bairros" stackId="a" fill="#3b82f6" />

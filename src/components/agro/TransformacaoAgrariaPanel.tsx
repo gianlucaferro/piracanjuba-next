@@ -1,5 +1,7 @@
 "use client";
 
+import { numericTooltip } from "@/lib/chart-formatters";
+
 import { useMemo } from "react";
 import {
   AreaChart, Area, LineChart, Line, BarChart, Bar, Cell,
@@ -92,11 +94,11 @@ export default function TransformacaoAgrariaPanel() {
             <YAxis yAxisId="leite" orientation="right" tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}mi L`} width={48} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number, name: string) =>
+              formatter={numericTooltip((v, name) =>
                 name === "sojaHa"
                   ? [`${nf(v)} ha`, "Soja (área plantada)"]
                   : [`${nf(v / 1000)} mi litros`, "Leite (produção)"]
-              }
+              )}
               labelFormatter={(l) => `Ano ${l}`}
             />
             <Line yAxisId="soja" type="monotone" dataKey="sojaHa" stroke={COR_SOJA} strokeWidth={2.6} dot={{ r: 2 }} />
@@ -131,7 +133,7 @@ export default function TransformacaoAgrariaPanel() {
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis dataKey="ano" tick={{ fontSize: 12 }} ticks={[1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024]} />
             <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={40} />
-            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [`${nf(v)} ha`, "Área plantada"]} labelFormatter={(l) => `Ano ${l}`} />
+            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={numericTooltip((v) => [`${nf(v)} ha`, "Área plantada"])} labelFormatter={(l) => `Ano ${l}`} />
             <Area type="monotone" dataKey="ha" stroke={COR_SOJA} strokeWidth={2.4} fill="url(#gradSojaHist)" />
           </AreaChart>
         </ResponsiveContainer>
@@ -157,7 +159,7 @@ export default function TransformacaoAgrariaPanel() {
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                 <XAxis dataKey="nome" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} width={36} />
-                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [nf(v), "Estabelecimentos"]} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={numericTooltip((v) => [nf(v), "Estabelecimentos"])} />
                 <Bar dataKey="valor" radius={[6, 6, 0, 0]}>
                   {estabData.map((d) => <Cell key={d.nome} fill={d.cor} />)}
                 </Bar>
@@ -171,7 +173,7 @@ export default function TransformacaoAgrariaPanel() {
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                 <XAxis dataKey="nome" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={36} />
-                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [`${nf(v)} ha`, "Área"]} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={numericTooltip((v) => [`${nf(v)} ha`, "Área"])} />
                 <Bar dataKey="valor" radius={[6, 6, 0, 0]}>
                   {areaData.map((d) => <Cell key={d.nome} fill={d.cor} />)}
                 </Bar>
