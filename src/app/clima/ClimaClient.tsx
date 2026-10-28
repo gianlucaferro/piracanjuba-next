@@ -139,6 +139,7 @@ export default function ClimaClient({
               <XAxis dataKey="data" fontSize={11} />
               <YAxis fontSize={11} unit=" mm" />
               <Tooltip
+                filterNull={false}
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
@@ -147,7 +148,7 @@ export default function ClimaClient({
                 }}
                 formatter={numericTooltip((v) => [`${v.toFixed(1)} mm`, "Chuva"])}
               />
-              <Bar dataKey="chuva" fill="hsl(199, 89%, 48%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="chuva" name="Chuva" fill="hsl(199, 89%, 48%)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -165,18 +166,19 @@ export default function ClimaClient({
               <XAxis dataKey="data" fontSize={11} />
               <YAxis fontSize={11} unit="°C" domain={["dataMin - 2", "dataMax + 2"]} />
               <Tooltip
+                filterNull={false}
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={numericTooltip((v, name) => [`${v.toFixed(1)}°C`, name === "tmax" ? "Máxima" : name === "tmin" ? "Mínima" : "Média"])}
+                formatter={numericTooltip((v, name) => [`${v.toFixed(1)}°C`, name])}
               />
               <ReferenceLine y={28} stroke="hsl(20, 90%, 50%)" strokeDasharray="3 3" opacity={0.4} />
-              <Line type="monotone" dataKey="tmax" stroke="hsl(20, 90%, 55%)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tmed" stroke="hsl(160, 60%, 45%)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tmin" stroke="hsl(199, 89%, 48%)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="tmax" name="Máxima" stroke="hsl(20, 90%, 55%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
+              <Line type="monotone" dataKey="tmed" name="Média" stroke="hsl(160, 60%, 45%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
+              <Line type="monotone" dataKey="tmin" name="Mínima" stroke="hsl(199, 89%, 48%)" strokeWidth={2} dot={{ r: 2 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
