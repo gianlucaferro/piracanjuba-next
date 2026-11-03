@@ -10,7 +10,7 @@ import { VereadoresContent } from "@/components/camara/VereadoresContent";
 import { AtuacaoContent } from "@/components/camara/AtuacaoContent";
 import { ProjetosContent } from "@/components/camara/ProjetosContent";
 import { useQuery } from "@tanstack/react-query";
-import { fetchServidores, type RemuneracaoServidor } from "@/data/prefeituraApi";
+import { fetchServidores, fetchAllServidores, type RemuneracaoServidor } from "@/data/prefeituraApi";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { Input } from "@/components/ui/input";
@@ -99,7 +99,7 @@ function ServidoresCamaraTab() {
   };
 
   const exportCsv = async () => {
-    const { data: all } = await fetchServidores(search || undefined, undefined, 0, 10000, "camara");
+    const all = await fetchAllServidores("camara", search || undefined);
     if (!all?.length) return;
     const header = "Nome,Cargo";
     const rows = all.map(s => `"${s.nome}","${s.cargo || ""}"`);

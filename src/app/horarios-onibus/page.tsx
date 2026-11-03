@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, BusFront, MapPin } from "lucide-react";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import HorariosOnibusClient from "./HorariosOnibusClient";
+import { BUS_DESTINATIONS, BUS_OPERATORS, isBusDate } from "@/data/horariosOnibus";
 
 export const revalidate = 300;
 
@@ -17,8 +18,12 @@ const breadcrumbs = breadcrumbJsonLd([
   { name: "Horários de ônibus", path: "/horarios-onibus" },
 ]);
 
-export default function HorariosOnibusPage() {
+export default async function HorariosOnibusPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const serverNow = new Date().toISOString();
+  const query = await searchParams;
+  const initialDate = typeof query.data === "string" && isBusDate(query.data) ? query.data : undefined;
+  const initialDestinationId = typeof query.destino === "string" && BUS_DESTINATIONS.some((item) => item.id === query.destino) ? query.destino : "all";
+  const initialOperatorId = typeof query.empresa === "string" && BUS_OPERATORS.some((item) => item.id === query.empresa) ? query.empresa : "all";
 
   return (
     <>
@@ -59,7 +64,7 @@ export default function HorariosOnibusPage() {
           </div>
         </header>
 
-        <HorariosOnibusClient serverNow={serverNow} />
+        <HorariosOnibusClient key={`${initialDate}-${initialDestinationId}-${initialOperatorId}`} serverNow={serverNow} initialDate={initialDate} initialDestinationId={initialDestinationId} initialOperatorId={initialOperatorId} />
       </div>
     </>
   );

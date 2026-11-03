@@ -1,0 +1,929 @@
+[
+  {
+    "id": "marly-goiania-20260910-0800",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "08:00",
+    "arrival": "09:30",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-0815",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "08:15",
+    "arrival": "09:40",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-0820",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "08:20",
+    "arrival": "09:40",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 80,
+    "serviceClasses": [
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "uniao-araguari-20260910-0915",
+    "date": "2026-09-10",
+    "destinationId": "araguari",
+    "operatorId": "uniao",
+    "departure": "09:15",
+    "arrival": "13:55",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 280,
+    "serviceClasses": [
+      "Convencional (1º trecho)",
+      "2º trecho: confirmar categoria"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "address": "Rua Cônego Olinto, Piracanjuba, GO, CEP 75640-000",
+      "verified": true
+    },
+    "stops": [],
+    "alighting": {
+      "name": "Churrascaria Menegon",
+      "address": "BR-050, km 41, Araguari, MG, CEP 38446-392"
+    },
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/araguari-menegon-mg?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08",
+    "connections": [
+      {
+        "city": "Caldas Novas",
+        "arrival": "10:30",
+        "departure": "11:30",
+        "operator": "Expresso União"
+      }
+    ]
+  },
+  {
+    "id": "uniao-caldas-novas-20260910-0915",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "uniao",
+    "departure": "09:15",
+    "arrival": "10:30",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 75,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-goiania-20260910-1100",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "11:00",
+    "arrival": "12:30",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "roderotas-araguari-20260910-1130",
+    "date": "2026-09-10",
+    "destinationId": "araguari",
+    "operatorId": "roderotas",
+    "departure": "11:30",
+    "arrival": "16:50",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 320,
+    "serviceClasses": [
+      "Semi-leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "alighting": {
+      "name": "Churrascaria Menegon",
+      "address": "BR-050, km 41, Araguari, MG, CEP 38446-392"
+    },
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/araguari-menegon-mg?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "roderotas-uberlandia-20260910-1130",
+    "date": "2026-09-10",
+    "destinationId": "uberlandia",
+    "operatorId": "roderotas",
+    "departure": "11:30",
+    "arrival": "17:50",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 380,
+    "serviceClasses": [
+      "Semi-leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/uberlandia-mg?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "real-caldas-novas-20260910-1215",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "real",
+    "departure": "12:15",
+    "arrival": "13:30",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 75,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "address": "Rua Cônego Olinto, Piracanjuba, GO, CEP 75640-000",
+      "verified": true
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08",
+    "alighting": {
+      "name": "Rodoviária de Caldas Novas",
+      "address": "Rua Ernesto Shinona, 1, Caldas Novas, GO"
+    }
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1300",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "13:00",
+    "arrival": "14:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1305",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "13:05",
+    "arrival": "14:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 80,
+    "serviceClasses": [
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "uniao-goiania-20260910-1315",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "uniao",
+    "departure": "13:15",
+    "arrival": "15:00",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 105,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      },
+      {
+        "name": "Mobifácil / Expresso União",
+        "url": "https://www.mobifacil.com.br/passagem-de-onibus/piracanjuba-go/goiania-go?date=10-09-2026&institutionSource=expresso-uniao"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-goiania-20260910-1330",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "13:30",
+    "arrival": "15:00",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "real-goiania-20260910-1550",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "real",
+    "departure": "15:50",
+    "arrival": "17:30",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 100,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "address": "Rua Cônego Olinto, Piracanjuba, GO, CEP 75640-000",
+      "verified": true
+    },
+    "stops": [
+      {
+        "name": "Hidrolândia",
+        "time": "16:35"
+      },
+      {
+        "name": "Aparecida de Goiânia",
+        "time": "17:00"
+      }
+    ],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1600",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "16:00",
+    "arrival": "17:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1605",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "16:05",
+    "arrival": "17:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 80,
+    "serviceClasses": [
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1900",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "19:00",
+    "arrival": "20:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-caldas-novas-20260910-1905",
+    "date": "2026-09-10",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "19:05",
+    "arrival": "20:25",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 80,
+    "serviceClasses": [
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-goiania-20260910-1930",
+    "date": "2026-09-10",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "19:30",
+    "arrival": "21:00",
+    "arrivalDate": "2026-09-10",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10"
+      }
+    ],
+    "checkedAt": "2026-09-08"
+  },
+  {
+    "id": "marly-goiania-20261104-0800",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "08:00",
+    "arrival": "09:30",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": true,
+      "address": "Rua Cônego Olinto, Piracanjuba, GO, CEP 75640-000"
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "marly-uberlandia-20261104-0800",
+    "date": "2026-11-04",
+    "destinationId": "uberlandia",
+    "operatorId": "marly",
+    "departure": "08:00",
+    "arrival": "23:00",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 900,
+    "serviceClasses": [
+      "Convencional ou Leito (primeiro trecho)",
+      "Convencional, Cama ou Cama Individual (segundo trecho)"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/uberlandia-mg?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "connections": [
+      {
+        "city": "Goiânia",
+        "arrival": "09:30",
+        "departure": "17:00",
+        "operator": "Expresso União"
+      }
+    ]
+  },
+  {
+    "id": "marly-caldas-novas-20261104-0815",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "08:15",
+    "arrival": "09:40",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "uniao-caldas-novas-20261104-0915",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "uniao",
+    "departure": "09:15",
+    "arrival": "10:30",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 75,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "marly-goiania-20261104-1100",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "11:00",
+    "arrival": "12:30",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "marly-uberlandia-20261104-1100",
+    "date": "2026-11-04",
+    "destinationId": "uberlandia",
+    "operatorId": "marly",
+    "departure": "11:00",
+    "arrival": "23:00",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 720,
+    "serviceClasses": [
+      "Convencional ou Leito (primeiro trecho)",
+      "Convencional, Cama ou Cama Individual (segundo trecho)"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/uberlandia-mg?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "connections": [
+      {
+        "city": "Goiânia",
+        "arrival": "12:30",
+        "departure": "17:00",
+        "operator": "Expresso União"
+      }
+    ]
+  },
+  {
+    "id": "real-caldas-novas-20261104-1210",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "real",
+    "departure": "12:10",
+    "arrival": "13:10",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 60,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "marly-caldas-novas-20261104-1300",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "13:00",
+    "arrival": "14:25",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "uniao-goiania-20261104-1315",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "uniao",
+    "departure": "13:15",
+    "arrival": "15:00",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 105,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "marly-goiania-20261104-1330",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "13:30",
+    "arrival": "15:00",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "real-goiania-20261104-1535",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "real",
+    "departure": "15:35",
+    "arrival": "17:10",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 95,
+    "serviceClasses": [
+      "Convencional"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": true,
+      "address": "Rua Cônego Olinto, Piracanjuba, GO, CEP 75640-000"
+    },
+    "stops": [
+      {
+        "name": "Bela Vista de Goiás",
+        "time": "16:20"
+      }
+    ],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  },
+  {
+    "id": "marly-caldas-novas-20261104-1600",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "16:00",
+    "arrival": "17:25",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "marly-caldas-novas-20261104-1900",
+    "date": "2026-11-04",
+    "destinationId": "caldas-novas",
+    "operatorId": "marly",
+    "departure": "19:00",
+    "arrival": "20:25",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 85,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/caldas-novas-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03"
+  },
+  {
+    "id": "marly-goiania-20261104-1930",
+    "date": "2026-11-04",
+    "destinationId": "goiania",
+    "operatorId": "marly",
+    "departure": "19:30",
+    "arrival": "21:00",
+    "arrivalDate": "2026-11-04",
+    "durationMinutes": 90,
+    "serviceClasses": [
+      "Convencional",
+      "Leito"
+    ],
+    "boarding": {
+      "name": "Embarque em Piracanjuba",
+      "verified": false
+    },
+    "stops": [],
+    "sources": [
+      {
+        "name": "ClickBus",
+        "url": "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-04"
+      }
+    ],
+    "checkedAt": "2026-11-03",
+    "alighting": {
+      "name": "Rodoviária de Goiânia",
+      "address": "Rua 44, 399, Goiânia, GO"
+    }
+  }
+]

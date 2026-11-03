@@ -7,12 +7,16 @@ import {
   BUS_SNAPSHOT_DATE,
   getBrazilDate,
   getBusDepartures,
+  getBusCoverage,
+  getBusPageUrl,
   getBusSearchUrl,
+  getUpcomingBusDepartures,
   getInitialBusDate,
   isBusDate,
   isBusDeparturePast,
 } from "../src/data/horariosOnibus.ts";
 import type { BusDeparture } from "../src/data/horariosOnibus.ts";
+import { validateBusDepartures, mergeBusDepartures } from "../src/data/busScheduleValidation.ts";
 
 function departure(overrides: Partial<BusDeparture> = {}): BusDeparture {
   return {
@@ -76,10 +80,10 @@ test("data de São Paulo muda às 03:00 UTC e não à meia-noite UTC", () => {
   assert.equal(getBrazilDate(new Date("2027-01-01T03:00:00Z")), "2027-01-01");
 });
 
-test("data inicial abandona a amostra quando seu dia termina em São Paulo", () => {
+test("data inicial usa hoje em São Paulo, inclusive antes da próxima consulta", () => {
   const start = new Date(`${BUS_SNAPSHOT_DATE}T03:00:00Z`).getTime();
   const end = start + 24 * 60 * 60 * 1000;
-  assert.equal(getInitialBusDate(new Date(start - 1)), BUS_SNAPSHOT_DATE);
+  assert.equal(getInitialBusDate(new Date(start - 1)), getBrazilDate(new Date(start - 1)));
   assert.equal(getInitialBusDate(new Date(start)), BUS_SNAPSHOT_DATE);
   assert.equal(getInitialBusDate(new Date(end - 1)), BUS_SNAPSHOT_DATE);
   const nextDate = new Date(end).toISOString().slice(0, 10);
@@ -87,6 +91,79 @@ test("data inicial abandona a amostra quando seu dia termina em São Paulo", () 
   withDepartures([departure({ date: BUS_SNAPSHOT_DATE })], () => {
     assert.deepEqual(getBusDepartures(getInitialBusDate(new Date(end))), []);
   });
+});
+
+test("cobertura informa somente a data e o destino selecionados", () => {
+  withDepartures([
+    departure(),
+    departure({ id: "caldas", destinationId: "caldas-novas", checkedAt: "2026-09-09" }),
+    departure({ id: "other-date", date: "2026-09-11" }),
+  ], () => {
+    assert.deepEqual(getBusCoverage("2026-09-10", "goiania"), { count: 1, lastCheckedAt: "2026-09-08", dates: ["2026-09-10", "2026-09-11"], status: "available" });
+    assert.deepEqual(getBusCoverage("2026-09-12", "caldas-novas"), { count: 0, lastCheckedAt: null, dates: ["2026-09-10"], status: "unverified" });
+  });
+});
+
+test("próximas partidas excluem passadas e registros sem revisão recente", () => {
+  withDepartures([
+    departure({ id: "passed", departure: "08:00" }),
+    departure({ id: "stale", departure: "14:00", checkedAt: "2026-09-01" }),
+    departure({ id: "future-checked", departure: "14:00", checkedAt: "2026-09-11" }),
+    departure({ id: "current", departure: "13:15" }),
+    departure({ id: "tomorrow", date: "2026-09-11" }),
+  ], () => {
+    const now = new Date("2026-09-10T15:00:00Z");
+    assert.deepEqual(getUpcomingBusDepartures(now).map((item) => item.id), ["current", "tomorrow"]);
+    assert.deepEqual(getUpcomingBusDepartures(now, 1).map((item) => item.id), ["current"]);
+    assert.deepEqual(getUpcomingBusDepartures(now, 0), []);
+  });
+});
+
+test("link compartilhável preserva filtros válidos e ignora valores adulterados", () => {
+  assert.equal(getBusPageUrl("2026-11-04", "goiania", "real"), "/horarios-onibus?data=2026-11-04&destino=goiania&empresa=real");
+  assert.equal(getBusPageUrl("2026-99-99", "https://evil.test", "__proto__"), "/horarios-onibus");
+});
+
+test("importação valida toda a base publicada, inclusive históricos", () => {
+  assert.deepEqual(validateBusDepartures(BUS_DEPARTURES, new Date("2026-11-03T22:00:00Z")).errors, []);
+});
+
+test("importação recusa datas fictícias, fonte errada, duração incorreta e duplicatas", () => {
+  const valid = departure({ sources: [{ name: "ClickBus", url: "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10" }] });
+  const now = new Date("2026-09-09T15:00:00Z");
+  assert.equal(validateBusDepartures([valid], now).errors.length, 0);
+  const invalid: Partial<BusDeparture>[] = [
+    { date: "2026-09-31" },
+    { departure: "25:00" },
+    { arrival: "12:00" },
+    { checkedAt: "2026-09-10" },
+    { checkedAt: "2026-09-01" },
+    { durationMinutes: 999 },
+    { destinationId: "unknown" },
+    { operatorId: "unknown" },
+    { boarding: { name: "Piracanjuba", verified: true } },
+    { sources: [] },
+    { sources: [{ name: "Fonte", url: "javascript:alert(1)" }] },
+    { sources: [{ name: "Fonte", url: "https://www.clickbus.com.br.evil.test/" }] },
+    { sources: [{ name: "Fonte", url: "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-11" }] },
+    { sources: [{ name: "Fonte", url: "https://www.clickbus.com.br/onibus/sao-paulo-sp/goiania-go?departureDate=2026-09-10" }] },
+    { connections: [{ city: "Goiânia", arrival: "13:30", departure: "13:00", operator: "União" }] },
+  ];
+  for (const changes of invalid) {
+    const result = validateBusDepartures([{ ...valid, ...changes }], now);
+    assert.ok(result.errors.length > 0, JSON.stringify(changes));
+    assert.deepEqual(result.departures, []);
+  }
+  assert.ok(validateBusDepartures([valid, { ...valid, id: "other" }], now).errors.some((error) => error.includes("partida repetida")));
+  assert.ok(validateBusDepartures([valid, valid], now).errors.some((error) => error.includes("ID repetido")));
+});
+
+test("arquivo de atualização preserva históricos e substitui registros pelo ID", () => {
+  const old = departure();
+  const current = departure({ arrival: "15:10", durationMinutes: 115 });
+  const newDate = departure({ id: "new", date: "2026-09-11" });
+  assert.deepEqual(mergeBusDepartures([old], [current, newDate]), [current, newDate]);
+  assert.equal(old.arrival, "15:00");
 });
 
 test("partida deixa de ser futura no instante exato do horário local", () => {

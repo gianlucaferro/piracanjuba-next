@@ -256,3 +256,10 @@ verify_jwt = false
 # ai-search, optimize-description, suggest-category, transcribe-audio,
 # summarize-camara-contrato, summarize-licitacao, summarize-obra, summarize-secretario,
 # import-folha-xlsx, parse-folha-md
+
+# Autenticação própria com CRON_SECRET ou service_role antes de qualquer efeito.
+[functions.sync-grupos-economicos]
+verify_jwt = false
+
+[functions.admin-sync-status]
+verify_jwt = true

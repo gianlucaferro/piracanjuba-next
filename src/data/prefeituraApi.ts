@@ -282,9 +282,20 @@ export async function fetchServidores(search?: string, secretariaId?: string, pa
   if (orgaoTipo) query = query.eq("orgao_tipo", orgaoTipo);
   const from = page * pageSize;
   const to = from + pageSize - 1;
-  const { data, error, count } = await query.order("nome").range(from, to);
+  const { data, error, count } = await query.order("nome").order("id").range(from, to);
   if (error) throw error;
   return { data: (data || []) as Servidor[], count: count ?? 0 };
+}
+
+export async function fetchAllServidores(orgaoTipo: "prefeitura" | "camara", search?: string): Promise<Servidor[]> {
+  const all: Servidor[] = [];
+  const size = 500;
+  for (let page = 0; ; page++) {
+    const result = await fetchServidores(search, undefined, page, size, orgaoTipo);
+    all.push(...result.data);
+    if (all.length >= result.count) return all;
+    if (!result.data.length) throw new Error("A exportação da folha está incompleta. Tente novamente.");
+  }
 }
 
 export async function fetchDespesas(): Promise<Despesa[]> {

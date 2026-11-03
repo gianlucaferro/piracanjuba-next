@@ -24,7 +24,7 @@ import {
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import {
-  fetchExecutivo, fetchSecretarias, fetchServidores,
+  fetchExecutivo, fetchSecretarias, fetchServidores, fetchAllServidores,
   fetchDespesas, fetchContratos, fetchLicitacoes,
   fetchDiarias, fetchObras, fetchSecretariosRemuneracao,
   fetchExecutivoRemuneracao,
@@ -430,7 +430,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
 
   const exportCsv = async () => {
     // Fetch all matching records (no pagination) for export
-    const { data: all } = await fetchServidores(search || undefined, undefined, 0, 10000);
+    const all = await fetchAllServidores("prefeitura", search || undefined);
     if (!all?.length) return;
     const header = "Nome,Cargo";
     const rows = all.map(s => `"${s.nome}","${s.cargo || ""}"`);
