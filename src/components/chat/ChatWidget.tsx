@@ -6,9 +6,10 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Sparkles, X, ArrowUp, Loader2, AlertTriangle } from "lucide-react";
+import { createChatStreamParser, type ChatSource } from "@/lib/chat-stream";
 
 type Role = "user" | "assistant";
-type Message = { role: Role; content: string };
+type Message = { role: Role; content: string; sources?: ChatSource[] };
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -127,7 +128,7 @@ export default function ChatWidget() {
       setError(null);
       setInput("");
 
-      const history = messages.slice(-6);
+      const history = messages.slice(-6).map(({ role, content }) => ({ role, content }));
       const next: Message[] = [...messages, { role: "user", content: q }, { role: "assistant", content: "" }];
       setMessages(next);
       setStreaming(true);
@@ -150,42 +151,32 @@ export default function ChatWidget() {
 
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
-        let buf = "";
         let acc = "";
-
+        let sources: ChatSource[] = [];
+        const updateMessage = () => {
+          setMessages((prev) => {
+            const copy = [...prev];
+            copy[copy.length - 1] = { role: "assistant", content: acc, sources };
+            return copy;
+          });
+          scrollToEnd();
+        };
+        const parser = createChatStreamParser({
+          onDelta(delta) { acc += delta; updateMessage(); },
+          onSources(value) { sources = value; updateMessage(); },
+        });
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const parts = buf.split("\n");
-          buf = parts.pop() || "";
-          for (const line of parts) {
-            const t = line.trim();
-            if (!t.startsWith("data:")) continue;
-            const payload = t.slice(5).trim();
-            if (!payload || payload === "[DONE]") continue;
-            try {
-              const j = JSON.parse(payload);
-              const delta: string | undefined = j.choices?.[0]?.delta?.content;
-              if (delta) {
-                acc += delta;
-                setMessages((prev) => {
-                  const copy = [...prev];
-                  copy[copy.length - 1] = { role: "assistant", content: acc };
-                  return copy;
-                });
-                scrollToEnd();
-              }
-            } catch {
-              /* fragmento incompleto, ignora */
-            }
-          }
+          parser.push(decoder.decode(value, { stream: true }));
         }
+        parser.push(decoder.decode());
+        parser.finish();
 
         if (!acc.trim()) {
           setMessages((prev) => {
             const copy = [...prev];
-            copy[copy.length - 1] = { role: "assistant", content: "Não encontrei essa informação no portal." };
+            copy[copy.length - 1] = { role: "assistant", content: "Não encontrei essa informação no portal.", sources };
             return copy;
           });
         }
@@ -273,7 +264,24 @@ export default function ChatWidget() {
                 >
                   {m.role === "assistant" ? (
                     m.content ? (
-                      <RichText text={m.content} />
+                      <>
+                        <RichText text={m.content} />
+                        {!!m.sources?.length && (
+                          <details className="mt-3 border-t border-border pt-2 text-xs">
+                            <summary className="cursor-pointer font-semibold">Conferir fontes e períodos ({m.sources.length})</summary>
+                            <p className="mt-2 text-muted-foreground">Bases consultadas para esta resposta. Os recortes e períodos podem variar.</p>
+                            <ul className="mt-2 space-y-3">
+                              {m.sources.map((source) => (
+                                <li key={`${source.url}|${source.period}`}>
+                                  <a href={source.url} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2">{source.title}</a>
+                                  <p>Referência: {source.period ?? "não informada neste recorte"}</p>
+                                  <p className="text-muted-foreground">{source.coverage}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                      </>
                     ) : (
                       <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                     )

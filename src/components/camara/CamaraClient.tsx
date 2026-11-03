@@ -4,13 +4,15 @@ import { useState, useRef, useCallback } from "react";
 import { Users, Megaphone, Landmark, UserCheck, Search, Sparkles, Download, ChevronLeft, ChevronRight, Loader2, FileText, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
+import { downloadCSV } from "@/lib/csvExport";
+import { ExportChangedError } from "@/lib/stable-export";
 import SEO from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VereadoresContent } from "@/components/camara/VereadoresContent";
 import { AtuacaoContent } from "@/components/camara/AtuacaoContent";
 import { ProjetosContent } from "@/components/camara/ProjetosContent";
 import { useQuery } from "@tanstack/react-query";
-import { fetchServidores, type RemuneracaoServidor } from "@/data/prefeituraApi";
+import { fetchServidores, fetchAllServidores, type RemuneracaoServidor } from "@/data/prefeituraApi";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { Input } from "@/components/ui/input";
@@ -51,6 +53,8 @@ import { formatCurrency } from "@/lib/formatters";
 function ServidoresCamaraTab() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const PAGE_SIZE = 30;
 
   const handleSearch = (value: string) => {
@@ -99,18 +103,21 @@ function ServidoresCamaraTab() {
   };
 
   const exportCsv = async () => {
-    const { data: all } = await fetchServidores(search || undefined, undefined, 0, 10000, "camara");
-    if (!all?.length) return;
-    const header = "Nome,Cargo";
-    const rows = all.map(s => `"${s.nome}","${s.cargo || ""}"`);
-    const csv = [header, ...rows].join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `servidores-camara${search ? `_${search}` : ""}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (exporting) return;
+    setExporting(true);
+    setExportError(null);
+    try {
+      const all = await fetchAllServidores("camara", search || undefined);
+      if (!all.length) {
+        setExportError("Nenhum servidor encontrado para exportar. Confira a busca e tente novamente.");
+        return;
+      }
+      downloadCSV(`servidores-camara${search ? `_${search}` : ""}.csv`, ["Nome", "Cargo"], all.map(s => [s.nome, s.cargo]), ",");
+    } catch (error) {
+      setExportError(error instanceof ExportChangedError ? error.message : "Não foi possível exportar os servidores. Tente novamente.");
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -128,12 +135,13 @@ function ServidoresCamaraTab() {
           {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para ver um resumo gerado por IA."}
         </p>
         {totalCount > 0 && (
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download className="w-4 h-4 mr-1" /> Exportar CSV
+          <Button variant="outline" size="sm" onClick={exportCsv} disabled={exporting}>
+            <Download className="w-4 h-4 mr-1" /> {exporting ? "Exportando..." : "Exportar CSV"}
           </Button>
         )}
       </div>
 
+      {exportError && <p role="alert" className="text-sm text-destructive">{exportError}</p>}
       {isLoading && <div className="stat-card animate-pulse h-40" />}
       {!isLoading && !servidores.length && (
         <div className="stat-card text-center py-8">

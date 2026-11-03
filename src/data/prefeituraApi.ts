@@ -1,5 +1,6 @@
 import { obrasOficiais } from "@/lib/obras-fontes";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { readStableExport } from "@/lib/stable-export";
 const supabase = createBrowserSupabaseClient();
 
 // Types
@@ -282,9 +283,38 @@ export async function fetchServidores(search?: string, secretariaId?: string, pa
   if (orgaoTipo) query = query.eq("orgao_tipo", orgaoTipo);
   const from = page * pageSize;
   const to = from + pageSize - 1;
-  const { data, error, count } = await query.order("nome").range(from, to);
+  const { data, error, count } = await query.order("nome").order("id").range(from, to);
   if (error) throw error;
   return { data: (data || []) as Servidor[], count: count ?? 0 };
+}
+
+export async function fetchAllServidores(orgaoTipo: "prefeitura" | "camara", search?: string): Promise<Servidor[]> {
+  const columns = "id,nome,cargo,secretaria_id,fonte_url,updated_at";
+  const filtered = (select: string, count?: "exact") => {
+    let query = supabase.from("servidores").select(select, count ? { count } : undefined).eq("orgao_tipo", orgaoTipo);
+    if (search) query = query.ilike("nome", `%${search}%`);
+    return query;
+  };
+  const all = await readStableExport<Servidor>({
+    async readRevision() {
+      const { data, error, count } = await filtered("id,updated_at", "exact")
+        .order("updated_at", { ascending: false, nullsFirst: false }).order("id", { ascending: false }).limit(1);
+      if (error || count === null) throw new Error("Não foi possível conferir os dados para exportação. Tente novamente.");
+      const latest = data?.[0] as unknown as { id: string; updated_at: string } | undefined;
+      return { count, latestId: latest?.id ?? null, latestUpdatedAt: latest?.updated_at ?? null };
+    },
+    async readPage(afterId, limit) {
+      let query = filtered(columns).order("id").limit(limit);
+      if (afterId) query = query.gt("id", afterId);
+      const { data, error } = await query;
+      if (error) throw new Error("Não foi possível consultar os dados para exportação. Tente novamente.");
+      return (data ?? []) as unknown as Servidor[];
+    },
+    // Não há trigger obrigatório de updated_at na origem. Comparar também
+    // o conteúdo impede aceitar uma alteração que preservou essa data.
+    rowVersion: (row) => JSON.stringify([row.id, row.nome, row.cargo, row.secretaria_id, row.fonte_url, row.updated_at]),
+  });
+  return all.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR") || a.id.localeCompare(b.id));
 }
 
 export async function fetchDespesas(): Promise<Despesa[]> {

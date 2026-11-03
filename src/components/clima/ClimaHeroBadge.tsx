@@ -1,17 +1,16 @@
 import Link from "next/link";
 import { CloudRain, Droplets } from "lucide-react";
 import { fetchClimaUltimoDia } from "@/lib/data/clima";
+import { formatChartNumber } from "@/lib/chart-formatters";
+import { climateNumber } from "@/lib/climate-measurements";
 import ClimaHeroIcon from "./ClimaHeroIcon";
 
 export default async function ClimaHeroBadge() {
   const dia = await fetchClimaUltimoDia();
   if (!dia) return null;
 
-  const tempMed = Math.round(Number(dia.temperatura_media ?? 0));
-  const tempMax = Math.round(Number(dia.temperatura_max ?? 0));
-  const tempMin = Math.round(Number(dia.temperatura_min ?? 0));
-  const chuva = Number(dia.precipitacao_mm ?? 0);
-  const umid = Math.round(Number(dia.umidade_media ?? 0));
+  const temperatura = (value: unknown) => formatChartNumber(value, (n) => `${Math.round(n)}°C`);
+  const chuva = climateNumber(dia.precipitacao_mm);
 
   return (
     <Link
@@ -27,17 +26,17 @@ export default async function ClimaHeroBadge() {
       />
       <div className="text-left flex items-baseline gap-1.5 sm:block">
         <p className="text-xs sm:text-xs uppercase tracking-widest text-white/70 leading-none sm:mb-1 hidden sm:block">
-          Piracanjuba agora
+          Piracanjuba · {dia.data}
         </p>
         <p className="text-base sm:text-2xl md:text-3xl font-extrabold leading-none">
-          {tempMed}°C
+          {temperatura(dia.temperatura_media)}
         </p>
         <p className="text-xs sm:text-xs text-white/80 sm:mt-1 inline-flex items-center gap-1 sm:gap-2 flex-wrap leading-none sm:leading-normal">
-          <span>{tempMin}°/{tempMax}°</span>
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <Droplets className="w-3 h-3" /> {umid}%
-          </span>
-          {chuva > 0.1 && (
+          {(dia.temperatura_min !== null || dia.temperatura_max !== null) && <span className="hidden sm:inline">Mín {temperatura(dia.temperatura_min)} · Máx {temperatura(dia.temperatura_max)}</span>}
+          {dia.umidade_media !== null && <span className="hidden sm:inline-flex items-center gap-1">
+            <Droplets className="w-3 h-3" /> {formatChartNumber(dia.umidade_media, (n) => `${Math.round(n)}%`)}
+          </span>}
+          {chuva !== null && chuva > 0.1 && (
             <span className="hidden sm:inline-flex items-center gap-1">
               <CloudRain className="w-3 h-3" /> {chuva.toFixed(1)}mm
             </span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   Archive,
   ArrowRight,
@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Clock3,
   Info,
+  Link2,
   MapPin,
   Phone,
   Route,
@@ -19,9 +20,10 @@ import {
   BUS_CHECKED_AT,
   BUS_DESTINATIONS,
   BUS_OPERATORS,
-  BUS_SNAPSHOT_DATE,
   getBrazilDate,
+  getBusCoverage,
   getBusDepartures,
+  getBusPageUrl,
   getBusSearchUrl,
   getInitialBusDate,
   isBusDate,
@@ -276,12 +278,18 @@ function BoardingAndContacts() {
   );
 }
 
-export default function HorariosOnibusClient({ serverNow }: { serverNow: string }) {
+const subscribeHydration = () => () => {};
+const hydratedSnapshot = () => true;
+const serverHydratedSnapshot = () => false;
+
+export default function HorariosOnibusClient({ serverNow, initialDate, initialDestinationId = "all", initialOperatorId = "all" }: { serverNow: string; initialDate?: string; initialDestinationId?: string; initialOperatorId?: string }) {
+  const hydrated = useSyncExternalStore(subscribeHydration, hydratedSnapshot, serverHydratedSnapshot);
   const [now, setNow] = useState(() => new Date(serverNow));
-  const [dateInput, setDateInput] = useState(() => getInitialBusDate(new Date(serverNow)));
-  const [dateWasSelected, setDateWasSelected] = useState(false);
-  const [destinationId, setDestinationId] = useState("all");
-  const [operatorId, setOperatorId] = useState("all");
+  const [dateInput, setDateInput] = useState(() => initialDate ?? getInitialBusDate(new Date(serverNow)));
+  const [dateWasSelected, setDateWasSelected] = useState(!!initialDate);
+  const [destinationId, setDestinationId] = useState(initialDestinationId);
+  const [operatorId, setOperatorId] = useState(initialOperatorId);
+  const [shareStatus, setShareStatus] = useState("");
 
   useEffect(() => {
     const updateNow = () => setNow(new Date());
@@ -301,14 +309,22 @@ export default function HorariosOnibusClient({ serverNow }: { serverNow: string 
   const departures = getBusDepartures(selectedDate, destinationId, operatorId);
   const allOperatorsDepartures = getBusDepartures(selectedDate, destinationId);
   const hasOtherOperators = departures.length === 0 && allOperatorsDepartures.length > 0;
+  const coverage = getBusCoverage(selectedDate, destinationId);
+  const nextConfirmedDate = coverage.dates.find((date) => date >= getBrazilDate(now) && getBusDepartures(date, destinationId, operatorId).some((trip) => !isBusDeparturePast(trip, now)));
+
+  function selectDate(date: string) {
+    setDateInput(date);
+    setDateWasSelected(true);
+    setShareStatus("");
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4 text-sm">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
         <p className="leading-relaxed text-foreground">
-          Consulta feita em <strong className="font-semibold">{BUS_CHECKED_AT}</strong>, com horários verificados para <strong className="font-semibold">{BUS_SNAPSHOT_DATE}</strong>.
-          {" "}Esta seleção pode mudar e não reúne todas as saídas. Confirme a viagem com a empresa antes de sair.
+          {coverage.count > 0 ? <>Horários consultados para <strong className="font-semibold">{selectedDate}</strong>. Última conferência desta seleção: <strong className="font-semibold">{coverage.lastCheckedAt}</strong>.</> : <>Escolha uma data para consultar as viagens disponíveis. Última conferência registrada: <strong className="font-semibold">{BUS_CHECKED_AT}</strong>.</>}
+          {" "}Cada horário vale somente para a data indicada. A seleção é parcial e pode mudar; confirme com a empresa antes de sair.
         </p>
       </div>
 
@@ -324,7 +340,7 @@ export default function HorariosOnibusClient({ serverNow }: { serverNow: string 
           </div>
           <div className="space-y-2">
             <label htmlFor="bus-date" className="block text-sm font-medium text-foreground">Data da viagem</label>
-            <input id="bus-date" type="date" max="9999-12-31" aria-describedby="bus-date-help" aria-invalid={!validDate} value={selectedDate} onInput={(event) => { setDateWasSelected(true); setDateInput(event.currentTarget.value); }} className={controlClassName} />
+            <input disabled={!hydrated} id="bus-date" type="date" max="9999-12-31" aria-describedby="bus-date-help" aria-invalid={!validDate} value={selectedDate} onChange={(event) => selectDate(event.currentTarget.value)} className={controlClassName} />
             <p id="bus-date-help" className={`text-xs ${validDate ? "text-muted-foreground" : "text-destructive"}`}>{validDate ? `Data selecionada: ${selectedDate}` : "Selecione uma data válida no calendário."}</p>
           </div>
           <div className="space-y-2">
@@ -335,6 +351,16 @@ export default function HorariosOnibusClient({ serverNow }: { serverNow: string 
             </select>
           </div>
         </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+          {nextConfirmedDate && nextConfirmedDate !== selectedDate && <button type="button" onClick={() => selectDate(nextConfirmedDate)} className={`${externalLinkClassName} bg-primary/5 text-primary hover:bg-primary/10`}>Ver horários de {nextConfirmedDate}<ArrowRight className="h-4 w-4" aria-hidden="true" /></button>}
+          <button type="button" disabled={!validDate} onClick={async () => {
+            try { await navigator.clipboard.writeText(new URL(getBusPageUrl(selectedDate, destinationId, operatorId), window.location.origin).href); setShareStatus("Link da consulta copiado."); }
+            catch { setShareStatus("Não foi possível copiar. Use o link da consulta abaixo."); }
+          }} className={`${externalLinkClassName} border border-border text-foreground hover:bg-muted disabled:opacity-50`}><Link2 className="h-4 w-4" aria-hidden="true" /> Copiar consulta</button>
+          <span role="status" className="text-xs text-muted-foreground">{shareStatus}</span>
+          {shareStatus.startsWith("Não") && <a href={getBusPageUrl(selectedDate, destinationId, operatorId)} className="text-sm font-medium text-primary underline">Abrir link da consulta</a>}
+        </div>
+        {coverage.dates.length > 0 && <details className="mt-3 text-sm"><summary className="min-h-10 cursor-pointer py-2 text-muted-foreground">Datas com consultas registradas</summary><div className="mt-2 flex flex-wrap gap-2">{coverage.dates.map((date) => <button key={date} type="button" onClick={() => selectDate(date)} className="min-h-10 rounded-lg border border-border px-3 text-sm hover:bg-muted">{date}{date < getBrazilDate(now) ? " (arquivo)" : ""}</button>)}</div></details>}
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">

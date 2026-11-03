@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchGrupos, type GrupoEconomico, type GrupoMembro } from "@/data/gruposApi";
 import { Network, Users, Building2, Loader2, Info } from "lucide-react";
+import { dataBaseGrupo } from "@/lib/gruposMetricas";
+import { GrupoContratos } from "./GrupoContratos";
 
 const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
@@ -131,7 +133,7 @@ function GrupoCard({ grupo }: { grupo: GrupoEconomico }) {
     (a, b) => participacoes(b.cnpj) - participacoes(a.cnpj) || b.valor - a.valor
   )[0];
   return (
-    <div className="stat-card space-y-4">
+    <article className="stat-card space-y-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full mb-1.5"
@@ -145,9 +147,11 @@ function GrupoCard({ grupo }: { grupo: GrupoEconomico }) {
         </div>
         <div className="text-right shrink-0">
           <p className="text-lg font-bold text-foreground">{BRL.format(grupo.valor_total)}</p>
-          <p className="text-xs text-muted-foreground">em contratos públicos</p>
+          <p className="text-xs text-muted-foreground">valor inicial dos contratos</p>
         </div>
       </div>
+
+      <p className="text-xs text-muted-foreground">Relações e valores consolidados em {dataBaseGrupo(grupo.atualizado_em) ?? "data não informada"}.</p>
 
       <GrafoGrupo grupo={grupo} />
 
@@ -168,7 +172,8 @@ function GrupoCard({ grupo }: { grupo: GrupoEconomico }) {
         <Users className="w-3.5 h-3.5 mt-px shrink-0" />
         <span>Sócios que conectam: {grupo.socios_conectores.map((s) => titulo(s.nome)).join(" · ")}</span>
       </div>
-    </div>
+      <GrupoContratos grupo={grupo} />
+    </article>
   );
 }
 
@@ -208,8 +213,9 @@ export default function GruposClient() {
       {grupos && totais && (
         <>
           <p className="text-sm text-muted-foreground">
-            {totais.grupos} grupos · {totais.empresas} empresas · {BRL.format(totais.valor)} em contratos
+            {totais.grupos} grupos · {totais.empresas} empresas · {BRL.format(totais.valor)} em valores iniciais dos contratos
           </p>
+          {grupos.length === 0 && <p className="text-sm text-muted-foreground">Nenhum grupo identificado na base disponível.</p>}
           <div className="space-y-4">
             {grupos.map((g) => <GrupoCard key={g.id} grupo={g} />)}
           </div>
@@ -224,7 +230,7 @@ export default function GruposClient() {
           </span>
         </p>
         <p>
-          Fonte: quadro de sócios e administradores (QSA) da Receita Federal, cruzado com os contratos publicados pela prefeitura e pela câmara. Passe o mouse sobre um sócio ou empresa no grafo para destacar as ligações.
+          Fonte: quadro de sócios e administradores (QSA) da Receita Federal, cruzado com os contratos publicados pela prefeitura e pela câmara. A identificação combina nome e documento público, que pode estar parcialmente mascarado. A cobertura depende dos CNPJs e quadros societários disponíveis; vínculos antigos não comprovam a composição atual sem nova consulta à fonte. Passe o mouse sobre um sócio ou empresa no grafo para destacar as ligações.
         </p>
       </div>
     </div>

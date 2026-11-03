@@ -7,6 +7,7 @@ import DesktopNav from "./DesktopNav";
 import MobileBottomNav from "./MobileBottomNav";
 import QueryProvider from "@/components/providers/QueryProvider";
 import ChatWidget from "@/components/chat/ChatWidget";
+import FollowingBanner from "@/components/FollowingBanner";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,6 +33,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
+        <FollowingBanner />
         <main className="flex-1 pb-20 md:pb-0">{children}</main>
 
         <section className="border-t bg-accent/5 py-6 hidden md:block">

@@ -35,6 +35,7 @@ import {
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
+import TodayInPiracanjuba from "@/components/home/TodayInPiracanjuba";
 import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
 import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
 
@@ -148,6 +149,8 @@ export default async function HomePage() {
       </section>
 
       <div className="container py-8 space-y-10">
+        <TodayInPiracanjuba />
+
         {/* Anúncio destaque */}
         <AnuncioBannerDestaque />
 

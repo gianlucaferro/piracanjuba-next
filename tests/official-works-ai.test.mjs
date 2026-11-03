@@ -5,6 +5,7 @@ import { stripTypeScriptTypes } from "node:module";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 import { test } from "node:test";
+import { safeSourceUrl } from "../supabase/functions/_shared/chatbot-sources.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const official = Array.from({ length: 20 }, (_, id) => ({
@@ -60,6 +61,7 @@ async function load(slug, client) {
     Deno: { env: { get: () => "fixture-sem-segredo" }, serve: callback => { sandbox.handler = callback; } },
     createClient: () => client,
     buildBenefitContextRows: () => [],
+    safeSourceUrl,
     fetch: async (_url, options) => {
       // Intercepta a etapa de envio: nenhum socket ou provedor de IA é chamado.
       prompts.push(JSON.parse(options.body).messages[0].content);
@@ -73,13 +75,21 @@ async function load(slug, client) {
 test("chatbot conta e lista apenas obras oficiais, distinguindo total e amostra", async () => {
   const client = clientFor([...legacy, ...official]);
   const loaded = await load("chatbot", client);
-  const totals = await loaded.domains.find(domain => domain.keys.includes("quantas")).run(client);
-  const works = await loaded.domains.find(domain => domain.keys.includes("obra")).run(client);
+  const sources = [];
+  const collectSource = source => sources.push(source);
+  const totals = await loaded.domains.find(domain => domain.keys.includes("quantas")).run(client, collectSource);
+  const works = await loaded.domains.find(domain => domain.keys.includes("obra")).run(client, collectSource);
   assert.match(totals, /Obras no cadastro oficial municipal importado: 20/);
   assert.match(works, /20 registros; amostra de 15/);
   assert.match(works, /situação declarada: Concluída/);
   assert.match(works, /Fonte: https:\/\/acessoainformacao/);
   assert.doesNotMatch(works, /LEGADA/);
+  const catalogSource = sources.find(source => source.url === "https://piracanjuba.ai/prefeitura/obras");
+  assert.ok(catalogSource);
+  assert.match(catalogSource.coverage, /Amostra de 15 entre 20 obras/);
+  assert.equal(catalogSource.period, null);
+  assert.ok(sources.some(source => source.url === official[0].fonte_url));
+  assert.ok(sources.every(source => !source.title.includes("LEGADA")));
   assert.equal(loaded.prompts.length, 0);
   for (const trace of client.traces.filter(trace => trace.table === "obras")) {
     assert.equal(trace.operations[0], "like");
@@ -90,11 +100,14 @@ for (const unavailable of [false, true]) {
   test(`chatbot falha fechado com cadastro ${unavailable ? "indisponível" : "em coleta"}`, async () => {
     const client = clientFor(legacy, unavailable);
     const loaded = await load("chatbot", client);
-    const totals = await loaded.domains.find(domain => domain.keys.includes("quantas")).run(client);
-    const works = await loaded.domains.find(domain => domain.keys.includes("obra")).run(client);
+    const sources = [];
+    const collectSource = source => sources.push(source);
+    const totals = await loaded.domains.find(domain => domain.keys.includes("quantas")).run(client, collectSource);
+    const works = await loaded.domains.find(domain => domain.keys.includes("obra")).run(client, collectSource);
     assert.doesNotMatch(totals, /Obras.*: (0|48)/);
     assert.match(works, unavailable ? /indisponível/ : /em coleta/);
     assert.doesNotMatch(works, /LEGADA/);
+    assert.deepEqual(sources, []);
     assert.equal(loaded.prompts.length, 0);
   });
 }

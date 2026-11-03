@@ -44,10 +44,10 @@ export default function ClimaHeroIcon({
     return () => clearInterval(interval);
   }, []);
 
-  const precip = precipitacao ?? 0;
+  const precip = precipitacao;
 
   let Icon = Cloud; // placeholder neutro durante SSR
-  if (isNight !== null) {
+  if (isNight !== null && precip !== null) {
     if (precip > 5) {
       Icon = CloudRain;
     } else if (precip > 1) {

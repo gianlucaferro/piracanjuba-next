@@ -25,6 +25,7 @@ import SyncStatusAdmin from "@/components/admin/SyncStatusAdmin";
 import ConsultaCpfAdmin from "@/components/admin/ConsultaCpfAdmin";
 import NepotismoAdmin from "@/components/admin/NepotismoAdmin";
 import HistoriaFotosAdmin from "@/components/admin/HistoriaFotosAdmin";
+import { OnibusAdmin } from "@/components/admin/OnibusAdmin";
 
 const SESSION_KEY = "pba_admin_token";
 
@@ -514,6 +515,7 @@ export default function Admin() {
 
   // Áreas do admin como cards (substitui o sistema de abas, que ficava apertado).
   const SECTIONS: { key: string; label: string; desc: string; icon: typeof MessageSquare; badge?: number; render: () => React.ReactNode }[] = [
+    { key: "onibus", label: "Horários de ônibus", desc: "Validar consultas e preparar atualização dos horários", icon: Package, render: () => <OnibusAdmin /> },
     { key: "zap", label: "Zap PBA", desc: "Estabelecimentos: aprovar, editar e exportar", icon: MessageSquare, badge: pending.length, render: renderZap },
     { key: "historia", label: "Fotos da História", desc: "Fotos enviadas pelos moradores para moderar", icon: ImageIcon, render: () => <HistoriaFotosAdmin /> },
     { key: "farmacias", label: "Farmácias", desc: "Fotos e telefones do plantão", icon: Pill, render: () => <FarmaciaFotosAdmin /> },

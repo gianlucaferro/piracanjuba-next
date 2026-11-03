@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 import {
   corsHeaders,
@@ -11,6 +11,7 @@ import {
   jsonError,
 } from "../_shared/ai.ts";
 import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
+import { normalizeChatSources, recordPeriods, safeSourceUrl, streamWithSources, type ChatSource } from "../_shared/chatbot-sources.ts";
 
 // Chatbot público do Piracanjuba.ai.
 // Responde perguntas sobre o município usando SOMENTE os dados públicos do banco
@@ -26,7 +27,7 @@ const RATE_MAX_PER_MIN = 12;
 const MAX_PERGUNTA = 500;
 const MAX_DOMAINS = 9; // teto de blocos por assunto por pergunta (custo/latência)
 
-type SB = ReturnType<typeof createClient>;
+type SB = SupabaseClient;
 type OfficialWorkContextRow = {
   nome: string | null;
   local: string | null;
@@ -36,7 +37,8 @@ type OfficialWorkContextRow = {
   fonte_url: string | null;
 };
 type Msg = { role: "user" | "assistant"; content: string };
-type DomainBlock = { keys: string[]; run: (sb: SB) => Promise<string | null> };
+type AddSource = (source: ChatSource) => void;
+type DomainBlock = { source: ChatSource; keys: string[]; run: (sb: SB, addSource: AddSource) => Promise<string | null> };
 
 const cur = (n: number | null | undefined): string =>
   n != null && !Number.isNaN(Number(n)) ? `R$ ${Number(n).toLocaleString("pt-BR")}` : "N/D";
@@ -75,18 +77,22 @@ function sanitizeHistory(raw: unknown): Msg[] {
 }
 
 // Núcleo institucional: sempre presente (pequeno e de alto valor).
-async function coreContext(sb: SB): Promise<string[]> {
+async function coreContext(sb: SB, addSource: AddSource): Promise<string[]> {
   const [exec, vers, secs, inds] = await Promise.all([
     sb.from("executivo").select("tipo, nome, partido, mandato_inicio, mandato_fim").limit(5),
     sb.from("vereadores").select("nome, partido, cargo_mesa, votos_eleicao").order("nome").limit(20),
     sb.from("secretarias").select("nome, secretario_nome, subsidio").limit(40),
     sb.from("indicadores_municipais").select("chave, valor_texto, valor, ano_referencia").limit(40),
   ]);
+  if (exec.data?.length) addSource({ title: "Chefia do Executivo", url: "https://piracanjuba.ai/prefeitura/chefia", period: recordPeriods(exec.data, ["mandato_inicio", "mandato_fim"]), coverage: "Mandatos cadastrados no portal. Remuneração depende de consulta à folha." });
+  if (vers.data?.length) addSource({ title: "Câmara Municipal", url: "https://piracanjuba.ai/camara", period: null, coverage: `${vers.data.length} vereadores cadastrados consultados.` });
+  if (secs.data?.length) addSource({ title: "Secretarias municipais", url: "https://piracanjuba.ai/prefeitura/secretarias", period: null, coverage: `${secs.data.length} secretarias consultadas; referência temporal não informada neste cadastro.` });
+  if (inds.data?.length) addSource({ title: "Indicadores municipais", url: "https://piracanjuba.ai/indicadores", period: recordPeriods(inds.data, ["ano_referencia"]), coverage: "Recorte de indicadores com referências próprias por registro." });
   const verList = vers.data || [];
   const blocks: string[] = [];
   blocks.push(
     `### Poder Executivo\n${
-      (exec.data || []).map((e) => `- ${e.tipo}: ${e.nome} (${e.partido || "s/partido"}), mandato ${e.mandato_inicio} a ${e.mandato_fim}, subsídio (salário do cargo) ${cur(/vice/i.test(String(e.tipo)) ? 9875 : 19875)}/mês`).join("\n") || "Sem dados"
+      (exec.data || []).map((e) => `- ${e.tipo}: ${e.nome} (${e.partido || "s/partido"}), mandato ${e.mandato_inicio} a ${e.mandato_fim}`).join("\n") || "Sem dados"
     }`,
   );
   blocks.push(
@@ -121,6 +127,7 @@ const DOMAINS: DomainBlock[] = [
   {
     // Totais e contagens. Resolve "quantos servidores/contratos/obras/vereadores...",
     // "número de X", "quantidade de Y". Sem isto o bot lista alguns itens mas nunca conta o total.
+    source: {"title": "Contagens das bases do portal", "url": "https://piracanjuba.ai/dados-pba", "period": null, "coverage": "Contagens dos registros importados, não necessariamente de todos os registros na fonte oficial."},
     keys: ["quantos", "quantas", "numero de", "n. de", "quantidade", "total de", "ao todo", "qtd", "quantos sao", "quantas sao"],
     run: async (sb) => {
       const countOf = async (tbl: string, col?: string, val?: string): Promise<number | null> => {
@@ -180,27 +187,30 @@ const DOMAINS: DomainBlock[] = [
   },
   {
     // Salário do Executivo (prefeita/vice). Vem antes pra responder direto "quanto ganha a prefeita".
+    source: {"title": "Remuneração do Executivo", "url": "https://piracanjuba.ai/prefeitura/chefia", "period": null, "coverage": "Remuneração dos nomes localizados na folha; não confundir líquido, bruto e subsídio legal."},
     keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha", "prefeita", "prefeito", "vice-prefeito", "vice prefeito", "chefe do executivo"],
-    run: async (sb) => {
+    run: async (sb, addSource) => {
       const { data: exe } = await sb.from("executivo").select("tipo, nome, partido").limit(5);
       if (!exe?.length) return null;
       const rows: string[] = [];
+      const periods: Record<string, unknown>[] = [];
       for (const e of exe) {
-        const sub = /vice/i.test(String(e.tipo)) ? 9875 : 19875;
         let remTxt = "";
         const { data: srv } = await sb.from("servidores").select("id").eq("orgao_tipo", "prefeitura").ilike("nome", `%${String(e.nome).toUpperCase()}%`).limit(1);
         if (srv?.length) {
           const { data: rem } = await sb.from("remuneracao_servidores").select("bruto, liquido, competencia").eq("servidor_id", srv[0].id).order("competencia", { ascending: false }).limit(1);
-          if (rem?.length) remTxt = `; remuneração bruta mais recente ${cur(rem[0].bruto)} (líquido ${cur(rem[0].liquido)}, ${rem[0].competencia})`;
+          if (rem?.length) { remTxt = `remuneração bruta ${cur(rem[0].bruto)}, líquido ${cur(rem[0].liquido)}, competência ${rem[0].competencia}`; periods.push(rem[0]); }
         }
-        rows.push(`- ${e.tipo} ${e.nome} (${e.partido || "s/partido"}): subsídio (salário do cargo) ${cur(sub)}/mês${remTxt}`);
+        rows.push(`- ${e.tipo} ${e.nome} (${e.partido || "s/partido"}): ${remTxt || "Folha individual não localizada neste recorte. Subsídio legal não confirmado."}`);
       }
+      if (periods.length) addSource({ title: "Folha do Executivo", url: "https://piracanjuba.ai/prefeitura/chefia", period: recordPeriods(periods, ["competencia"]), coverage: "Última remuneração localizada por nome da chefia do Executivo; não comprova o subsídio fixado em lei." });
       return fmtList("Salário do Executivo (prefeita e vice)", rows);
     },
   },
   {
+    source: {"title": "Remuneração dos vereadores", "url": "https://piracanjuba.ai/camara", "period": null, "coverage": "Folhas recentes consultadas, com competência por vereador."},
     keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "vencimento", "quanto ganha"],
-    run: async (sb) => {
+    run: async (sb, addSource) => {
       const { data } = await sb.from("remuneracao_mensal").select("vereador_id, bruto, liquido, subsidio_referencia, competencia").order("competencia", { ascending: false }).limit(40);
       if (!data?.length) return null;
       const ids = [...new Set(data.map((r) => r.vereador_id))];
@@ -213,28 +223,43 @@ const DOMAINS: DomainBlock[] = [
         seen.add(r.vereador_id);
         rows.push(`- ${nm.get(r.vereador_id) || "Vereador"}: bruto ${cur(r.bruto)}, líquido ${cur(r.liquido)} (subsídio ref. ${cur(r.subsidio_referencia)}, ${r.competencia})`);
       }
+      addSource({ title: "Folha dos vereadores", url: "https://piracanjuba.ai/camara", period: recordPeriods(data, ["competencia"]), coverage: `${rows.length} vereadores com remuneração localizada no recorte recente.` });
       return fmtList("Remuneração dos vereadores (folha recente)", rows);
     },
   },
   {
+    source: {"title": "Folhas de servidores", "url": "https://piracanjuba.ai/prefeitura/servidores", "period": null, "coverage": "Amostras separadas por órgão e competência. Não somar como total da folha."},
     keys: ["salario", "subsidio", "remunera", "ganha", "recebe", "folha", "servidor", "secretario", "funcionario"],
-    run: async (sb) => {
-      const { data: rem } = await sb.from("remuneracao_servidores").select("servidor_id, bruto, liquido, competencia").order("competencia", { ascending: false }).limit(120);
-      if (!rem?.length) return null;
-      const seen = new Map<string, { bruto: number | null; liquido: number | null }>();
-      for (const r of rem) if (!seen.has(r.servidor_id)) seen.set(r.servidor_id, { bruto: r.bruto, liquido: r.liquido });
-      const ids = [...seen.keys()].slice(0, 60);
-      const { data: ss } = await sb.from("servidores").select("id, nome, cargo, orgao_tipo").in("id", ids);
-      return fmtList(
-        "Remuneração de servidores (folha mais recente)",
-        (ss || []).map((s) => {
-          const r = seen.get(s.id);
-          return `- ${s.nome} (${s.cargo || "s/cargo"}, ${s.orgao_tipo === "camara" ? "Câmara" : "Prefeitura"}): bruto ${cur(r?.bruto)}, líquido ${cur(r?.liquido)}`;
-        }),
-      );
+    run: async (sb, addSource) => {
+      const blocks: string[] = [];
+      for (const orgao of ["prefeitura", "camara"] as const) {
+        const label = orgao === "prefeitura" ? "Prefeitura" : "Câmara";
+        const { data: latest, error: latestError } = await sb.from("remuneracao_servidores")
+          .select("competencia,servidores!inner(orgao_tipo)").eq("servidores.orgao_tipo", orgao)
+          .order("competencia", { ascending: false }).limit(1).maybeSingle();
+        if (latestError || !latest?.competencia) continue;
+        const { data, count, error } = await sb.from("remuneracao_servidores")
+          .select("bruto,liquido,competencia,fonte_url,servidores!inner(nome,cargo,orgao_tipo)", { count: "exact" })
+          .eq("servidores.orgao_tipo", orgao).eq("competencia", latest.competencia)
+          .order("bruto", { ascending: false, nullsFirst: false }).limit(30);
+        if (error || !data?.length) continue;
+        const rows = data.map((row) => {
+          const server = (Array.isArray(row.servidores) ? row.servidores[0] : row.servidores) as { nome: string; cargo: string | null };
+          return `- ${server.nome} (${server.cargo || "s/cargo"}, ${label}): bruto ${cur(row.bruto)}, líquido ${cur(row.liquido)}, competência ${row.competencia}`;
+        });
+        addSource({ title: `Folha ${label}`, url: `https://piracanjuba.ai/${orgao}/servidores`, period: String(latest.competencia), coverage: `Amostra de ${data.length} maiores remunerações brutas entre ${count ?? "N/D"} holerites cadastrados nesta competência. Não é a folha completa.` });
+        for (const row of data.slice(0, 2)) {
+          const url = safeSourceUrl(row.fonte_url);
+          if (url) addSource({ title: `Fonte da folha ${label}`, url, period: String(row.competencia), coverage: "Registro de origem de remuneração incluída no recorte consultado." });
+        }
+        const text = fmtList(`Remuneração ${label} (${latest.competencia}; amostra de ${data.length} maiores remunerações, não somar como total da folha)`, rows);
+        if (text) blocks.push(text);
+      }
+      return blocks.length ? blocks.join("\n\n") : null;
     },
   },
   {
+    source: {"title": "Projetos da Câmara", "url": "https://piracanjuba.ai/camara/projetos", "period": null, "coverage": "Até 15 registros recentes consultados."},
     keys: ["projeto", "lei", "ementa", "propos", "legisla"],
     run: async (sb) => {
       const { data } = await sb.from("projetos").select("tipo, numero, ano, ementa, autor_texto, status").order("data", { ascending: false }).limit(15);
@@ -242,6 +267,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Atuação parlamentar", "url": "https://piracanjuba.ai/camara/atuacao", "period": null, "coverage": "Até 15 registros recentes consultados."},
     keys: ["requerimento", "mocao", "indica", "atuacao", "fiscaliz", "propos"],
     run: async (sb) => {
       const { data } = await sb.from("atuacao_parlamentar").select("tipo, numero, ano, descricao, autor_texto").order("data", { ascending: false }).limit(15);
@@ -249,6 +275,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Presença em sessões", "url": "https://piracanjuba.ai/camara/atas", "period": null, "coverage": "Até 220 registros recentes, sem garantir cobertura de todas as sessões."},
     keys: ["presenca", "falta", "faltou", "frequencia", "sessao", "assiduidade", "compareceu"],
     run: async (sb) => {
       const { data } = await sb.from("presenca_sessoes").select("vereador_nome, presente, sessao_data").order("sessao_data", { ascending: false }).limit(220);
@@ -265,28 +292,42 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Contratos consultados", "url": "https://piracanjuba.ai/prefeitura/contratos", "period": null, "coverage": "Recortes de contratos recentes e maiores valores; não representam o total contratado."},
     keys: ["contrato", "fornecedor", "licitad", "contratad", "terceiriz"],
-    run: async (sb) => {
+    run: async (sb, addSource) => {
       const [recentes, maiores, cam] = await Promise.all([
-        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("vigencia_inicio", { ascending: false }).limit(8),
-        sb.from("contratos").select("numero, objeto, empresa, valor, status").order("valor", { ascending: false, nullsFirst: false }).limit(6),
-        sb.from("camara_contratos").select("numero, ano, credor, objeto, valor, status").order("vigencia_inicio", { ascending: false }).limit(6),
+        sb.from("contratos").select("numero, objeto, empresa, valor, status, vigencia_inicio, fonte_url").order("vigencia_inicio", { ascending: false }).limit(8),
+        sb.from("contratos").select("numero, objeto, empresa, valor, status, vigencia_inicio, fonte_url").order("valor", { ascending: false, nullsFirst: false }).limit(6),
+        sb.from("camara_contratos").select("numero, ano, credor, objeto, valor, status, vigencia_inicio, fonte_url").order("vigencia_inicio", { ascending: false }).limit(6),
       ]);
       const secoes: string[] = [];
+      const groups = [
+        { title: "Contratos Prefeitura", path: "/prefeitura/contratos", rows: [...(recentes.data ?? []), ...(maiores.data ?? [])] },
+        { title: "Contratos Câmara", path: "/camara/contratos", rows: cam.data ?? [] },
+      ];
+      for (const group of groups) {
+        if (!group.rows.length) continue;
+        addSource({ title: group.title, url: `https://piracanjuba.ai${group.path}`, period: recordPeriods(group.rows, ["vigencia_inicio"]), coverage: "Recortes de contratos recentes e maiores valores originais. Aditivos não foram agregados nesta consulta." });
+        for (const row of group.rows.slice(0, 4)) {
+          const url = safeSourceUrl(row.fonte_url);
+          if (url) addSource({ title: `${group.title}: ${row.numero}`, url, period: recordPeriods([row], ["vigencia_inicio"]), coverage: "Documento ou registro de origem do contrato incluído no contexto." });
+        }
+      }
       const recentesBloco = fmtList("Contratos recentes", [
-        ...(recentes.data || []).map((c) => `- [Prefeitura] Contrato ${c.numero} (${c.status}): ${trunc(c.objeto, 80)} - ${c.empresa || "N/D"} - ${cur(c.valor)}`),
-        ...(cam.data || []).map((c) => `- [Câmara] Contrato ${c.numero}/${c.ano} (${c.status}): ${trunc(c.objeto, 80)} - ${c.credor || "N/D"} - ${cur(c.valor)}`),
+        ...(recentes.data || []).map((c) => `- [Prefeitura] Contrato ${c.numero} (${c.status}, início ${c.vigencia_inicio || "não informado"}): ${trunc(c.objeto, 80)} - ${c.empresa || "N/D"} - ${cur(c.valor)}`),
+        ...(cam.data || []).map((c) => `- [Câmara] Contrato ${c.numero}/${c.ano} (${c.status}, início ${c.vigencia_inicio || "não informado"}): ${trunc(c.objeto, 80)} - ${c.credor || "N/D"} - ${cur(c.valor)}`),
       ]);
       if (recentesBloco) secoes.push(recentesBloco);
       const maioresBloco = fmtList(
         "Maiores contratos da Prefeitura por valor (entre todos os cadastrados)",
-        (maiores.data || []).filter((c) => c.valor != null).map((c) => `- Contrato ${c.numero} (${c.status}): ${cur(c.valor)} - ${c.empresa || "N/D"} - ${trunc(c.objeto, 70)}`),
+        (maiores.data || []).filter((c) => c.valor != null).map((c) => `- Contrato ${c.numero} (${c.status}, início ${c.vigencia_inicio || "não informado"}): ${cur(c.valor)} - ${c.empresa || "N/D"} - ${trunc(c.objeto, 70)}`),
       );
       if (maioresBloco) secoes.push(maioresBloco);
       return secoes.length ? secoes.join("\n\n") : null;
     },
   },
   {
+    source: {"title": "Despesas consultadas", "url": "https://piracanjuba.ai/prefeitura/despesas", "period": null, "coverage": "Pagamentos individuais recentes e maiores valores. Não equivalem ao gasto total anual."},
     keys: ["despesa", "gasto", "gastou", "pagamento", "pagou", "empenho", "favorecido", "quanto custou", "mais recebeu", "quem recebeu", "maior pagamento"],
     run: async (sb) => {
       const [recentes, maiores, cam] = await Promise.all([
@@ -311,6 +352,7 @@ const DOMAINS: DomainBlock[] = [
   {
     // Orçamento, receita/despesa totais e limite de gasto com pessoal (LRF).
     // Dados oficiais do Tesouro Nacional (SICONFI RREO/RGF), os mesmos da aba Prestação de Contas.
+    source: {"title": "Prestação de contas", "url": "https://piracanjuba.ai/prefeitura/prestacao-contas", "period": null, "coverage": "RREO/RGF consultados. Exercícios parciais permanecem identificados no contexto."},
     keys: ["orcament", "arrecad", "receita", "despesa total", "despesas totais", "total de despesa", "gastou", "gasta", "gastos", "quanto gast", "prestacao de conta", "balanco municipal", "rreo", "rgf", "lrf", "limite de gasto", "gasto com pessoal", "folha total", "quanto a prefeitura recebe", "quanto entra de dinheiro"],
     run: async (sb) => {
       const { data } = await sb
@@ -336,6 +378,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Diárias consultadas", "url": "https://piracanjuba.ai/prefeitura/diarias", "period": null, "coverage": "Recorte recente de diárias da Prefeitura e da Câmara."},
     keys: ["diaria", "viagem", "viajou", "deslocamento"],
     run: async (sb) => {
       const [pref, cam] = await Promise.all([
@@ -350,18 +393,25 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Obras oficiais", "url": "https://piracanjuba.ai/prefeitura/obras", "period": null, "coverage": "Amostra do cadastro oficial importado, com situação declarada pela fonte."},
     keys: ["obra", "reforma", "construc", "pavimenta", "asfalto", "praca", "ponte", "calcamento"],
-    run: async (sb) => {
+    run: async (sb, addSource) => {
       const { data, count, error } = await sb.from("obras")
         .select("nome, local, valor, empresa, status, fonte_url", { count: "exact" })
         .like("origem_chave", OFFICIAL_WORKS_PREFIX).order("nome").limit(15);
       if (error) return "### Obras\nConsulta ao cadastro oficial de obras indisponível. Não há dados confirmados para responder sobre quantidade ou situação.";
       if (!data?.length) return "### Obras\nCadastro oficial de obras em coleta. Ausência de registros importados não significa ausência de obras no município.";
+      addSource({ title: "Obras no cadastro oficial", url: "https://piracanjuba.ai/prefeitura/obras", period: null, coverage: `Amostra de ${data.length} entre ${count ?? "N/D"} obras importadas; referência temporal não informada neste recorte.` });
+      for (const row of data.slice(0, 3)) {
+        const url = safeSourceUrl(row.fonte_url);
+        if (url) addSource({ title: `Obra: ${row.nome}`, url, period: null, coverage: "Registro oficial incluído no contexto, com situação declarada pela fonte." });
+      }
       return fmtList(`Obras no cadastro oficial municipal (${count ?? "N/D"} registros; amostra de ${data.length})`,
         data.map((o: OfficialWorkContextRow) => `- ${o.nome} (situação declarada: ${o.status || "não informada"})${o.local ? ` em ${o.local}` : ""} - ${cur(o.valor)} - ${o.empresa || "N/D"}${o.fonte_url ? ` - Fonte: ${o.fonte_url}` : ""}`));
     },
   },
   {
+    source: {"title": "Licitações da Prefeitura", "url": "https://piracanjuba.ai/prefeitura/licitacoes", "period": null, "coverage": "Até 12 registros recentes consultados."},
     keys: ["licita", "pregao", "edital", "dispensa", "concorrencia", "tomada de preco"],
     run: async (sb) => {
       const { data } = await sb.from("licitacoes").select("numero, modalidade, objeto, status, data_publicacao").order("data_publicacao", { ascending: false }).limit(12);
@@ -369,6 +419,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Decretos municipais", "url": "https://piracanjuba.ai/prefeitura/decretos", "period": null, "coverage": "Até 12 registros recentes; resumos podem ser gerados por IA."},
     keys: ["decreto"],
     run: async (sb) => {
       const { data } = await sb.from("decretos").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
@@ -376,6 +427,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Portarias municipais", "url": "https://piracanjuba.ai/prefeitura/portarias", "period": null, "coverage": "Até 12 registros recentes; resumos podem ser gerados por IA."},
     keys: ["portaria"],
     run: async (sb) => {
       const { data } = await sb.from("portarias").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
@@ -383,6 +435,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Leis municipais", "url": "https://piracanjuba.ai/prefeitura/leis", "period": null, "coverage": "Até 12 registros recentes; resumos podem ser gerados por IA."},
     keys: ["lei municipal", "leis", "sanciona", "norma", "lei "],
     run: async (sb) => {
       const { data } = await sb.from("leis_municipais").select("numero, data_publicacao, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(12);
@@ -390,6 +443,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Lei Orgânica", "url": "https://piracanjuba.ai/prefeitura/lei-organica", "period": null, "coverage": "Até 12 artigos consultados; não é o texto integral."},
     keys: ["lei organica", "organica"],
     run: async (sb) => {
       const { data } = await sb.from("lei_organica_artigos").select("titulo, artigo_numero, resumo_ia, artigo_texto").order("ordem").limit(12);
@@ -397,6 +451,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Resoluções da Câmara", "url": "https://piracanjuba.ai/camara/resolucoes", "period": null, "coverage": "Até 10 registros recentes consultados."},
     keys: ["resolucao"],
     run: async (sb) => {
       const { data } = await sb.from("resolucoes").select("numero, ano, ementa, resumo_ia").order("data_publicacao", { ascending: false }).limit(10);
@@ -404,14 +459,16 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Frota municipal", "url": "https://piracanjuba.ai/prefeitura/veiculos", "period": null, "coverage": "Amostra de veículos cadastrados, não contagem integral da frota."},
     keys: ["veiculo", "carro", "frota", "placa", "caminhao", "onibus", "ambulancia"],
     run: async (sb) => {
       const { data } = await sb.from("veiculos_frota").select("placa, descricao, marca, ano_fabricacao, situacao, orgao").limit(30);
       if (!data?.length) return null;
-      return fmtList(`Frota de veículos (${data.length} no total)`, data.slice(0, 20).map((v) => `- ${v.descricao || v.marca || "Veículo"} ${v.ano_fabricacao || ""} (placa ${v.placa || "N/D"}, ${v.situacao || ""}, ${v.orgao || ""})`));
+      return fmtList(`Frota de veículos (amostra de ${Math.min(data.length, 20)} registros, não é o total)`, data.slice(0, 20).map((v) => `- ${v.descricao || v.marca || "Veículo"} ${v.ano_fabricacao || ""} (placa ${v.placa || "N/D"}, ${v.situacao || ""}, ${v.orgao || ""})`));
     },
   },
   {
+    source: {"title": "Saúde", "url": "https://piracanjuba.ai/saude", "period": null, "coverage": "Recorte de indicadores e unidades; referências variam por registro."},
     keys: ["saude", "posto", "hospital", "ubs", "medico", "dengue", "vacina", "sus", "leito", "cnes", "doenca"],
     run: async (sb) => {
       const [ind, est] = await Promise.all([
@@ -426,6 +483,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Educação", "url": "https://piracanjuba.ai/educacao", "period": null, "coverage": "Recorte de indicadores e IDEB, com ano de referência por registro."},
     keys: ["educac", "escola", "ideb", "matricula", "creche", "ensino", "aluno", "professor"],
     run: async (sb) => {
       const [ind, ideb] = await Promise.all([
@@ -440,6 +498,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Segurança pública", "url": "https://piracanjuba.ai/seguranca", "period": null, "coverage": "Até 40 indicadores municipais, com ano de referência por registro."},
     keys: ["seguran", "crime", "homic", "roubo", "furto", "violen", "policia", "assassin", "criminal"],
     run: async (sb) => {
       const { data } = await sb.from("seguranca_indicadores").select("ano, indicador, ocorrencias, vitimas").eq("municipio", "Piracanjuba").order("ano", { ascending: false }).limit(40);
@@ -447,6 +506,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Benefícios sociais", "url": "https://piracanjuba.ai/beneficios-sociais", "period": null, "coverage": "Recorte por programa e competência; naturezas de dados distintas não devem ser somadas."},
     keys: [
       "beneficio",
       "bolsa familia",
@@ -476,6 +536,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Arrecadação", "url": "https://piracanjuba.ai/arrecadacao", "period": null, "coverage": "Recorte de categorias. Não somar como receita total municipal."},
     keys: ["arrecada", "imposto", "iptu", "iss", "tributo", "receita propria"],
     run: async (sb) => {
       const { data } = await sb.from("arrecadacao_municipal").select("tipo, categoria, valor, competencia, ano").order("ano", { ascending: false }).limit(25);
@@ -483,6 +544,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Agropecuária", "url": "https://piracanjuba.ai/agro", "period": null, "coverage": "Até 30 indicadores, com ano de referência por registro."},
     keys: ["agro", "agricultura", "pecuaria", "rebanho", "plantac", "soja", "milho", "leite", "gado", "producao rural", "lavoura", "safra"],
     run: async (sb) => {
       const { data } = await sb.from("agro_indicadores").select("categoria, chave, valor_texto, ano_referencia").not("categoria", "like", "historico%").limit(30);
@@ -490,6 +552,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Emendas parlamentares", "url": "https://piracanjuba.ai/emendas", "period": null, "coverage": "Até 15 registros recentes consultados."},
     keys: ["emenda", "deputado", "senador", "verba parlamentar"],
     run: async (sb) => {
       const { data } = await sb.from("emendas_parlamentares").select("parlamentar_nome, objeto, valor_empenhado, valor_pago, ano").order("ano", { ascending: false }).limit(15);
@@ -497,6 +560,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Transferências federais", "url": "https://piracanjuba.ai/dados-pba", "period": null, "coverage": "Até 15 registros recentes importados."},
     keys: ["transferencia", "repasse", "uniao", "federal", "convenio"],
     run: async (sb) => {
       const { data } = await sb.from("transferencias_federais").select("tipo, orgao_concedente, objeto, valor_total, valor_liberado, ano").order("ano", { ascending: false }).limit(15);
@@ -504,6 +568,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Indicadores econômicos", "url": "https://piracanjuba.ai/economia", "period": null, "coverage": "Até 20 indicadores, com referência por registro."},
     keys: ["economia", "selic", "ipca", "inflac", "cambio", "dolar", "pib", "emprego", "caged", "salario minimo", "juros"],
     run: async (sb) => {
       const { data } = await sb.from("economia_indicadores").select("categoria, indicador, ano, mes, valor_texto, valor").order("ano", { ascending: false }).limit(20);
@@ -511,6 +576,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Infraestrutura", "url": "https://piracanjuba.ai/infraestrutura", "period": null, "coverage": "Até 20 indicadores, com ano de referência por registro."},
     keys: ["infraestrutura", "saneamento", "esgoto", "agua", "iluminac", "energia eletrica", "internet"],
     run: async (sb) => {
       const { data } = await sb.from("infraestrutura_indicadores").select("categoria, indicador, valor_texto, ano").order("ano", { ascending: false }).limit(20);
@@ -518,6 +584,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Apontamentos TCM-GO", "url": "https://piracanjuba.ai/prefeitura/tcm-go", "period": null, "coverage": "Até 12 registros recentes; apontamentos não equivalem a condenação definitiva."},
     keys: ["tcm", "tribunal de contas", "apontamento", "irregularidade", "conta rejeitada", "auditoria"],
     run: async (sb) => {
       const { data } = await sb.from("tcm_go_apontamentos").select("numero_processo, ano, orgao_alvo, tipo, status, ementa, ementa_resumo_ia, valor_envolvido").order("data_publicacao", { ascending: false }).limit(12);
@@ -525,6 +592,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Atuação MP-GO", "url": "https://piracanjuba.ai/dados-pba", "period": null, "coverage": "Até 12 registros recentes importados."},
     keys: ["ministerio publico", "mp-go", "mpgo", "promotoria", "acao civil", "improbidade", "promotor"],
     run: async (sb) => {
       const { data } = await sb.from("mpgo_atuacao").select("tipo, promotoria, ementa, ementa_resumo_ia, data_publicacao").order("data_publicacao", { ascending: false }).limit(12);
@@ -532,6 +600,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Processos públicos", "url": "https://piracanjuba.ai/transparencia/processos-publicos", "period": null, "coverage": "Até 12 processos marcados públicos; existência de processo não implica condenação."},
     keys: ["processo", "judicial", "justica", "reu", "condenado", "tjgo", "acao judicial", "sentenca"],
     run: async (sb) => {
       const { data } = await sb.from("processo_judicial").select("numero_processo, tribunal, classe, assunto, status, objeto_resumo, resumo_ia, pessoa_publica_id").eq("visivel_publico", true).order("data_ultima_movimentacao", { ascending: false }).limit(12);
@@ -546,6 +615,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Orçamento da Câmara", "url": "https://piracanjuba.ai/camara/receitas", "period": null, "coverage": "Até seis registros anuais, com execução parcial identificada."},
     keys: ["duodecimo", "orcamento da camara", "custo da camara", "quanto custa a camara", "orcamento camara"],
     run: async (sb) => {
       const { data } = await sb.from("camara_orcamento").select("ano, dotacao, liquidada, periodo_referencia").order("ano", { ascending: false }).limit(6);
@@ -553,6 +623,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Financiadores de campanha", "url": "https://piracanjuba.ai/vereadores", "period": null, "coverage": "Até 25 doações consultadas, com eleição por registro."},
     keys: ["doador", "doacao", "financiad", "campanha", "quem financiou", "financiamento"],
     run: async (sb) => {
       const { data } = await sb.from("tse_doador_campanha").select("nome_candidato, ds_cargo, nome_doador, vr_receita, ano_eleicao").order("vr_receita", { ascending: false }).limit(25);
@@ -560,6 +631,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Notícias", "url": "https://piracanjuba.ai/noticias", "period": null, "coverage": "Até 12 notícias recentes, com veículo e data por registro."},
     keys: ["noticia", "aconteceu", "ultimas", "novidade", "acontecendo", "imprensa"],
     run: async (sb) => {
       const { data } = await sb.from("noticias").select("title, source, pub_date").order("pub_date", { ascending: false }).limit(12);
@@ -567,6 +639,7 @@ const DOMAINS: DomainBlock[] = [
     },
   },
   {
+    source: {"title": "Empresas sancionadas", "url": "https://piracanjuba.ai/grupos-economicos", "period": null, "coverage": "Até 15 registros de sanções consultados. Conferir vigência na fonte original."},
     keys: ["sanciona", "sancao", "inidonea", "ceis", "cnep", "impedida de contratar", "empresa punida", "empresa irregular"],
     run: async (sb) => {
       const { data } = await sb.from("empresa_sancionada").select("nome, cnpj, tipo_sancao, data_inicio_sancao, orgao_sancionador").order("data_inicio_sancao", { ascending: false }).limit(15);
@@ -575,12 +648,19 @@ const DOMAINS: DomainBlock[] = [
   },
 ];
 
-async function buildContext(sb: SB, pergunta: string): Promise<string> {
+async function buildContext(sb: SB, pergunta: string): Promise<{ text: string; sources: ChatSource[] }> {
   const q = norm(pergunta);
-  const core = await coreContext(sb);
+  const coreSources: ChatSource[] = [];
+  const core = await coreContext(sb, (source) => coreSources.push(source));
   const matched = DOMAINS.filter((d) => d.keys.some((k) => q.includes(k))).slice(0, MAX_DOMAINS);
-  const extra = (await Promise.all(matched.map((d) => d.run(sb).catch(() => null)))).filter((b): b is string => !!b);
-  return [...core, ...extra].join("\n\n");
+  const results = await Promise.all(matched.map(async (domain) => {
+    const sources: ChatSource[] = [];
+    const text = await domain.run(sb, (source) => sources.push(source)).catch(() => null);
+    if (!text || !/^[-] /m.test(text)) return { text, sources: [] };
+    return { text, sources: sources.length ? sources : [domain.source] };
+  }));
+  const extra = results.map((result) => result.text).filter((text): text is string => !!text);
+  return { text: [...core, ...extra].join("\n\n"), sources: normalizeChatSources([...results.flatMap((result) => result.sources), ...coreSources]) };
 }
 
 const PLATFORM = `O Piracanjuba.ai é um portal independente (da Ferro Labs, sem vínculo com órgão público) que reúne dados públicos de Piracanjuba, Goiás. Seções: Câmara (vereadores, projetos de lei, atuação, indicações, presença em sessões, contratos, despesas, diárias, orçamento/duodécimo, licitações), Prefeitura (secretarias, servidores e salários, contratos, despesas, licitações, obras, decretos, portarias, leis, lei orgânica, diárias, veículos, TCM-GO), e ainda Saúde, Educação, Segurança, Benefícios sociais, Arrecadação, Economia, Agro, Emendas, Transferências federais, MP-GO, Processos, Notícias. Fontes oficiais: Portal da Transparência municipal, Câmara, IBGE, DataSUS, INEP, SINESP/SSP-GO, Tesouro Nacional, TCM-GO, MP-GO, TSE.`;
@@ -610,7 +690,8 @@ Deno.serve(async (req) => {
     }
     await sb.from("chatbot_consultas").insert({ ip_hash: ipHash, pergunta });
 
-    const contexto = maskCpf(await buildContext(sb, pergunta));
+    const grounding = await buildContext(sb, pergunta);
+    const contexto = maskCpf(grounding.text);
 
     const systemPrompt = `Você é o assistente do Piracanjuba.ai, portal independente de transparência pública do município de Piracanjuba, Goiás, Brasil.
 
@@ -619,6 +700,8 @@ ${PLATFORM}
 Regras:
 - Responda APENAS com base nos dados abaixo. Se a informação não estiver nos dados, diga com franqueza que ainda não tem esse dado no portal e indique a seção mais provável onde procurar.
 - Seja conciso e use português simples. Use markdown leve (negrito e listas) quando ajudar. Prefira o ano/competência mais recente quando houver vários.
+- Ao dar números, informe a competência, ano ou período que acompanha o registro. Se não houver período, diga que ele não foi informado. Diga quando o contexto é uma amostra; nunca some uma amostra como total.
+- Os links de conferência serão anexados pelo sistema. Não invente URLs nem cite fonte que não conste do contexto.
 - Ao dar números, cite a origem (ex: "segundo o Portal da Transparência", "dados da Câmara", "IBGE", "DataSUS").
 - NUNCA invente nomes, valores, datas ou documentos. Não exiba CPF. Não dê aconselhamento jurídico.
 - Você não é órgão público. Para atos oficiais, oriente conferir a fonte.
@@ -633,7 +716,7 @@ ${contexto}`;
     ];
 
     // Circuit breaker diário global (o rate limit por IP do chatbot já passou acima).
-    const _g = await aiGuard(sb, req, "chatbot");
+    const _g = await aiGuard({ rpc: async (name, args) => await sb.rpc(name, args) }, req, "chatbot");
     if (!_g.allowed) return guardBlockedResponse(_g);
 
     // OpenRouter é o provider primário (Gemini direto satura no free-tier e devolve 429).
@@ -644,7 +727,7 @@ ${contexto}`;
     if (!resp.ok) {
       return geminiErrorToResponse(new GeminiUpstreamError(resp.status, await resp.text()));
     }
-    return new Response(resp.body, { headers: { ...corsHeaders, "Content-Type": "text/event-stream" } });
+    return new Response(streamWithSources(resp.body, grounding.sources), { headers: { ...corsHeaders, "Content-Type": "text/event-stream" } });
   } catch (e) {
     return jsonError(e instanceof Error ? e.message : "Erro interno.", 500);
   }
