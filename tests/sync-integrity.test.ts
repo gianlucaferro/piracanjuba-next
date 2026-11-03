@@ -56,6 +56,22 @@ test("limite de execução do coletor é específico e não substitui competênc
   assert.equal(assessCollector({ ...collector, health_status: "failing" })?.status, "error");
 });
 
+test("base recente e coletor saudável não ocultam cobertura de importação sem comprovação", () => {
+  const fresh = assessFreshness(36, "2026-10", monthly, now);
+  const healthy = assessCollector({ function_name: "sync-a", frequency_tier: "daily", max_stale_hours: 36, health_status: "healthy", cron_status: "scheduled", last_started_at: null, last_finished_at: null, last_dispatch_at: null });
+  assert.equal(fresh.status, "ok");
+  assert.equal(healthy?.status, "ok");
+  for (const status of ["success", "ok"]) {
+    for (const details of [{}, { fetched: 36, source_total: 36 }, { complete: true }]) {
+      const result = combineAssessments(fresh, healthy, assessImport(log(details, { status })));
+      assert.equal(result.status, "warning");
+      assert.match(result.message, /não comprova a cobertura/);
+    }
+    const verified = combineAssessments(fresh, healthy, assessImport(log({ complete: true, fetched: 36, source_total: 36 }, { status })));
+    assert.equal(verified.status, "ok");
+  }
+});
+
 test("plantão depende da cobertura da escala, inclusive lacunas e fim de validade", () => {
   const starts = ["2026-10-31", "2026-11-14"];
   assert.equal(assessScheduleCoverage(starts, now).status, "ok");

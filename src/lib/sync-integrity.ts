@@ -59,7 +59,7 @@ export function assessImport(log?: SyncObservation | null): IntegrityAssessment 
   if ((details.complete === true || details.source_complete === true) && fetched !== null && sourceTotal !== null) {
     return { status: "ok", message: `Coleta conferida: ${fetched.toLocaleString("pt-BR")} de ${sourceTotal.toLocaleString("pt-BR")} registros informados pela fonte.` };
   }
-  return { status: "ok", message: "Coleta concluída. Este log não comprova a cobertura de toda a base." };
+  return { status: "warning", message: "Coleta concluída. Este log não comprova a cobertura de toda a base." };
 }
 
 /** Limites de revisão do produto, não prazos legais de publicação dos órgãos. */
