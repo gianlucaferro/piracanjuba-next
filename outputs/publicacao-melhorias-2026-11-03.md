@@ -17,14 +17,14 @@ Durante os testes foram corrigidas duas falhas adicionais: exportação de servi
 | TypeScript | Aprovado, zero erros |
 | ESLint | Aprovado, zero erros e avisos |
 | Compilação Next | Aprovada no Dell |
-| Node | 171 aprovados |
-| Deno | 175 aprovados |
-| Playwright | 20 aprovados, desktop e celular |
+| Node | 171 aprovados na rodada review, `artifacts/melhorias-review-2026-11-03/tests.log` |
+| Deno | 175 aprovados na rodada review, `artifacts/melhorias-review-2026-11-03/sync-tests.log` |
+| Playwright | 20 aprovados na rodada review, desktop e celular, `artifacts/e2e-review-2026-11-03/e2e.log` |
 | SQL descartável PostgreSQL 17.11 | Equivalência, permissões e rollback do monitor; atomicidade, completude e idempotência dos grupos aprovados |
 
-Relatórios em `artifacts/melhorias-2026-11-03-final`, `artifacts/e2e-2026-11-03-r3` e `artifacts/e2e-chat-2026-11-03`. A primeira execução Node final detectou um harness antigo sem coletor de fontes. O harness foi corrigido e os 144 testes passaram em `node-after-harness.log`. O resultado inicial foi preservado para rastreabilidade.
+Rodadas anteriores estão em `artifacts/melhorias-2026-11-03-final`, `artifacts/e2e-2026-11-03-r3` e `artifacts/e2e-chat-2026-11-03`. Uma execução anterior detectou um harness antigo sem coletor de fontes, posteriormente corrigido. A contagem histórica de 144 testes Node foi superada pela rodada review identificada na tabela, com 171 testes aprovados.
 
-Após revisão, a rodada final está em `artifacts/melhorias-review-2026-11-03` e `artifacts/e2e-review-2026-11-03`, ambos com gate zero. Os dois ensaios SQL passaram novamente, incluindo substituição de grupos e asserção efetiva de leitura pelo service_role, em `artifacts/sql-review-2026-11-03.log`.
+Após revisão, a rodada final está em `artifacts/melhorias-review-2026-11-03` e `artifacts/e2e-review-2026-11-03`, ambos com gate zero. Os dois ensaios SQL passaram novamente, incluindo substituição de grupos e asserção efetiva de leitura pelo service_role. O resultado SQL foi conferido na saída da execução; não há arquivo local separado preservado dessa rodada.
 
 Testes de navegador usam dados públicos simulados, inclusive 1.002 servidores da Prefeitura e 32 da Câmara para provar paginação e isolamento no CSV. Nenhum modelo pago, mensagem externa ou notificação real foi acionado.
 
@@ -63,10 +63,14 @@ A prévia Vercel `dpl_FUTuJ1NZYRM2NjWHuRDQ5HTAxxjK` concluiu o build. Navegaçã
 
 Durante a conferência posterior, a API Supabase passou a informar `UPGRADING`. O agente não iniciou essa atualização e não interferiu nela. Em seguida o projeto retornou a `ACTIVE_HEALTHY`, versão `17.11.0.011`. SQL confirmou PostgreSQL 17.11, 85 jobs (81 ativos), 66 coletores, 61 grupos e 135 membros preservados. O novo coletor consta como healthy/scheduled; nenhuma view externa depende diretamente das tabelas cron e as permissões continuam corretas. Evidência privada: `work/verification-after-upgrade-2026-11-03.json`.
 
-A prévia do ajuste da home (`232dc21`) falhou durante a indisponibilidade do banco no upgrade, ao gerar `/investigacoes`. Compilação, TypeScript e CI passaram; o próximo build será executado com o banco saudável. A produção frontend anterior foi preservada.
+A prévia do ajuste da home (`232dc21`) falhou durante a indisponibilidade do banco no upgrade, ao gerar `/investigacoes`. A prévia seguinte, commit `d198d35`, concluiu em Ready no deployment `dpl_HPWSQWJvH6VLatd4QX6Sb52nZm3w`, com banco saudável. CI checks e browser aprovados. A produção frontend anterior foi preservada até o merge.
+
+O coletor de grupos foi republicado como v2 para tornar nomes determinísticos e preservar mensagens de erro. `work/deploy-grupos-v2-2026-11-03.json` contém o pacote. `work/verification-backend-final-2026-11-03.json` confirma a função v2 ACTIVE, arquivos iguais ao pacote verificado, projeto ACTIVE_HEALTHY e versão Postgres 17.11.0.011 em 2026-11-03T22:53:05Z.
+
+A revisão final acrescentou seleção determinística também entre nomes de fornecedores repetidos, mantendo precedência sobre contratos. Os seis testes focados do helper passaram, incluindo o novo caso de ordem invertida. A função foi publicada como v3, com pacote e comparação integral registrados em `work/deploy-grupos-v3-2026-11-03.json` e `work/verification-grupos-v3-2026-11-03.json`. A consolidação inicial não foi repetida; o cron já configurado usará a correção na próxima execução.
 
 ## Ajustes da revisão
 
-Importações de ônibus fazem merge por ID e exigem opção explícita para remover históricos. Validação exige consulta de viagem com data, origem e destino; a identidade da partida independe da chegada. CSV compartilhado escapa campos e neutraliza fórmulas. Exportação pagina por cursor e compara duas leituras completas com revisões e IDs únicos, repetindo até três vezes se detectar mudança. Essa detecção REST não equivale a uma transação única do banco. Falhas aparecem ao usuário, sem produzir arquivo parcial.
+Importações de ônibus fazem merge por ID e exigem opção explícita para remover históricos. Validação exige consulta de viagem com data, origem e destino; a identidade da partida independe da chegada. CSV compartilhado escapa campos e neutraliza fórmulas. Exportação pagina por cursor e compara duas leituras completas com revisões e IDs únicos, com até três tentativas totais se detectar mudança. Essa detecção REST não equivale a uma transação única do banco. Falhas aparecem ao usuário, sem produzir arquivo parcial.
 
 Todos os itens do feed ficam acessíveis, e contratos usam ID do banco. Lacunas da escala não prolongam plantões. Chuva usa sete datas do calendário local, mantém avisos suportados pelo acumulado parcial e identifica faltas. Nomes alternativos dos grupos são determinísticos e erros Supabase preservam sua mensagem. O resumo administrativo usa o mesmo critério das linhas; os testes SQL, limpeza de volumes descartáveis e smoke de redirecionamentos receberam as correções correspondentes.

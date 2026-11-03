@@ -52,3 +52,19 @@ Deno.test("nome alternativo de contratos é determinístico com variantes, espa�
   const comCadastro = calcularGruposEconomicos([{ ...fontes[0], razao_social: " Nome Oficial " }, fontes[1]], contratos);
   assertEquals(comCadastro[0].membros.find((membro) => membro.cnpj === a)?.razao_social, "Nome Oficial");
 });
+
+Deno.test("fornecedores repetidos escolhem nome determinístico com prioridade sobre contratos", () => {
+  const base = fornecedor(a, "Pessoa Um", "***123456**");
+  const fontes: FornecedorGrupo[] = [
+    { ...base, razao_social: " Zeta Oficial " },
+    { ...base, cnpj: "12.345.678/0001-90", razao_social: " Beta Oficial " },
+    { ...base, razao_social: null },
+    { ...base, razao_social: "   " },
+    fornecedor(b, "Pessoa Um", "***123456**"),
+  ];
+  const contratos = [{ ...contrato(a, 200), razao_social: "Alfa Contrato" }, contrato(b)];
+  const esperado = calcularGruposEconomicos(fontes, contratos);
+  assertEquals(esperado[0].membros.find((membro) => membro.cnpj === a)?.razao_social, "Beta Oficial");
+  assertEquals(esperado[0].rotulo, "Beta Oficial e mais 1");
+  assertEquals(calcularGruposEconomicos([...fontes].reverse(), [...contratos].reverse()), esperado);
+});

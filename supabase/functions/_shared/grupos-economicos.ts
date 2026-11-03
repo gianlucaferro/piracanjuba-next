@@ -58,12 +58,17 @@ export function calcularGruposEconomicos(fornecedores: FornecedorGrupo[], contra
     membros.set(cnpj, membro);
   }
   const socios = new Map<string, { nome: string; doc: string; cnpjs: Set<string> }>();
+  const nomesFornecedores = new Map<string, string>();
   for (const fornecedor of fornecedores) {
     const cnpj = fornecedor.cnpj.replace(/\D/g, "");
     const membro = membros.get(cnpj);
     if (!membro || !Array.isArray(fornecedor.socios)) continue;
     const nomeFornecedor = fornecedor.razao_social?.trim();
-    if (nomeFornecedor) membro.razao_social = nomeFornecedor;
+    const nomeAnterior = nomesFornecedores.get(cnpj);
+    if (nomeFornecedor && (!nomeAnterior || nomeFornecedor < nomeAnterior)) {
+      nomesFornecedores.set(cnpj, nomeFornecedor);
+      membro.razao_social = nomeFornecedor;
+    }
     for (const raw of fornecedor.socios) {
       const socio = socioIdentificado(raw);
       if (!socio) continue;
