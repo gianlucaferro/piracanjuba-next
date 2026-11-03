@@ -48,3 +48,15 @@ O operador autorizou explicitamente as três migrations, o cron diário e a prim
 - `admin-sync-status` é um endpoint novo e somente leitura. Pode permanecer protegido durante rollback do frontend; não expõe logs sem sessão administrativa válida.
 
 Os backups permanecem privados no M5, fora do Git e do espelho Dell. O estado efetivo da publicação será registrado após as verificações.
+
+## Banco e funções publicados
+
+As três migrations foram aplicadas com sucesso. A verificação anterior à atualização gerenciada confirmou zero dependências diretas da view em `cron.job` e `cron.job_run_details`, `security_invoker=true`, leitura exclusiva para service_role/postgres e os 65 coletores anteriores preservados. A inclusão do novo coletor elevou o monitor para 66 entradas.
+
+`admin-sync-status` v1, `sync-grupos-economicos` v1 e `chatbot` v10 foram publicados. Os conteúdos ativos foram comparados integralmente ao manifesto privado `work/deploy-melhorias-2026-11-03.json`. JWT do chatbot permaneceu false; o monitor usa JWT e sessão administrativa; o coletor de grupos mantém autenticação própria estrita. Chamadas não autenticadas aos dois novos endpoints retornaram HTTP 401.
+
+A primeira atualização de grupos, request 61173, terminou com success em 2026-11-03T22:30:22Z: 61 grupos, 135 empresas, R$ 54.855.584,76 em valores iniciais dos contratos. Foram lidos 6.598 contratos da Prefeitura, 170 registros contratuais da Câmara e 3.629 fornecedores. Cron diário `0 22 * * *` UTC ativado, equivalente a 19h em Piracanjuba. RPC recusada ao papel anon e permitida ao service_role.
+
+A prévia Vercel `dpl_FUTuJ1NZYRM2NjWHuRDQ5HTAxxjK` concluiu o build. Navegação autenticada no Chrome confirmou home, favoritos e comparação real do primeiro grupo, incluindo valores anuais, aditivos e documentos. O acesso pelo conector Vercel permaneceu limitado, mas CLI e sessão Chrome funcionaram. O card da próxima viagem recebeu um ajuste para abrir diretamente a data, o destino e a empresa anunciados, aprovado nos dois projetos Playwright.
+
+Durante a conferência posterior, a API Supabase passou a informar `UPGRADING`. O agente não iniciou essa atualização e não interferiu nela. A verificação final do banco aguarda retorno a ACTIVE_HEALTHY, sem declarar que o upgrade terminou.

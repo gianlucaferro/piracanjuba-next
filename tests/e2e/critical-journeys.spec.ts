@@ -7,6 +7,11 @@ test("home destaca serviços atuais e mantém ônibus ao lado dos grupos", async
   const today = page.getByRole("region", { name: "Hoje em Piracanjuba" });
   await expect(today).toContainText("2026-11-03");
   await expect(today.getByRole("link", { name: /Farmácia de plantão/ })).toBeVisible();
+  const departure = today.getByRole("link", { name: /Próxima saída conferida/ });
+  await expect(departure).toContainText("2026-11-04");
+  await departure.click();
+  await expect(page.locator("#bus-date")).toHaveValue("2026-11-04");
+  await page.goto("/");
   const services = page.getByRole("region", { name: "Mais serviços" });
   const cards = await services.getByRole("link").all();
   const hrefs = await Promise.all(cards.map((card) => card.getAttribute("href")));

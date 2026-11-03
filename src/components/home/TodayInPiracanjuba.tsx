@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Pill, BusFront, Trash2, Phone, Bell } from "lucide-react";
 import { PLANTAO_FARMACIAS } from "@/data/plantaoFarmacias";
-import { BUS_DESTINATIONS, getUpcomingBusDepartures } from "@/data/horariosOnibus";
+import { BUS_DESTINATIONS, getBusPageUrl, getUpcomingBusDepartures } from "@/data/horariosOnibus";
 import { brazilDate, weekForDate } from "@/lib/civic-day";
 import { useBrazilClock } from "@/hooks/useBrazilClock";
 
@@ -15,7 +15,7 @@ export default function TodayInPiracanjuba() {
   const destination = BUS_DESTINATIONS.find((item) => item.id === nextBus?.destinationId);
   const cards = [
     { href: "/plantao-farmacias", title: "Farmácia de plantão", icon: Pill, text: !date ? "Consulte a escala" : week?.farmacia24h ? `${week.farmacia24h.nome}, plantão 24h` : week ? "Veja as farmácias da semana" : "Consulte a cobertura da escala" },
-    { href: "/horarios-onibus", title: "Próxima saída conferida", icon: BusFront, text: nextBus ? `${nextBus.departure} para ${destination?.name ?? nextBus.destinationId}, ${nextBus.date}` : "Busque por data e destino" },
+    { href: nextBus ? getBusPageUrl(nextBus.date, nextBus.destinationId, nextBus.operatorId) : "/horarios-onibus", title: "Próxima saída conferida", icon: BusFront, text: nextBus ? `${nextBus.departure} para ${destination?.name ?? nextBus.destinationId}, ${nextBus.date}` : "Busque por data e destino" },
     { href: "/coleta-lixo", title: "Coleta no seu bairro", icon: Trash2, text: "Dias, horários e orientações" },
     { href: "/contatos", title: "Contatos úteis", icon: Phone, text: "Serviços públicos e emergências" },
   ];
