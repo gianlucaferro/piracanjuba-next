@@ -1,6 +1,18 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
+test("favoritos mostram todos os atos retornados, inclusive após o quadragésimo", async ({ page }) => {
+  await page.route("**/api/acompanhar", (route) => route.fulfill({ json: {
+    items: Array.from({ length: 50 }, (_, index) => ({ id: `camara:${index}`, topic: "camara", title: `Ato parlamentar ${index + 1}`, detail: "Registro de teste", href: "/atuacao-parlamentar", revision: "v1", filter: "Vereador Teste" })),
+    unavailable: ["farmacias", "onibus", "contratos"], checkedAt: "2026-11-03T20:00:00Z",
+  } }));
+  await page.goto("/acompanhar");
+  await page.getByRole("checkbox", { name: "Atuação dos vereadores" }).check();
+  await page.getByRole("button", { name: "Salvar preferências" }).click();
+  await expect(page.getByRole("heading", { name: "Ato parlamentar 50", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Ato parlamentar / })).toHaveCount(50);
+});
+
 test("home destaca serviços atuais e mantém ônibus ao lado dos grupos", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-11-03T15:00:00-03:00"));
   await page.goto("/");

@@ -10,3 +10,11 @@ test("plantão muda no dia local e expira ao terminar a última semana", () => {
   assert.equal(weekForDate(weeks, "2026-11-14"), null);
   assert.equal(weekForDate([], "2026-11-03"), null);
 });
+
+test("plantão não prolonga uma semana através de lacunas na escala", () => {
+  const weeks = [{ inicio: "2026-10-31", name: "A" }, { inicio: "2026-11-14", name: "B" }];
+  assert.equal(weekForDate(weeks, "2026-11-06")?.name, "A");
+  assert.equal(weekForDate(weeks, "2026-11-07"), null);
+  assert.equal(weekForDate(weeks, "2026-11-13"), null);
+  assert.equal(weekForDate(weeks, "2026-11-14")?.name, "B");
+});

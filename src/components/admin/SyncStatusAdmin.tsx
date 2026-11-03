@@ -296,7 +296,7 @@ export default function SyncStatusAdmin() {
 
       {!!data?.jobs.length && (
         <details className="stat-card">
-          <summary className="cursor-pointer font-semibold">Coletores: {data.jobs.length} monitorados, {data.jobs.filter((job) => job.health_status !== "healthy").length} precisam de acompanhamento</summary>
+          <summary className="cursor-pointer font-semibold">Coletores: {data.jobs.length} monitorados, {data.jobs.filter((job) => assessCollector(job)?.status !== "ok").length} precisam de acompanhamento</summary>
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-sm text-left">
               <thead><tr><th className="p-2">Coletor</th><th className="p-2">Situação</th><th className="p-2">Prazo de execução</th><th className="p-2">Última conclusão</th></tr></thead>

@@ -10,7 +10,7 @@ Data da verificação: 2026-11-03. Data das viagens consultadas: 2026-11-04.
 - A página abre na data atual de São Paulo, oferece a próxima data com partidas futuras conferidas e permite acessar consultas antigas explicitamente. Links compartilháveis preservam data, destino e empresa.
 - `getUpcomingBusDepartures` exclui partidas passadas e conferências com mais de sete dias. `getBusCoverage` descreve a cobertura da data e do destino escolhidos, sem confundir ausência de consulta com inexistência de ônibus.
 - `OnibusAdmin` permite abrir o arquivo publicado ou um JSON local, editar, validar e baixar para revisão. O painel informa claramente que baixar não publica.
-- O importador valida antes de escrever e mostra quantos registros existentes seriam removidos. `--apply` substitui somente o arquivo local versionado. Não há escrita de banco nem cron novo.
+- O importador valida antes de escrever, mescla por ID e preserva os registros históricos ausentes de uma importação parcial. `--apply` atualiza somente o arquivo local versionado. Remoções exigem a opção explícita `--allow-removals`, que substitui a base pelo arquivo fornecido e lista os IDs removidos. Não há escrita de banco nem cron novo.
 
 ## Fontes e observações
 
@@ -32,15 +32,15 @@ Limites: consulta comercial por data, sem garantia de inventário completo, disp
 ## Manutenção
 
 1. Conferir data, horário local, empresa, destino, embarque e conexões diretamente na fonte. ANTT/AGR podem informar partida de outra cidade, não o horário de passagem em Piracanjuba.
-2. Abrir o arquivo publicado no painel de manutenção. Manter históricos e substituir os registros corrigidos ou cancelados. Não duplicar partidas pela classe de assento.
-3. Usar `checkedAt` real e uma fonte que corresponda à data da viagem. A validação limita a conferência a sete dias antes da viagem; isso é uma regra editorial de revisão, não promessa da operadora.
+2. Abrir o arquivo publicado no painel de manutenção. Manter o ID ao corrigir uma viagem e preservar históricos. Não duplicar partidas pela classe de assento. O importador faz a mesclagem por ID, inclusive quando recebe apenas novas viagens.
+3. Usar `checkedAt` real e pelo menos uma URL de consulta ClickBus ou Mobifácil que corresponda à data, à origem Piracanjuba e ao destino da viagem. Páginas gerais das empresas ou órgãos oficiais servem apenas como fontes de apoio. A validação limita a conferência a sete dias antes da viagem; isso é uma regra editorial de revisão, não promessa da operadora.
 4. Validar e baixar o arquivo. No repositório, executar `node scripts/import-bus-schedules.mjs caminho/do/arquivo.json` para conferir sem escrever.
-5. Revisar fontes e remoções informadas. Executar o mesmo comando com `--apply`, conferir `git diff`, rodar os testes de ônibus e os checks do projeto e publicar pelo fluxo normal de revisão.
+5. Revisar fontes e diferenças. Executar o mesmo comando com `--apply`, conferir `git diff`, rodar os testes de ônibus e os checks do projeto e publicar pelo fluxo normal de revisão. Para cancelamentos ou remoções deliberadas, preparar o arquivo completo, simular com `--allow-removals` e revisar a lista de IDs excluídos antes de aplicar com `--apply --allow-removals`.
 6. Rollback: restaurar o JSON anterior pelo Git e publicar uma reversão. O importador não altera banco, preferências dos visitantes ou histórico Git.
 
 ## Validação executada
 
-- `node --test tests/bus-schedules.test.ts`: 19 testes aprovados.
-- `node scripts/import-bus-schedules.mjs src/data/horariosOnibus-registros.json`: 33 viagens válidas, zero remoções, sem escrita.
-- Cobertura: timezone, data estrita sem recorrência, partidas expiradas, filtros, links, integridade das fontes, validação de importação, duplicatas, duração e conexões.
+- `node --test tests/bus-schedules.test.ts tests/bus-import.test.mjs`: 25 testes aprovados após a revisão do importador.
+- `node scripts/import-bus-schedules.mjs src/data/horariosOnibus-registros.json`: 33 viagens válidas, histórico preservado, zero remoções e sem escrita.
+- Cobertura: timezone, data estrita sem recorrência, partidas expiradas, filtros, links, fonte de viagem obrigatória, validação de importação, duplicatas, duração, conexões, preservação de histórico, atualização por ID e remoção explícita. O teste da base publicada usa a maior data de conferência do arquivo; o caso negativo de conferência futura continua com data fixa.
 - Tipos, lint, build e smoke de navegador ficam integrados à validação global da entrega pelo agente principal.

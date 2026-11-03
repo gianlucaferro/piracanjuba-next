@@ -17,7 +17,7 @@ const server = createServer((request, response) => {
     // A fixture inclui mais de mil registros e órgãos distintos para detectar truncamento e mistura.
     const orgao = url.searchParams.get("orgao_tipo")?.replace("eq.", "");
     const organs = orgao ? [orgao] : ["prefeitura", "camara"];
-    data = organs.flatMap((type) => Array.from({ length: type === "prefeitura" ? 1002 : 32 }, (_, i) => ({ id: `${type}-${i}`, nome: `${type === "prefeitura" ? "PREF" : "CAM"} Servidor ${String(i + 1).padStart(4, "0")}`, cargo: type === "prefeitura" ? "Professor" : "Assessor", orgao_tipo: type, secretaria_id: null })));
+    data = organs.flatMap((type) => Array.from({ length: type === "prefeitura" ? 1002 : 32 }, (_, i) => ({ id: `${type}-${i}`, nome: `${type === "prefeitura" ? "PREF" : "CAM"} Servidor ${String(i + 1).padStart(4, "0")}`, cargo: type === "prefeitura" ? "Professor" : "Assessor", orgao_tipo: type, secretaria_id: null, updated_at: "2026-11-03T12:00:00Z" })));
     const search = url.searchParams.get("nome")?.replace(/^ilike\./, "").replaceAll("%", "").toLowerCase();
     if (search) data = data.filter((row) => row.nome.toLowerCase().includes(search));
   }
@@ -31,6 +31,18 @@ const server = createServer((request, response) => {
   if (url.pathname === "/rest/v1/classificados") {
     data = [{ id: "00000000-0000-4000-8000-000000000099", titulo: "Bicicleta de teste", bairro: "Centro", categoria: "outros", nome: "Anunciante teste", descricao: "Anúncio fictício usado somente nos testes locais.", preco: 450, preco_tipo: "fixo", fotos: [], status: "ativo", created_at: "2026-11-03T12:00:00Z", updated_at: "2026-11-03T12:00:00Z", expira_em: "2099-12-31T00:00:00Z", whatsapp: "5564999999999", visualizacoes: 0, denuncias: 0, whatsapp_clicks: 0 }];
   }
+  const idFilter = url.searchParams.get("id");
+  if (idFilter?.startsWith("gt.")) data = data.filter((row) => row.id > idFilter.slice(3));
+  const order = url.searchParams.get("order")?.split(",") ?? [];
+  data.sort((left, right) => {
+    for (const rule of order) {
+      const [column, direction] = rule.split(".");
+      const a = left[column], b = right[column];
+      const compared = a === b ? 0 : a == null ? 1 : b == null ? -1 : a < b ? -1 : 1;
+      if (compared) return direction === "desc" ? -compared : compared;
+    }
+    return 0;
+  });
   const count = data.length;
   const start = Number(url.searchParams.get("offset") ?? 0);
   const limit = Math.min(1000, Number(url.searchParams.get("limit") ?? 1000));

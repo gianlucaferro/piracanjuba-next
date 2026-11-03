@@ -41,7 +41,13 @@ begin
 end;
 $test$;
 set local role service_role;
-select count(*) = 3 as service_role_can_read from public.v_sync_dashboard;
+do $test$
+begin
+  if (select count(*) from public.v_sync_dashboard) <> 3 then
+    raise exception 'service_role nao le todas as linhas do painel';
+  end if;
+end;
+$test$;
 reset role;
 
 -- Prova de independencia: remocao sem CASCADE e recriacao das tabelas da extensao.

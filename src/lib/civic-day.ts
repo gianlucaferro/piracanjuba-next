@@ -10,5 +10,8 @@ export function weekForDate<T extends { inicio: string }>(weeks: readonly T[], d
   const week = weeks[index];
   const end = new Date(`${week.inicio}T12:00:00Z`);
   end.setUTCDate(end.getUTCDate() + 7);
-  return date < (weeks[index + 1]?.inicio ?? end.toISOString().slice(0, 10)) ? week : null;
+  const sevenDaysEnd = end.toISOString().slice(0, 10);
+  const nextStart = weeks[index + 1]?.inicio;
+  const expires = nextStart && nextStart < sevenDaysEnd ? nextStart : sevenDaysEnd;
+  return date < expires ? week : null;
 }

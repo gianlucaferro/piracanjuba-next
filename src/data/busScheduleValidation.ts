@@ -44,7 +44,7 @@ export function validateBusDepartures(input: unknown, now = new Date()): BusImpo
       const duration = (timestamp(item.arrivalDate, item.arrival) - timestamp(item.date, item.departure)) / 60_000;
       if (duration <= 0 || duration > 48 * 60 || item.durationMinutes !== duration) fail("duração deve corresponder à partida e à chegada, entre 1 minuto e 48 horas.");
     }
-    const journey = [item.date, item.destinationId, item.operatorId, item.departure, item.arrivalDate, item.arrival].join("|");
+    const journey = [item.date, item.destinationId, item.operatorId, item.departure].join("|");
     if (journeys.has(journey)) fail("partida repetida. Agrupe classes da mesma viagem em serviceClasses.");
     journeys.add(journey);
     if (!Array.isArray(item.serviceClasses) || !item.serviceClasses.length || !item.serviceClasses.every(text)) fail("informe as classes de serviço.");
@@ -71,16 +71,24 @@ export function validateBusDepartures(input: unknown, now = new Date()): BusImpo
         }
       }
     }
+    let hasDatedTripSource = false;
     if (!Array.isArray(item.sources) || !item.sources.length) fail("adicione uma fonte verificável para esta data e partida local.");
     else for (const source of item.sources) {
       if (!record(source) || !text(source.name) || !text(source.url)) { fail("fonte deve ter nome e URL."); continue; }
       try {
         const url = new URL(source.url);
-        if (url.protocol !== "https:" || url.username || url.password || url.port || !sourceHosts.has(url.hostname)) fail("fonte deve usar HTTPS e um canal cadastrado de empresa, venda ou órgão oficial.");
-        if (["www.clickbus.com.br", "clickbus.com.br"].includes(url.hostname) && (url.searchParams.get("departureDate") !== item.date || url.pathname !== `/onibus/piracanjuba-go/${destination?.clickbusSlug}`)) fail("link ClickBus deve corresponder ao destino e à data da viagem.");
-        if (["www.mobifacil.com.br", "mobifacil.com.br"].includes(url.hostname) && date(item.date) && (url.searchParams.get("date") !== item.date.split("-").reverse().join("-") || !destination?.mobifacilSlug || url.pathname !== `/passagem-de-onibus/piracanjuba-go/${destination.mobifacilSlug}`)) fail("link Mobifácil deve corresponder ao destino e à data da viagem.");
+        if (url.protocol !== "https:" || url.username || url.password || url.port || !sourceHosts.has(url.hostname)) { fail("fonte deve usar HTTPS e um canal cadastrado de empresa, venda ou órgão oficial."); continue; }
+        if (["www.clickbus.com.br", "clickbus.com.br"].includes(url.hostname) && url.pathname.startsWith("/onibus/")) {
+          if (date(item.date) && destination && url.searchParams.getAll("departureDate").length === 1 && url.searchParams.get("departureDate") === item.date && url.pathname === `/onibus/piracanjuba-go/${destination.clickbusSlug}`) hasDatedTripSource = true;
+          else fail("link ClickBus deve corresponder ao destino e à data da viagem.");
+        }
+        if (["www.mobifacil.com.br", "mobifacil.com.br"].includes(url.hostname) && url.pathname.startsWith("/passagem-de-onibus/")) {
+          if (date(item.date) && destination?.mobifacilSlug && url.searchParams.getAll("date").length === 1 && url.searchParams.get("date") === item.date.split("-").reverse().join("-") && url.pathname === `/passagem-de-onibus/piracanjuba-go/${destination.mobifacilSlug}`) hasDatedTripSource = true;
+          else fail("link Mobifácil deve corresponder ao destino e à data da viagem.");
+        }
       } catch { fail("URL da fonte inválida."); }
     }
+    if (!hasDatedTripSource) fail("inclua ao menos uma consulta de viagem ClickBus ou Mobifácil com origem Piracanjuba, destino e data correspondentes. Sites gerais servem apenas como apoio.");
   }
   return { departures: errors.length ? [] : input as BusDeparture[], errors };
 }

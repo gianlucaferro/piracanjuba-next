@@ -53,7 +53,9 @@ Deno.serve(async (req) => {
     if (finalError) throw finalError;
     return new Response(JSON.stringify({ success: true, ...resultado }), { headers });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = error instanceof Error ? error.message
+      : error && typeof error === "object" && "message" in error && typeof error.message === "string"
+      ? error.message : String(error);
     if (logId) await sb.from("sync_log").update({ status: "error", finished_at: new Date().toISOString(), detalhes: { error: message, complete: false } }).eq("id", logId);
     return new Response(JSON.stringify({ success: false, error: message }), { status: 500, headers });
   }

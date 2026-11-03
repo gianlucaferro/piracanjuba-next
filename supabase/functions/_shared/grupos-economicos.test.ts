@@ -33,3 +33,22 @@ Deno.test("grupos ignoram empresas sem contrato e resultado independe da ordem d
   assertEquals(esperado[0].valor_total, 3.03);
   assertEquals(calcularGruposEconomicos([...fontes].reverse(), [...contratos].reverse()), esperado);
 });
+
+Deno.test("nome alternativo de contratos é determinístico com variantes, espaços e nulos", () => {
+  const fontes = [fornecedor(a, "Pessoa Um", "***123456**"), { ...fornecedor(b, "Pessoa Um", "***123456**"), razao_social: "   " }];
+  const contratos: ContratoGrupo[] = [
+    { ...contrato(a), id: "a1", razao_social: null },
+    { ...contrato(a), id: "a2", razao_social: " Zeta Serviços " },
+    { ...contrato(a), id: "a3", razao_social: "   " },
+    { ...contrato(a), id: "a4", razao_social: " Alfa Serviços " },
+    { ...contrato(b), id: "b1", razao_social: " Beta Serviços " },
+    { ...contrato(b), id: "b2", razao_social: null },
+  ];
+  const esperado = calcularGruposEconomicos(fontes, contratos);
+  assertEquals(esperado[0].membros.find((membro) => membro.cnpj === a)?.razao_social, "Alfa Serviços");
+  assertEquals(esperado[0].membros.find((membro) => membro.cnpj === b)?.razao_social, "Beta Serviços");
+  assertEquals(esperado[0].rotulo, "Alfa Serviços e mais 1");
+  assertEquals(calcularGruposEconomicos([...fontes].reverse(), [...contratos].reverse()), esperado);
+  const comCadastro = calcularGruposEconomicos([{ ...fontes[0], razao_social: " Nome Oficial " }, fontes[1]], contratos);
+  assertEquals(comCadastro[0].membros.find((membro) => membro.cnpj === a)?.razao_social, "Nome Oficial");
+});

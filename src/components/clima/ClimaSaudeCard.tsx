@@ -1,22 +1,15 @@
 import Link from "next/link";
 import { CloudRain, AlertTriangle, ArrowRight } from "lucide-react";
 import { fetchClimaSerieDias } from "@/lib/data/clima";
-import { climateNumber } from "@/lib/climate-measurements";
+import { summarizeRainRisk } from "@/lib/climate-rain-risk";
 
 export default async function ClimaSaudeCard() {
   const dias = await fetchClimaSerieDias(7);
-  const medicoes = dias.map((dia) => climateNumber(dia.precipitacao_mm)).filter((value): value is number => value !== null);
-  if (!medicoes.length) return null;
-  const parcial = medicoes.length !== dias.length;
+  const resumo = summarizeRainRisk(dias);
+  if (!resumo) return null;
+  const { total: chuvaSemana, rainyDays: diasComChuva, partial: parcial, risk: risco } = resumo;
 
-  const chuvaSemana = Math.round(
-    medicoes.reduce((sum, value) => sum + value, 0) * 10,
-  ) / 10;
-  const diasComChuva = medicoes.filter((value) => value > 0.1).length;
-
-  // Heuristica: chuva > 10mm na semana = risco aumentado de criadouros
-  const risco = chuvaSemana > 30 ? "alto" : chuvaSemana > 10 ? "moderado" : "baixo";
-  const corRisco = parcial ? "border-border" : risco === "alto" ? "border-red-500/30 bg-red-500/5" :
+  const corRisco = risco === null ? "border-border" : risco === "alto" ? "border-red-500/30 bg-red-500/5" :
                    risco === "moderado" ? "border-amber-500/30 bg-amber-500/5" :
                    "border-emerald-500/30 bg-emerald-500/5";
   const corText = risco === "alto" ? "text-red-600" :
@@ -38,7 +31,8 @@ export default async function ClimaSaudeCard() {
             · {diasComChuva} dia{diasComChuva !== 1 ? "s" : ""} com chuva
           </span>
         </p>
-        {parcial ? <p className="mt-0.5 text-sm text-muted-foreground">Acumulado parcial: há dias sem medição de chuva.</p> : <p className={`text-sm mt-0.5 inline-flex items-center gap-1 ${corText}`}>
+        {parcial && <p className="mt-0.5 text-sm text-muted-foreground">Acumulado parcial: há dias sem medição de chuva.</p>}
+        {risco !== null && <p className={`text-sm mt-0.5 inline-flex items-center gap-1 ${corText}`}>
           {risco !== "baixo" && <AlertTriangle className="w-3 h-3" />}
           Risco de criadouros de mosquito: <span className="font-semibold capitalize">{risco}</span>
         </p>}

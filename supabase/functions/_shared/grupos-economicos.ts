@@ -49,7 +49,9 @@ export function calcularGruposEconomicos(fornecedores: FornecedorGrupo[], contra
     const identidade = `${contrato.poder}:${contrato.id}`;
     if (cnpj.length !== 14 || vistos.has(identidade)) continue;
     vistos.add(identidade);
-    const membro = membros.get(cnpj) ?? { cnpj, razao_social: contrato.razao_social, poderes: [], n_contratos: 0, valor: 0 };
+    const membro = membros.get(cnpj) ?? { cnpj, razao_social: null, poderes: [], n_contratos: 0, valor: 0 };
+    const nomeContrato = contrato.razao_social?.trim();
+    if (nomeContrato && (!membro.razao_social || nomeContrato < membro.razao_social)) membro.razao_social = nomeContrato;
     if (!membro.poderes.includes(contrato.poder)) membro.poderes.push(contrato.poder);
     membro.n_contratos++;
     membro.valor += Number.isFinite(contrato.valor) ? contrato.valor ?? 0 : 0;
@@ -60,7 +62,8 @@ export function calcularGruposEconomicos(fornecedores: FornecedorGrupo[], contra
     const cnpj = fornecedor.cnpj.replace(/\D/g, "");
     const membro = membros.get(cnpj);
     if (!membro || !Array.isArray(fornecedor.socios)) continue;
-    if (fornecedor.razao_social) membro.razao_social = fornecedor.razao_social;
+    const nomeFornecedor = fornecedor.razao_social?.trim();
+    if (nomeFornecedor) membro.razao_social = nomeFornecedor;
     for (const raw of fornecedor.socios) {
       const socio = socioIdentificado(raw);
       if (!socio) continue;

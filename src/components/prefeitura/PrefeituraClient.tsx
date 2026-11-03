@@ -44,6 +44,7 @@ import { LayoutDashboard } from "lucide-react";
 import { calcularSuspeitaContrato, normalizarPrefeitura, type FornecedorCNPJ } from "@/lib/contratoSuspeita";
 import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditivos";
 import { downloadCSV } from "@/lib/csvExport";
+import { ExportChangedError } from "@/lib/stable-export";
 import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
@@ -381,6 +382,8 @@ function SecretariasTab() {
 function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
   const [search, setSearch] = useState(initialSearch || "");
   const [page, setPage] = useState(0);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const PAGE_SIZE = 30;
 
   const handleSearch = (value: string) => {
@@ -429,19 +432,21 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
   };
 
   const exportCsv = async () => {
-    // Fetch all matching records (no pagination) for export
-    const all = await fetchAllServidores("prefeitura", search || undefined);
-    if (!all?.length) return;
-    const header = "Nome,Cargo";
-    const rows = all.map(s => `"${s.nome}","${s.cargo || ""}"`);
-    const csv = [header, ...rows].join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `servidores${search ? `_${search}` : ""}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (exporting) return;
+    setExporting(true);
+    setExportError(null);
+    try {
+      const all = await fetchAllServidores("prefeitura", search || undefined);
+      if (!all.length) {
+        setExportError("Nenhum servidor encontrado para exportar. Confira a busca e tente novamente.");
+        return;
+      }
+      downloadCSV(`servidores${search ? `_${search}` : ""}.csv`, ["Nome", "Cargo"], all.map(s => [s.nome, s.cargo]), ",");
+    } catch (error) {
+      setExportError(error instanceof ExportChangedError ? error.message : "Não foi possível exportar os servidores. Tente novamente.");
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -456,12 +461,13 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
           {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para ver um resumo gerado por IA."}
         </p>
         {totalCount > 0 && (
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download className="w-4 h-4 mr-1" /> Exportar CSV
+          <Button variant="outline" size="sm" onClick={exportCsv} disabled={exporting}>
+            <Download className="w-4 h-4 mr-1" /> {exporting ? "Exportando..." : "Exportar CSV"}
           </Button>
         )}
       </div>
 
+      {exportError && <p role="alert" className="text-sm text-destructive">{exportError}</p>}
       {isLoading && <div className="stat-card animate-pulse h-40" />}
       {!isLoading && !servidores.length && (
         <EmptyState icon={Users} title="Sem dados de servidores"

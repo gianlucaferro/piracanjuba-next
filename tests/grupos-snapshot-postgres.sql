@@ -59,5 +59,33 @@ do $$ begin
   end if;
   if not has_function_privilege('service_role','public.publicar_grupos_economicos(jsonb,jsonb)','EXECUTE') then raise exception 'RPC indisponível ao coletor'; end if;
 end $$;
+create function pg_temp.grupos_novos() returns jsonb language sql as $$
+select '[{"chave":"22222222000122,33333333000133","rotulo":"Outro grupo","tipo":"socio_comum","n_empresas":2,"valor_total":700,"socios_conectores":[{"nome":"Outra Pessoa","doc":"***654321**","n_empresas":2,"cnpjs":["22222222000122","33333333000133"]}],"membros":[{"cnpj":"22222222000122","razao_social":"Empresa C","poderes":["prefeitura"],"n_contratos":1,"valor":300},{"cnpj":"33333333000133","razao_social":"Empresa D","poderes":["camara"],"n_contratos":1,"valor":400}]}]'::jsonb;
+$$;
+do $$ declare resultado jsonb; novo_id uuid; begin
+  begin
+    perform public.publicar_grupos_economicos(jsonb_set(pg_temp.grupos_novos(),'{0,membros,1,valor}','"valor inválido"'),pg_temp.fontes());
+    raise exception 'Teste deveria recusar valor inválido após iniciar a substituição';
+  exception when invalid_text_representation then null;
+  end;
+  if (select count(*) from public.grupo_economico)<>1 or
+     not exists(select 1 from public.grupo_economico where id='00000000-0000-4000-8000-000000000010' and valor_total=200) or
+     (select count(*) from public.grupo_economico_membro)<>2 or
+     exists(select 1 from public.grupo_economico_membro where cnpj not in ('12345678000190','98765432000100')) then
+    raise exception 'Substituição interrompida não preservou integralmente o snapshot anterior';
+  end if;
+  resultado := public.publicar_grupos_economicos(pg_temp.grupos_novos(),pg_temp.fontes());
+  if resultado->>'grupos'<>'1' or resultado->>'alterados'<>'1' then raise exception 'Substituição não publicou o novo grupo'; end if;
+  select id into novo_id from public.grupo_economico where chave='22222222000122,33333333000133' and valor_total=700;
+  if novo_id is null or (select count(*) from public.grupo_economico)<>1 or
+     exists(select 1 from public.grupo_economico where id='00000000-0000-4000-8000-000000000010') then
+    raise exception 'Substituição não removeu o grupo antigo';
+  end if;
+  if (select count(*) from public.grupo_economico_membro where grupo_id=novo_id and cnpj in ('22222222000122','33333333000133'))<>2 or
+     (select count(*) from public.grupo_economico_membro)<>2 then
+    raise exception 'Substituição manteve membros antigos ou perdeu os novos';
+  end if;
+  if (select grupos from public.grupo_economico_atualizacao where id=true)<>1 then raise exception 'Metadados não acompanharam a substituição'; end if;
+end $$;
 rollback;
-\echo 'Grupos: publicação atômica, identidade estável, idempotência, cobertura e ACL aprovados'
+\echo 'Grupos: publicação e substituição atômicas, identidade estável, idempotência, cobertura e ACL aprovados'

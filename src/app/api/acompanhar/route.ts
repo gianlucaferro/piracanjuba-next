@@ -20,13 +20,13 @@ export async function GET() {
   if (!items.some((item) => item.topic === "onibus")) unavailable.push("onibus");
   const sb = createPublicSupabaseClient();
   const results = await Promise.allSettled([
-    sb.from("contratos").select("numero,empresa,objeto,valor,status,vigencia_inicio,vigencia_fim").order("vigencia_inicio", { ascending: false, nullsFirst: false }).order("numero").order("empresa").order("id").limit(30),
+    sb.from("contratos").select("id,numero,empresa,objeto,valor,status,vigencia_inicio,vigencia_fim").order("vigencia_inicio", { ascending: false, nullsFirst: false }).order("numero").order("empresa").order("id").limit(30),
     sb.from("atuacao_parlamentar").select("id,tipo,numero,ano,autor_texto,descricao,data").order("data", { ascending: false }).order("id").limit(50),
   ]);
   const contracts = results[0];
   if (contracts.status === "rejected" || contracts.value.error) unavailable.push("contratos");
   else for (const contract of contracts.value.data ?? []) {
-    items.push({ id: `contratos:${JSON.stringify([contract.numero, contract.empresa, contract.vigencia_inicio])}`, topic: "contratos", title: `Contrato ${contract.numero ?? "sem número"}: ${contract.empresa ?? "Fornecedor não informado"}`, detail: (contract.objeto ?? "Consulte o objeto e os aditivos no contrato.").slice(0, 220), href: "/prefeitura/contratos", revision: JSON.stringify(contract) });
+    items.push({ id: `contratos:${contract.id}`, topic: "contratos", title: `Contrato ${contract.numero ?? "sem número"}: ${contract.empresa ?? "Fornecedor não informado"}`, detail: (contract.objeto ?? "Consulte o objeto e os aditivos no contrato.").slice(0, 220), href: "/prefeitura/contratos", revision: JSON.stringify(contract) });
   }
   const council = results[1];
   if (council.status === "rejected" || council.value.error) unavailable.push("camara");

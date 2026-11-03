@@ -125,7 +125,28 @@ test("link compartilhável preserva filtros válidos e ignora valores adulterado
 });
 
 test("importação valida toda a base publicada, inclusive históricos", () => {
-  assert.deepEqual(validateBusDepartures(BUS_DEPARTURES, new Date("2026-11-03T22:00:00Z")).errors, []);
+  const lastCheckedAt = BUS_DEPARTURES.reduce((latest, item) => item.checkedAt > latest ? item.checkedAt : latest, "");
+  assert.ok(isBusDate(lastCheckedAt));
+  assert.deepEqual(validateBusDepartures(BUS_DEPARTURES, new Date(`${lastCheckedAt}T12:00:00-03:00`)).errors, []);
+});
+
+test("fontes gerais apenas apoiam uma consulta com data, origem e destino comprováveis", () => {
+  const homepage = { name: "Expresso União", url: "https://www.expressouniao.com.br/" };
+  const now = new Date("2026-09-09T15:00:00Z");
+  const clickbus = { name: "ClickBus", url: "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-09-10" };
+  const mobifacil = { name: "Mobifácil", url: "https://www.mobifacil.com.br/passagem-de-onibus/piracanjuba-go/goiania-go?date=10-09-2026" };
+  for (const sources of [[homepage], [{ name: "ClickBus", url: "https://www.clickbus.com.br/" }]]) {
+    assert.ok(validateBusDepartures([departure({ sources })], now).errors.some((error) => error.includes("ao menos uma consulta de viagem")));
+  }
+  for (const tripSource of [clickbus, mobifacil]) {
+    assert.deepEqual(validateBusDepartures([departure({ sources: [homepage, tripSource] })], now).errors, []);
+  }
+  for (const source of [
+    { ...clickbus, url: `${clickbus.url}&departureDate=2026-09-11` },
+    { ...mobifacil, url: mobifacil.url.replace("10-09-2026", "11-09-2026") },
+    { ...mobifacil, url: mobifacil.url.replace("piracanjuba-go", "goiania-go") },
+    { ...clickbus, url: clickbus.url.replace("goiania-go", "uberlandia-mg") },
+  ]) assert.ok(validateBusDepartures([departure({ sources: [homepage, source] })], now).errors.length > 0);
 });
 
 test("importação recusa datas fictícias, fonte errada, duração incorreta e duplicatas", () => {
@@ -155,6 +176,9 @@ test("importação recusa datas fictícias, fonte errada, duração incorreta e 
     assert.deepEqual(result.departures, []);
   }
   assert.ok(validateBusDepartures([valid, { ...valid, id: "other" }], now).errors.some((error) => error.includes("partida repetida")));
+  const conflictingArrival = { ...valid, id: "different-arrival", arrival: "15:10", durationMinutes: 115 };
+  assert.deepEqual(validateBusDepartures([conflictingArrival], now).errors, []);
+  assert.ok(validateBusDepartures([valid, conflictingArrival], now).errors.some((error) => error.includes("partida repetida")));
   assert.ok(validateBusDepartures([valid, valid], now).errors.some((error) => error.includes("ID repetido")));
 });
 
