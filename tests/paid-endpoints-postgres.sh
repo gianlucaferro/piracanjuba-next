@@ -32,4 +32,8 @@ run_sql -c "SELECT public.fixture_assert(total=4000,'concorrência respeita últ
 run_sql < "$root/supabase/migrations/20260622120000_ai_guard_rate_limit.sql"
 run_sql < "$root/supabase/migrations/20261104010000_protect_paid_admin_endpoints.sql"
 run_sql -c "SELECT public.fixture_assert(total=4000,'reaplicação preserva consumo') FROM ai_usage_daily WHERE dia=(now() AT TIME ZONE 'America/Sao_Paulo')::date;"
-printf 'PostgreSQL: ACLs, wrappers, quotas e 8 reservas concorrentes aprovados.\n'
+# Um ambiente novo não tem a função opcional encontrada em produção.
+run_sql -c "DROP FUNCTION public.invoke_enrich_cnpj(text,integer);"
+run_sql < "$root/supabase/migrations/20261104010000_protect_paid_admin_endpoints.sql"
+run_sql -c "SELECT public.fixture_assert(to_regprocedure('public.invoke_enrich_cnpj(text,integer)') IS NULL,'migration aceita função opcional ausente');"
+printf 'PostgreSQL: ACLs, wrappers, quotas, função opcional e 8 reservas concorrentes aprovados.\n'
