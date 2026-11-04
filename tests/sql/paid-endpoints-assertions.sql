@@ -1,6 +1,9 @@
 SELECT public.fixture_assert(NOT has_function_privilege('anon','public.ai_guard(text,text)','EXECUTE'),'anon não executa quota');
 SELECT public.fixture_assert(NOT has_function_privilege('authenticated','public.invoke_backfill_servidor_resumos()','EXECUTE'),'visitante não executa wrapper');
 SELECT public.fixture_assert(has_function_privilege('service_role','public.invoke_analyze_risco_catchup()','EXECUTE'),'cron preservado');
+SELECT public.fixture_assert(NOT has_function_privilege('anon','public.invoke_enrich_cnpj(text,integer)','EXECUTE'),'anon não executa enriquecimento');
+SELECT public.fixture_assert(NOT has_function_privilege('authenticated','public.invoke_enrich_cnpj(text,integer)','EXECUTE'),'usuário não executa enriquecimento');
+SELECT public.fixture_assert(has_function_privilege('service_role','public.invoke_enrich_cnpj(text,integer)','EXECUTE'),'enriquecimento interno preservado');
 SELECT public.invoke_backfill_servidor_resumos();
 SELECT public.invoke_analyze_risco_catchup();
 SELECT public.fixture_assert(count(*)=2,'dois wrappers') FROM public.fixture_requests;

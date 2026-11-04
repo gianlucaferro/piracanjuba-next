@@ -49,6 +49,8 @@ Evidências do Dell: artifacts/paid-security. Os comandos de execução estão e
 
 Se a migration falhar, a transação reverte. Se um handler regredir, restaurar somente seu bundle anterior a partir do backup, com verify_jwt original.
 
+Restaurar o chatbot anterior também restaura a ordem antiga: grava pergunta e monta contexto antes de aiGuard, ignora erros na contagem por IP e permite geração se a RPC de quota falhar. O mesmo helper antigo pode reabrir essa permissão em outros bundles restaurados. Portanto, esse rollback reduz a proteção de consumo mesmo mantendo o SQL novo. Preferir corrigir o handler preservando a reserva; se a restauração for indispensável, conferir limites dos provedores e observar consumo antes de prosseguir.
+
 Os wrappers privados são compatíveis com os handlers antigos, ambos verify_jwt=false. Preservá-los no rollback de aplicação evita reintroduzir credencial pública na configuração e mantém ACLs fechadas. Se a quota SQL exigir rollback, restaurar ai_guard.live.sql e manter seu EXECUTE apenas para postgres/service_role, sem apagar contadores. Essa restauração reduz a proteção concorrente e exige decisão específica.
 
 Não desfazer os três REVOKEs já autorizados e aplicados. Não executar jobs como teste. Não substituir arquivos remotos que tenham mudado depois do preflight.

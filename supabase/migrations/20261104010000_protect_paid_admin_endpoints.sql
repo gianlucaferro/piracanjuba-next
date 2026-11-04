@@ -80,7 +80,14 @@ $function$;
 -- Mantém versionada a contenção autorizada e aplicada em 2026-11-03.
 REVOKE EXECUTE ON FUNCTION public.invoke_analyze_risco_catchup() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.invoke_backfill_servidor_resumos() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.invoke_enrich_cnpj(text, integer) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.invoke_analyze_risco_catchup() TO postgres, service_role;
 GRANT EXECUTE ON FUNCTION public.invoke_backfill_servidor_resumos() TO postgres, service_role;
-GRANT EXECUTE ON FUNCTION public.invoke_enrich_cnpj(text, integer) TO postgres, service_role;
+-- Esta função existe em produção, mas não é criada pela cadeia de migrations.
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.invoke_enrich_cnpj(text, integer)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.invoke_enrich_cnpj(text, integer) FROM PUBLIC, anon, authenticated';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.invoke_enrich_cnpj(text, integer) TO postgres, service_role';
+  END IF;
+END;
+$guard$;
