@@ -1,4 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,18 +15,34 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const json = { ...corsHeaders, "Content-Type": "application/json" };
+  if (req.method !== "POST") return new Response(null, { status: 405, headers: { ...corsHeaders, Allow: "POST, OPTIONS" } });
+  if (!hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"))) {
+    return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 401, headers: json });
+  }
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? serviceKey;
-    const sb = createClient(supabaseUrl, serviceKey);
 
-    const body = await req.json().catch(() => ({}));
+    let body: Record<string, unknown>;
+    try {
+      body = await readAdminActionBody(req, 8_192);
+    } catch (error) {
+      return new Response(JSON.stringify({ error: "Corpo da requisição inválido ou muito grande." }), {
+        status: error instanceof AdminBodyTooLargeError ? 413 : 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (body.dry_run === true) return new Response(JSON.stringify({ success: true, dry_run: true }), { headers: json });
+    const sb = createClient(supabaseUrl, serviceKey);
     const provider = body?.provider === "openrouter" ? "openrouter" : undefined;
     // OpenRouter (pago) aguenta batch maior e delay curto; Gemini free vai devagar.
-    const batchSize = Math.min(Number(body?.batch_size) || (provider ? 40 : 12), provider ? 50 : 25);
-    const delayMs = Number(body?.delay_ms) || (provider ? 400 : 4000);
+    const requestedBatch = Number(body.batch_size);
+    const batchSize = Number.isFinite(requestedBatch) && requestedBatch > 0
+      ? Math.max(1, Math.min(Math.floor(requestedBatch), provider ? 50 : 25)) : (provider ? 40 : 12);
+    const requestedDelay = Number(body.delay_ms);
+    const delayMs = Number.isFinite(requestedDelay) && requestedDelay > 0
+      ? Math.max(250, Math.min(requestedDelay, 10_000)) : (provider ? 400 : 4000);
 
     // servidores que ainda nao tem nenhum resumo em cache (prioriza quem nunca gerou)
     const { data: alvos, error } = await sb.rpc("servidores_sem_resumo", { lim: batchSize });
@@ -41,6 +59,7 @@ Deno.serve(async (req) => {
     let cacheHits = 0;
     let erros = 0;
     let quotaParou = false;
+    let quotaIndisponivel = false;
     // OpenRouter (pago) aguenta concorrencia; Gemini free vai 1 a 1 com delay.
     const conc = provider ? 6 : 1;
 
@@ -48,7 +67,7 @@ Deno.serve(async (req) => {
       try {
         const resp = await fetch(`${supabaseUrl}/functions/v1/summarize-servidor`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${anonKey}`, apikey: anonKey, "Content-Type": "application/json" },
+          headers: { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey, "Content-Type": "application/json" },
           body: JSON.stringify({ servidor_id: row.id, ...(provider ? { provider } : {}) }),
           signal: AbortSignal.timeout(60000),
         });
@@ -56,8 +75,9 @@ Deno.serve(async (req) => {
           const d = await resp.json().catch(() => ({}));
           if (d?.cached) cacheHits++;
           else gerados++;
-        } else if (resp.status === 429 || resp.status === 402) {
+        } else if (resp.status === 429 || resp.status === 402 || resp.status === 503) {
           quotaParou = true;
+          if (resp.status === 503) quotaIndisponivel = true;
         } else {
           erros++;
         }
@@ -76,8 +96,8 @@ Deno.serve(async (req) => {
     const restantes = restantesRows?.length ?? null;
 
     return new Response(
-      JSON.stringify({ success: true, gerados, cacheHits, erros, quotaParou, restantes }),
-      { headers: json }
+      JSON.stringify({ success: !quotaIndisponivel, gerados, cacheHits, erros, quotaParou, quotaIndisponivel, restantes }),
+      { status: quotaIndisponivel ? 503 : 200, headers: json }
     );
   } catch (e) {
     console.error("backfill-servidor-resumos error:", e);

@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
 import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 import {
   corsHeaders,
@@ -667,9 +668,12 @@ const PLATFORM = `O Piracanjuba.ai é um portal independente (da Ferro Labs, sem
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return jsonError("Método não permitido.", 405);
 
   try {
-    const body = await req.json().catch(() => ({}));
+    let body: Record<string, unknown>;
+    try { body = await readAdminActionBody(req, 65_536); }
+    catch (error) { return jsonError("Corpo da requisição inválido ou muito grande.", error instanceof AdminBodyTooLargeError ? 413 : 400); }
     const pergunta = typeof body.question === "string" ? body.question.trim() : "";
     if (pergunta.length < 2) return jsonError("Faça uma pergunta.", 400);
     if (pergunta.length > MAX_PERGUNTA) return jsonError("Pergunta muito longa (máx. 500 caracteres).", 400);
@@ -680,14 +684,18 @@ Deno.serve(async (req) => {
     const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "0.0.0.0";
     const ipHash = await hashIp(ip);
     const since = new Date(Date.now() - 60_000).toISOString();
-    const { count } = await sb
+    const { count, error: rateError } = await sb
       .from("chatbot_consultas")
       .select("id", { count: "exact", head: true })
       .eq("ip_hash", ipHash)
       .gte("created_at", since);
-    if ((count ?? 0) >= RATE_MAX_PER_MIN) {
+    if (rateError || typeof count !== "number") return guardBlockedResponse({ allowed: false, reason: "unavailable" });
+    if (count >= RATE_MAX_PER_MIN) {
       return jsonError("Muitas perguntas em pouco tempo. Aguarde um minuto.", 429);
     }
+    // Reserva antes do log e do contexto. Falha da quota não inicia trabalho caro.
+    const guard = await aiGuard({ rpc: async (name, args) => await sb.rpc(name, args) }, req, "chatbot");
+    if (!guard.allowed) return guardBlockedResponse(guard);
     await sb.from("chatbot_consultas").insert({ ip_hash: ipHash, pergunta });
 
     const grounding = await buildContext(sb, pergunta);
@@ -715,15 +723,12 @@ ${contexto}`;
       { role: "user" as const, content: pergunta },
     ];
 
-    // Circuit breaker diário global (o rate limit por IP do chatbot já passou acima).
-    const _g = await aiGuard({ rpc: async (name, args) => await sb.rpc(name, args) }, req, "chatbot");
-    if (!_g.allowed) return guardBlockedResponse(_g);
 
     // OpenRouter é o provider primário (Gemini direto satura no free-tier e devolve 429).
     // O modelo barato fica travado dentro de openrouterChat, sem fallback para modelo caro.
     const resp = hasOpenRouter()
-      ? await openrouterChat({ messages, temperature: 0.3, stream: true })
-      : await geminiChat({ model: MODELS.flashLite, messages, temperature: 0.3, stream: true });
+      ? await openrouterChat({ messages, temperature: 0.3, maxTokens: 4_096, stream: true })
+      : await geminiChat({ model: MODELS.flashLite, messages, temperature: 0.3, maxTokens: 4_096, stream: true });
     if (!resp.ok) {
       return geminiErrorToResponse(new GeminiUpstreamError(resp.status, await resp.text()));
     }

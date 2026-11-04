@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildBenefitContextRows } from "../_shared/beneficios-context.ts";
+import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
+import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
 
 const OFFICIAL_WORKS_PREFIX = "prefeitura:nucleogov:obra:%";
 
@@ -10,14 +12,24 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return new Response(null, { status: 405, headers: { ...corsHeaders, Allow: "POST, OPTIONS" } });
 
   try {
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
-    const { question } = await req.json();
-    if (!question || typeof question !== "string") {
-      return new Response(JSON.stringify({ error: "question is required" }), {
+    let body: Record<string, unknown>;
+    try {
+      body = await readAdminActionBody(req, 16_384);
+    } catch (error) {
+      return new Response(JSON.stringify({ error: "Corpo da requisição inválido ou muito grande." }), {
+        status: error instanceof AdminBodyTooLargeError ? 413 : 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const question = typeof body.question === "string" ? body.question.trim() : "";
+    if (!question || question.length > 4_000) {
+      return new Response(JSON.stringify({ error: "Envie uma pergunta com até 4.000 caracteres." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -27,6 +39,10 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
+
+    // A busca permanece pública, com reserva persistente antes das consultas e da IA.
+    const guard = await aiGuard(supabase, req, "ai-search");
+    if (!guard.allowed) return guardBlockedResponse(guard);
 
     // Parallel data fetches for context
     const [
@@ -216,7 +232,9 @@ ${extraContext}`;
           { role: "user", content: question },
         ],
         stream: true,
+        max_tokens: 4_096,
       }),
+      signal: AbortSignal.timeout(60_000),
     });
 
     if (!response.ok) {
@@ -244,6 +262,7 @@ ${extraContext}`;
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
+
     console.error("ai-search error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
       status: 500,

@@ -1,0 +1,838 @@
+{
+  "date": "2026-11-03",
+  "project_id": "oinweocqcptwxqsztlcl",
+  "git_base": "ea90a3f",
+  "scope": "Read-only deployed source backup. No business invocation. Token-pattern scan passed before persistence.",
+  "functions": [
+    {
+      "slug": "consulta-placa",
+      "version": 24,
+      "verify_jwt": false,
+      "ezbr_sha256": "ac8bb09940331a3863adb849294b10bae6148f44eb83b3a47492f71fe724732c",
+      "files": [
+        {
+          "original_name": "functions/consulta-placa/index.ts",
+          "backup_path": "consulta-placa/functions/consulta-placa/index.ts",
+          "bytes": 4451,
+          "sha256": "905c8f8fc0256790209feccb4b68c323f86c976bbedcc71f0575cc8dd6222d26",
+          "git_base_path": "supabase/functions/consulta-placa/index.ts",
+          "git_base_sha256": "905c8f8fc0256790209feccb4b68c323f86c976bbedcc71f0575cc8dd6222d26",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "consulta-placa/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "consulta-placa/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "transcribe-audio",
+      "version": 24,
+      "verify_jwt": true,
+      "ezbr_sha256": "cecce57da88c863a24011d6fa9c9c42ec1790feec2dcbff9b74d76a4e447b598",
+      "files": [
+        {
+          "original_name": "functions/transcribe-audio/index.ts",
+          "backup_path": "transcribe-audio/functions/transcribe-audio/index.ts",
+          "bytes": 1715,
+          "sha256": "1b98957f192c1bce7e8993e95773ed5f2d0686a98072277de072a8f2155b0642",
+          "git_base_path": "supabase/functions/transcribe-audio/index.ts",
+          "git_base_sha256": "1b98957f192c1bce7e8993e95773ed5f2d0686a98072277de072a8f2155b0642",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "transcribe-audio/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "transcribe-audio/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-secretario",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "157869e8e57ffbd1538e94a87527ba8b51ea9229be268845bd4266ad329418ad",
+      "files": [
+        {
+          "original_name": "functions/summarize-secretario/index.ts",
+          "backup_path": "summarize-secretario/functions/summarize-secretario/index.ts",
+          "bytes": 5246,
+          "sha256": "1c830e052c7927514dd2b1a472cf70dc4819936f6f61fb8a83e2031eb483ba2d",
+          "git_base_path": "supabase/functions/summarize-secretario/index.ts",
+          "git_base_sha256": "1c830e052c7927514dd2b1a472cf70dc4819936f6f61fb8a83e2031eb483ba2d",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-secretario/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-secretario/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-licitacao",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "7595ad346492f920d387bd48311dc6ce24c9fb9eb1ee233f9b9cbf46f940f4d2",
+      "files": [
+        {
+          "original_name": "functions/summarize-licitacao/index.ts",
+          "backup_path": "summarize-licitacao/functions/summarize-licitacao/index.ts",
+          "bytes": 6040,
+          "sha256": "716db5057f7b644ac6888614d457c131ab98250157fb16b12510b5c0a891c746",
+          "git_base_path": "supabase/functions/summarize-licitacao/index.ts",
+          "git_base_sha256": "716db5057f7b644ac6888614d457c131ab98250157fb16b12510b5c0a891c746",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-licitacao/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-licitacao/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-portaria",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "c0d48bee7f48a112c3234092e68a070a2ecdb18dbd214b9b772e7a924a3bb8a3",
+      "files": [
+        {
+          "original_name": "functions/summarize-portaria/index.ts",
+          "backup_path": "summarize-portaria/functions/summarize-portaria/index.ts",
+          "bytes": 4203,
+          "sha256": "2b0c1440a16ce9c2f7702db0cf29f93ef1c1dc67066603228581abaf7756f8f5",
+          "git_base_path": "supabase/functions/summarize-portaria/index.ts",
+          "git_base_sha256": "2b0c1440a16ce9c2f7702db0cf29f93ef1c1dc67066603228581abaf7756f8f5",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-portaria/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-portaria/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "chatbot",
+      "version": 10,
+      "verify_jwt": false,
+      "ezbr_sha256": "43c0309fe7c37a3a5d0f756a66f13ab898670fa13d4f60c02ce6fd6841d21061",
+      "files": [
+        {
+          "original_name": "chatbot/index.ts",
+          "backup_path": "chatbot/chatbot/index.ts",
+          "bytes": 51129,
+          "sha256": "687841e170e688f840d4e87a40e10b3becf6accaae7a3ba586f4f03921273575",
+          "git_base_path": "supabase/functions/chatbot/index.ts",
+          "git_base_sha256": "687841e170e688f840d4e87a40e10b3becf6accaae7a3ba586f4f03921273575",
+          "same_as_base": true
+        },
+        {
+          "original_name": "_shared/ratelimit.ts",
+          "backup_path": "chatbot/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "_shared/ai.ts",
+          "backup_path": "chatbot/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        },
+        {
+          "original_name": "_shared/beneficios-context.ts",
+          "backup_path": "chatbot/_shared/beneficios-context.ts",
+          "bytes": 1855,
+          "sha256": "e99dd47409a51dad29f87042f7dfb6af088437404c0d1bcc6749339f479f57f9",
+          "git_base_path": "supabase/functions/_shared/beneficios-context.ts",
+          "git_base_sha256": "e99dd47409a51dad29f87042f7dfb6af088437404c0d1bcc6749339f479f57f9",
+          "same_as_base": true
+        },
+        {
+          "original_name": "_shared/chatbot-sources.ts",
+          "backup_path": "chatbot/_shared/chatbot-sources.ts",
+          "bytes": 2572,
+          "sha256": "1d6f735d0818518b9cf66ec64a39722021c7105250af4d5a3c407322e3a9aa7a",
+          "git_base_path": "supabase/functions/_shared/chatbot-sources.ts",
+          "git_base_sha256": "1d6f735d0818518b9cf66ec64a39722021c7105250af4d5a3c407322e3a9aa7a",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "f49c2556fc7cb937aec4050cc5ac26b36a1aaa5ccae072609a4953a7b0b215ec",
+      "files": [
+        {
+          "original_name": "functions/summarize-lei-municipal/index.ts",
+          "backup_path": "summarize-lei-municipal/functions/summarize-lei-municipal/index.ts",
+          "bytes": 5408,
+          "sha256": "34db5055eaea373d24c935cf6b7359896211e76d0e9662d01bfef06e36faabaa",
+          "git_base_path": "supabase/functions/summarize-lei-municipal/index.ts",
+          "git_base_sha256": "34db5055eaea373d24c935cf6b7359896211e76d0e9662d01bfef06e36faabaa",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-lei-municipal/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-lei-municipal/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "55fc6cedda4c312bfbc8137873dc28d3d8501bcf5d83847d06195453b42d8b96",
+      "files": [
+        {
+          "original_name": "functions/summarize-camara-contrato/index.ts",
+          "backup_path": "summarize-camara-contrato/functions/summarize-camara-contrato/index.ts",
+          "bytes": 9193,
+          "sha256": "59fc3155618140e7e6df696e7bcebb54430135e37d476b9f44dbb4b75d0dc274",
+          "git_base_path": "supabase/functions/summarize-camara-contrato/index.ts",
+          "git_base_sha256": "59fc3155618140e7e6df696e7bcebb54430135e37d476b9f44dbb4b75d0dc274",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-camara-contrato/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-camara-contrato/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-contrato",
+      "version": 30,
+      "verify_jwt": false,
+      "ezbr_sha256": "24e1746bba5388da5ee5550cafff885c08d43c9092d68a7b3c6efcce9011d234",
+      "files": [
+        {
+          "original_name": "functions/summarize-contrato/index.ts",
+          "backup_path": "summarize-contrato/functions/summarize-contrato/index.ts",
+          "bytes": 22050,
+          "sha256": "162d04186de873e19c26cc19a7610cb2e024855daefa522a03f0630ee23ca4d0",
+          "git_base_path": "supabase/functions/summarize-contrato/index.ts",
+          "git_base_sha256": "162d04186de873e19c26cc19a7610cb2e024855daefa522a03f0630ee23ca4d0",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-contrato/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-contrato/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "1315fa223317717daf9a63e0f1aec008007596fd3db472ad37258db6f65c17b1",
+      "files": [
+        {
+          "original_name": "functions/summarize-lei-organica/index.ts",
+          "backup_path": "summarize-lei-organica/functions/summarize-lei-organica/index.ts",
+          "bytes": 6252,
+          "sha256": "02f9e60019dd7bdd48cacd6e7e6e702bdd8d1607a21874da0b30707494d185c2",
+          "git_base_path": "supabase/functions/summarize-lei-organica/index.ts",
+          "git_base_sha256": "02f9e60019dd7bdd48cacd6e7e6e702bdd8d1607a21874da0b30707494d185c2",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-lei-organica/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-lei-organica/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-servidor",
+      "version": 29,
+      "verify_jwt": false,
+      "ezbr_sha256": "f1b17daac89fa4d7cb64ada077db5b88439f7c3279321983b8c0417e7d18ff2d",
+      "files": [
+        {
+          "original_name": "functions/summarize-servidor/index.ts",
+          "backup_path": "summarize-servidor/functions/summarize-servidor/index.ts",
+          "bytes": 7677,
+          "sha256": "1d66b33a6edf6b1b442c5b0b7308a767a2bc17ec7aa4fcce1261a32c8873cc8e",
+          "git_base_path": "supabase/functions/summarize-servidor/index.ts",
+          "git_base_sha256": "1d66b33a6edf6b1b442c5b0b7308a767a2bc17ec7aa4fcce1261a32c8873cc8e",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-servidor/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-servidor/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-artigo",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "afba821f9062c6a3e724951857d0891b2044bec6d26be0639a685c6adc364953",
+      "files": [
+        {
+          "original_name": "functions/summarize-artigo/index.ts",
+          "backup_path": "summarize-artigo/functions/summarize-artigo/index.ts",
+          "bytes": 4769,
+          "sha256": "c297e7c5eaf3fb2519fd2118f93a33c1b7a04a0ce6884edf276a077c0379b161",
+          "git_base_path": "supabase/functions/summarize-artigo/index.ts",
+          "git_base_sha256": "c297e7c5eaf3fb2519fd2118f93a33c1b7a04a0ce6884edf276a077c0379b161",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-artigo/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-artigo/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-imposto",
+      "version": 24,
+      "verify_jwt": false,
+      "ezbr_sha256": "e9520797ad024efe6c1e1c396e1c40bd88c6a6831f2fb45d478dc44c748514a5",
+      "files": [
+        {
+          "original_name": "functions/summarize-imposto/index.ts",
+          "backup_path": "summarize-imposto/functions/summarize-imposto/index.ts",
+          "bytes": 5082,
+          "sha256": "1fd71e53a15ac42fc3c70e56e77d5531a76b78a3351de3316215a726f3e82993",
+          "git_base_path": "supabase/functions/summarize-imposto/index.ts",
+          "git_base_sha256": "1fd71e53a15ac42fc3c70e56e77d5531a76b78a3351de3316215a726f3e82993",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-imposto/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-imposto/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-decreto",
+      "version": 28,
+      "verify_jwt": false,
+      "ezbr_sha256": "1ec45b1f664aaa2ef87c80bdcc75afea0da39c8cb987c007759c1905e55a9d42",
+      "files": [
+        {
+          "original_name": "functions/summarize-decreto/index.ts",
+          "backup_path": "summarize-decreto/functions/summarize-decreto/index.ts",
+          "bytes": 11007,
+          "sha256": "b699fe3847f66c97f42712572bfcffccf37cd96124f19910bc9ac1728a500bde",
+          "git_base_path": "supabase/functions/summarize-decreto/index.ts",
+          "git_base_sha256": "b699fe3847f66c97f42712572bfcffccf37cd96124f19910bc9ac1728a500bde",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-decreto/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-decreto/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-generic",
+      "version": 28,
+      "verify_jwt": false,
+      "ezbr_sha256": "f04d490307e0d119a20d75f437f45e5b9370f1ee2aa7ec576d5b0c30d89ff075",
+      "files": [
+        {
+          "original_name": "functions/summarize-generic/index.ts",
+          "backup_path": "summarize-generic/functions/summarize-generic/index.ts",
+          "bytes": 10656,
+          "sha256": "1dd213f0129a12e9d4f133f968015f3cc24d8e0377ba4bdde81ca3948e9e29d8",
+          "git_base_path": "supabase/functions/summarize-generic/index.ts",
+          "git_base_sha256": "1dd213f0129a12e9d4f133f968015f3cc24d8e0377ba4bdde81ca3948e9e29d8",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-generic/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-generic/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "optimize-description",
+      "version": 24,
+      "verify_jwt": true,
+      "ezbr_sha256": "a561a10399f1003699a1cf8cbc913904a8f5cb86ba28eedcc0f1febdf24531e8",
+      "files": [
+        {
+          "original_name": "functions/optimize-description/index.ts",
+          "backup_path": "optimize-description/functions/optimize-description/index.ts",
+          "bytes": 4648,
+          "sha256": "05c2171a5b705b38e44ebc494cbcd7b15db08a1343c27c1f669f03f6eb6cdaad",
+          "git_base_path": "supabase/functions/optimize-description/index.ts",
+          "git_base_sha256": "05c2171a5b705b38e44ebc494cbcd7b15db08a1343c27c1f669f03f6eb6cdaad",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "optimize-description/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "optimize-description/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-obra",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "c162f45d0f0e4d63b236b62b813d4e6d500e3543066d7c1e9d134e0e7fc25156",
+      "files": [
+        {
+          "original_name": "functions/summarize-obra/index.ts",
+          "backup_path": "summarize-obra/functions/summarize-obra/index.ts",
+          "bytes": 5891,
+          "sha256": "1d0836b7b37ac89633c6d76e1acb44bca0a0d55a47e6e3d42aebe17315c2053c",
+          "git_base_path": "supabase/functions/summarize-obra/index.ts",
+          "git_base_sha256": "1d0836b7b37ac89633c6d76e1acb44bca0a0d55a47e6e3d42aebe17315c2053c",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-obra/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-obra/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "summarize-atuacao",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "5d0f3a14f7b4d9b71e87fdec5e8e1d534d075baee52aacfa88ea3085bc94a675",
+      "files": [
+        {
+          "original_name": "functions/summarize-atuacao/index.ts",
+          "backup_path": "summarize-atuacao/functions/summarize-atuacao/index.ts",
+          "bytes": 6614,
+          "sha256": "88965afdbda48f437c3b8507c63f1783de2f09c148d0004b2905d93d761273a7",
+          "git_base_path": "supabase/functions/summarize-atuacao/index.ts",
+          "git_base_sha256": "88965afdbda48f437c3b8507c63f1783de2f09c148d0004b2905d93d761273a7",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ratelimit.ts",
+          "backup_path": "summarize-atuacao/functions/_shared/ratelimit.ts",
+          "bytes": 2329,
+          "sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "git_base_path": "supabase/functions/_shared/ratelimit.ts",
+          "git_base_sha256": "382022a0d08147058ea4541a59d62014659c5e29a29736833cdbac506ee147b1",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/ai.ts",
+          "backup_path": "summarize-atuacao/functions/_shared/ai.ts",
+          "bytes": 8031,
+          "sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "git_base_path": "supabase/functions/_shared/ai.ts",
+          "git_base_sha256": "04701b5b8fb4a4644cee240946fa0201c71fd27b019bdce922c5cf4382f07694",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "ai-search",
+      "version": 25,
+      "verify_jwt": true,
+      "ezbr_sha256": "b756da6353b0f886d6cc2d6c3bdda1370a50ad98dfb88e99288f7e73a14f11ae",
+      "files": [
+        {
+          "original_name": "ai-search/index.ts",
+          "backup_path": "ai-search/ai-search/index.ts",
+          "bytes": 14893,
+          "sha256": "5f3ca53b9a9baa7c06a8fc7e127e6d4c58ee5b0f36df1e58c4f39356ad907227",
+          "git_base_path": "supabase/functions/ai-search/index.ts",
+          "git_base_sha256": "5f3ca53b9a9baa7c06a8fc7e127e6d4c58ee5b0f36df1e58c4f39356ad907227",
+          "same_as_base": true
+        },
+        {
+          "original_name": "_shared/beneficios-context.ts",
+          "backup_path": "ai-search/_shared/beneficios-context.ts",
+          "bytes": 1855,
+          "sha256": "e99dd47409a51dad29f87042f7dfb6af088437404c0d1bcc6749339f479f57f9",
+          "git_base_path": "supabase/functions/_shared/beneficios-context.ts",
+          "git_base_sha256": "e99dd47409a51dad29f87042f7dfb6af088437404c0d1bcc6749339f479f57f9",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "backfill-servidor-resumos",
+      "version": 5,
+      "verify_jwt": false,
+      "ezbr_sha256": "f99d91216e4b2803e4f9618a8448878f502a752a6fc0ce4ac8ee19fe44e4d163",
+      "files": [
+        {
+          "original_name": "backfill-servidor-resumos/index.ts",
+          "backup_path": "backfill-servidor-resumos/backfill-servidor-resumos/index.ts",
+          "bytes": 3671,
+          "sha256": "ce103d664f864bba883cc86ceec42a21bc1c82362ef2e4b0b39fabe383192189",
+          "git_base_path": "supabase/functions/backfill-servidor-resumos/index.ts",
+          "git_base_sha256": "ce103d664f864bba883cc86ceec42a21bc1c82362ef2e4b0b39fabe383192189",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "version": 34,
+      "verify_jwt": false,
+      "ezbr_sha256": "a5cd7d0d36d62201bbf0c56e8159c6fc0a404dc748556c3e4c04c9536b8e8554",
+      "files": [
+        {
+          "original_name": "analyze-contrato-risco/index.ts",
+          "backup_path": "analyze-contrato-risco/analyze-contrato-risco/index.ts",
+          "bytes": 16449,
+          "sha256": "33f5bddaaf2fb067f68ca3d10e06663cbccc978d634db18f3d9162484c2eb719",
+          "git_base_path": "supabase/functions/analyze-contrato-risco/index.ts",
+          "git_base_sha256": "33f5bddaaf2fb067f68ca3d10e06663cbccc978d634db18f3d9162484c2eb719",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "sync-prefeitura-diaria",
+      "version": 31,
+      "verify_jwt": true,
+      "ezbr_sha256": "f57670f7e0aa370c40311748f448a08cb18b0981c54ae7ccb548d426a57bc68c",
+      "files": [
+        {
+          "original_name": "sync-prefeitura-diaria/index.ts",
+          "backup_path": "sync-prefeitura-diaria/sync-prefeitura-diaria/index.ts",
+          "bytes": 12794,
+          "sha256": "e900e741002478026f2c37f918f1e7a2b250bbeb0d7bb05946f6dcc35520d855",
+          "git_base_path": "supabase/functions/sync-prefeitura-diaria/index.ts",
+          "git_base_sha256": "e900e741002478026f2c37f918f1e7a2b250bbeb0d7bb05946f6dcc35520d855",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "sync-prefeitura-mensal",
+      "version": 29,
+      "verify_jwt": false,
+      "ezbr_sha256": "860c475bd5b5a75c46b762de611ce7bdd3a81d35050ee2862bda45882a7bbd3a",
+      "files": [
+        {
+          "original_name": "functions/sync-prefeitura-mensal/index.ts",
+          "backup_path": "sync-prefeitura-mensal/functions/sync-prefeitura-mensal/index.ts",
+          "bytes": 20016,
+          "sha256": "b1091be93f76eeb44a558ef42a0f9cdf88bc5c15bde8469722bd223454a40a43",
+          "git_base_path": "supabase/functions/sync-prefeitura-mensal/index.ts",
+          "git_base_sha256": "b1091be93f76eeb44a558ef42a0f9cdf88bc5c15bde8469722bd223454a40a43",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/servidor-origin.ts",
+          "backup_path": "sync-prefeitura-mensal/functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d",
+          "git_base_path": "supabase/functions/_shared/servidor-origin.ts",
+          "git_base_sha256": "8b11de14ced490e4dbdb482bbac98c1a10b4aacbe9d9ecb1ad2a068912dc848f",
+          "same_as_base": false
+        },
+        {
+          "original_name": "functions/_shared/persistence-guards.ts",
+          "backup_path": "sync-prefeitura-mensal/functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "git_base_path": "supabase/functions/_shared/persistence-guards.ts",
+          "git_base_sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "import-folha-manual",
+      "version": 26,
+      "verify_jwt": true,
+      "ezbr_sha256": "086f3242a92b82cf1dd1c4cff9c5903a7bcedeb6bf4a9afaa56abb2fc08467fb",
+      "files": [
+        {
+          "original_name": "functions/import-folha-manual/index.ts",
+          "backup_path": "import-folha-manual/functions/import-folha-manual/index.ts",
+          "bytes": 7283,
+          "sha256": "7eac1ebcdfcc67839c085c5abe861448845260e48509da8da1cdec02557776a5",
+          "git_base_path": "supabase/functions/import-folha-manual/index.ts",
+          "git_base_sha256": "7eac1ebcdfcc67839c085c5abe861448845260e48509da8da1cdec02557776a5",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/servidor-origin.ts",
+          "backup_path": "import-folha-manual/functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d",
+          "git_base_path": "supabase/functions/_shared/servidor-origin.ts",
+          "git_base_sha256": "8b11de14ced490e4dbdb482bbac98c1a10b4aacbe9d9ecb1ad2a068912dc848f",
+          "same_as_base": false
+        },
+        {
+          "original_name": "functions/_shared/persistence-guards.ts",
+          "backup_path": "import-folha-manual/functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "git_base_path": "supabase/functions/_shared/persistence-guards.ts",
+          "git_base_sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "same_as_base": true
+        }
+      ]
+    },
+    {
+      "slug": "import-folha-xlsx",
+      "version": 26,
+      "verify_jwt": true,
+      "ezbr_sha256": "beb4e51559297eeefd88edd3a8dc2c9ba79bc54d089f5bef9eb85426c6e49bb5",
+      "files": [
+        {
+          "original_name": "functions/import-folha-xlsx/index.ts",
+          "backup_path": "import-folha-xlsx/functions/import-folha-xlsx/index.ts",
+          "bytes": 10601,
+          "sha256": "f3059770a77c72d3906dc637e6261ca18ab864fc9f4f5e354f2a59d44d41a090",
+          "git_base_path": "supabase/functions/import-folha-xlsx/index.ts",
+          "git_base_sha256": "f3059770a77c72d3906dc637e6261ca18ab864fc9f4f5e354f2a59d44d41a090",
+          "same_as_base": true
+        },
+        {
+          "original_name": "functions/_shared/servidor-origin.ts",
+          "backup_path": "import-folha-xlsx/functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d",
+          "git_base_path": "supabase/functions/_shared/servidor-origin.ts",
+          "git_base_sha256": "8b11de14ced490e4dbdb482bbac98c1a10b4aacbe9d9ecb1ad2a068912dc848f",
+          "same_as_base": false
+        },
+        {
+          "original_name": "functions/_shared/persistence-guards.ts",
+          "backup_path": "import-folha-xlsx/functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "git_base_path": "supabase/functions/_shared/persistence-guards.ts",
+          "git_base_sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3",
+          "same_as_base": true
+        }
+      ]
+    }
+  ]
+}
