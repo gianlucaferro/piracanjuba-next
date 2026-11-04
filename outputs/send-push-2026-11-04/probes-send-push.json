@@ -1,0 +1,58 @@
+[
+  {
+    "function": "send-push",
+    "case": "public",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 1.135
+  },
+  {
+    "function": "send-push",
+    "case": "anon",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 2.473
+  },
+  {
+    "function": "send-push",
+    "case": "wrong-secret",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.377
+  },
+  {
+    "function": "send-push",
+    "case": "authorized-dry-run",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "seconds": 0.284
+  },
+  {
+    "function": "send-push",
+    "case": "options",
+    "status": 204,
+    "expected": 204,
+    "passed": true,
+    "seconds": 0.397
+  },
+  {
+    "function": "send-push",
+    "case": "get",
+    "status": 405,
+    "expected": 405,
+    "passed": true,
+    "seconds": 0.249
+  },
+  {
+    "function": "send-push",
+    "case": "configuration-dry-run",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "seconds": 0.24
+  }
+]

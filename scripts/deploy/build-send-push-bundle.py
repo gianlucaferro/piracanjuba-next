@@ -1,5 +1,6 @@
 """Pacote seletivo, com dependências remotas preservadas quando não alteradas."""
 import json
+import hashlib
 from pathlib import Path
 import re
 import sys
@@ -24,10 +25,17 @@ def include(path):
         return
     # Estes módulos não foram corrigidos nesta etapa. Preservar os bytes publicados.
     backup_path = BACKUP / slug / name
-    source = backup_path if relative.as_posix() in {
+    preserve_backup = relative.as_posix() in {
         "_shared/servidor-origin.ts", "_shared/persistence-guards.ts"
-    } and backup_path.exists() else path
-    content = source.read_text()
+    }
+    source = backup_path if preserve_backup else path
+    if preserve_backup:
+        expected = next((f["sha256"] for f in allowed[slug]["files"] if f["name"] == name), None)
+        if not backup_path.is_file() or not expected:
+            raise SystemExit("Backup obrigatório ausente: " + name)
+        if hashlib.sha256(backup_path.read_bytes()).hexdigest() != expected:
+            raise SystemExit("Hash do backup divergente: " + name)
+    content = source.read_bytes().decode("utf-8")
     files[name] = content
     for dependency in imports.findall(content):
         include(path.parent / dependency)

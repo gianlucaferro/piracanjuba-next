@@ -1,0 +1,210 @@
+{
+  "date": "2026-11-04",
+  "project": "oinweocqcptwxqsztlcl",
+  "code_commit": "ed4e5da19b4400fc2ceb3807df150cd9afc6f613",
+  "total_functions": 141,
+  "unchanged_functions": 136,
+  "changed_functions": [
+    {
+      "id": "f0cddc31-0c6d-4ca8-b677-045a73d0f736",
+      "slug": "import-folha-manual",
+      "name": "import-folha-manual",
+      "status": "ACTIVE",
+      "version": 27,
+      "created_at": 1777806183292,
+      "updated_at": 1793766974470,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_f0cddc31-0c6d-4ca8-b677-045a73d0f736_27/source/functions/import-folha-manual/index.ts",
+      "ezbr_sha256": "7d316013276f98636a02da12ceeec2649da343e8d06232327f0e1f7bd9476424",
+      "readback_exact": true,
+      "files": [
+        {
+          "name": "functions/import-folha-manual/index.ts",
+          "characters": 7264
+        },
+        {
+          "name": "functions/_shared/push-caller-auth.ts",
+          "characters": 3066
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "characters": 764
+        },
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "characters": 2324
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "characters": 617
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "characters": 1009
+        }
+      ]
+    },
+    {
+      "id": "bd4b83f0-21d0-47c3-acde-b686cacadedd",
+      "slug": "import-folha-xlsx",
+      "name": "import-folha-xlsx",
+      "status": "ACTIVE",
+      "version": 27,
+      "created_at": 1777806183292,
+      "updated_at": 1793766976143,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_bd4b83f0-21d0-47c3-acde-b686cacadedd_27/source/functions/import-folha-xlsx/index.ts",
+      "ezbr_sha256": "aac66ed6bfbb7d8ca15e225913e7c031635e5e28b0b52f1f893f76fd12f3d416",
+      "readback_exact": true,
+      "files": [
+        {
+          "name": "functions/import-folha-xlsx/index.ts",
+          "characters": 10663
+        },
+        {
+          "name": "functions/_shared/push-caller-auth.ts",
+          "characters": 3066
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "characters": 764
+        },
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "characters": 2324
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "characters": 617
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "characters": 1009
+        }
+      ]
+    },
+    {
+      "id": "2967baae-556c-4c6b-af06-f7a9b4c4d153",
+      "slug": "send-push",
+      "name": "send-push",
+      "status": "ACTIVE",
+      "version": 24,
+      "created_at": 1777806183292,
+      "updated_at": 1793767082826,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_2967baae-556c-4c6b-af06-f7a9b4c4d153_24/source/functions/send-push/index.ts",
+      "ezbr_sha256": "2a9307205bdad077b03276175fead771194a9a96a9d6e4b923d8ccf0e33d970e",
+      "readback_exact": true,
+      "files": [
+        {
+          "name": "functions/send-push/index.ts",
+          "characters": 2606
+        },
+        {
+          "name": "functions/_shared/send-push-policy.ts",
+          "characters": 11764
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "characters": 764
+        },
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "characters": 2324
+        }
+      ]
+    },
+    {
+      "id": "aad8bf7d-620d-495e-98e4-03a66676f61e",
+      "slug": "sync-prefeitura-diaria",
+      "name": "sync-prefeitura-diaria",
+      "status": "ACTIVE",
+      "version": 32,
+      "created_at": 1777806183292,
+      "updated_at": 1793766932413,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_aad8bf7d-620d-495e-98e4-03a66676f61e_32/source/functions/sync-prefeitura-diaria/index.ts",
+      "ezbr_sha256": "0f3a29d06b951019478411feb567dd118360e62fa5b20b1d344844a8a7ec2018",
+      "readback_exact": true,
+      "files": [
+        {
+          "name": "functions/sync-prefeitura-diaria/index.ts",
+          "characters": 12747
+        },
+        {
+          "name": "functions/_shared/push-caller-auth.ts",
+          "characters": 3066
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "characters": 764
+        },
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "characters": 2324
+        }
+      ]
+    },
+    {
+      "id": "d5ec23ea-748c-4395-9a7a-ad6bf262a8d1",
+      "slug": "sync-prefeitura-mensal",
+      "name": "sync-prefeitura-mensal",
+      "status": "ACTIVE",
+      "version": 30,
+      "created_at": 1777806183292,
+      "updated_at": 1793766972694,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_d5ec23ea-748c-4395-9a7a-ad6bf262a8d1_30/source/functions/sync-prefeitura-mensal/index.ts",
+      "ezbr_sha256": "56d816e78910f8d395ad23a03b6f56dae6d8606790a62b3f8f7df92432091782",
+      "readback_exact": true,
+      "files": [
+        {
+          "name": "functions/sync-prefeitura-mensal/index.ts",
+          "characters": 18834
+        },
+        {
+          "name": "functions/_shared/push-caller-auth.ts",
+          "characters": 3066
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "characters": 764
+        },
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "characters": 2324
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "characters": 617
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "characters": 1009
+        }
+      ]
+    }
+  ],
+  "database_before": {
+    "cron_count": 85,
+    "cron_checksum": "5b9cc6fa938dc7c843d4141d7cab0927",
+    "subscriptions_count": 1,
+    "subscriptions_checksum": "5276c7c5711e563c9932840b9639aa36",
+    "push_log_count": 23
+  },
+  "database_after": {
+    "cron_count": 85,
+    "cron_checksum": "5b9cc6fa938dc7c843d4141d7cab0927",
+    "subscriptions_count": 1,
+    "subscriptions_checksum": "5276c7c5711e563c9932840b9639aa36",
+    "push_log_count": 23
+  },
+  "production_checks": 31,
+  "production_checks_passed": 31,
+  "real_notifications_sent": 0
+}

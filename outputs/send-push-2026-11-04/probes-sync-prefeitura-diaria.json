@@ -1,0 +1,50 @@
+[
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "public",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 3.306
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "anon",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.895
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "wrong-secret",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.294
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "authorized-dry-run",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "seconds": 0.207
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "options",
+    "status": 204,
+    "expected": 204,
+    "passed": true,
+    "seconds": 0.28
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "case": "get",
+    "status": 405,
+    "expected": 405,
+    "passed": true,
+    "seconds": 0.207
+  }
+]

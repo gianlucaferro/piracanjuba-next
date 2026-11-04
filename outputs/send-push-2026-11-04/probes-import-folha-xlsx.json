@@ -1,0 +1,50 @@
+[
+  {
+    "function": "import-folha-xlsx",
+    "case": "public",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 2.338
+  },
+  {
+    "function": "import-folha-xlsx",
+    "case": "anon",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 1.091
+  },
+  {
+    "function": "import-folha-xlsx",
+    "case": "wrong-secret",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.208
+  },
+  {
+    "function": "import-folha-xlsx",
+    "case": "authorized-dry-run",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "seconds": 0.22
+  },
+  {
+    "function": "import-folha-xlsx",
+    "case": "options",
+    "status": 204,
+    "expected": 204,
+    "passed": true,
+    "seconds": 0.21
+  },
+  {
+    "function": "import-folha-xlsx",
+    "case": "get",
+    "status": 405,
+    "expected": 405,
+    "passed": true,
+    "seconds": 0.269
+  }
+]

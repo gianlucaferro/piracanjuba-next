@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "dry_run": true,
+  "status": "success",
+  "total_jobs": 66,
+  "healthy": 38,
+  "unhealthy": 28,
+  "retried": [],
+  "invocation_failures": [],
+  "http_status": 200
+}
