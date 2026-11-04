@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 // deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { preparePushCallerRequest, notifyPushFromCaller } from "../_shared/push-caller-auth.ts";
 import { servidorOriginKey } from "../_shared/servidor-origin.ts";
 import { mapIdsByOrigin } from "../_shared/persistence-guards.ts";
 
@@ -9,24 +10,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-cron-secret, x-centi-ingest-secret, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
-
-/**
- * Codex 2026-06-03: auth obrigatória. Aceita cron_secret OU centi_ingest_secret OU SR no header.
- * Mesma logica de _shared/centi-auth.ts mas inline pra evitar import dynamic em deploy MCP.
- */
-function checkCentiAuth(req: Request): boolean {
-  const SR = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const CRON_SECRET = Deno.env.get("CRON_SECRET") ?? "";
-  const INGEST = Deno.env.get("CENTI_INGEST_SECRET") ?? "";
-  const cron = req.headers.get("x-cron-secret") ?? "";
-  const ingest = req.headers.get("x-centi-ingest-secret") ?? "";
-  const auth = req.headers.get("authorization") ?? "";
-  return (
-    (CRON_SECRET !== "" && cron === CRON_SECRET) ||
-    (INGEST !== "" && ingest === INGEST) ||
-    (SR !== "" && auth.includes(SR))
-  );
-}
 
 const BASE_URL = "https://piracanjuba.centi.com.br";
 const UA = "piracanjuba.ai/1.0 (transparencia municipal)";
@@ -351,20 +334,9 @@ async function fetchFolha(
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  // Codex 2026-06-03: auth obrigatoria (function estava aberta apesar de verify_jwt=false).
-  if (!checkCentiAuth(req)) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Unauthorized" }),
-      {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
-  }
+  const prepared = await preparePushCallerRequest(req, corsHeaders, 8 * 1024, true);
+  if ("response" in prepared) return prepared.response;
+  const { serviceRoleKey } = prepared;
 
   const url = new URL(req.url);
   const orgaoFilter = url.searchParams.get("orgao");
@@ -376,7 +348,7 @@ Deno.serve(async (req) => {
 
   const sb = createClient(
     Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    serviceRoleKey,
   );
 
   let detected: CompetenciaDetectada;
@@ -583,21 +555,18 @@ Deno.serve(async (req) => {
       ];
       const mesNome = meses[mes] || competencia;
       try {
-        await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-          },
-          body: JSON.stringify({
+        await notifyPushFromCaller(
+          Deno.env.get("SUPABASE_URL")!,
+          serviceRoleKey,
+          {
             title: `💰 Folha de ${mesNome}/${ano} disponível`,
             body:
               `A folha de pagamento de ${mesNome} já está disponível com ${remCriadas} registros.`,
             topic: "geral",
             url: "/prefeitura",
             dedup_key: `folha_${competencia}`,
-          }),
-        });
+          },
+        );
       } catch (e) {
         console.error("Push notification error:", (e as Error).message);
       }

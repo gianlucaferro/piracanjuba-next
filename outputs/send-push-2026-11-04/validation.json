@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-04",
+  "worker": "dell",
+  "checks": {
+    "edge-types": 0,
+    "lint": 0,
+    "node-tests": 0,
+    "sync-tests": 0
+  },
+  "node_tests": 258,
+  "deno_tests": 184,
+  "live_messages_sent": 0,
+  "files": {
+    "supabase/functions/send-push/index.ts": "09a3a546d6a04f8ee42ef509ec2f505cd9e397db1a8b581adfdf230502e074a4",
+    "supabase/functions/_shared/send-push-policy.ts": "5c4e50d7d02fdf3bf029e981bb042120f949ff35c5c279c1ad0caa66484987f0",
+    "supabase/functions/_shared/push-caller-auth.ts": "9796c07d399146cbe857418928660367c206d514eafd9b14bf036b7a10130b1a",
+    "supabase/functions/_shared/send-push-transport.test.ts": "4984ed59bb0c68cf947e42a7ce4d0180e126686228748f6b4242a85704c50ccf",
+    "tests/send-push-security.test.mjs": "9373598febcd51db456204e32b75a7c129cc892cdc3745490485f41a754c2fee",
+    "tests/send-push-callers.test.mjs": "7c67839b30e489f5d0106d581e8327c1e37d7c78f469c43ad4976fbb34088b49",
+    "supabase/functions/sync-prefeitura-diaria/index.ts": "f8691a0aaef1590b20267ea9066d87996a5c899e46ab1c22f8333302e5e69549",
+    "supabase/functions/sync-prefeitura-mensal/index.ts": "8153bdaa28842d7f0c15ffa9afa37e93c243505f60a01f2569796fe919fe0bfc",
+    "supabase/functions/import-folha-manual/index.ts": "aa2541e55ae01884f0e833df6119ce7efc0356ec687ac160cf9909be3ac8b335",
+    "supabase/functions/import-folha-xlsx/index.ts": "c78843c022cd319edd8f2ff6bd2c81a290486bd8d98a7e67e0d7f4d5cbbd1d56"
+  }
+}

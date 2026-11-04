@@ -1,0 +1,145 @@
+{
+  "project": "oinweocqcptwxqsztlcl",
+  "functions": [
+    {
+      "id": "aad8bf7d-620d-495e-98e4-03a66676f61e",
+      "slug": "sync-prefeitura-diaria",
+      "name": "sync-prefeitura-diaria",
+      "status": "ACTIVE",
+      "version": 31,
+      "created_at": 1777806183292,
+      "updated_at": 1784879146990,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "/Users/gianlucaferro/Desktop/Claude Code/piracanjuba-next/supabase/functions/sync-prefeitura-diaria/index.ts",
+      "ezbr_sha256": "f57670f7e0aa370c40311748f448a08cb18b0981c54ae7ccb548d426a57bc68c",
+      "files": [
+        {
+          "name": "sync-prefeitura-diaria/index.ts",
+          "bytes": 12794,
+          "sha256": "e900e741002478026f2c37f918f1e7a2b250bbeb0d7bb05946f6dcc35520d855"
+        }
+      ]
+    },
+    {
+      "id": "d5ec23ea-748c-4395-9a7a-ad6bf262a8d1",
+      "slug": "sync-prefeitura-mensal",
+      "name": "sync-prefeitura-mensal",
+      "status": "ACTIVE",
+      "version": 29,
+      "created_at": 1777806183292,
+      "updated_at": 1784880044166,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_oinweocqcptwxqsztlcl_d5ec23ea-748c-4395-9a7a-ad6bf262a8d1_29/source/supabase/functions/sync-prefeitura-mensal/index.ts",
+      "ezbr_sha256": "860c475bd5b5a75c46b762de611ce7bdd3a81d35050ee2862bda45882a7bbd3a",
+      "files": [
+        {
+          "name": "functions/sync-prefeitura-mensal/index.ts",
+          "bytes": 20016,
+          "sha256": "b1091be93f76eeb44a558ef42a0f9cdf88bc5c15bde8469722bd223454a40a43"
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+        }
+      ]
+    },
+    {
+      "id": "f0cddc31-0c6d-4ca8-b677-045a73d0f736",
+      "slug": "import-folha-manual",
+      "name": "import-folha-manual",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1784880046988,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_oinweocqcptwxqsztlcl_f0cddc31-0c6d-4ca8-b677-045a73d0f736_26/source/supabase/functions/import-folha-manual/index.ts",
+      "ezbr_sha256": "086f3242a92b82cf1dd1c4cff9c5903a7bcedeb6bf4a9afaa56abb2fc08467fb",
+      "files": [
+        {
+          "name": "functions/import-folha-manual/index.ts",
+          "bytes": 7283,
+          "sha256": "7eac1ebcdfcc67839c085c5abe861448845260e48509da8da1cdec02557776a5"
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+        }
+      ]
+    },
+    {
+      "id": "bd4b83f0-21d0-47c3-acde-b686cacadedd",
+      "slug": "import-folha-xlsx",
+      "name": "import-folha-xlsx",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1784880047904,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_oinweocqcptwxqsztlcl_bd4b83f0-21d0-47c3-acde-b686cacadedd_26/source/supabase/functions/import-folha-xlsx/index.ts",
+      "ezbr_sha256": "beb4e51559297eeefd88edd3a8dc2c9ba79bc54d089f5bef9eb85426c6e49bb5",
+      "files": [
+        {
+          "name": "functions/import-folha-xlsx/index.ts",
+          "bytes": 10601,
+          "sha256": "f3059770a77c72d3906dc637e6261ca18ab864fc9f4f5e354f2a59d44d41a090"
+        },
+        {
+          "name": "functions/_shared/servidor-origin.ts",
+          "bytes": 617,
+          "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+        },
+        {
+          "name": "functions/_shared/persistence-guards.ts",
+          "bytes": 1009,
+          "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+        }
+      ]
+    },
+    {
+      "id": "a2fde7ba-777b-4b6a-bd6e-d280abd77578",
+      "slug": "sync-health-check",
+      "name": "sync-health-check",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1788797079662,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_oinweocqcptwxqsztlcl_a2fde7ba-777b-4b6a-bd6e-d280abd77578_26/source/sync-health-check/index.ts",
+      "ezbr_sha256": "4075c0be7e7cdbf641cfc0313a36d7fee0913d3f068647e1d1981fe925e60343",
+      "files": [
+        {
+          "name": "sync-health-check/index.ts",
+          "bytes": 1557,
+          "sha256": "e1202a2a3ef1363f3b3d28bef54b7b93557bb47e6f6486c8cb3beb7afd7cf250"
+        },
+        {
+          "name": "_shared/sync-health-policy.ts",
+          "bytes": 8529,
+          "sha256": "0bf1b9e6a7a2444b0340e45a1faafd8df14bacf32ae176eadf17ef10e82db8f7"
+        },
+        {
+          "name": "_shared/service-role-auth.ts",
+          "bytes": 764,
+          "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+        }
+      ]
+    }
+  ]
+}

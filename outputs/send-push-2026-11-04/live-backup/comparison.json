@@ -1,0 +1,29 @@
+{
+  "compared_at": "2026-11-04 04:20:34 UTC",
+  "recovered_original": "sources/send-push/index.ts",
+  "original_provenance": "Embedded source map sourcesContent, original UTF-8 bytes preserved without normalization.",
+  "local_file": "supabase/functions/send-push/index.ts",
+  "comparison": "byte-for-byte identical at read-only comparison, before parent's security edits",
+  "bytes": 4960,
+  "recovered_sha256": "5a560ca271b90f18e89695ac57ca66b142279eb64e52b364a837e232e4458c90",
+  "local_sha256_at_comparison": "5a560ca271b90f18e89695ac57ca66b142279eb64e52b364a837e232e4458c90",
+  "unified_diff_empty": true,
+  "local_dependencies": [],
+  "external_imports": [
+    "https://esm.sh/@supabase/supabase-js@2",
+    "https://esm.sh/web-push@3.6.7"
+  ],
+  "bundled_supabase_version": "2.105.1",
+  "bundled_web_push_version": "3.6.7",
+  "observations": [
+    "Live handler source has no caller authentication gate before reading JSON and using the service-role client.",
+    "Catalog independently identifies send-push v23 ACTIVE with verify_jwt=false.",
+    "No notification, subscription endpoint, secret value or production write was invoked.",
+    "Public VAPID key and contact URI are application configuration, not private credentials. Private VAPID and service-role values are obtained only from runtime environment references."
+  ],
+  "limitations": [
+    "The textual JS/WASM API cannot decode Supabase binary EDGE-RUNTIME-METADATA as UTF-8; it remains intact inside send-push.eszip.",
+    "Secret-pattern scanning is not an exhaustive guarantee.",
+    "The local file can change after this comparison as the parent implements security fixes."
+  ]
+}

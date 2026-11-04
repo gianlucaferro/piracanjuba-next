@@ -1,0 +1,383 @@
+{
+  "at": "2026-11-04T04:14:58.185Z",
+  "project": "oinweocqcptwxqsztlcl",
+  "scope": "Read-only catalog metadata, source comparison and aggregate counts. No notification, business RPC, subscriber endpoint, key value, raw cron command or raw SQL definition read or invoked.",
+  "edge_functions": [
+    {
+      "slug": "sync-health-check",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4075c0be7e7cdbf641cfc0313a36d7fee0913d3f068647e1d1981fe925e60343"
+    },
+    {
+      "slug": "unsubscribe-push",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-prefeitura-mensal",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "860c475bd5b5a75c46b762de611ce7bdd3a81d35050ee2862bda45882a7bbd3a"
+    },
+    {
+      "slug": "sync-prefeitura-diaria",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "f57670f7e0aa370c40311748f448a08cb18b0981c54ae7ccb548d426a57bc68c"
+    },
+    {
+      "slug": "import-folha-manual",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "086f3242a92b82cf1dd1c4cff9c5903a7bcedeb6bf4a9afaa56abb2fc08467fb"
+    },
+    {
+      "slug": "send-push",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "import-folha-xlsx",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "beb4e51559297eeefd88edd3a8dc2c9ba79bc54d089f5bef9eb85426c6e49bb5"
+    }
+  ],
+  "database_inventory": {
+    "crons": [],
+    "tables": [
+      {
+        "rls": true,
+        "kind": "r",
+        "name": "push_subscriptions",
+        "schema": "public",
+        "force_rls": false,
+        "estimated_rows": 1
+      },
+      {
+        "rls": true,
+        "kind": "r",
+        "name": "subscription_vereadores",
+        "schema": "public",
+        "force_rls": false,
+        "estimated_rows": 1
+      },
+      {
+        "rls": true,
+        "kind": "r",
+        "name": "subscriptions",
+        "schema": "public",
+        "force_rls": false,
+        "estimated_rows": 7
+      },
+      {
+        "rls": false,
+        "kind": "r",
+        "name": "subscription",
+        "schema": "realtime",
+        "force_rls": false,
+        "estimated_rows": 0
+      }
+    ],
+    "functions": [
+      {
+        "acl": [
+          "=X/supabase_realtime_admin",
+          "supabase_realtime_admin=X/supabase_realtime_admin",
+          "postgres=X/supabase_realtime_admin",
+          "dashboard_user=X/supabase_realtime_admin",
+          "anon=X/supabase_realtime_admin",
+          "authenticated=X/supabase_realtime_admin",
+          "service_role=X/supabase_realtime_admin"
+        ],
+        "args": "",
+        "name": "subscription_check_filters",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime",
+        "definition_md5": "ff71dc5fe6923e2a5b8b9f79f5ccbf0d",
+        "mentions_apikey": false,
+        "security_definer": false,
+        "mentions_net_http": false,
+        "mentions_send_push": false,
+        "mentions_user_auth": false,
+        "jwt_literal_present": false,
+        "mentions_rate_limit": false,
+        "mentions_cron_secret": false,
+        "mentions_service_role": false,
+        "mentions_authorization": false,
+        "mentions_subscriptions": false
+      }
+    ]
+  },
+  "table_metadata": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": true
+      },
+      {
+        "name": "endpoint",
+        "type": "text",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": false
+      },
+      {
+        "name": "keys_p256dh",
+        "type": "text",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": false
+      },
+      {
+        "name": "keys_auth",
+        "type": "text",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": false
+      },
+      {
+        "name": "topic",
+        "type": "text",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "table": "push_subscriptions",
+        "not_null": true,
+        "has_default": true
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "ALL",
+        "name": "app_settings_no_public",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "table": "app_settings",
+        "qual_md5": "68934a3e9455fa72420237eb05902327",
+        "check_md5": null,
+        "qual_true": false,
+        "check_true": null,
+        "permissive": "PERMISSIVE",
+        "uses_auth_uid": false,
+        "uses_auth_role": false,
+        "uses_admin_role": false
+      },
+      {
+        "cmd": "INSERT",
+        "name": "Push subscriptions insert público",
+        "roles": [
+          "public"
+        ],
+        "table": "push_subscriptions",
+        "qual_md5": null,
+        "check_md5": "b326b5062b2f0e69046810717534cb09",
+        "qual_true": null,
+        "check_true": true,
+        "permissive": "PERMISSIVE",
+        "uses_auth_uid": false,
+        "uses_auth_role": false,
+        "uses_admin_role": false
+      }
+    ],
+    "triggers": [],
+    "privileges": [
+      {
+        "role": "anon",
+        "table": "app_settings",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "truncate": false
+      },
+      {
+        "role": "authenticated",
+        "table": "app_settings",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "truncate": false
+      },
+      {
+        "role": "service_role",
+        "table": "app_settings",
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "truncate": true
+      },
+      {
+        "role": "anon",
+        "table": "push_subscriptions",
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "truncate": true
+      },
+      {
+        "role": "authenticated",
+        "table": "push_subscriptions",
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "truncate": true
+      },
+      {
+        "role": "service_role",
+        "table": "push_subscriptions",
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "truncate": true
+      }
+    ],
+    "constraints": [
+      {
+        "name": "push_subscriptions_endpoint_key",
+        "type": "u",
+        "table": "push_subscriptions",
+        "validated": true,
+        "definition_md5": "c54f4973b348bd674601debb2cbe6df3",
+        "reference_table": null,
+        "has_length_limit": false,
+        "reference_schema": null,
+        "has_url_validation": true,
+        "has_topic_validation": false
+      },
+      {
+        "name": "push_subscriptions_pkey",
+        "type": "p",
+        "table": "push_subscriptions",
+        "validated": true,
+        "definition_md5": "4c6419b3704337bbfe50f018842a9ad3",
+        "reference_table": null,
+        "has_length_limit": false,
+        "reference_schema": null,
+        "has_url_validation": false,
+        "has_topic_validation": false
+      }
+    ]
+  },
+  "subscription_aggregate": {
+    "subscriptions_total": 1,
+    "subscriptions_last_30d": 0,
+    "first_subscription_day": "2026-03-26",
+    "latest_subscription_day": "2026-03-26",
+    "endpoint_max_length": 188,
+    "p256dh_max_length": 87,
+    "auth_max_length": 22,
+    "topic_max_length": 5,
+    "non_https_count": 0,
+    "other_topic_count": 1,
+    "fcm_count": 1,
+    "mozilla_count": 0,
+    "apple_count": 0
+  },
+  "grouped_aggregates": {
+    "subscriptions": [
+      {
+        "count": 1,
+        "topic": "geral",
+        "hostname": "fcm.googleapis.com",
+        "protocol": "https"
+      }
+    ],
+    "push_log_status": [
+      {
+        "count": 23,
+        "status": "success",
+        "first_day": "2026-03-27",
+        "latest_day": "2026-05-01"
+      }
+    ]
+  },
+  "direct_consumer_crons": [],
+  "consumer_sql_functions": [],
+  "sync_health_cron": [
+    {
+      "jobid": 151,
+      "jobname": "sync-health-check-daily",
+      "schedule": "0  10 * * *",
+      "active": true,
+      "username": "postgres",
+      "command_md5": "c624a5e6fd405521e40d3d75bc6e7701",
+      "mentions_sync_health_check": true,
+      "mentions_cron_secret": false,
+      "mentions_service_role": false,
+      "mentions_authorization": false,
+      "mentions_apikey": false,
+      "mentions_x_cron_secret": false
+    }
+  ],
+  "sync_health_cron_wrapper": [
+    {
+      "nspname": "public",
+      "proname": "invoke_edge_function_secure",
+      "args": "function_name text, body_json jsonb",
+      "definition_md5": "410ebab859eae0e3d1e6f70752779fe6",
+      "mentions_authorization": false,
+      "mentions_apikey": false,
+      "mentions_x_cron_secret": true,
+      "mentions_cron_secret": true,
+      "mentions_service_role": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_execute": true
+    }
+  ],
+  "sync_health_bundle_comparison": [
+    {
+      "name": "sync-health-check/index.ts",
+      "sha256": "e1202a2a3ef1363f3b3d28bef54b7b93557bb47e6f6486c8cb3beb7afd7cf250",
+      "same_as_local": true
+    },
+    {
+      "name": "_shared/sync-health-policy.ts",
+      "sha256": "0bf1b9e6a7a2444b0340e45a1faafd8df14bacf32ae176eadf17ef10e82db8f7",
+      "same_as_local": true
+    },
+    {
+      "name": "_shared/service-role-auth.ts",
+      "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e",
+      "same_as_local": true
+    }
+  ],
+  "unsubscription_live_source": {
+    "available": false,
+    "error_code": "UNAVAILABLE",
+    "error": "MCP internal error"
+  },
+  "notes": [
+    "has_url_validation in the raw constraint classification means textual mention of endpoint. There are no CHECK constraints, so UNIQUE(endpoint) is not URL validation.",
+    "Catalog grants SELECT/UPDATE/DELETE/TRUNCATE on push_subscriptions are broad, but only INSERT has an allowing RLS policy. TRUNCATE is not covered by RLS and is not exposed by ordinary PostgREST CRUD.",
+    "The send-push source is being recovered independently by the parent agent. Local source findings remain conditional until that comparison.",
+    "Four deployed consumer entrypoints match the previous reviewed live backup, with unchanged metadata versions and ezbr hashes. Their servidor-origin dependency differs from local for three consumers; use the live dependency when preparing targeted deployment.",
+    "No current registration or unsubscribe client invocation was found in src. The current public/sw.js continues to display and open push notification URLs.",
+    "The public subscription default is folha_pagamento, while all four notification producers use geral. Preserve the observed existing topic geral; do not narrow to the default alone."
+  ]
+}
