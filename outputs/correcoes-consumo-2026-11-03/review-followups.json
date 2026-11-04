@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-03",
+  "findings": [
+    "rollback_warning_for_fail_open_backup",
+    "optional_invoke_enrich_cnpj_on_fresh_database"
+  ],
+  "changes": [
+    "runbook_warns_about_old_guard_order_and_fail_open",
+    "conditional_acl_for_optional_exact_signature"
+  ],
+  "validation": {
+    "worker": "dell",
+    "postgres17": "passed",
+    "concurrent_reservations": 8,
+    "optional_function_present_acl": "passed",
+    "optional_function_absent_migration": "passed",
+    "production_writes": false
+  },
+  "migration_sha256": "befef946a31c86508b24f30ad5145bcd4c3e9598c1f9c7cf4edd4f6758c6ac88"
+}

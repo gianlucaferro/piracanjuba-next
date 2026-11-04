@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 import { test } from "node:test";
 import { safeSourceUrl } from "../supabase/functions/_shared/chatbot-sources.ts";
+import { readAdminActionBody, AdminBodyTooLargeError } from "../supabase/functions/_shared/admin-session-auth.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const official = Array.from({ length: 20 }, (_, id) => ({
@@ -57,7 +58,9 @@ async function load(slug, client) {
   const compiled = stripTypeScriptTypes(source.replace(/^import[\s\S]*?;\n/gm, ""));
   const prompts = [];
   const sandbox = {
-    exports: {}, console, Request, Response, URL, TextEncoder,
+    exports: {}, console, Request, Response, URL, TextEncoder, AbortSignal,
+    readAdminActionBody, AdminBodyTooLargeError,
+    aiGuard: async () => ({ allowed: true }),
     Deno: { env: { get: () => "fixture-sem-segredo" }, serve: callback => { sandbox.handler = callback; } },
     createClient: () => client,
     buildBenefitContextRows: () => [],

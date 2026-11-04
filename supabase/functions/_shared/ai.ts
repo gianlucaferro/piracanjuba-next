@@ -77,6 +77,7 @@ export async function geminiChat(options: GeminiChatOptions): Promise<Response> 
   };
 
   return await fetch(OPENAI_COMPAT_URL, {
+    signal: AbortSignal.timeout(60_000),
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -116,6 +117,7 @@ export async function openrouterChat(options: OpenRouterOptions): Promise<Respon
     ...(options.stream ? { stream: true } : {}),
   };
   return await fetch(OPENROUTER_URL, {
+    signal: AbortSignal.timeout(60_000),
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,

@@ -1,0 +1,231 @@
+{
+  "quota-full": [
+    {
+      "signature": "ai_guard(text,text)",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "definition_md5": "fbf8ae9192228ff43e4ddcec939664b9",
+      "definition": "CREATE OR REPLACE FUNCTION public.ai_guard(p_ip_hash text, p_fn text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  v_dia date := (now() at time zone 'America/Sao_Paulo')::date;\n  v_now timestamptz := now();\n  c_daily int := 4000;   -- teto global diário de gerações por IA (circuit breaker)\n  c_min int := 15;       -- por IP por minuto\n  c_hora int := 80;      -- por IP por hora\n  v_min int; v_hora int; v_daily int;\nbegin\n  -- limpeza probabilística das janelas velhas (evita crescimento da tabela)\n  if random() < 0.02 then\n    delete from ai_rate_limit where janela_inicio < v_now - interval '2 hours';\n  end if;\n\n  -- janela por minuto (incrementa com reset se expirou)\n  insert into ai_rate_limit(ip_hash, scope, janela_inicio, total) values (p_ip_hash, 'min', v_now, 1)\n  on conflict (ip_hash, scope) do update set\n    total = case when ai_rate_limit.janela_inicio < v_now - interval '1 minute' then 1 else ai_rate_limit.total + 1 end,\n    janela_inicio = case when ai_rate_limit.janela_inicio < v_now - interval '1 minute' then v_now else ai_rate_limit.janela_inicio end\n  returning total into v_min;\n\n  -- janela por hora\n  insert into ai_rate_limit(ip_hash, scope, janela_inicio, total) values (p_ip_hash, 'hora', v_now, 1)\n  on conflict (ip_hash, scope) do update set\n    total = case when ai_rate_limit.janela_inicio < v_now - interval '1 hour' then 1 else ai_rate_limit.total + 1 end,\n    janela_inicio = case when ai_rate_limit.janela_inicio < v_now - interval '1 hour' then v_now else ai_rate_limit.janela_inicio end\n  returning total into v_hora;\n\n  -- budget diário (lê, decide, só incrementa se liberado)\n  insert into ai_usage_daily(dia, total) values (v_dia, 0) on conflict (dia) do nothing;\n  select total into v_daily from ai_usage_daily where dia = v_dia;\n\n  if v_daily >= c_daily then return jsonb_build_object('allowed', false, 'reason', 'budget'); end if;\n  if v_min  > c_min  then return jsonb_build_object('allowed', false, 'reason', 'rate', 'scope', 'minuto'); end if;\n  if v_hora > c_hora then return jsonb_build_object('allowed', false, 'reason', 'rate', 'scope', 'hora'); end if;\n\n  update ai_usage_daily set total = total + 1, updated_at = now() where dia = v_dia;\n  return jsonb_build_object('allowed', true, 'daily', v_daily + 1);\nend;\n$function$\n"
+    }
+  ],
+  "quota-wrappers": [
+    {
+      "signature": "invoke_backfill_servidor_resumos()",
+      "owner": "postgres",
+      "prosecdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "proconfig": [
+        "search_path=public"
+      ],
+      "definition_md5": "0f18f65bd0e4e6c00d66b9fb335c43e0",
+      "redacted_definition": "CREATE OR REPLACE FUNCTION public.invoke_backfill_servidor_resumos()\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO '[literal]'\nAS $function$\ndeclare\n  anon_key text := '[literal]';\n  request_id bigint;\nbegin\n  select net.http_post(\n    url := '[literal]',\n    headers := jsonb_build_object('[literal]','[literal]','[literal]','[literal]'||anon_key),\n    body := jsonb_build_object('[literal]', 10, '[literal]', 3000),\n    timeout_milliseconds := 150000\n  ) into request_id;\n  return request_id;\nend; $function$\n"
+    },
+    {
+      "signature": "invoke_edge_function(text)",
+      "owner": "postgres",
+      "prosecdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "proconfig": [
+        "search_path=public"
+      ],
+      "definition_md5": "c9b5a1c56f2bc21fbe9ba56fa84e2825",
+      "redacted_definition": "CREATE OR REPLACE FUNCTION public.invoke_edge_function(function_name text)\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO '[literal]'\nAS $function$\nDECLARE\n  proj_url TEXT := '[literal]';\n  anon_key TEXT := '[literal]';\n  request_id BIGINT;\nBEGIN\n  SELECT net.http_post(\n    url := proj_url || '[literal]' || function_name,\n    headers := jsonb_build_object(\n      '[literal]', '[literal]',\n      '[literal]', '[literal]' || anon_key\n    ),\n    body := '[literal]'::jsonb,\n    timeout_milliseconds := 60000\n  ) INTO request_id;\n\n  RETURN request_id;\nEND;\n$function$\n"
+    },
+    {
+      "signature": "ai_guard(text,text)",
+      "owner": "postgres",
+      "prosecdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "proconfig": [
+        "search_path=public"
+      ],
+      "definition_md5": "fbf8ae9192228ff43e4ddcec939664b9",
+      "redacted_definition": "CREATE OR REPLACE FUNCTION public.ai_guard(p_ip_hash text, p_fn text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO '[literal]'\nAS $function$\ndeclare\n  v_dia date := (now() at time zone '[literal]')::date;\n  v_now timestamptz := now();\n  c_daily int := 4000;   -- teto global diário de gerações por IA (circuit breaker)\n  c_min int := 15;       -- por IP por minuto\n  c_hora int := 80;      -- por IP por hora\n  v_min int; v_hora int; v_daily int;\nbegin\n  -- limpeza probabilística das janelas velhas (evita crescimento da tabela)\n  if random() < 0.02 then\n    delete from ai_rate_limit where janela_inicio < v_now - interval '[literal]';\n  end if;\n\n  -- janela por minuto (incrementa com reset se expirou)\n  insert into ai_rate_limit(ip_hash, scope, janela_inicio, total) values (p_ip_hash, '[literal]', v_now, 1)\n  on conflict (ip_hash, scope) do update set\n    total = case when ai_rate_limit.janela_inicio < v_now - interval '[literal]' then 1 else ai_rate_limit.total + 1 end,\n    janela_inicio = case when ai_rate_limit.janela_inicio < v_now - interval '[literal]' then v_now else ai_rate_limit.janela_inicio end\n  returning total into v_min;\n\n  -- janela por hora\n  insert into ai_rate_limit(ip_hash, scope, janela_inicio, total) values (p_ip_hash, '[literal]', v_now, 1)\n  on conflict (ip_hash, scope) do update set\n    total = case when ai_rate_limit.janela_inicio < v_now - interval '[literal]' then 1 else ai_rate_limit.total + 1 end,\n    janela_inicio = case when ai_rate_limit.janela_inicio < v_now - interval '[literal]' then v_now else ai_rate_limit.janela_inicio end\n  returning total into v_hora;\n\n  -- budget diário (lê, decide, só incrementa se liberado)\n  insert into ai_usage_daily(dia, total) values (v_dia, 0) on conflict (dia) do nothing;\n  select total into v_daily from ai_usage_daily where dia = v_dia;\n\n  if v_daily >= c_daily then return jsonb_build_object('[literal]', false, '[literal]', '[literal]'); end if;\n  if v_min  > c_min  then return jsonb_build_object('[literal]', false, '[literal]', '[literal]', '[literal]', '[literal]'); end if;\n  if v_hora > c_hora then return jsonb_build_object('[literal]', false, '[literal]', '[literal]', '[literal]', '[literal]'); end if;\n\n  update ai_usage_daily set total = total + 1, updated_at = now() where dia = v_dia;\n  return jsonb_build_object('[literal]', true, '[literal]', v_daily + 1);\nend;\n$function$\n"
+    },
+    {
+      "signature": "invoke_analyze_risco_catchup()",
+      "owner": "postgres",
+      "prosecdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "proconfig": [
+        "search_path=public"
+      ],
+      "definition_md5": "6afc74c40eb3e6cc3cecda528049f05f",
+      "redacted_definition": "CREATE OR REPLACE FUNCTION public.invoke_analyze_risco_catchup()\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO '[literal]'\nAS $function$\nDECLARE\n  anon_key TEXT := '[literal]';\n  request_id BIGINT;\nBEGIN\n  SELECT net.http_post(\n    url := '[literal]',\n    headers := jsonb_build_object('[literal]', '[literal]', '[literal]', '[literal]' || anon_key),\n    body := jsonb_build_object('[literal]', '[literal]', '[literal]', 12),\n    timeout_milliseconds := 120000\n  ) INTO request_id;\n  RETURN request_id;\nEND;\n$function$\n"
+    },
+    {
+      "signature": "invoke_edge_function_secure(text,jsonb)",
+      "owner": "postgres",
+      "prosecdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "proconfig": [
+        "search_path=public"
+      ],
+      "definition_md5": "410ebab859eae0e3d1e6f70752779fe6",
+      "redacted_definition": "CREATE OR REPLACE FUNCTION public.invoke_edge_function_secure(function_name text, body_json jsonb DEFAULT '[literal]'::jsonb)\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO '[literal]'\nAS $function$\ndeclare\n  proj_url text := '[literal]';\n  cron_secret text;\n  request_id bigint;\nbegin\n  if function_name is null or not (\n    function_name = any(array[\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]', '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]',\n      '[literal]'\n    ]::text[])\n  ) then\n    raise exception '[literal]', function_name;\n  end if;\n\n  if octet_length(body_json::text) > 10000 then\n    raise exception '[literal]';\n  end if;\n\n  select value into cron_secret\n  from public.app_settings\n  where key = '[literal]';\n\n  if cron_secret is null or cron_secret = '[literal]' then\n    raise exception '[literal]';\n  end if;\n\n  select net.http_post(\n    url := proj_url || '[literal]' || function_name,\n    headers := jsonb_build_object(\n      '[literal]', '[literal]',\n      '[literal]', cron_secret,\n      '[literal]', cron_secret\n    ),\n    body := body_json,\n    timeout_milliseconds := 290000\n  ) into request_id;\n\n  return request_id;\nend;\n$function$\n"
+    }
+  ],
+  "quota-meta": [
+    {
+      "relname": "ai_rate_limit",
+      "relrowsecurity": true,
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "columns": [
+        {
+          "name": "ip_hash",
+          "type": "text",
+          "notnull": true
+        },
+        {
+          "name": "scope",
+          "type": "text",
+          "notnull": true
+        },
+        {
+          "name": "janela_inicio",
+          "type": "timestamp with time zone",
+          "notnull": true
+        },
+        {
+          "name": "total",
+          "type": "integer",
+          "notnull": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "ai_rate_limit_pkey",
+          "definition": "PRIMARY KEY (ip_hash, scope)"
+        }
+      ],
+      "policies": null
+    },
+    {
+      "relname": "ai_usage_daily",
+      "relrowsecurity": true,
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "columns": [
+        {
+          "name": "dia",
+          "type": "date",
+          "notnull": true
+        },
+        {
+          "name": "total",
+          "type": "integer",
+          "notnull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "notnull": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "ai_usage_daily_pkey",
+          "definition": "PRIMARY KEY (dia)"
+        }
+      ],
+      "policies": null
+    },
+    {
+      "relname": "app_settings",
+      "relrowsecurity": true,
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "columns": [
+        {
+          "name": "key",
+          "type": "text",
+          "notnull": true
+        },
+        {
+          "name": "value",
+          "type": "text",
+          "notnull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "notnull": true
+        }
+      ],
+      "constraints": [
+        {
+          "name": "app_settings_pkey",
+          "definition": "PRIMARY KEY (key)"
+        }
+      ],
+      "policies": [
+        {
+          "name": "app_settings_no_public",
+          "qual": "false",
+          "check": null,
+          "roles": [
+            "16485",
+            "16484"
+          ],
+          "command": "*"
+        }
+      ]
+    }
+  ],
+  "pg-callers": [
+    {
+      "signature": "invoke_backfill_servidor_resumos()",
+      "definition_md5": "0f18f65bd0e4e6c00d66b9fb335c43e0",
+      "references": [
+        "backfill-servidor-resumos"
+      ],
+      "uses_cron_header": false,
+      "uses_cron_secret_name": false,
+      "uses_app_settings": false
+    },
+    {
+      "signature": "invoke_analyze_risco_catchup()",
+      "definition_md5": "6afc74c40eb3e6cc3cecda528049f05f",
+      "references": [
+        "analyze-contrato-risco"
+      ],
+      "uses_cron_header": false,
+      "uses_cron_secret_name": false,
+      "uses_app_settings": false
+    }
+  ],
+  "cron-callers": [
+    {
+      "jobid": 211,
+      "jobname": "backfill-servidor-resumos-madrugada",
+      "schedule": "5-59/10 6-10 * * *",
+      "username": "postgres",
+      "active": true,
+      "command_md5": "4ffd49db566cbb96a0cd86c80b955984",
+      "references": [
+        "invoke_backfill_servidor_resumos"
+      ],
+      "uses_cron_header": false,
+      "uses_cron_secret_name": false,
+      "uses_app_settings": false
+    },
+    {
+      "jobid": 210,
+      "jobname": "analyze-risco-catchup-2025",
+      "schedule": "*/10 6-10 * * *",
+      "username": "postgres",
+      "active": true,
+      "command_md5": "ca98c11576015db1c4760fa06c735658",
+      "references": [
+        "invoke_analyze_risco_catchup"
+      ],
+      "uses_cron_header": false,
+      "uses_cron_secret_name": false,
+      "uses_app_settings": false
+    }
+  ],
+  "cron-exists": [
+    {
+      "cron_secret_present": true,
+      "catchup_desde": "2025-01-01"
+    }
+  ]
+}

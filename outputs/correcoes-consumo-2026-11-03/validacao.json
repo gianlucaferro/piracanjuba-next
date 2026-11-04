@@ -1,0 +1,10 @@
+{
+  "node_tests": 193,
+  "deno_tests": 176,
+  "postgres_concurrency_sessions": 8,
+  "typecheck": true,
+  "lint": true,
+  "edge_types": true,
+  "production_mutations": false,
+  "worker": "dell"
+}

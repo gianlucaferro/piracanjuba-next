@@ -1,4 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
 import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
@@ -11,12 +13,22 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
+    let body: Record<string, unknown>;
+    try { body = await readAdminActionBody(req, 8_192); }
+    catch (error) {
+      return new Response(JSON.stringify({ error: "Corpo da requisição inválido ou muito grande." }), {
+        status: error instanceof AdminBodyTooLargeError ? 413 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const internal = hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"));
+    if (!internal && (body.model !== undefined || body.provider !== undefined)) {
+      return new Response(JSON.stringify({ error: "Parâmetros administrativos não permitidos." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const servidor_id = body?.servidor_id;
     // Modelo parametrizavel. Default gemini-2.5-flash (estavel e rapido; o preview
     // tinha cota free apertada). Override por body.model permite teste A/B.
     const model = typeof body?.model === "string" ? body.model : "gemini-2.5-flash";
-    if (!servidor_id) {
+    if (typeof servidor_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(servidor_id)) {
       return new Response(JSON.stringify({ error: "servidor_id é obrigatório" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -130,6 +142,7 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
         },
         body: JSON.stringify({
           model: m,
+          max_tokens: 2_048,
           messages: [
             { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
             { role: "user", content: prompt },
@@ -137,6 +150,7 @@ Responda em português, de forma clara e objetiva. Não invente dados. Sempre me
           // Trava de custo: no OpenRouter, nao deixa cair pra outro provider/modelo mais caro.
           ...(useOR ? { provider: { allow_fallbacks: false } } : {}),
         }),
+        signal: AbortSignal.timeout(60_000),
       });
 
       if (aiResponse.ok) {

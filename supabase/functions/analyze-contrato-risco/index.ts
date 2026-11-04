@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
+import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
+import { aiGuard } from "../_shared/ratelimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,7 +41,19 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") return new Response(null, { status: 405, headers: { ...corsHeaders, Allow: "POST, OPTIONS" } });
+  if (!hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"))) {
+    return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
   try {
+    let body: Record<string, unknown>;
+    try { body = await readAdminActionBody(req, 8_192); }
+    catch (error) {
+      return new Response(JSON.stringify({ error: "Corpo da requisição inválido ou muito grande." }), {
+        status: error instanceof AdminBodyTooLargeError ? 413 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (body.dry_run === true) return new Response(JSON.stringify({ success: true, dry_run: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableKey = Deno.env.get("GEMINI_API_KEY");
@@ -46,10 +61,10 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const body = await req.json().catch(() => ({}));
-    const orgao = body?.orgao || "prefeitura"; // "prefeitura" or "camara"
+    const orgao = body.orgao === "camara" ? "camara" : "prefeitura"; // "prefeitura" or "camara"
     const forceRefresh = body?.force === true;
-    const batchSize = body?.batch_size || 20;
+    const requestedBatch = Number(body.batch_size);
+    const batchSize = Number.isFinite(requestedBatch) && requestedBatch > 0 ? Math.max(1, Math.min(Math.floor(requestedBatch), 20)) : 20;
     // "desde" (ex "2021-01-01"): recorta a analise a contratos com vigencia_inicio >= desde.
     const desde = typeof body?.desde === "string" ? body.desde : null;
 
@@ -154,6 +169,7 @@ Deno.serve(async (req) => {
     let analyzed = 0;
     let flagged = 0;
     const errors: string[] = [];
+    let stoppedReason: string | undefined;
 
     for (const contrato of toAnalyze) {
       try {
@@ -212,6 +228,12 @@ ${contratoAditivos.length > 0 ? `- Aditivos: ${contratoAditivos.length} termos, 
 
 NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falsos negativos neste contexto.`;
 
+        const guard = await aiGuard(supabase, req, "analyze-contrato-risco");
+        if (!guard.allowed) {
+          stoppedReason = guard.reason ?? "unavailable";
+          errors.push(guard.reason === "unavailable" ? "Quota de IA temporariamente indisponível." : "Limite de IA atingido.");
+          break;
+        }
         const aiResponse = await fetch(aiUrl, {
           method: "POST",
           headers: {
@@ -221,6 +243,7 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
           },
           body: JSON.stringify({
             model: aiModel,
+            max_tokens: 4_096,
             messages: [
               { role: "system", content: "Você é um analista de contratos públicos. Responda sempre usando a função fornecida." },
               { role: "user", content: prompt },
@@ -258,6 +281,7 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
             // Trava de custo: no OpenRouter, nao cai pra outro provider/modelo mais caro.
             ...(useOR ? { provider: { allow_fallbacks: false } } : {}),
           }),
+          signal: AbortSignal.timeout(60_000),
         });
 
         if (!aiResponse.ok) {
@@ -321,13 +345,14 @@ NA DÚVIDA, CLASSIFIQUE COMO BAIXO RISCO. Falsos positivos são piores que falso
 
     return new Response(
       JSON.stringify({
-        success: true,
+        success: !stoppedReason,
         analyzed,
         flagged,
         remaining: allContratos.length - alreadyAnalyzed.size - analyzed,
         errors: errors.slice(0, 10),
+        stopped_reason: stoppedReason,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: stoppedReason === "unavailable" ? 503 : stoppedReason ? 429 : 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error("analyze-contrato-risco error:", e);
