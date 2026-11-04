@@ -1,7 +1,18 @@
 # Piracanjuba.ai: proteção dos endpoints pagos e administrativos
 
 Data local: 2026-11-03. Projeto: oinweocqcptwxqsztlcl. Base publicada: ea90a3f.
-Estado: código e SQL preparados e testados, publicação ainda não executada.
+Estado atualizado em 2026-11-04: migration e 21 funções publicadas após autorização específica, com verificações de produção aprovadas. PR 29 integrada em 8002e57fe2d3f54d36ad3b775e26c2a0e84d2b5f. As seções de preparação abaixo preservam o plano e o rollback revisados.
+
+## Execução autorizada e conferida
+
+- Preflight confirmou os 21 bundles anteriores sem drift, ACLs privadas e presença do segredo interno, sem ler seu valor.
+- Migration aplicada em transação, com lock_timeout 5s e statement_timeout 30s. O MCP registrou a versão 20261104025344, nome 20261104010000_protect_paid_admin_endpoints. Conciliar esse mapeamento antes de qualquer db push futuro; não reaplicar nem reparar automaticamente.
+- Os três corpos SQL são idênticos aos do arquivo revisado; owners, SECURITY DEFINER, search_path e ACLs preservados. invoke_enrich_cnpj permaneceu com o mesmo corpo.
+- Publicadas somente as 21 funções selecionadas. Todos os 72 arquivos enviados conferidos por igualdade exata, com verify_jwt preservado. Outras 119 funções não mudaram.
+- Os 85 agendamentos completos permaneceram iguais, incluindo horários, status, usuário e hash do comando.
+- As duas chamadas administrativas dry_run retornaram HTTP 200, success=true e dry_run=true, sem IA ou coleta. Requests 61244 e 61245.
+- As 27 verificações HTTP de OPTIONS, autenticação e entradas inválidas passaram, sem iniciar geração. Testes pagos continuam simulados.
+- Evidências em production-functions-receipt.json, production-sql-verification.json, production-http-smoke.json e snapshots production-preflight/after.
 
 ## Mudanças
 

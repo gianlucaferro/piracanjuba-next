@@ -1,0 +1,14 @@
+{
+  "authorization": "User explicitly authorized this migration and dry_run verification in current conversation.",
+  "migration": "20261104010000_protect_paid_admin_endpoints",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}

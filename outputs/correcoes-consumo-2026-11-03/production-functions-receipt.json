@@ -1,0 +1,815 @@
+{
+  "published_at": "2026-11-04T03:00:21.981Z",
+  "authorization": "2026-11-03: migration, dry_run e publicacao autorizados pelo operador",
+  "project": "oinweocqcptwxqsztlcl",
+  "deployments": [
+    {
+      "slug": "backfill-servidor-resumos",
+      "id": "65161f74-e9ae-4f3f-81d1-aced03bbc4d6",
+      "name": "backfill-servidor-resumos",
+      "status": "ACTIVE",
+      "version": 6,
+      "created_at": 1781685716969,
+      "updated_at": 1793760895578,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_65161f74-e9ae-4f3f-81d1-aced03bbc4d6_6/source/functions/backfill-servidor-resumos/index.ts",
+      "ezbr_sha256": "b7bc7720babd81f84959953c533387e39b6acac5528fd0251c8e50b51c4820eb"
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "id": "8e07c901-0203-477a-ae9d-0bad550b0cad",
+      "name": "analyze-contrato-risco",
+      "status": "ACTIVE",
+      "version": 35,
+      "created_at": 1777806183292,
+      "updated_at": 1793761055469,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_8e07c901-0203-477a-ae9d-0bad550b0cad_35/source/functions/analyze-contrato-risco/index.ts",
+      "ezbr_sha256": "d9f467bf74570f2d8bfae346783b7e4414faeb13c31eac8a5412c75e8af18cd9"
+    },
+    {
+      "slug": "summarize-servidor",
+      "id": "d1312e1a-92ce-46d6-9008-3e0337c99f00",
+      "name": "summarize-servidor",
+      "status": "ACTIVE",
+      "version": 30,
+      "created_at": 1777806183292,
+      "updated_at": 1793761056558,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_d1312e1a-92ce-46d6-9008-3e0337c99f00_30/source/functions/summarize-servidor/index.ts",
+      "ezbr_sha256": "622e05578a46f8db02b1cd9914a58812e4837457c3f4cf91e4208e1e33952a0b"
+    },
+    {
+      "slug": "ai-search",
+      "id": "b4535183-8b35-4014-a878-c561422135a7",
+      "name": "ai-search",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761057894,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_b4535183-8b35-4014-a878-c561422135a7_26/source/functions/ai-search/index.ts",
+      "ezbr_sha256": "a78fae50fe005c5a7435a03841ead37bc0e4547a2346facf19ea327469820012"
+    },
+    {
+      "slug": "chatbot",
+      "id": "45dc7b67-702c-4526-aeec-3807f2b4df5d",
+      "name": "chatbot",
+      "status": "ACTIVE",
+      "version": 11,
+      "created_at": 1781741039426,
+      "updated_at": 1793761059280,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_45dc7b67-702c-4526-aeec-3807f2b4df5d_11/source/functions/chatbot/index.ts",
+      "ezbr_sha256": "c0f5a2b7b92d1cac2616b9e366b2c1fc79f6bccd281ad0f715e2d654941b7c05"
+    },
+    {
+      "slug": "consulta-placa",
+      "id": "3234144c-b2d2-4d2c-a00c-00535fd4a23b",
+      "name": "consulta-placa",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1777806183292,
+      "updated_at": 1793761061110,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_3234144c-b2d2-4d2c-a00c-00535fd4a23b_25/source/functions/consulta-placa/index.ts",
+      "ezbr_sha256": "ca60a54e0a73da6c5ce59387c2f9897b8d07a71b41c4fb2957d19b8a5006c434"
+    },
+    {
+      "slug": "transcribe-audio",
+      "id": "4cf65d8a-0cd2-4188-96d2-47492d70dc52",
+      "name": "transcribe-audio",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1777806183292,
+      "updated_at": 1793761062270,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_4cf65d8a-0cd2-4188-96d2-47492d70dc52_25/source/functions/transcribe-audio/index.ts",
+      "ezbr_sha256": "2480202d4d366096a76382db7ca73e33cb7196cff8d9feb21512a2dac8b24ccd"
+    },
+    {
+      "slug": "summarize-secretario",
+      "id": "652e09cb-b250-4ef6-b22c-ed4180e8e3e0",
+      "name": "summarize-secretario",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761063416,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_652e09cb-b250-4ef6-b22c-ed4180e8e3e0_26/source/functions/summarize-secretario/index.ts",
+      "ezbr_sha256": "661eace7a56195a278bf99ee3afa19a60b46254b546fa7fe8351ac786e9cbb8a"
+    },
+    {
+      "slug": "summarize-licitacao",
+      "id": "bf4e658a-c362-44f9-8bfe-1d1ccbc83144",
+      "name": "summarize-licitacao",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761064408,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_bf4e658a-c362-44f9-8bfe-1d1ccbc83144_26/source/functions/summarize-licitacao/index.ts",
+      "ezbr_sha256": "7a148d1e607dd8a51846bc5f75d543ea5cb6a5ba0043f00cd1dd05c5cb7280b5"
+    },
+    {
+      "slug": "summarize-portaria",
+      "id": "d3de9163-9b30-45b1-beda-e7c9415663ff",
+      "name": "summarize-portaria",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761065548,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_d3de9163-9b30-45b1-beda-e7c9415663ff_26/source/functions/summarize-portaria/index.ts",
+      "ezbr_sha256": "4854d03aee2b0c1edcf28674525f8eae60bd6e6590d74bb6c83028f39f6386a0"
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "id": "8729f503-6a89-4b5a-929f-f92a07739476",
+      "name": "summarize-lei-municipal",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761066588,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_8729f503-6a89-4b5a-929f-f92a07739476_26/source/functions/summarize-lei-municipal/index.ts",
+      "ezbr_sha256": "757c9f2c89cfe363bd33e83aef886847e68620ee80f59798d0c9f7633a313c20"
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "id": "2fbe4326-dacd-4e13-82d7-5f59ed67fa3f",
+      "name": "summarize-camara-contrato",
+      "status": "ACTIVE",
+      "version": 27,
+      "created_at": 1777806183292,
+      "updated_at": 1793761068041,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_2fbe4326-dacd-4e13-82d7-5f59ed67fa3f_27/source/functions/summarize-camara-contrato/index.ts",
+      "ezbr_sha256": "ecfc8530ad2250f1013c59ecfdd51f25caf170ea9361c71acfaa7d9576566306"
+    },
+    {
+      "slug": "summarize-contrato",
+      "id": "0531dd3d-e171-435d-b94a-6754c1f04c04",
+      "name": "summarize-contrato",
+      "status": "ACTIVE",
+      "version": 31,
+      "created_at": 1777806183292,
+      "updated_at": 1793761069340,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_0531dd3d-e171-435d-b94a-6754c1f04c04_31/source/functions/summarize-contrato/index.ts",
+      "ezbr_sha256": "f7b6377d6ebcdf3ca3a5756be3d7dd6e034baa19477eae664bad179eedcd56e1"
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "id": "48d6b43a-68d3-4140-95e6-5730b91d29b3",
+      "name": "summarize-lei-organica",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761070677,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_48d6b43a-68d3-4140-95e6-5730b91d29b3_26/source/functions/summarize-lei-organica/index.ts",
+      "ezbr_sha256": "8354ab2288df04f01b3763fc8b9761a819dccecd8225d29ef0639c3e5aeaed00"
+    },
+    {
+      "slug": "summarize-artigo",
+      "id": "ec79f16e-7c2a-49e8-94e2-b22a27eb2681",
+      "name": "summarize-artigo",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761071686,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_ec79f16e-7c2a-49e8-94e2-b22a27eb2681_26/source/functions/summarize-artigo/index.ts",
+      "ezbr_sha256": "2851d7e98e765353c28a301ef2b00a7f2fa18896ed15a0555cb8976f8269e675"
+    },
+    {
+      "slug": "summarize-imposto",
+      "id": "d0323563-0657-42ee-8023-1a858201fc4e",
+      "name": "summarize-imposto",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1777806183292,
+      "updated_at": 1793761072862,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_d0323563-0657-42ee-8023-1a858201fc4e_25/source/functions/summarize-imposto/index.ts",
+      "ezbr_sha256": "72f62563eaea71c493078bad846a3010ad4b87687f0cb3b6113c226371035cd6"
+    },
+    {
+      "slug": "summarize-decreto",
+      "id": "1ae43c5b-94c4-4ceb-af1d-ffd08cb04081",
+      "name": "summarize-decreto",
+      "status": "ACTIVE",
+      "version": 29,
+      "created_at": 1777806183292,
+      "updated_at": 1793761073904,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_1ae43c5b-94c4-4ceb-af1d-ffd08cb04081_29/source/functions/summarize-decreto/index.ts",
+      "ezbr_sha256": "6bd3b89585f5eb4a5bdcfc9d6fc41c8e1e490f7157d7c2aa875f9c8605290dca"
+    },
+    {
+      "slug": "summarize-generic",
+      "id": "b97c4eac-6431-4903-b01b-6522d1df9734",
+      "name": "summarize-generic",
+      "status": "ACTIVE",
+      "version": 29,
+      "created_at": 1777806183292,
+      "updated_at": 1793761074983,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_b97c4eac-6431-4903-b01b-6522d1df9734_29/source/functions/summarize-generic/index.ts",
+      "ezbr_sha256": "ec764cb1e24cfc22d5eade32d6d61177610a042ab5eaf631f5502d3728c183df"
+    },
+    {
+      "slug": "optimize-description",
+      "id": "e7cdba6f-fe15-44c5-87b5-eb9db9ed5ecf",
+      "name": "optimize-description",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1777806183292,
+      "updated_at": 1793761077115,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_e7cdba6f-fe15-44c5-87b5-eb9db9ed5ecf_25/source/functions/optimize-description/index.ts",
+      "ezbr_sha256": "410dd575d9a32b1b32389eaca76a1e5be7b2f29a2e21d8039d380ea9a0241d9b"
+    },
+    {
+      "slug": "summarize-obra",
+      "id": "f2864d26-e35a-4211-ae6e-adbfe29870f5",
+      "name": "summarize-obra",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761078383,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_f2864d26-e35a-4211-ae6e-adbfe29870f5_26/source/functions/summarize-obra/index.ts",
+      "ezbr_sha256": "f8952aa2e0e9db6048bc3821cfe5aa62e7014c153cfaeca858bb512f8440fdd7"
+    },
+    {
+      "slug": "summarize-atuacao",
+      "id": "738983e4-105a-4421-b520-0cbdcc1943f4",
+      "name": "summarize-atuacao",
+      "status": "ACTIVE",
+      "version": 26,
+      "created_at": 1777806183292,
+      "updated_at": 1793761079563,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_738983e4-105a-4421-b520-0cbdcc1943f4_26/source/functions/summarize-atuacao/index.ts",
+      "ezbr_sha256": "e79efc153ca0c25d51c7edb10759b4a9d7d13584afda1d803bc77427d10b9b7d"
+    }
+  ],
+  "source_verification": [
+    {
+      "slug": "backfill-servidor-resumos",
+      "version": 6,
+      "verify_jwt": false,
+      "ezbr_sha256": "b7bc7720babd81f84959953c533387e39b6acac5528fd0251c8e50b51c4820eb",
+      "files": [
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/backfill-servidor-resumos/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "version": 35,
+      "verify_jwt": false,
+      "ezbr_sha256": "d9f467bf74570f2d8bfae346783b7e4414faeb13c31eac8a5412c75e8af18cd9",
+      "files": [
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/analyze-contrato-risco/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-servidor",
+      "version": 30,
+      "verify_jwt": false,
+      "ezbr_sha256": "622e05578a46f8db02b1cd9914a58812e4837457c3f4cf91e4208e1e33952a0b",
+      "files": [
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/service-role-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-servidor/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "ai-search",
+      "version": 26,
+      "verify_jwt": true,
+      "ezbr_sha256": "a78fae50fe005c5a7435a03841ead37bc0e4547a2346facf19ea327469820012",
+      "files": [
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/beneficios-context.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/ai-search/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "chatbot",
+      "version": 11,
+      "verify_jwt": false,
+      "ezbr_sha256": "c0f5a2b7b92d1cac2616b9e366b2c1fc79f6bccd281ad0f715e2d654941b7c05",
+      "files": [
+        {
+          "name": "functions/_shared/admin-session-auth.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/beneficios-context.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/chatbot-sources.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/chatbot/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "consulta-placa",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "ca60a54e0a73da6c5ce59387c2f9897b8d07a71b41c4fb2957d19b8a5006c434",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/consulta-placa/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "transcribe-audio",
+      "version": 25,
+      "verify_jwt": true,
+      "ezbr_sha256": "2480202d4d366096a76382db7ca73e33cb7196cff8d9feb21512a2dac8b24ccd",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/transcribe-audio/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-secretario",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "661eace7a56195a278bf99ee3afa19a60b46254b546fa7fe8351ac786e9cbb8a",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-secretario/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-licitacao",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "7a148d1e607dd8a51846bc5f75d543ea5cb6a5ba0043f00cd1dd05c5cb7280b5",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-licitacao/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-portaria",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "4854d03aee2b0c1edcf28674525f8eae60bd6e6590d74bb6c83028f39f6386a0",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-portaria/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "757c9f2c89cfe363bd33e83aef886847e68620ee80f59798d0c9f7633a313c20",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-lei-municipal/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "version": 27,
+      "verify_jwt": false,
+      "ezbr_sha256": "ecfc8530ad2250f1013c59ecfdd51f25caf170ea9361c71acfaa7d9576566306",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-camara-contrato/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-contrato",
+      "version": 31,
+      "verify_jwt": false,
+      "ezbr_sha256": "f7b6377d6ebcdf3ca3a5756be3d7dd6e034baa19477eae664bad179eedcd56e1",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-contrato/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "8354ab2288df04f01b3763fc8b9761a819dccecd8225d29ef0639c3e5aeaed00",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-lei-organica/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-artigo",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "2851d7e98e765353c28a301ef2b00a7f2fa18896ed15a0555cb8976f8269e675",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-artigo/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-imposto",
+      "version": 25,
+      "verify_jwt": false,
+      "ezbr_sha256": "72f62563eaea71c493078bad846a3010ad4b87687f0cb3b6113c226371035cd6",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-imposto/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-decreto",
+      "version": 29,
+      "verify_jwt": false,
+      "ezbr_sha256": "6bd3b89585f5eb4a5bdcfc9d6fc41c8e1e490f7157d7c2aa875f9c8605290dca",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-decreto/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-generic",
+      "version": 29,
+      "verify_jwt": false,
+      "ezbr_sha256": "ec764cb1e24cfc22d5eade32d6d61177610a042ab5eaf631f5502d3728c183df",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-generic/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "optimize-description",
+      "version": 25,
+      "verify_jwt": true,
+      "ezbr_sha256": "410dd575d9a32b1b32389eaca76a1e5be7b2f29a2e21d8039d380ea9a0241d9b",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/optimize-description/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-obra",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "f8952aa2e0e9db6048bc3821cfe5aa62e7014c153cfaeca858bb512f8440fdd7",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-obra/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    },
+    {
+      "slug": "summarize-atuacao",
+      "version": 26,
+      "verify_jwt": false,
+      "ezbr_sha256": "e79efc153ca0c25d51c7edb10759b4a9d7d13584afda1d803bc77427d10b9b7d",
+      "files": [
+        {
+          "name": "functions/_shared/ai.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/_shared/ratelimit.ts",
+          "exact": true
+        },
+        {
+          "name": "functions/summarize-atuacao/index.ts",
+          "exact": true
+        }
+      ],
+      "exact": true
+    }
+  ],
+  "scope": {
+    "before": 140,
+    "after": 140,
+    "changed": [
+      "summarize-generic",
+      "summarize-lei-municipal",
+      "summarize-obra",
+      "transcribe-audio",
+      "summarize-decreto",
+      "summarize-imposto",
+      "ai-search",
+      "summarize-camara-contrato",
+      "analyze-contrato-risco",
+      "summarize-servidor",
+      "summarize-lei-organica",
+      "summarize-artigo",
+      "summarize-secretario",
+      "summarize-atuacao",
+      "summarize-contrato",
+      "summarize-portaria",
+      "summarize-licitacao",
+      "optimize-description",
+      "consulta-placa",
+      "backfill-servidor-resumos",
+      "chatbot"
+    ],
+    "unexpected": []
+  },
+  "dry_run_requests": [
+    {
+      "name": "backfill-servidor-resumos",
+      "request_id": 61244
+    },
+    {
+      "name": "analyze-contrato-risco",
+      "request_id": 61245
+    }
+  ],
+  "dry_run_responses": [
+    {
+      "id": 61244,
+      "status_code": 200,
+      "timed_out": false,
+      "error_msg": null,
+      "content": "{\"success\":true,\"dry_run\":true}"
+    },
+    {
+      "id": 61245,
+      "status_code": 200,
+      "timed_out": false,
+      "error_msg": null,
+      "content": "{\"success\":true,\"dry_run\":true}"
+    }
+  ],
+  "crons_unchanged": true,
+  "paid_calls": false
+}

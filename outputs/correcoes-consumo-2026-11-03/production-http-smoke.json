@@ -1,0 +1,249 @@
+{
+  "at": "2026-11-04T03:00:06.459835+00:00",
+  "paid_calls": false,
+  "results": [
+    {
+      "slug": "consulta-placa",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": "ok"
+    },
+    {
+      "slug": "transcribe-audio",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-secretario",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-licitacao",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-portaria",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "chatbot",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-contrato",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-servidor",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-artigo",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-imposto",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-decreto",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-generic",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "optimize-description",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-obra",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "summarize-atuacao",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "ai-search",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "backfill-servidor-resumos",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "method": "OPTIONS",
+      "public_key": false,
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "body": ""
+    },
+    {
+      "slug": "backfill-servidor-resumos",
+      "method": "POST",
+      "public_key": false,
+      "expected": 401,
+      "status": 401,
+      "pass": true,
+      "body": "{\"error\":\"N\u00e3o autorizado\"}"
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "method": "POST",
+      "public_key": false,
+      "expected": 401,
+      "status": 401,
+      "pass": true,
+      "body": "{\"error\":\"N\u00e3o autorizado\"}"
+    },
+    {
+      "slug": "ai-search",
+      "method": "POST",
+      "public_key": true,
+      "expected": 400,
+      "status": 400,
+      "pass": true,
+      "body": "{\"error\":\"Envie uma pergunta com at\u00e9 4.000 caracteres.\"}"
+    },
+    {
+      "slug": "chatbot",
+      "method": "POST",
+      "public_key": false,
+      "expected": 400,
+      "status": 400,
+      "pass": true,
+      "body": "{\"error\":\"Fa\u00e7a uma pergunta.\"}"
+    },
+    {
+      "slug": "summarize-servidor",
+      "method": "POST",
+      "public_key": false,
+      "expected": 400,
+      "status": 400,
+      "pass": true,
+      "body": "{\"error\":\"servidor_id \u00e9 obrigat\u00f3rio\"}"
+    },
+    {
+      "slug": "summarize-servidor",
+      "method": "POST",
+      "public_key": false,
+      "expected": 403,
+      "status": 403,
+      "pass": true,
+      "body": "{\"error\":\"Par\u00e2metros administrativos n\u00e3o permitidos.\"}"
+    }
+  ]
+}

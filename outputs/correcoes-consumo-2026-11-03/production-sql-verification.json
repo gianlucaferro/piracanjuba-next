@@ -1,0 +1,55 @@
+{
+  "at": "2026-11-04T03:03:49.419Z",
+  "expected_bodies": [
+    {
+      "name": "ai_guard",
+      "body_md5": "a8b6f2c17f1d1f06dda99cddbb33cd06"
+    },
+    {
+      "name": "invoke_backfill_servidor_resumos",
+      "body_md5": "05b9d7679c9fc78f0cd1ce33e9c10f62"
+    },
+    {
+      "name": "invoke_analyze_risco_catchup",
+      "body_md5": "93bb7a19272d14b8cd0624b92e052daf"
+    }
+  ],
+  "verified_bodies": [
+    {
+      "proname": "ai_guard",
+      "body_md5": "a8b6f2c17f1d1f06dda99cddbb33cd06",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=public"
+      ],
+      "exact": true
+    },
+    {
+      "proname": "invoke_analyze_risco_catchup",
+      "body_md5": "93bb7a19272d14b8cd0624b92e052daf",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=public"
+      ],
+      "exact": true
+    },
+    {
+      "proname": "invoke_backfill_servidor_resumos",
+      "body_md5": "05b9d7679c9fc78f0cd1ce33e9c10f62",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=public"
+      ],
+      "exact": true
+    }
+  ],
+  "registered_version": "20261104025344",
+  "migration_name": "20261104010000_protect_paid_admin_endpoints",
+  "merge": {
+    "sha": "8002e57fe2d3f54d36ad3b775e26c2a0e84d2b5f",
+    "merged": true,
+    "message": "Pull Request successfully merged"
+  },
+  "crons_unchanged": true,
+  "crons_compared": 85
+}
