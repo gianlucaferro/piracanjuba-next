@@ -9,7 +9,6 @@ const supabase = createBrowserSupabaseClient();
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Loader2, Image as ImageIcon, Trash2, Pencil, Save, Phone, X } from "lucide-react";
-import { toast } from "sonner";
 import { getErrorMessage } from "./request-error";
 import { ImageUploadButton } from "./ImageUploadButton";
 
@@ -55,11 +54,24 @@ export default function FarmaciaFotosAdmin() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [editPhone, setEditPhone] = useState("");
+  const [notice, setNotice] = useState<{ message: string; error: boolean } | null>(null);
+  const notify = (message: string, error = false) => setNotice({ message, error });
 
-  const { data: fotos, isLoading } = useQuery({
+  const adminAction = async (payload: Record<string, unknown>) => {
+    const admin_token = localStorage.getItem("pba_admin_token") || "";
+    const { data, error } = await supabase.functions.invoke("admin-farmacia-update", {
+      body: { ...payload, admin_token },
+    });
+    if (error) throw new Error("Não foi possível salvar. Confira sua sessão e tente novamente.");
+    if (data?.error) throw new Error(data.error);
+    if (data?.success !== true) throw new Error("A alteração não foi confirmada. Tente novamente.");
+  };
+
+  const { data: fotos, isLoading, isError } = useQuery({
     queryKey: ["farmacia-fotos-admin"],
     queryFn: async () => {
-      const { data } = await supabase.from("farmacia_fotos").select("*");
+      const { data, error } = await supabase.from("farmacia_fotos").select("*");
+      if (error) throw error;
       const map = new Map<string, FarmaciaRow>();
       ((data || []) as FarmaciaRow[]).forEach((f) => map.set(f.nome, f));
       return map;
@@ -69,8 +81,10 @@ export default function FarmaciaFotosAdmin() {
   const compressToWebP = (file: File, maxWidth = 540, quality = 0.8): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new window.Image();
+      const objectUrl = URL.createObjectURL(file);
       img.onload = () => {
-        const ratio = Math.min(maxWidth / img.width, 1);
+        URL.revokeObjectURL(objectUrl);
+        const ratio = Math.min(maxWidth / img.width, 2160 / img.height, 1);
         const w = Math.round(img.width * ratio);
         const h = Math.round(img.height * ratio);
         const canvas = document.createElement("canvas");
@@ -85,53 +99,47 @@ export default function FarmaciaFotosAdmin() {
           quality
         );
       };
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = URL.createObjectURL(file);
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("Não foi possível abrir a imagem."));
+      };
+      img.src = objectUrl;
     });
   };
 
   const handleUpload = async (nome: string, file: File) => {
+    setNotice(null);
     setUploading(nome);
     try {
-      const slug = nome.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-      const path = `${slug}.webp`;
-
       // Compress and convert to WebP (max 540px wide, 80% quality)
       const compressed = await compressToWebP(file);
+      if (compressed.size > 524_288) throw new Error("Escolha uma imagem menor. O limite após conversão é 512 KB.");
       const sizeKB = (compressed.size / 1024).toFixed(0);
+      const image_base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = () => reject(new Error("Não foi possível preparar a imagem."));
+        reader.readAsDataURL(compressed);
+      });
+      await adminAction({ action: "upload", nome, image_base64 });
 
-      const { error: uploadError } = await supabase.storage
-        .from("farmacia-fotos")
-        .upload(path, compressed, { upsert: true, contentType: "image/webp" });
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("farmacia-fotos")
-        .getPublicUrl(path);
-
-      const { error: dbError } = await supabase
-        .from("farmacia_fotos")
-        .upsert({ nome, foto_url: urlData.publicUrl }, { onConflict: "nome" });
-      if (dbError) throw dbError;
-
-      toast.success(`Foto de ${nome} salva! (${sizeKB}KB WebP)`);
+      notify(`Foto de ${nome} salva! (${sizeKB}KB WebP)`);
       invalidate();
     } catch (e: unknown) {
-      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
+      notify(getErrorMessage(e, "Não foi possível salvar a alteração."), true);
     } finally {
       setUploading(null);
     }
   };
 
   const handleRemove = async (nome: string) => {
+    setNotice(null);
     try {
-      await supabase.from("farmacia_fotos").delete().eq("nome", nome);
-      toast.success(`Foto de ${nome} removida`);
+      await adminAction({ action: "remove_photo", nome });
+      notify(`Foto de ${nome} removida`);
       invalidate();
     } catch (e: unknown) {
-      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
+      notify(getErrorMessage(e, "Não foi possível salvar a alteração."), true);
     }
   };
 
@@ -142,18 +150,15 @@ export default function FarmaciaFotosAdmin() {
   };
 
   const handleSavePhone = async (nome: string) => {
+    setNotice(null);
     try {
-      const tipo = editPhone.includes("3405") ? "fixo" : "whatsapp";
-      const { error } = await supabase
-        .from("farmacia_fotos")
-        .upsert({ nome, telefone: editPhone, tipo_telefone: tipo, foto_url: fotos?.get(nome)?.foto_url || "" }, { onConflict: "nome" });
-      if (error) throw error;
+      await adminAction({ action: "update_phone", nome, telefone: editPhone });
 
-      toast.success(`Telefone de ${nome} atualizado!`);
+      notify(`Telefone de ${nome} atualizado!`);
       setEditing(null);
       invalidate();
     } catch (e: unknown) {
-      toast.error(getErrorMessage(e, "Não foi possível salvar a alteração."));
+      notify(getErrorMessage(e, "Não foi possível salvar a alteração."), true);
     }
   };
 
@@ -163,11 +168,13 @@ export default function FarmaciaFotosAdmin() {
   };
 
   if (isLoading) return <div className="animate-pulse h-40" />;
+  if (isError) return <p role="alert">Não foi possível carregar as farmácias. Recarregue a página.</p>;
 
   const comFoto = FARMACIAS.filter(n => fotos?.get(n)?.foto_url).length;
 
   return (
     <div className="space-y-4">
+      {notice && <p role={notice.error ? "alert" : "status"} className={notice.error ? "text-sm text-destructive" : "text-sm text-foreground"}>{notice.message}</p>}
       <p className="text-sm text-muted-foreground">
         {comFoto} de {FARMACIAS.length} farmácias com foto · Clique no lápis para editar o telefone
       </p>
@@ -210,7 +217,7 @@ export default function FarmaciaFotosAdmin() {
                 </ImageUploadButton>
 
                 {row?.foto_url && (
-                  <Button variant="ghost" size="sm" onClick={() => handleRemove(nome)} className="text-destructive shrink-0">
+                  <Button variant="ghost" size="sm" aria-label={`Remover foto de ${nome}`} onClick={() => handleRemove(nome)} className="text-destructive shrink-0">
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 )}
@@ -226,7 +233,7 @@ export default function FarmaciaFotosAdmin() {
                     className="h-8 text-sm flex-1"
                     autoFocus
                   />
-                  <Button size="sm" variant="default" onClick={() => handleSavePhone(nome)} className="h-8">
+                  <Button size="sm" variant="default" aria-label={`Salvar telefone de ${nome}`} onClick={() => handleSavePhone(nome)} className="h-8">
                     <Save className="w-3.5 h-3.5" />
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(null)} className="h-8">

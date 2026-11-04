@@ -263,3 +263,7 @@ verify_jwt = false
 
 [functions.admin-sync-status]
 verify_jwt = true
+
+# Sessao propria do painel validada no handler antes de qualquer escrita.
+[functions.admin-farmacia-update]
+verify_jwt = true

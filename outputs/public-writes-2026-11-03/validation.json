@@ -1,0 +1,45 @@
+{
+  "validated_at": "2026-11-04T00:46:41.773557+00:00",
+  "worker": "Dell Ubuntu native",
+  "base_commit": "b8b3137c5deda90e71c013eff264c95d09c6ff90",
+  "project_id": "oinweocqcptwxqsztlcl",
+  "production_mutations": false,
+  "checks_exit": {
+    "types": 0,
+    "lint": 0,
+    "tests": 0,
+    "edge": 0,
+    "edge-types": 0,
+    "sql": 0,
+    "compile": 0,
+    "quality": 0,
+    "e2e": 0
+  },
+  "node_tests": {
+    "passed": 193,
+    "failed": 0
+  },
+  "deno_tests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "chromium": {
+    "desktop": "passed",
+    "mobile": "passed",
+    "network": "local mocks only"
+  },
+  "postgres": "17 isolated, no network; anon/auth write denial, read/admin/other bucket, MAINTAIN, reapply and exact rollback",
+  "review": "supabase_quota_docs approved, no blockers",
+  "sha256": {
+    "src/components/admin/FarmaciaFotosAdmin.tsx": "43e9b8b1ce38ee70146d6995fed24970ba1c262203e8b10562cd530304ffaa32",
+    "supabase/config.toml": "4cbf6e9db3094063cbd5ec2f990dc0cf4d519c2f57f0d77a3a90506443b4e856",
+    "supabase/migrations/20261104030000_restringe_escritas_publicas.sql": "0b4a60859143c4db9267faff3ee7092a0bdeb5d1045c2d58111d4882f9a335af",
+    "supabase/rollbacks/20261104030000_restringe_escritas_publicas.sql": "ea636e83784aab0e423d63852b17485fe34b88ad239be5326a78eea0ae6c65fd",
+    "supabase/functions/admin-farmacia-update/index.ts": "14af2f770e0f4860f1148d5adeb564054d484177237191cdf54f5eb8a7113d32",
+    "supabase/functions/_shared/farmacia-admin.ts": "a5e20c35f25726c7115a206469cee73789f2a392c2b23dd54aad1f54f195134f",
+    "supabase/functions/_shared/farmacia-admin-store.ts": "1bcd8e7f32f23a718073579a98d1733cec7cdfd1315e1d40478e1d2f9829c353",
+    "supabase/functions/_shared/farmacia-admin.test.ts": "15461205f5955b3291d4e2b065883996728e7d50a4d43e574bee2a9b12c918cb",
+    "tests/sql/public-writes.test.sql": "ae18089a0c16a2d02834f4b9dc5fc496d6bcd834001ccd960db3138d7f0748c0",
+    "tests/e2e/farmacia-admin.spec.ts": "f2e9f5b307b8b863d61e1bc7b415561c0faf96432cc79150ab717be83b7aab24"
+  }
+}
