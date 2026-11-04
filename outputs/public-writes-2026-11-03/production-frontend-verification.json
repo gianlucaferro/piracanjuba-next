@@ -1,0 +1,306 @@
+{
+  "checked_at": "2026-11-04 03:08:28 UTC",
+  "project": {
+    "name": "piracanjuba-next",
+    "id": "prj_5Mc7CvhDr9trmK83YROaD0FsbTKR",
+    "team_id": "team_oUW1IkirbIioX1u8zxq2tjIo",
+    "scope": "gianlucaferros-projects"
+  },
+  "expected_source_commit": "ba35806c821788713dba728834b92f854ef102e7",
+  "source": {
+    "repository": "gianlucaferro/piracanjuba-next",
+    "branch": "main",
+    "commit": "ba35806c821788713dba728834b92f854ef102e7",
+    "git_deployment": "1"
+  },
+  "deployment": {
+    "id": "dpl_B2btbrJuA5uGRctBevvV1LYQTwP2",
+    "url": "piracanjuba-next-p2co9rsgb-gianlucaferros-projects.vercel.app",
+    "readyState": "READY",
+    "state": null,
+    "target": "production",
+    "alias": null,
+    "aliasAssigned": null,
+    "createdAt": 1793761515626,
+    "buildingAt": null,
+    "ready": null,
+    "gitSource": null,
+    "meta": null,
+    "created_at": "2026-11-04T03:05:15.626Z",
+    "building_at": "2026-11-04T03:05:16.915Z",
+    "ready_at": "2026-11-04T03:05:47.625Z"
+  },
+  "aliases": {
+    "piracanjuba.ai": {
+      "id": "dpl_B2btbrJuA5uGRctBevvV1LYQTwP2",
+      "url": "piracanjuba-next-p2co9rsgb-gianlucaferros-projects.vercel.app",
+      "readyState": "READY",
+      "state": null,
+      "target": "production",
+      "alias": null,
+      "aliasAssigned": null,
+      "gitSource": null,
+      "meta": null
+    },
+    "www.piracanjuba.ai": {
+      "id": "dpl_B2btbrJuA5uGRctBevvV1LYQTwP2",
+      "url": "piracanjuba-next-p2co9rsgb-gianlucaferros-projects.vercel.app",
+      "readyState": "READY",
+      "state": null,
+      "target": "production",
+      "alias": null,
+      "aliasAssigned": null,
+      "gitSource": null,
+      "meta": null
+    }
+  },
+  "admin_http": {
+    "page": {
+      "url": "https://piracanjuba.ai/admin",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    "html_sha256": "8b1010b952fd742eba280260e2733b338ac2536a45ef5fa64d68f429e6f514e1",
+    "script_count": 11,
+    "scripts": [
+      "https://piracanjuba.ai/_next/static/immutable/chunks/44p8sc9vrudmr.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/1ja0fa-7gzr4g.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/17h8bblkk6wiv.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/turbopack-2awcvvi0f8u54.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/2o_1esz3qu8oh.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/1kv0qwdny9xp8.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/0fzq4yxwjn-1p.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/1nvxskwuk0079.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/2bwn9mmdwwlca.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/0c0hxoamwjsbw.js",
+      "https://piracanjuba.ai/_next/static/immutable/chunks/2-wppezi6i-y_.js"
+    ]
+  },
+  "direct_chunks": [
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/44p8sc9vrudmr.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 34216,
+      "sha256": "5a8d261942478fc0517136e2a3ba3df645df0e83d5c29c09cb00c49811f02b8b",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/1ja0fa-7gzr4g.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 229521,
+      "sha256": "38ae4f937d97a6e62b013e10e2083cf4a16530e6fa4a8ec43b69ae7f48738329",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/17h8bblkk6wiv.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 164417,
+      "sha256": "b40af175b92ebf83b5f47f26aa31d9f88460a599500662e178dbc9807fc652bf",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/turbopack-2awcvvi0f8u54.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 10310,
+      "sha256": "72959bb31680561004fabc7b339e6a25b299153df8730fc9d8455903413da52b",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/2o_1esz3qu8oh.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 25553,
+      "sha256": "85af25e02a57c35556f99a97732ecd3c2aacaa9ba5e945ccdca3b1a33faea94f",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/1kv0qwdny9xp8.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 26733,
+      "sha256": "7c81c872f89687bf8c94e63831311d0113eba6942169dce6788988d84fa6b340",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/0fzq4yxwjn-1p.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 29729,
+      "sha256": "e36f50dff73dace8c8d8b1ca248477465153f4cd122693d641867748c0da9339",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/1nvxskwuk0079.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 41226,
+      "sha256": "be7a592cd5e62d50338ef8b7d717b4a00a83b84e44e43d2c92eeeabedcf7a1e3",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/2bwn9mmdwwlca.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 5464,
+      "sha256": "456955894810e93a28e97e901ff252af4e867a6c8ece4c64d4c523fd5bd7eb16",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/0c0hxoamwjsbw.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 112594,
+      "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/2-wppezi6i-y_.js",
+      "status": 200,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 6547,
+      "sha256": "f4a3ef7eeaaba1d5b8dcd1e9cdb0e2c6745d30d601ef8b82387916aa95a5d1f1",
+      "has_admin_farmacia_update": false,
+      "has_farmacia_component": false
+    }
+  ],
+  "lazy_chunks": [
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/18fl02g-yl_r8.js",
+      "status": 200,
+      "bytes": 103127,
+      "sha256": "80519b8cef754b8569a48ce1254d0e5baade417b177dd94e3f8588013c9d0e11",
+      "has_admin_farmacia_update": true,
+      "marker_context": "pba_admin_token\")||\"\",{data:s,error:t}=await V.functions.invoke(\"admin-farmacia-update\",{body:{...e,admin_token:a}});if(t)throw Error(\"Não foi possível salvar. Confira sua sessão e tente",
+      "has_upload_action": true,
+      "has_remove_photo_action": true,
+      "has_update_phone_action": true
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/19d9a0fy-cjii.js",
+      "status": 200,
+      "bytes": 60813,
+      "sha256": "773dbb70152897b360d04f9a42492a7be8b7a8165d6b7b6d95cb827354e2a157",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/1oy633znra_vj.js",
+      "status": 200,
+      "bytes": 23092,
+      "sha256": "4d133c0d02586b35acb3a8fddbf0142631d515289f2f731f663fc0891284781d",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/1vpqb7_nf0cie.js",
+      "status": 200,
+      "bytes": 32620,
+      "sha256": "55c2151dfa057136c2bc2fdd04e8d1d58663da417491fe24c6776f69de990e73",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/2ffaki5ffy9lc.js",
+      "status": 200,
+      "bytes": 20451,
+      "sha256": "532cc9afb7d1e9743945967a15eb44fe791b85716e3a1084ffaec67237147c71",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/34dtatspfg-57.js",
+      "status": 200,
+      "bytes": 247894,
+      "sha256": "d0ac1ca79b452ea941188fefd593bf96ad16ddcf5fd5bc2ccbd5c62de182b0ec",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": true,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/3msj2dcn4lc_f.js",
+      "status": 200,
+      "bytes": 79079,
+      "sha256": "0ed0a9537d35deb50a322dad08e64e67d65eb4a377290169b73c63f7f9cdd946",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    },
+    {
+      "url": "https://piracanjuba.ai/_next/static/immutable/chunks/3y-nlautybh6i.js",
+      "status": 200,
+      "bytes": 53501,
+      "sha256": "fdcca72237df1ef16cfa3d078639d4e886c2c4602cbe4309b0b235b176d060c6",
+      "has_admin_farmacia_update": false,
+      "marker_context": null,
+      "has_upload_action": false,
+      "has_remove_photo_action": false,
+      "has_update_phone_action": false
+    }
+  ],
+  "checks": {
+    "exact_source_commit": true,
+    "production_ready": true,
+    "apex_same_deployment": true,
+    "www_same_deployment": true,
+    "admin_http_200": true,
+    "direct_chunks_http_200": true,
+    "lazy_chunks_http_200": true,
+    "shipped_admin_farmacia_endpoint": true
+  },
+  "deployment_mechanism": {
+    "type": "Integracao GitHub da Vercel, branch main, deployment automatico do frontend",
+    "configuration_source": "/Users/gianlucaferro/dev/claude-code/piracanjuba-next/.vercel/project.json",
+    "workflows_reviewed": [
+      ".github/workflows/quality.yml",
+      ".github/workflows/post-deploy.yml"
+    ],
+    "quality": "Quality valida checks e browser; nao publica frontend ou Supabase.",
+    "post_deploy": "Production smoke responde a deployment_status success no ambiente Production.",
+    "inspection_cli": "/Users/gianlucaferro/.local/agent-tools/bin/vercel",
+    "authenticated_user": "gianlucaferro",
+    "cli_version": "58.9.0",
+    "commands": [
+      "vercel list piracanjuba-next --scope gianlucaferros-projects --environment production --meta githubCommitSha=ba35806c821788713dba728834b92f854ef102e7 --json",
+      "vercel inspect dpl_B2btbrJuA5uGRctBevvV1LYQTwP2 --scope gianlucaferros-projects --json",
+      "vercel inspect piracanjuba.ai --scope gianlucaferros-projects --json",
+      "vercel inspect www.piracanjuba.ai --scope gianlucaferros-projects --json"
+    ],
+    "connector_limit": "Vercel list_teams retornou lista vazia; CLI autenticada confirmou projeto e deploy."
+  },
+  "verification_limits": [
+    "Somente GET publico e consultas somente leitura de deployment. Nenhuma publicacao, alteracao de Git, SQL ou chamada de negocio.",
+    "Nenhuma leitura de sessao admin ou valores de segredos.",
+    "Confirma entrega do codigo novo e fonte correta, sem upload, alteracao de telefone ou remocao real de foto.",
+    "SQL e verificacao apos corte continuam sob responsabilidade do root."
+  ]
+}

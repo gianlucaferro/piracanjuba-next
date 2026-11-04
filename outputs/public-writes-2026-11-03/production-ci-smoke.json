@@ -1,0 +1,174 @@
+{
+  "verified_at": "2026-11-04 03:10:15 UTC",
+  "merge_commit": "ba35806c821788713dba728834b92f854ef102e7",
+  "deployment_id": "dpl_B2btbrJuA5uGRctBevvV1LYQTwP2",
+  "deployment_state": "READY (confirmed by root)",
+  "sql_cutover_completed_at": "2026-11-04T03:07:45Z",
+  "ci": {
+    "conclusion": "success",
+    "createdAt": "2026-11-04T03:05:50Z",
+    "databaseId": 41764937043,
+    "event": "deployment_status",
+    "headSha": "ba35806c821788713dba728834b92f854ef102e7",
+    "jobs": [
+      {
+        "completedAt": "2026-11-04T03:06:20Z",
+        "conclusion": "success",
+        "databaseId": 126360984209,
+        "name": "smoke",
+        "startedAt": "2026-11-04T03:05:53Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-04T03:05:57Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-04T03:05:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:04Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-11-04T03:05:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:10Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v4",
+            "number": 3,
+            "startedAt": "2026-11-04T03:06:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:17Z",
+            "conclusion": "success",
+            "name": "Verify public production routes",
+            "number": 4,
+            "startedAt": "2026-11-04T03:06:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:17Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v4",
+            "number": 7,
+            "startedAt": "2026-11-04T03:06:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:17Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 8,
+            "startedAt": "2026-11-04T03:06:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-04T03:06:17Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-11-04T03:06:17Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/gianlucaferro/piracanjuba-next/actions/runs/41764937043/job/126360984209"
+      }
+    ],
+    "name": "Production smoke",
+    "status": "completed",
+    "updatedAt": "2026-11-04T03:06:21Z",
+    "url": "https://github.com/gianlucaferro/piracanjuba-next/actions/runs/41764937043"
+  },
+  "ci_completed_before_sql": true,
+  "post_sql_smoke": {
+    "worker": "Dell",
+    "command": "desktop-run --worker dell --no-sync -- node scripts/validation/http-smoke.mjs https://piracanjuba.ai",
+    "execution_observed_at": "2026-11-04T03:09:40Z",
+    "completed_by": "2026-11-04 03:10:15 UTC",
+    "exit_code": 0,
+    "checks": [
+      {
+        "route": "/",
+        "status": 200
+      },
+      {
+        "route": "/horarios-onibus",
+        "status": 200
+      },
+      {
+        "route": "/plantao-farmacias",
+        "status": 200
+      },
+      {
+        "route": "/prefeitura/servidores",
+        "status": 200
+      },
+      {
+        "route": "/camara/servidores",
+        "status": 200
+      },
+      {
+        "route": "/prefeitura/contratos",
+        "status": 200
+      },
+      {
+        "route": "/grupos-economicos",
+        "status": 200
+      },
+      {
+        "route": "/acompanhar",
+        "status": 200
+      },
+      {
+        "route": "/coleta-lixo",
+        "status": 200
+      },
+      {
+        "route": "/contatos",
+        "status": 200
+      },
+      {
+        "route": "/saude",
+        "status": 200
+      },
+      {
+        "route": "/educacao",
+        "status": 200
+      },
+      {
+        "route": "/clima",
+        "status": 200
+      },
+      {
+        "route": "/compra-e-venda",
+        "status": 200
+      },
+      {
+        "route": "/zap-pba",
+        "status": 200
+      },
+      {
+        "route": "/vereadores",
+        "status": 200
+      },
+      {
+        "route": "/sitemap.xml",
+        "status": 200
+      },
+      {
+        "route": "/robots.txt",
+        "status": 200
+      }
+    ],
+    "paid_calls": 0,
+    "mutating_calls": 0,
+    "new_workflow_created": false
+  },
+  "git_operations": false,
+  "obsidian_edits": false
+}

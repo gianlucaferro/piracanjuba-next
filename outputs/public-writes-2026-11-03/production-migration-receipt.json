@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-04T03:07:45.267Z",
+  "authorization": "Corte SQL autorizado pelo operador, apos endpoint e frontend publicados",
+  "frontend_merge": "ba35806c821788713dba728834b92f854ef102e7",
+  "frontend_deployment": "dpl_B2btbrJuA5uGRctBevvV1LYQTwP2",
+  "endpoint_version": 1,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}

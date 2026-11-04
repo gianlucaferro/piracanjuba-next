@@ -1,0 +1,706 @@
+{
+  "comparison": {
+    "rls": true,
+    "bucket": true,
+    "grants": true,
+    "policies": true,
+    "table_acl": true,
+    "column_acl": true
+  },
+  "at": "2026-11-04T03:06:48.86369+00:00",
+  "crons": [
+    {
+      "jobid": 103,
+      "active": true,
+      "jobname": "notify-expiring-ads-daily",
+      "schedule": "0  12 * * *",
+      "username": "postgres",
+      "command_md5": "beeed24385521761a134c432cc470a23"
+    },
+    {
+      "jobid": 104,
+      "active": true,
+      "jobname": "sync-vereadores-weekly",
+      "schedule": "5 3 * * *",
+      "username": "postgres",
+      "command_md5": "04cd84a872f4fde0f43ed0056bf1af55"
+    },
+    {
+      "jobid": 105,
+      "active": true,
+      "jobname": "sync-projetos-weekly",
+      "schedule": "10 3 * * *",
+      "username": "postgres",
+      "command_md5": "94399e039761240f391e23d6c49a35f7"
+    },
+    {
+      "jobid": 106,
+      "active": true,
+      "jobname": "sync-atuacao-weekly",
+      "schedule": "20 3 * * *",
+      "username": "postgres",
+      "command_md5": "697ebed6a0a50c1742d93f02bb4f0a72"
+    },
+    {
+      "jobid": 107,
+      "active": false,
+      "jobname": "sync-votacoes-weekly",
+      "schedule": "30 3 * * 2",
+      "username": "postgres",
+      "command_md5": "80ac39f00610deec01b3e352805388ae"
+    },
+    {
+      "jobid": 108,
+      "active": true,
+      "jobname": "sync-presenca-sessoes-weekly",
+      "schedule": "40 3 * * 2",
+      "username": "postgres",
+      "command_md5": "b97c9f9d9a0756fc1e10a35f8469e480"
+    },
+    {
+      "jobid": 109,
+      "active": false,
+      "jobname": "sync-presenca-atas-weekly",
+      "schedule": "50 3 * * 2",
+      "username": "postgres",
+      "command_md5": "02f565ffd224d1ccd96a2d3105deb4d0"
+    },
+    {
+      "jobid": 110,
+      "active": true,
+      "jobname": "sync-presenca-centi-weekly",
+      "schedule": "0 4 * * *",
+      "username": "postgres",
+      "command_md5": "0e1b3e96d0d7afe45a84e323e5ebcf48"
+    },
+    {
+      "jobid": 111,
+      "active": true,
+      "jobname": "sync-camara-atos-weekly",
+      "schedule": "10 4 * * *",
+      "username": "postgres",
+      "command_md5": "66bdc91ef1179e6528f645359040c1e5"
+    },
+    {
+      "jobid": 112,
+      "active": true,
+      "jobname": "sync-camara-financeiro-weekly",
+      "schedule": "20 4 * * *",
+      "username": "postgres",
+      "command_md5": "e3444bc38bc6aa98b96a1897a0a57c73"
+    },
+    {
+      "jobid": 121,
+      "active": true,
+      "jobname": "sync-leis-municipais-weekly",
+      "schedule": "50 4 * * *",
+      "username": "postgres",
+      "command_md5": "8d136837a71b4b54091327bb83a30b06"
+    },
+    {
+      "jobid": 122,
+      "active": true,
+      "jobname": "sync-lei-organica-weekly",
+      "schedule": "40 5 * * *",
+      "username": "postgres",
+      "command_md5": "e37e7384b5d492df2f7f5dd34077cae4"
+    },
+    {
+      "jobid": 123,
+      "active": true,
+      "jobname": "sync-frota-veiculos-weekly",
+      "schedule": "20 5 * * *",
+      "username": "postgres",
+      "command_md5": "27622ec76255097667aae9b445fdf8c4"
+    },
+    {
+      "jobid": 125,
+      "active": true,
+      "jobname": "sync-remuneracao-vereadores-bw",
+      "schedule": "15 6 5,20 * *",
+      "username": "postgres",
+      "command_md5": "04d39b8768ad7003c4fd7b0d5a4bae18"
+    },
+    {
+      "jobid": 127,
+      "active": true,
+      "jobname": "sync-executivo-secretarias-bw",
+      "schedule": "45 6 5,20 * *",
+      "username": "postgres",
+      "command_md5": "57c24e9bcdf296ec31742890ea27404b"
+    },
+    {
+      "jobid": 131,
+      "active": true,
+      "jobname": "sync-obras-monthly",
+      "schedule": "25 3 * * *",
+      "username": "postgres",
+      "command_md5": "5cde5cd1319e76f4d4f7ce6f2d8dd295"
+    },
+    {
+      "jobid": 135,
+      "active": true,
+      "jobname": "sync-arrecadacao-monthly",
+      "schedule": "45 3 15 * *",
+      "username": "postgres",
+      "command_md5": "83ce9452c64baa97503584736001210d"
+    },
+    {
+      "jobid": 136,
+      "active": true,
+      "jobname": "sync-contas-publicas-monthly",
+      "schedule": "0  4 15 * *",
+      "username": "postgres",
+      "command_md5": "263e19c21e24a3b8bd215da1cf7e9587"
+    },
+    {
+      "jobid": 137,
+      "active": true,
+      "jobname": "sync-arrecadacao-comp-monthly",
+      "schedule": "15 4 15 * *",
+      "username": "postgres",
+      "command_md5": "29927b3104d684d8cfaeed20ffa169e0"
+    },
+    {
+      "jobid": 138,
+      "active": true,
+      "jobname": "sync-emendas-quarterly",
+      "schedule": "0  5 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "54b39196188c0247e0d6cfd33fe3e07a"
+    },
+    {
+      "jobid": 139,
+      "active": true,
+      "jobname": "sync-saude-srag-quarterly",
+      "schedule": "30 5 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "6b369667ddc573acb24c73984ef4d9ee"
+    },
+    {
+      "jobid": 140,
+      "active": true,
+      "jobname": "sync-saude-hiv-quarterly",
+      "schedule": "45 5 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "ad1cdbe6db539e8a8e869bd48c639023"
+    },
+    {
+      "jobid": 141,
+      "active": true,
+      "jobname": "sync-saude-hiv-casos-quarterly",
+      "schedule": "0  6 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "267068aafaf02f439c3bd4897553cf86"
+    },
+    {
+      "jobid": 142,
+      "active": true,
+      "jobname": "sync-saude-sesgo-quarterly",
+      "schedule": "15 6 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "91f63dd08e55edc8fc2566a958b50afd"
+    },
+    {
+      "jobid": 143,
+      "active": true,
+      "jobname": "sync-mortalidade-quarterly",
+      "schedule": "30 6 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "8eb19d205c43635f71303fca2a3b9f96"
+    },
+    {
+      "jobid": 144,
+      "active": false,
+      "jobname": "sync-seguranca-quarterly",
+      "schedule": "45 6 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "f3824d5fdc44acf3c90dec6eeda08efe"
+    },
+    {
+      "jobid": 145,
+      "active": true,
+      "jobname": "sync-cde-subsidios-quarterly",
+      "schedule": "0  7 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "dd1e572bc628ee8e967308b917b61fca"
+    },
+    {
+      "jobid": 146,
+      "active": true,
+      "jobname": "sync-agro-quarterly",
+      "schedule": "0  5 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "18fd06450eba0ea063ff3a53d9217940"
+    },
+    {
+      "jobid": 147,
+      "active": true,
+      "jobname": "sync-educacao-semiannual",
+      "schedule": "15 5 1 1,7 *",
+      "username": "postgres",
+      "command_md5": "5d8df5c5801d725b2aad0c7d6017e7f0"
+    },
+    {
+      "jobid": 148,
+      "active": true,
+      "jobname": "sync-indicadores-home-semiannual",
+      "schedule": "30 5 1 1,7 *",
+      "username": "postgres",
+      "command_md5": "25f4356bcdccbfa5de191b752c2fcb13"
+    },
+    {
+      "jobid": 149,
+      "active": true,
+      "jobname": "sync-saude-estab-semiannual",
+      "schedule": "45 5 1 1,7 *",
+      "username": "postgres",
+      "command_md5": "ca99edf4a80282582124181942d13266"
+    },
+    {
+      "jobid": 150,
+      "active": true,
+      "jobname": "sync-saude-indicadores-weekly",
+      "schedule": "15 5 * * 2",
+      "username": "postgres",
+      "command_md5": "4ffbfd7a17df33cbdd6b570a426849cf"
+    },
+    {
+      "jobid": 151,
+      "active": true,
+      "jobname": "sync-health-check-daily",
+      "schedule": "0  10 * * *",
+      "username": "postgres",
+      "command_md5": "c624a5e6fd405521e40d3d75bc6e7701"
+    },
+    {
+      "jobid": 152,
+      "active": true,
+      "jobname": "send-weekly-digest-mon",
+      "schedule": "0  13 * * 1",
+      "username": "postgres",
+      "command_md5": "ec182b061cc83860fcf1315693b5212b"
+    },
+    {
+      "jobid": 168,
+      "active": true,
+      "jobname": "sync-inmet-clima-15min",
+      "schedule": "*/15 * * * *",
+      "username": "postgres",
+      "command_md5": "6faaf0f1a2a2f2f016392203b66161af"
+    },
+    {
+      "jobid": 169,
+      "active": true,
+      "jobname": "sync-clima-historico-weekly",
+      "schedule": "0 4 * * 0",
+      "username": "postgres",
+      "command_md5": "a5bf09917a92f1a2d342e2cd94e7e0c4"
+    },
+    {
+      "jobid": 170,
+      "active": true,
+      "jobname": "sync-economia-monthly",
+      "schedule": "0 6 1-7 * 1",
+      "username": "postgres",
+      "command_md5": "260ab61ee2530960c81efea976397d7c"
+    },
+    {
+      "jobid": 171,
+      "active": true,
+      "jobname": "sync-infraestrutura-monthly",
+      "schedule": "0 7 1-7 * 1",
+      "username": "postgres",
+      "command_md5": "fba10795cd8d42687f858205b11935d9"
+    },
+    {
+      "jobid": 176,
+      "active": true,
+      "jobname": "sync-indicacoes-camara-semanal",
+      "schedule": "0 6 * * *",
+      "username": "postgres",
+      "command_md5": "2d5ac869eb3e6aebcc8c7fc697c0f2e4"
+    },
+    {
+      "jobid": 177,
+      "active": true,
+      "jobname": "sync-atividades-legislativas-semanal",
+      "schedule": "15 6 * * *",
+      "username": "postgres",
+      "command_md5": "b441521ffe070786ab78e0959b0b301b"
+    },
+    {
+      "jobid": 181,
+      "active": true,
+      "jobname": "sync-atos-camara-semanal",
+      "schedule": "30 6 * * *",
+      "username": "postgres",
+      "command_md5": "db1a42988466e3a05b4895ad4d2810ad"
+    },
+    {
+      "jobid": 182,
+      "active": true,
+      "jobname": "sync-processos-escavador-trimestral",
+      "schedule": "0 7 1 1,4,7,10 *",
+      "username": "postgres",
+      "command_md5": "eb3fd9170789972a540fd1d8395aa5b2"
+    },
+    {
+      "jobid": 185,
+      "active": true,
+      "jobname": "enrich-cnpj-contrato-camara-monthly",
+      "schedule": "0 3 5 * *",
+      "username": "postgres",
+      "command_md5": "baa2ec59ea25a25a857083a03e523b58"
+    },
+    {
+      "jobid": 186,
+      "active": true,
+      "jobname": "enrich-cnpj-aditivos-monthly",
+      "schedule": "0 4 5 * *",
+      "username": "postgres",
+      "command_md5": "4ca79a984c429921bed5e3e9584d2cc7"
+    },
+    {
+      "jobid": 187,
+      "active": true,
+      "jobname": "enrich-cnpj-contratos-prefeitura-monthly-1",
+      "schedule": "0 5 5 * *",
+      "username": "postgres",
+      "command_md5": "4c965e330a58b6e58cf1df479b44c8e0"
+    },
+    {
+      "jobid": 188,
+      "active": true,
+      "jobname": "enrich-cnpj-contratos-prefeitura-monthly-2",
+      "schedule": "0 6 5 * *",
+      "username": "postgres",
+      "command_md5": "4c965e330a58b6e58cf1df479b44c8e0"
+    },
+    {
+      "jobid": 189,
+      "active": true,
+      "jobname": "enrich-cnpj-contratos-prefeitura-monthly-3",
+      "schedule": "0 7 5 * *",
+      "username": "postgres",
+      "command_md5": "4c965e330a58b6e58cf1df479b44c8e0"
+    },
+    {
+      "jobid": 190,
+      "active": true,
+      "jobname": "enrich-cnpj-obras-monthly",
+      "schedule": "0 8 5 * *",
+      "username": "postgres",
+      "command_md5": "8810b878c857a51a88c197ae8c0c9d47"
+    },
+    {
+      "jobid": 191,
+      "active": true,
+      "jobname": "enrich-cnpj-cache-refresh-monthly",
+      "schedule": "0 3 10 * *",
+      "username": "postgres",
+      "command_md5": "fbade947893ef207df76b23c9a7fb487"
+    },
+    {
+      "jobid": 194,
+      "active": false,
+      "jobname": "sync-bolsa-familia-mensal",
+      "schedule": "0 5 6 * *",
+      "username": "postgres",
+      "command_md5": "94fbee1d6abdb4166263b08f4d0c10ec"
+    },
+    {
+      "jobid": 195,
+      "active": true,
+      "jobname": "sync-empresa-sancionada-mensal",
+      "schedule": "0 4 5 * *",
+      "username": "postgres",
+      "command_md5": "5a606f8dee96084e41bd7f5cf20aeeea"
+    },
+    {
+      "jobid": 196,
+      "active": true,
+      "jobname": "sync-folha-camara-mensal",
+      "schedule": "0 9 7 * *",
+      "username": "postgres",
+      "command_md5": "c5e06cf9735da7d559e27e40908b1b9b"
+    },
+    {
+      "jobid": 199,
+      "active": true,
+      "jobname": "sync-diarias-camara-mensal",
+      "schedule": "0 7 * * *",
+      "username": "postgres",
+      "command_md5": "1e858bc69fc88e346d33b4e387dad882"
+    },
+    {
+      "jobid": 204,
+      "active": true,
+      "jobname": "sync-contratos-camara-daily",
+      "schedule": "10 21 * * *",
+      "username": "postgres",
+      "command_md5": "87e60af0cabfdb9a2b629f853bf172de"
+    },
+    {
+      "jobid": 205,
+      "active": true,
+      "jobname": "sync-licitacoes-camara-daily",
+      "schedule": "15 21 * * *",
+      "username": "postgres",
+      "command_md5": "2d8e8c868dd60f2afbdd30f4ea3001be"
+    },
+    {
+      "jobid": 210,
+      "active": true,
+      "jobname": "analyze-risco-catchup-2025",
+      "schedule": "*/10 6-10 * * *",
+      "username": "postgres",
+      "command_md5": "ca98c11576015db1c4760fa06c735658"
+    },
+    {
+      "jobid": 211,
+      "active": true,
+      "jobname": "backfill-servidor-resumos-madrugada",
+      "schedule": "5-59/10 6-10 * * *",
+      "username": "postgres",
+      "command_md5": "4ffd49db566cbb96a0cd86c80b955984"
+    },
+    {
+      "jobid": 212,
+      "active": true,
+      "jobname": "sync-camara-despesas-monthly",
+      "schedule": "0 5 * * *",
+      "username": "postgres",
+      "command_md5": "c084c4e870c33e16cbb2aac5303ded95"
+    },
+    {
+      "jobid": 213,
+      "active": true,
+      "jobname": "sync-camara-siconfi-monthly",
+      "schedule": "0 6 18 * *",
+      "username": "postgres",
+      "command_md5": "7e3c84fe02dd7acb85043078ff31911e"
+    },
+    {
+      "jobid": 214,
+      "active": true,
+      "jobname": "backfill-atos-resumos-daily",
+      "schedule": "0 8 * * *",
+      "username": "postgres",
+      "command_md5": "bcfa3609092383bff3e495aaf9b01dc2"
+    },
+    {
+      "jobid": 215,
+      "active": true,
+      "jobname": "sync-tcm-go-piracanjuba-weekly",
+      "schedule": "0 5 * * 0",
+      "username": "postgres",
+      "command_md5": "5041cf4cba665365a104a342f2ac7c71"
+    },
+    {
+      "jobid": 216,
+      "active": true,
+      "jobname": "sync-prestacao-contas-monthly",
+      "schedule": "0 7 19 * *",
+      "username": "postgres",
+      "command_md5": "5afdd62496322dbfce3f7dd7fa7a2c5c"
+    },
+    {
+      "jobid": 217,
+      "active": true,
+      "jobname": "backfill-contrato-objeto-daily",
+      "schedule": "0 22 * * *",
+      "username": "postgres",
+      "command_md5": "84518d597e7c5caa8fa33b786ad1ddab"
+    },
+    {
+      "jobid": 219,
+      "active": true,
+      "jobname": "watchdog-dados-anuais-mensal",
+      "schedule": "0 7 12 * *",
+      "username": "postgres",
+      "command_md5": "a083c083c05b91506d596fe9b9c9272e"
+    },
+    {
+      "jobid": 220,
+      "active": true,
+      "jobname": "sync-postos-combustivel-monthly",
+      "schedule": "30 5 8 * *",
+      "username": "postgres",
+      "command_md5": "ab41bfe11b8601af3a73ba7373871330"
+    },
+    {
+      "jobid": 221,
+      "active": true,
+      "jobname": "sync-licitacoes-prefeitura-daily",
+      "schedule": "40 5 * * *",
+      "username": "postgres",
+      "command_md5": "e99464b7934594fd2275c1b305805f54"
+    },
+    {
+      "jobid": 222,
+      "active": true,
+      "jobname": "sync-dispensas-prefeitura-daily",
+      "schedule": "50 5 * * *",
+      "username": "postgres",
+      "command_md5": "89fa0a978b4982b986f5806ca580b302"
+    },
+    {
+      "jobid": 223,
+      "active": true,
+      "jobname": "sync-contratos-prefeitura-nucleogov-daily",
+      "schedule": "10 6 * * *",
+      "username": "postgres",
+      "command_md5": "b5f22188583a06bda3ab00686a22a872"
+    },
+    {
+      "jobid": 224,
+      "active": true,
+      "jobname": "sync-aditivos-prefeitura-nucleogov-daily",
+      "schedule": "20 6 * * *",
+      "username": "postgres",
+      "command_md5": "581f39e7e5557266cb0e2d8259931cef"
+    },
+    {
+      "jobid": 225,
+      "active": true,
+      "jobname": "sync-fiscais-prefeitura-nucleogov-daily",
+      "schedule": "30 6 * * *",
+      "username": "postgres",
+      "command_md5": "003b1a4743cbe98fc0f3b62d6fbb25b9"
+    },
+    {
+      "jobid": 226,
+      "active": true,
+      "jobname": "sync-pagamentos-prefeitura-nucleogov-daily",
+      "schedule": "40 6 * * *",
+      "username": "postgres",
+      "command_md5": "0b14a14de5ac9ee95c7c567a8af9dff0"
+    },
+    {
+      "jobid": 227,
+      "active": true,
+      "jobname": "sync-diarias-prefeitura-nucleogov-daily",
+      "schedule": "50 6 * * *",
+      "username": "postgres",
+      "command_md5": "75ef415f92a74d07a63bb78db73de8ce"
+    },
+    {
+      "jobid": 228,
+      "active": true,
+      "jobname": "sync-empenhos-prefeitura-nucleogov-daily",
+      "schedule": "0 7 * * *",
+      "username": "postgres",
+      "command_md5": "733118dc75fa4613a72e66616dcfea3b"
+    },
+    {
+      "jobid": 229,
+      "active": true,
+      "jobname": "sync-folha-prefeitura-nucleogov-daily",
+      "schedule": "20 7 * * *",
+      "username": "postgres",
+      "command_md5": "37ab252242371ec688b61d85b07a3ff3"
+    },
+    {
+      "jobid": 230,
+      "active": true,
+      "jobname": "sync-atos-prefeitura-nucleogov-daily",
+      "schedule": "30 7 * * *",
+      "username": "postgres",
+      "command_md5": "a7ccb6dfc3b94c89e4b5645b733ca38f"
+    },
+    {
+      "jobid": 231,
+      "active": true,
+      "jobname": "sync-camara-servidores-bw",
+      "schedule": "0 6 * * *",
+      "username": "postgres",
+      "command_md5": "5eb57c1ef4c9a526922ee45d443577bd"
+    },
+    {
+      "jobid": 243,
+      "active": true,
+      "jobname": "backfill-empenhos-prefeitura-nucleogov",
+      "schedule": "*/3 * * * *",
+      "username": "postgres",
+      "command_md5": "e7e0ba6541be93a076905812f21337d4"
+    },
+    {
+      "jobid": 245,
+      "active": true,
+      "jobname": "refresh-investigacao-piracanjuba",
+      "schedule": "17 * * * *",
+      "username": "postgres",
+      "command_md5": "dd99cc8d70573c490e57bd81dde105f4"
+    },
+    {
+      "jobid": 247,
+      "active": true,
+      "jobname": "sync-fornecedores-cnpj-investigativo",
+      "schedule": "*/5 * * * *",
+      "username": "postgres",
+      "command_md5": "659f3c287490d90a16661641df300ca2"
+    },
+    {
+      "jobid": 248,
+      "active": true,
+      "jobname": "maintain-empenhos-backfill-coverage",
+      "schedule": "11 0 * * *",
+      "username": "postgres",
+      "command_md5": "8a9874d7648e8bca9dda1badc7b81e35"
+    },
+    {
+      "jobid": 249,
+      "active": true,
+      "jobname": "sync-beneficios-sociais-bw",
+      "schedule": "0 3 5,20 * *",
+      "username": "postgres",
+      "command_md5": "332dc248ba002a62faeec621a90d5798"
+    },
+    {
+      "jobid": 250,
+      "active": true,
+      "jobname": "sync-transferencias-monthly",
+      "schedule": "15 3 15 * *",
+      "username": "postgres",
+      "command_md5": "78f21ac06ecfe3083850764680f5d63d"
+    },
+    {
+      "jobid": 251,
+      "active": true,
+      "jobname": "sync-receitas-mensais-monthly",
+      "schedule": "10 6 10 * *",
+      "username": "postgres",
+      "command_md5": "8284e1de2756b521a2013e9d8e45f1a3"
+    },
+    {
+      "jobid": 252,
+      "active": true,
+      "jobname": "sync-despesas-mensais-monthly",
+      "schedule": "25 6 10 * *",
+      "username": "postgres",
+      "command_md5": "98e354fb62561bd04db7d5280da0b379"
+    },
+    {
+      "jobid": 253,
+      "active": true,
+      "jobname": "sync-grupos-economicos-daily",
+      "schedule": "0 22 * * *",
+      "username": "postgres",
+      "command_md5": "9a98cfd445bad86d945fba78e9463e1e"
+    }
+  ],
+  "objects": {
+    "count": 23,
+    "digest": "3c660c7b8ee857c5e37e3291dfabfb5e"
+  },
+  "farmacia": {
+    "count": 22,
+    "digest": "debd5b65a206133f9f61f844b433c3e3"
+  },
+  "registry": {
+    "count": 78,
+    "digest": "d94e7598c661ec529f37ebb568ddb336"
+  },
+  "monitor_view_md5": "e8bc77f3fcc3f61d378dd1705f21c238"
+}

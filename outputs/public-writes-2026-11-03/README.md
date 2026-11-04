@@ -1,6 +1,21 @@
 # Piracanjuba.ai: escritas públicas
 
-Pacote independente baseado em `b8b3137`, branch `codex/piracanjuba-public-writes`. Não altera a PR29, agendamentos, coletores, pagamentos ou dados de negócio. Projeto Supabase `oinweocqcptwxqsztlcl`. Código preparado no M5; validações no Dell. Nenhuma publicação ou escrita em produção foi executada por este pacote.
+Pacote independente baseado em `b8b3137`, branch `codex/piracanjuba-public-writes`. Projeto Supabase `oinweocqcptwxqsztlcl`. Código preparado no M5; validações no Dell. Estado atualizado em 2026-11-04: endpoint, frontend e corte SQL publicados nessa ordem, após autorização específica. Agendamentos, coletores, pagamentos e dados de negócio preservados. As seções de diagnóstico e preparação abaixo registram os snapshots anteriores.
+
+## Publicação concluída em 2026-11-04
+
+- Preflight fresco sem divergência em seis grupos de metadados: policies, grants, ACLs de tabela/coluna, RLS e bucket. Backup final em production-pre-cut-backup.json.
+- admin-farmacia-update v1 ACTIVE, verify_jwt=true e quatro arquivos remotos idênticos aos revisados. Cinco testes de OPTIONS, método e autenticação passaram sem escrita de negócio.
+- PR 30 integrada após Quality 41764564081 aprovado, incluindo checks e browser. Merge ba35806c821788713dba728834b92f854ef102e7. Vercel dpl_B2btbrJuA5uGRctBevvV1LYQTwP2 READY, ambos os aliases de produção confirmados antes do SQL.
+- /admin e 19 chunks JavaScript HTTP 200. Código servido pelo domínio contém chamada real ao endpoint novo, com admin_token e as três ações permitidas.
+- Migration autorizada aplicada em transação às 2026-11-04T03:07:45Z. O MCP registrou a versão 20261104030745, nome 20261104030000_restringe_escritas_publicas. Conciliar esse mapeamento antes de qualquer db push futuro; não reaplicar nem reparar automaticamente.
+- anon e authenticated conservam SELECT e perderam todas as escritas e MAINTAIN nas duas tabelas. ACLs privilegiadas, demais policies e leituras públicas do bucket permanecem iguais. Três policies restritivas protegem a escrita no bucket, com limite de 524288 bytes e image/webp.
+- Comparação antes/depois confirmou iguais os hashes de 22 linhas de farmácias, 78 registros de jobs e 23 objetos de Storage, além da definição do monitor e dos 85 agendamentos. Nenhuma linha ou foto foi alterada ou removida.
+- Após o SQL, duas leituras REST anônimas retornaram HTTP 200. Navegador confirmou login administrativo sem erros e página de farmácias com foto 540x405 carregada, modal abrindo/fechando e nenhum erro de console.
+- Production smoke 41764937043 passou antes do corte. Uma única repetição do script existente no Dell, depois do SQL, confirmou 18/18 rotas HTTP 200. Projeto Supabase ACTIVE_HEALTHY.
+- Nenhum upload, alteração de telefone, exclusão, IA, email ou coleta foi usado como teste real. Sucesso das escritas administrativas foi validado com backend simulado antes da publicação; não havia sessão administrativa autenticada no navegador desta conferência.
+
+Recibos em production-endpoint-*, production-frontend-verification.json, production-migration-receipt.json, production-final-verification.json, production-public-reads.json e production-ci-smoke.json. O frontend novo deve permanecer junto ao corte SQL. Painéis antigos abertos precisam ser recarregados.
 
 O catálogo live confirmou que `admin-farmacia-update` ainda não existe. É função nova, não há bundle implantado sendo substituído ou rebaixado. `admin-anuncios-update` v6 e `admin-sync-status` v1 foram apenas identificados e permanecem intocados.
 
@@ -63,4 +78,4 @@ Resultados consolidados em `validation.json`. Logs detalhados locais em `artifac
 
 Reprodução: `desktop-run --worker dell --pull artifacts -- bash scripts/validation/public-writes.sh`, depois `desktop-run --worker dell --pull artifacts -- bash scripts/validation/e2e.sh farmacia-admin tests/e2e/farmacia-admin.spec.ts`. O modo `frontend-sql` repete somente as etapas correspondentes e exige recibos anteriores aprovados para os demais gates. Uma falha local de multiplexação SSH foi contornada por ControlPath=none somente no processo de teste, preservando locks, excludes e a conexão compartilhada de outros agentes.
 
-Limitações: não foi feito teste real de upload em produção, nem deploy, nem aplicação de SQL. O recibo de ACL é uma fotografia temporal, não garantia sobre alterações concorrentes posteriores. Nenhuma quota de gasto em dólares foi criada por esta mudança; ela fecha os caminhos de escrita anônima identificados.
+Limitações: não foi feito teste real de upload em produção. Deploy e SQL foram concluídos conforme o registro de execução acima. O recibo de ACL é uma fotografia temporal, não garantia sobre alterações concorrentes posteriores. Nenhuma quota de gasto em dólares foi criada por esta mudança; ela fecha os caminhos de escrita anônima identificados.

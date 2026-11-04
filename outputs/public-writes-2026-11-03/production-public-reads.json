@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-04T03:09:47.442408+00:00",
+  "read_only": true,
+  "results": [
+    {
+      "table": "farmacia_fotos",
+      "status": 200,
+      "rows_returned": 1,
+      "pass": true
+    },
+    {
+      "table": "sync_job_registry",
+      "status": 200,
+      "rows_returned": 1,
+      "pass": true
+    }
+  ]
+}
