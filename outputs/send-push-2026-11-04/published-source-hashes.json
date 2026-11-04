@@ -1,0 +1,158 @@
+[
+  {
+    "function": "import-folha-manual",
+    "name": "functions/import-folha-manual/index.ts",
+    "bytes": 7283,
+    "sha256": "aa2541e55ae01884f0e833df6119ce7efc0356ec687ac160cf9909be3ac8b335"
+  },
+  {
+    "function": "import-folha-manual",
+    "name": "functions/_shared/push-caller-auth.ts",
+    "bytes": 3079,
+    "sha256": "9796c07d399146cbe857418928660367c206d514eafd9b14bf036b7a10130b1a"
+  },
+  {
+    "function": "import-folha-manual",
+    "name": "functions/_shared/service-role-auth.ts",
+    "bytes": 764,
+    "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+  },
+  {
+    "function": "import-folha-manual",
+    "name": "functions/_shared/admin-session-auth.ts",
+    "bytes": 2324,
+    "sha256": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  {
+    "function": "import-folha-manual",
+    "name": "functions/_shared/servidor-origin.ts",
+    "bytes": 617,
+    "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+  },
+  {
+    "function": "import-folha-manual",
+    "name": "functions/_shared/persistence-guards.ts",
+    "bytes": 1009,
+    "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/import-folha-xlsx/index.ts",
+    "bytes": 10683,
+    "sha256": "c78843c022cd319edd8f2ff6bd2c81a290486bd8d98a7e67e0d7f4d5cbbd1d56"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/_shared/push-caller-auth.ts",
+    "bytes": 3079,
+    "sha256": "9796c07d399146cbe857418928660367c206d514eafd9b14bf036b7a10130b1a"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/_shared/service-role-auth.ts",
+    "bytes": 764,
+    "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/_shared/admin-session-auth.ts",
+    "bytes": 2324,
+    "sha256": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/_shared/servidor-origin.ts",
+    "bytes": 617,
+    "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+  },
+  {
+    "function": "import-folha-xlsx",
+    "name": "functions/_shared/persistence-guards.ts",
+    "bytes": 1009,
+    "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+  },
+  {
+    "function": "send-push",
+    "name": "functions/send-push/index.ts",
+    "bytes": 2607,
+    "sha256": "09a3a546d6a04f8ee42ef509ec2f505cd9e397db1a8b581adfdf230502e074a4"
+  },
+  {
+    "function": "send-push",
+    "name": "functions/_shared/send-push-policy.ts",
+    "bytes": 11803,
+    "sha256": "5c4e50d7d02fdf3bf029e981bb042120f949ff35c5c279c1ad0caa66484987f0"
+  },
+  {
+    "function": "send-push",
+    "name": "functions/_shared/service-role-auth.ts",
+    "bytes": 764,
+    "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+  },
+  {
+    "function": "send-push",
+    "name": "functions/_shared/admin-session-auth.ts",
+    "bytes": 2324,
+    "sha256": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "name": "functions/sync-prefeitura-diaria/index.ts",
+    "bytes": 12772,
+    "sha256": "f8691a0aaef1590b20267ea9066d87996a5c899e46ab1c22f8333302e5e69549"
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "name": "functions/_shared/push-caller-auth.ts",
+    "bytes": 3079,
+    "sha256": "9796c07d399146cbe857418928660367c206d514eafd9b14bf036b7a10130b1a"
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "name": "functions/_shared/service-role-auth.ts",
+    "bytes": 764,
+    "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+  },
+  {
+    "function": "sync-prefeitura-diaria",
+    "name": "functions/_shared/admin-session-auth.ts",
+    "bytes": 2324,
+    "sha256": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/sync-prefeitura-mensal/index.ts",
+    "bytes": 18895,
+    "sha256": "8153bdaa28842d7f0c15ffa9afa37e93c243505f60a01f2569796fe919fe0bfc"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/_shared/push-caller-auth.ts",
+    "bytes": 3079,
+    "sha256": "9796c07d399146cbe857418928660367c206d514eafd9b14bf036b7a10130b1a"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/_shared/service-role-auth.ts",
+    "bytes": 764,
+    "sha256": "1ace7ef274c73caff1c4f9675488bddb45b39c5389f91ff9c899c188bd2d3a5e"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/_shared/admin-session-auth.ts",
+    "bytes": 2324,
+    "sha256": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/_shared/servidor-origin.ts",
+    "bytes": 617,
+    "sha256": "7dec4be6313fdcea6fe3a0f01863a9fa035bfa3d472236e924bc1fc2929b7c7d"
+  },
+  {
+    "function": "sync-prefeitura-mensal",
+    "name": "functions/_shared/persistence-guards.ts",
+    "bytes": 1009,
+    "sha256": "0e2cdd9ffff7bb243fd74667678feb83c31c2b956183b022161b27b449308ca3"
+  }
+]

@@ -3,13 +3,13 @@ tipo: sessao
 data: 2026-11-04
 projeto: Piracanjuba.ai
 tags: [codex, supabase, seguranca, notificacoes, producao]
-status: funcoes-publicadas-integracao-em-andamento
+status: publicado-verificado
 canal: obsidian-only
 ---
 
 # Recuperação e proteção do send-push
 
-O código original publicado foi recuperado e as cinco funções corrigidas foram publicadas no Supabase `oinweocqcptwxqsztlcl`. Veredito: proteção do disparo concluída e conferida no escopo, sem regressão encontrada nos testes. Nenhuma notificação real, coleta, IA ou consulta paga foi executada para teste. A integração Git está na [PR 31](https://github.com/gianlucaferro/piracanjuba-next/pull/31).
+O código original publicado foi recuperado e as cinco funções corrigidas foram publicadas no Supabase `oinweocqcptwxqsztlcl`. Veredito: proteção do disparo concluída e conferida no escopo, sem regressão encontrada nos testes. Nenhuma notificação real, coleta, IA ou consulta paga foi executada para teste. A [PR 31](https://github.com/gianlucaferro/piracanjuba-next/pull/31) foi integrada em `c25dc22a2e737e60d080853f74d793be01c0a2cd`. Vercel Production `dpl_AYwoXtgyGR9yuc6PrEELEXmd71ar` está READY, com os aliases públicos e o mesmo commit confirmados.
 
 Esta nota substitui a pendência de recuperação registrada em [[2026-11-04 Codex - Supabase - Publicacao das protecoes de consumo]], preservando aquele registro histórico. Relaciona-se à auditoria [[2026-11-03 Codex - Supabase - Auditoria de abuso e custos]] e ao [[Historico consolidado Piracanjuba.ai]].
 
@@ -57,3 +57,9 @@ Esta etapa não cria quota financeira absoluta. A deduplicação legada não é 
 Referências primárias: [API do corpo da função](https://supabase.com/docs/reference/api/v1-get-a-function-body), [parser ESZIP](https://github.com/denoland/eszip), [Web Push 3.6.7](https://github.com/web-push-libs/web-push/blob/v3.6.7/src/web-push-lib.js), [RFC 8291](https://www.rfc-editor.org/rfc/rfc8291).
 
 Nota canônica: `/Users/gianlucaferro/dev/obsidian/GianlucaObsidian/Sessões/2026-11-04 Codex - Piracanjuba.ai - Recuperacao e seguranca do send-push.md`. Esta cópia no repositório espelha o registro do Obsidian.
+
+## Integração e conferência final
+
+Quality do head final `41775382478` e da main `41775928611` concluídos com sucesso em checks e browser. Vercel Production pronta em `2026-11-04T04:54:23.358Z`. Após a publicação, as 18 rotas públicas foram conferidas novamente no Dell e responderam HTTP 200. Os catálogos sanitizados antes/depois e os 26 hashes de fontes remotas permitem recalcular offline as alegações de preservação. A revisão documental independente confirmou as evidências.
+
+CodeRabbit revisou o código em ed4e5da. Os ajustes finais dos scripts foram revisados diretamente e validados sem alterar os cinco pacotes. A nova rodada automática ainda estava em andamento no momento do merge; não declarar que ela revisou integralmente o head final. Não restaram findings bloqueantes nas revisões concluídas. Recibos finais são versionados após o merge na branch de trabalho, sem nova alteração de código implantado.

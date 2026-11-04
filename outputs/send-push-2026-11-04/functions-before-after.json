@@ -1,0 +1,1980 @@
+{
+  "before": [
+    {
+      "slug": "admin-anuncios-update",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "70b407fdd5cf03edca6e1d8c6810381f03024b2bf90b34b3e595863740c9adcd"
+    },
+    {
+      "slug": "admin-classificados",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f3b5e51be9e1ea67bb5840e3da2376b2e47f373cb92d4ec683f50a9ba8116400"
+    },
+    {
+      "slug": "admin-cpf-consulta",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "d3326ae494700cbf0863967c330d344f6f32111efd8da0470963e11641520038"
+    },
+    {
+      "slug": "admin-farmacia-update",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "59c98cbd47cb330d134e91d846169db90509b8d7f0dc1b1254ab160a480be378"
+    },
+    {
+      "slug": "admin-login",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "admin-sync-status",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "208385a91e34657299d1dec97d019f1b6258806db3322fc301abb4f37296dda0"
+    },
+    {
+      "slug": "admin-zap-read",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "admin-zap-update",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "ai-search",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "a78fae50fe005c5a7435a03841ead37bc0e4547a2346facf19ea327469820012"
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "version": 35,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d9f467bf74570f2d8bfae346783b7e4414faeb13c31eac8a5412c75e8af18cd9"
+    },
+    {
+      "slug": "auth-email-hook",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0ce6ef4698f069e1acef9d688a98040a216552280474a14ef29872a8521a6426"
+    },
+    {
+      "slug": "backfill-atos-resumos",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a5e155fdbdb1bef1ee60c28e49ad0541c3470a131d8d9e327f32cdf4449eec6e"
+    },
+    {
+      "slug": "backfill-contrato-objeto",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d5b9f7e800d4282dd124e9184e89d0fae64f07b5186691bcfbe7596b338d9b80"
+    },
+    {
+      "slug": "backfill-servidor-resumos",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b7bc7720babd81f84959953c533387e39b6acac5528fd0251c8e50b51c4820eb"
+    },
+    {
+      "slug": "backup-zap-pba",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "batch-categorize-leis",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "centi-fetch",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b0557fa91f470c1bbcab59ee133b4a9524f51a4884dde84cd2e8570b3cdb8af9"
+    },
+    {
+      "slug": "chatbot",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "c0f5a2b7b92d1cac2616b9e366b2c1fc79f6bccd281ad0f715e2d654941b7c05"
+    },
+    {
+      "slug": "consulta-placa",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ca60a54e0a73da6c5ce59387c2f9897b8d07a71b41c4fb2957d19b8a5006c434"
+    },
+    {
+      "slug": "create-donation",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-camara-contratos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-cnpj-universal",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0ce45508e5858e3d9a225fd6b21ce94e3bd421e8dd754a4fe9378c45c0a5a048"
+    },
+    {
+      "slug": "enrich-contratos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-contratos-cnpj",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "c4167d83b639b7c16af04c9766907910500bf4115b7ec0516f3b48703f1b5ee2"
+    },
+    {
+      "slug": "enrich-processo-ia",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5bf78d42b568e8051784f341a0cab1d8fef8b017595acdf32e897e10db366cd8"
+    },
+    {
+      "slug": "extract-lei-organica-pdf",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "historia-fotos",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "953ffdd9de35ba259bea8a2d9311f62c4e6fde6ca4d3b2b7f5806d8d603c235a"
+    },
+    {
+      "slug": "import-folha-manual",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "086f3242a92b82cf1dd1c4cff9c5903a7bcedeb6bf4a9afaa56abb2fc08467fb"
+    },
+    {
+      "slug": "import-folha-xlsx",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "beb4e51559297eeefd88edd3a8dc2c9ba79bc54d089f5bef9eb85426c6e49bb5"
+    },
+    {
+      "slug": "nepotismo-analise",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ccc1406dae6d72249f32e421d9198249e6dd729d4e3acf6518b76d9ddd6627e8"
+    },
+    {
+      "slug": "notify-expiring-ads",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "optimize-description",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "410dd575d9a32b1b32389eaca76a1e5be7b2f29a2e21d8039d380ea9a0241d9b"
+    },
+    {
+      "slug": "parse-folha-md",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "c6e9a5efb3f1d6e362a6f7487a7859cdd65cdd051ee2e6d422219ef77a19d86c"
+    },
+    {
+      "slug": "parse-lei-organica",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "send-push",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "send-weekly-digest",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3f978a4f5572edee65381b7e0cd57e53074e174db54fe1a327c939731824108f"
+    },
+    {
+      "slug": "sitemap-classificados",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "suggest-category",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "summarize-artigo",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2851d7e98e765353c28a301ef2b00a7f2fa18896ed15a0555cb8976f8269e675"
+    },
+    {
+      "slug": "summarize-atuacao",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "e79efc153ca0c25d51c7edb10759b4a9d7d13584afda1d803bc77427d10b9b7d"
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ecfc8530ad2250f1013c59ecfdd51f25caf170ea9361c71acfaa7d9576566306"
+    },
+    {
+      "slug": "summarize-contrato",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f7b6377d6ebcdf3ca3a5756be3d7dd6e034baa19477eae664bad179eedcd56e1"
+    },
+    {
+      "slug": "summarize-decreto",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "6bd3b89585f5eb4a5bdcfc9d6fc41c8e1e490f7157d7c2aa875f9c8605290dca"
+    },
+    {
+      "slug": "summarize-generic",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ec764cb1e24cfc22d5eade32d6d61177610a042ab5eaf631f5502d3728c183df"
+    },
+    {
+      "slug": "summarize-imposto",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "72f62563eaea71c493078bad846a3010ad4b87687f0cb3b6113c226371035cd6"
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "757c9f2c89cfe363bd33e83aef886847e68620ee80f59798d0c9f7633a313c20"
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8354ab2288df04f01b3763fc8b9761a819dccecd8225d29ef0639c3e5aeaed00"
+    },
+    {
+      "slug": "summarize-licitacao",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "7a148d1e607dd8a51846bc5f75d543ea5cb6a5ba0043f00cd1dd05c5cb7280b5"
+    },
+    {
+      "slug": "summarize-obra",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f8952aa2e0e9db6048bc3821cfe5aa62e7014c153cfaeca858bb512f8440fdd7"
+    },
+    {
+      "slug": "summarize-portaria",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4854d03aee2b0c1edcf28674525f8eae60bd6e6590d74bb6c83028f39f6386a0"
+    },
+    {
+      "slug": "summarize-secretario",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "661eace7a56195a278bf99ee3afa19a60b46254b546fa7fe8351ac786e9cbb8a"
+    },
+    {
+      "slug": "summarize-servidor",
+      "version": 30,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "622e05578a46f8db02b1cd9914a58812e4837457c3f4cf91e4208e1e33952a0b"
+    },
+    {
+      "slug": "sync-aditivos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "068640baa038dcd678a7ba3647a1e2a51d5d1e6ebb6c368d1f72328985b0b801"
+    },
+    {
+      "slug": "sync-agro",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-arrecadacao",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-arrecadacao-comparativo",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-atividades-legislativas",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "c36131d5ea713509971f5bce96761a81629a7c1bcc03edb9dbd1c6e61aa73110"
+    },
+    {
+      "slug": "sync-atos-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "136f9685ec84c2d6b6e990d64e16592a1e0a33e04863d27212d48acfbf79bba6"
+    },
+    {
+      "slug": "sync-atos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8dc9820b561233932ac5a44a2b204f2259b4a9b190121dd55d458d4ceb62836c"
+    },
+    {
+      "slug": "sync-atuacao",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "301deebb2115218319b606c0348c57332679c97c2d4e6481b4baa82e79267ddd"
+    },
+    {
+      "slug": "sync-beneficios-sociais",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "270828037a7ccbf9c3454e5b671b344e843022ae4b9edbe8d4d68e6813f30d7e"
+    },
+    {
+      "slug": "sync-bolsa-familia",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d7d8e860ac11079fb4df9d9d21197d7796f1b122dcc8d96492375d541e94b9e6"
+    },
+    {
+      "slug": "sync-camara-atas-pdf",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "981de6844b44d8b9857efcbfc88f59afb45aee6d9cb4d36996623fe1f04f0608"
+    },
+    {
+      "slug": "sync-camara-atos",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a964ce27e7a1758aa6ae1815fecc82cca796f32da4054634ffb216fa2ef3b5a6"
+    },
+    {
+      "slug": "sync-camara-despesas",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9d0dcdc8f61d0b84fd9f280600f4a915ee965af4f231e2bea02d422967f499d5"
+    },
+    {
+      "slug": "sync-camara-financeiro",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "07ef884dc25a4f448bcc2bece537fbc7fc8713599f55089a9282f061ea94e6ca"
+    },
+    {
+      "slug": "sync-camara-servidores",
+      "version": 30,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2e879dc6026b106ca233eb49b7ad8da9debd526ba8a3e9ea59d21ec742fdcfc4"
+    },
+    {
+      "slug": "sync-camara-siconfi",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "450b31ea7f0d1a01e099d49dbda710588a26654b66c8986ac974b29b0f2836b4"
+    },
+    {
+      "slug": "sync-cde-subsidios",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-clima-historico",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "aa3976615441e4aacdac8c12ce28488a38d6e4c5660d1f8c31d42dc3b9ed7e7f"
+    },
+    {
+      "slug": "sync-cnj-datajud",
+      "version": 15,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ce2962a15aeb728947f3c7253d068c39eb025c9ca490226fe30d406e84e8fe35"
+    },
+    {
+      "slug": "sync-conab-precos",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "291a959d3604c97d24db134d6c52be4c59932763193b05b0d24d254f374a136e"
+    },
+    {
+      "slug": "sync-contas-publicas",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-contratos-aditivos",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "62b74068554f70de84cfcf809d9d2f7c6206a01fdb6aab7f05d2f1fd2bbe300b"
+    },
+    {
+      "slug": "sync-contratos-camara",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3f856524096471e03da032a916083055b89a97601a2cf3a196ec0de746cc72e9"
+    },
+    {
+      "slug": "sync-contratos-prefeitura-nucleogov",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3a87206eb103022f82b0bdd4ff6382b35b27bcacdb9402fdf46a8e92fea6c92f"
+    },
+    {
+      "slug": "sync-decretos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-despesas",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0090c0356683bf118c81b440bfd388942fce2d1ed960716cf6dbac241ab525ad"
+    },
+    {
+      "slug": "sync-despesas-mensais",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5f33ab7ca85eb8777e3f8e4218db88d3cbf6901160694299133fb7c3ea679ff2"
+    },
+    {
+      "slug": "sync-detran-go",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "55f7663f5e387a38b693c8d94a84821ab2947d2a8c9e1b3b70bffad43ac5d974"
+    },
+    {
+      "slug": "sync-diarias",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8ebc44329159d2faa77cbacfaa3a903e1c5d08fda7b341b8129fab77233b0ba2"
+    },
+    {
+      "slug": "sync-diarias-camara",
+      "version": 10,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2299ae1bc0c2c918d2464dd0adb378b64145783331eee2c02fd9ecd8eef573e6"
+    },
+    {
+      "slug": "sync-diarias-prefeitura-nucleogov",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d14fdd77925ea4972cc77f4cf0062595659ee5b882cba86b20f69822f3d6f366"
+    },
+    {
+      "slug": "sync-economia-mensal",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a2b9e0c5c848e2a20ece7eabb757fc0b044624bf64ff3c0d8ef967f1ee48285d"
+    },
+    {
+      "slug": "sync-educacao",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-emendas",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-empenhos-prefeitura-nucleogov",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "eefcb3c90fff9f55f1771f73f3267d2b25b93fe8bba7d4ed55c4c755862ed1b2"
+    },
+    {
+      "slug": "sync-empresa-sancionada",
+      "version": 10,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "eccbeebf3252abd413a0372735c60d8bf971c7e91870f440031f29f227e6b0ed"
+    },
+    {
+      "slug": "sync-executivo-secretarias",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d1ccd77f972d460426f1a96321d7d40c45dfb4efecafe3fac6039f407b64549e"
+    },
+    {
+      "slug": "sync-fiscais-prefeitura-nucleogov",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5a69254829f47e69eceb1103f545ab83eaf148e6b8a0d05ea924cda16c385181"
+    },
+    {
+      "slug": "sync-folha-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f4fa2b74d0029ec025c0278faaef18cd01b4ab88953c1d89d1ccdcfdf8741f26"
+    },
+    {
+      "slug": "sync-folha-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f0992a03457130b2ff9f1e7ed9fe260a2044f087c4acadbcb0b275db2086116f"
+    },
+    {
+      "slug": "sync-fornecedores-cnpj",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "bad4a164361a3804d242702b27b18f0187fc87985fbb4c6f55df8b2c74e77e93"
+    },
+    {
+      "slug": "sync-frota-veiculos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-grupos-economicos",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5ebfcc88a02bff7a6dfa27705c23b5d9a4a2710b11f2075b2138b53668a28d4e"
+    },
+    {
+      "slug": "sync-health-check",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4075c0be7e7cdbf641cfc0313a36d7fee0913d3f068647e1d1981fe925e60343"
+    },
+    {
+      "slug": "sync-indicacoes-camara",
+      "version": 12,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "a7ee9457ca3135a68f992d507a9ec2bbf14272db1673b7d9616edf17be904a7b"
+    },
+    {
+      "slug": "sync-indicadores-home",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2df284c3bf05a406b84735986ce2640d37752a2bfed6cf0581480094617a74e5"
+    },
+    {
+      "slug": "sync-inep-escolas",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "27161e825d8357d11b91efb47bf867dbea477abe89e4c929e92b8584060904aa"
+    },
+    {
+      "slug": "sync-infraestrutura-mensal",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "7bf9c87d762b95f511023555d014a843e9cd5a791dea6ed88d280a0ccfceb842"
+    },
+    {
+      "slug": "sync-inmet-clima",
+      "version": 17,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "531b15a0ce5475387e93251428a5f65da64b14f1e0f50098208ebc79f98a7f55"
+    },
+    {
+      "slug": "sync-lei-organica",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-leis-municipais",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "fc25acfd92318591e19057f60246e4323f28e1793d6293bc455a9d153dfaa4db"
+    },
+    {
+      "slug": "sync-licitacoes-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "1e97328250fe573e4302abd04df0dac8428c25e32fc3639285d22cdb606c526b"
+    },
+    {
+      "slug": "sync-licitacoes-prefeitura",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "124841ccafc61f1d7675d118a9c5cef32c2c5007af7c518baf1edc4c6315a8a6"
+    },
+    {
+      "slug": "sync-mortalidade",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "bee0fd53244082128e9e23bf1071ee1c2198ad9b944257e1b6c3079270df9b29"
+    },
+    {
+      "slug": "sync-mpgo-atuacao",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "18c032fbf771733832c2d1d803eae45f80977e3909a881275bc734a1da8c9149"
+    },
+    {
+      "slug": "sync-obras",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "36e5591e6616b3c0b8b16208ea270f1881a803466d47fbb88435a80eddae902e"
+    },
+    {
+      "slug": "sync-pagamentos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "739a7788c8f90c20206b9c10d8136c26aba97ab8bbd569a263cdf401c78dd85d"
+    },
+    {
+      "slug": "sync-pe-de-meia",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "dfe1b517b8009c97b5f920c9473ccadc6ef2350a636316a136c4fd74c7bf53ad"
+    },
+    {
+      "slug": "sync-pncp-licitacoes",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "cf092264dd4ea2b9a5540fd9e8c53ad9f7e6c3ec61cd146c3cc1f7081c50dac0"
+    },
+    {
+      "slug": "sync-portarias",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-postos-combustivel",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5582b7619ef608f8fdd5c766af1624db533bc40df4256959f9bc1e1228bd7235"
+    },
+    {
+      "slug": "sync-prefeitura-diaria",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "f57670f7e0aa370c40311748f448a08cb18b0981c54ae7ccb548d426a57bc68c"
+    },
+    {
+      "slug": "sync-prefeitura-mensal",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "860c475bd5b5a75c46b762de611ce7bdd3a81d35050ee2862bda45882a7bbd3a"
+    },
+    {
+      "slug": "sync-presenca-atas",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "84eaea7d029e72a3e854435c6900a9d171c29c277780bcf5473e71efb307e6e8"
+    },
+    {
+      "slug": "sync-presenca-centi",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "cf0f4b079f82d9ad57cd321b5f7af6463633e3f61c2cbc01a8a074653d578589"
+    },
+    {
+      "slug": "sync-presenca-sessoes",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "1362b99d29bf48d677ec2e0abcb97ea007c8a74224e9a5560ef919cf5d56973f"
+    },
+    {
+      "slug": "sync-prestacao-contas",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4495482124c40ea9831a660055e18732f9a81a1c8e0210d9dd1024eaf1413873"
+    },
+    {
+      "slug": "sync-processos-escavador",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "84b51f79338d6ac515fea492945aad7b279fbbe08a9ed6da77f5feb39cc91002"
+    },
+    {
+      "slug": "sync-processos-publicos",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "68646c1e02332ee65781f7012fe3c5348f3108c74b4a98c26fbe22f8fbb2383b"
+    },
+    {
+      "slug": "sync-projetos",
+      "version": 28,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5d4d555df012149e8cbc3eeb78ab90176ee7c281a67153ff6a7a8678985ed5aa"
+    },
+    {
+      "slug": "sync-receitas-mensais",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f8a64cf64c1b04126e78d6ae05871184e56f87e6ae3a6c717ae8212f536caf53"
+    },
+    {
+      "slug": "sync-remuneracao-vereadores",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-estabelecimentos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-hiv",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-hiv-casos",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "e2c1dca249cd78722662d709e02f0619486d1939bdc3e5b2d5f26a05c59e95aa"
+    },
+    {
+      "slug": "sync-saude-indicadores",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0bb785493b8fdc2d06835e1c1d62c9236cabccf09d4f55a106971b13fe3614de"
+    },
+    {
+      "slug": "sync-saude-sesgo",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-srag",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-seguranca",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-tcm-go-piracanjuba",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "77e5c194212316a2421a0a186c610f011bd2c93dd3adcc4df1fa3e59599df43a"
+    },
+    {
+      "slug": "sync-tjgo-processos",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "aacc4b34c47405b2e5bff22b9f46bd3956a911e63b3ad72f22233f3470688d7c"
+    },
+    {
+      "slug": "sync-transferencias-federais",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "259cf2683f07d0c5b031a9ce145acf5581ea53f2daa39baee7fecc0719f8076b"
+    },
+    {
+      "slug": "sync-tse-doadores",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9dc111fc31f6e4e69471190e32c7c128e516a09e215356cc43cf3a1c5f5874e4"
+    },
+    {
+      "slug": "sync-tse-eleicoes",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "755af25633d9d41061e8b687aebee253bf656447d94db21a4e5c77ad9c548947"
+    },
+    {
+      "slug": "sync-vereadores",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "184639603b351ffaa9f9f0ff0071f1dd86a2d7b2d66715448fb5655953367635"
+    },
+    {
+      "slug": "sync-votacoes",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b9ef91baf6829da52205f2da82b784a49531877f3259a3352bac3703be8617a4"
+    },
+    {
+      "slug": "transcribe-audio",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2480202d4d366096a76382db7ca73e33cb7196cff8d9feb21512a2dac8b24ccd"
+    },
+    {
+      "slug": "unsubscribe-push",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "watchdog-dados-anuais",
+      "version": 4,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "9bc90cdc7816f81a79123743a216c1083d7d3ef6ef9fcc0872d20a5848ccd27c"
+    }
+  ],
+  "after": [
+    {
+      "slug": "admin-anuncios-update",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "70b407fdd5cf03edca6e1d8c6810381f03024b2bf90b34b3e595863740c9adcd"
+    },
+    {
+      "slug": "admin-classificados",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f3b5e51be9e1ea67bb5840e3da2376b2e47f373cb92d4ec683f50a9ba8116400"
+    },
+    {
+      "slug": "admin-cpf-consulta",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "d3326ae494700cbf0863967c330d344f6f32111efd8da0470963e11641520038"
+    },
+    {
+      "slug": "admin-farmacia-update",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "59c98cbd47cb330d134e91d846169db90509b8d7f0dc1b1254ab160a480be378"
+    },
+    {
+      "slug": "admin-login",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "admin-sync-status",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "208385a91e34657299d1dec97d019f1b6258806db3322fc301abb4f37296dda0"
+    },
+    {
+      "slug": "admin-zap-read",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "admin-zap-update",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "ai-search",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "a78fae50fe005c5a7435a03841ead37bc0e4547a2346facf19ea327469820012"
+    },
+    {
+      "slug": "analyze-contrato-risco",
+      "version": 35,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d9f467bf74570f2d8bfae346783b7e4414faeb13c31eac8a5412c75e8af18cd9"
+    },
+    {
+      "slug": "auth-email-hook",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0ce6ef4698f069e1acef9d688a98040a216552280474a14ef29872a8521a6426"
+    },
+    {
+      "slug": "backfill-atos-resumos",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a5e155fdbdb1bef1ee60c28e49ad0541c3470a131d8d9e327f32cdf4449eec6e"
+    },
+    {
+      "slug": "backfill-contrato-objeto",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d5b9f7e800d4282dd124e9184e89d0fae64f07b5186691bcfbe7596b338d9b80"
+    },
+    {
+      "slug": "backfill-servidor-resumos",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b7bc7720babd81f84959953c533387e39b6acac5528fd0251c8e50b51c4820eb"
+    },
+    {
+      "slug": "backup-zap-pba",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "batch-categorize-leis",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "centi-fetch",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b0557fa91f470c1bbcab59ee133b4a9524f51a4884dde84cd2e8570b3cdb8af9"
+    },
+    {
+      "slug": "chatbot",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "c0f5a2b7b92d1cac2616b9e366b2c1fc79f6bccd281ad0f715e2d654941b7c05"
+    },
+    {
+      "slug": "consulta-placa",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ca60a54e0a73da6c5ce59387c2f9897b8d07a71b41c4fb2957d19b8a5006c434"
+    },
+    {
+      "slug": "create-donation",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-camara-contratos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-cnpj-universal",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0ce45508e5858e3d9a225fd6b21ce94e3bd421e8dd754a4fe9378c45c0a5a048"
+    },
+    {
+      "slug": "enrich-contratos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "enrich-contratos-cnpj",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "c4167d83b639b7c16af04c9766907910500bf4115b7ec0516f3b48703f1b5ee2"
+    },
+    {
+      "slug": "enrich-processo-ia",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5bf78d42b568e8051784f341a0cab1d8fef8b017595acdf32e897e10db366cd8"
+    },
+    {
+      "slug": "extract-lei-organica-pdf",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "historia-fotos",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "953ffdd9de35ba259bea8a2d9311f62c4e6fde6ca4d3b2b7f5806d8d603c235a"
+    },
+    {
+      "slug": "import-folha-manual",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "7d316013276f98636a02da12ceeec2649da343e8d06232327f0e1f7bd9476424"
+    },
+    {
+      "slug": "import-folha-xlsx",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "aac66ed6bfbb7d8ca15e225913e7c031635e5e28b0b52f1f893f76fd12f3d416"
+    },
+    {
+      "slug": "nepotismo-analise",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ccc1406dae6d72249f32e421d9198249e6dd729d4e3acf6518b76d9ddd6627e8"
+    },
+    {
+      "slug": "notify-expiring-ads",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "optimize-description",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "410dd575d9a32b1b32389eaca76a1e5be7b2f29a2e21d8039d380ea9a0241d9b"
+    },
+    {
+      "slug": "parse-folha-md",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "c6e9a5efb3f1d6e362a6f7487a7859cdd65cdd051ee2e6d422219ef77a19d86c"
+    },
+    {
+      "slug": "parse-lei-organica",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "send-push",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2a9307205bdad077b03276175fead771194a9a96a9d6e4b923d8ccf0e33d970e"
+    },
+    {
+      "slug": "send-weekly-digest",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3f978a4f5572edee65381b7e0cd57e53074e174db54fe1a327c939731824108f"
+    },
+    {
+      "slug": "sitemap-classificados",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "suggest-category",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "summarize-artigo",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2851d7e98e765353c28a301ef2b00a7f2fa18896ed15a0555cb8976f8269e675"
+    },
+    {
+      "slug": "summarize-atuacao",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "e79efc153ca0c25d51c7edb10759b4a9d7d13584afda1d803bc77427d10b9b7d"
+    },
+    {
+      "slug": "summarize-camara-contrato",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ecfc8530ad2250f1013c59ecfdd51f25caf170ea9361c71acfaa7d9576566306"
+    },
+    {
+      "slug": "summarize-contrato",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f7b6377d6ebcdf3ca3a5756be3d7dd6e034baa19477eae664bad179eedcd56e1"
+    },
+    {
+      "slug": "summarize-decreto",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "6bd3b89585f5eb4a5bdcfc9d6fc41c8e1e490f7157d7c2aa875f9c8605290dca"
+    },
+    {
+      "slug": "summarize-generic",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ec764cb1e24cfc22d5eade32d6d61177610a042ab5eaf631f5502d3728c183df"
+    },
+    {
+      "slug": "summarize-imposto",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "72f62563eaea71c493078bad846a3010ad4b87687f0cb3b6113c226371035cd6"
+    },
+    {
+      "slug": "summarize-lei-municipal",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "757c9f2c89cfe363bd33e83aef886847e68620ee80f59798d0c9f7633a313c20"
+    },
+    {
+      "slug": "summarize-lei-organica",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8354ab2288df04f01b3763fc8b9761a819dccecd8225d29ef0639c3e5aeaed00"
+    },
+    {
+      "slug": "summarize-licitacao",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "7a148d1e607dd8a51846bc5f75d543ea5cb6a5ba0043f00cd1dd05c5cb7280b5"
+    },
+    {
+      "slug": "summarize-obra",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f8952aa2e0e9db6048bc3821cfe5aa62e7014c153cfaeca858bb512f8440fdd7"
+    },
+    {
+      "slug": "summarize-portaria",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4854d03aee2b0c1edcf28674525f8eae60bd6e6590d74bb6c83028f39f6386a0"
+    },
+    {
+      "slug": "summarize-secretario",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "661eace7a56195a278bf99ee3afa19a60b46254b546fa7fe8351ac786e9cbb8a"
+    },
+    {
+      "slug": "summarize-servidor",
+      "version": 30,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "622e05578a46f8db02b1cd9914a58812e4837457c3f4cf91e4208e1e33952a0b"
+    },
+    {
+      "slug": "sync-aditivos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "068640baa038dcd678a7ba3647a1e2a51d5d1e6ebb6c368d1f72328985b0b801"
+    },
+    {
+      "slug": "sync-agro",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-arrecadacao",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-arrecadacao-comparativo",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-atividades-legislativas",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "c36131d5ea713509971f5bce96761a81629a7c1bcc03edb9dbd1c6e61aa73110"
+    },
+    {
+      "slug": "sync-atos-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "136f9685ec84c2d6b6e990d64e16592a1e0a33e04863d27212d48acfbf79bba6"
+    },
+    {
+      "slug": "sync-atos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8dc9820b561233932ac5a44a2b204f2259b4a9b190121dd55d458d4ceb62836c"
+    },
+    {
+      "slug": "sync-atuacao",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "301deebb2115218319b606c0348c57332679c97c2d4e6481b4baa82e79267ddd"
+    },
+    {
+      "slug": "sync-beneficios-sociais",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "270828037a7ccbf9c3454e5b671b344e843022ae4b9edbe8d4d68e6813f30d7e"
+    },
+    {
+      "slug": "sync-bolsa-familia",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d7d8e860ac11079fb4df9d9d21197d7796f1b122dcc8d96492375d541e94b9e6"
+    },
+    {
+      "slug": "sync-camara-atas-pdf",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "981de6844b44d8b9857efcbfc88f59afb45aee6d9cb4d36996623fe1f04f0608"
+    },
+    {
+      "slug": "sync-camara-atos",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a964ce27e7a1758aa6ae1815fecc82cca796f32da4054634ffb216fa2ef3b5a6"
+    },
+    {
+      "slug": "sync-camara-despesas",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9d0dcdc8f61d0b84fd9f280600f4a915ee965af4f231e2bea02d422967f499d5"
+    },
+    {
+      "slug": "sync-camara-financeiro",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "07ef884dc25a4f448bcc2bece537fbc7fc8713599f55089a9282f061ea94e6ca"
+    },
+    {
+      "slug": "sync-camara-servidores",
+      "version": 30,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2e879dc6026b106ca233eb49b7ad8da9debd526ba8a3e9ea59d21ec742fdcfc4"
+    },
+    {
+      "slug": "sync-camara-siconfi",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "450b31ea7f0d1a01e099d49dbda710588a26654b66c8986ac974b29b0f2836b4"
+    },
+    {
+      "slug": "sync-cde-subsidios",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-clima-historico",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "aa3976615441e4aacdac8c12ce28488a38d6e4c5660d1f8c31d42dc3b9ed7e7f"
+    },
+    {
+      "slug": "sync-cnj-datajud",
+      "version": 15,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "ce2962a15aeb728947f3c7253d068c39eb025c9ca490226fe30d406e84e8fe35"
+    },
+    {
+      "slug": "sync-conab-precos",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "291a959d3604c97d24db134d6c52be4c59932763193b05b0d24d254f374a136e"
+    },
+    {
+      "slug": "sync-contas-publicas",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-contratos-aditivos",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "62b74068554f70de84cfcf809d9d2f7c6206a01fdb6aab7f05d2f1fd2bbe300b"
+    },
+    {
+      "slug": "sync-contratos-camara",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3f856524096471e03da032a916083055b89a97601a2cf3a196ec0de746cc72e9"
+    },
+    {
+      "slug": "sync-contratos-prefeitura-nucleogov",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "3a87206eb103022f82b0bdd4ff6382b35b27bcacdb9402fdf46a8e92fea6c92f"
+    },
+    {
+      "slug": "sync-decretos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-despesas",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0090c0356683bf118c81b440bfd388942fce2d1ed960716cf6dbac241ab525ad"
+    },
+    {
+      "slug": "sync-despesas-mensais",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5f33ab7ca85eb8777e3f8e4218db88d3cbf6901160694299133fb7c3ea679ff2"
+    },
+    {
+      "slug": "sync-detran-go",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "55f7663f5e387a38b693c8d94a84821ab2947d2a8c9e1b3b70bffad43ac5d974"
+    },
+    {
+      "slug": "sync-diarias",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "8ebc44329159d2faa77cbacfaa3a903e1c5d08fda7b341b8129fab77233b0ba2"
+    },
+    {
+      "slug": "sync-diarias-camara",
+      "version": 10,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "2299ae1bc0c2c918d2464dd0adb378b64145783331eee2c02fd9ecd8eef573e6"
+    },
+    {
+      "slug": "sync-diarias-prefeitura-nucleogov",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d14fdd77925ea4972cc77f4cf0062595659ee5b882cba86b20f69822f3d6f366"
+    },
+    {
+      "slug": "sync-economia-mensal",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "a2b9e0c5c848e2a20ece7eabb757fc0b044624bf64ff3c0d8ef967f1ee48285d"
+    },
+    {
+      "slug": "sync-educacao",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-emendas",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-empenhos-prefeitura-nucleogov",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "eefcb3c90fff9f55f1771f73f3267d2b25b93fe8bba7d4ed55c4c755862ed1b2"
+    },
+    {
+      "slug": "sync-empresa-sancionada",
+      "version": 10,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "eccbeebf3252abd413a0372735c60d8bf971c7e91870f440031f29f227e6b0ed"
+    },
+    {
+      "slug": "sync-executivo-secretarias",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "d1ccd77f972d460426f1a96321d7d40c45dfb4efecafe3fac6039f407b64549e"
+    },
+    {
+      "slug": "sync-fiscais-prefeitura-nucleogov",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5a69254829f47e69eceb1103f545ab83eaf148e6b8a0d05ea924cda16c385181"
+    },
+    {
+      "slug": "sync-folha-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f4fa2b74d0029ec025c0278faaef18cd01b4ab88953c1d89d1ccdcfdf8741f26"
+    },
+    {
+      "slug": "sync-folha-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f0992a03457130b2ff9f1e7ed9fe260a2044f087c4acadbcb0b275db2086116f"
+    },
+    {
+      "slug": "sync-fornecedores-cnpj",
+      "version": 29,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "bad4a164361a3804d242702b27b18f0187fc87985fbb4c6f55df8b2c74e77e93"
+    },
+    {
+      "slug": "sync-frota-veiculos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-grupos-economicos",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5ebfcc88a02bff7a6dfa27705c23b5d9a4a2710b11f2075b2138b53668a28d4e"
+    },
+    {
+      "slug": "sync-health-check",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4075c0be7e7cdbf641cfc0313a36d7fee0913d3f068647e1d1981fe925e60343"
+    },
+    {
+      "slug": "sync-indicacoes-camara",
+      "version": 12,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "a7ee9457ca3135a68f992d507a9ec2bbf14272db1673b7d9616edf17be904a7b"
+    },
+    {
+      "slug": "sync-indicadores-home",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2df284c3bf05a406b84735986ce2640d37752a2bfed6cf0581480094617a74e5"
+    },
+    {
+      "slug": "sync-inep-escolas",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "27161e825d8357d11b91efb47bf867dbea477abe89e4c929e92b8584060904aa"
+    },
+    {
+      "slug": "sync-infraestrutura-mensal",
+      "version": 13,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "7bf9c87d762b95f511023555d014a843e9cd5a791dea6ed88d280a0ccfceb842"
+    },
+    {
+      "slug": "sync-inmet-clima",
+      "version": 17,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "531b15a0ce5475387e93251428a5f65da64b14f1e0f50098208ebc79f98a7f55"
+    },
+    {
+      "slug": "sync-lei-organica",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-leis-municipais",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "fc25acfd92318591e19057f60246e4323f28e1793d6293bc455a9d153dfaa4db"
+    },
+    {
+      "slug": "sync-licitacoes-camara",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "1e97328250fe573e4302abd04df0dac8428c25e32fc3639285d22cdb606c526b"
+    },
+    {
+      "slug": "sync-licitacoes-prefeitura",
+      "version": 9,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "124841ccafc61f1d7675d118a9c5cef32c2c5007af7c518baf1edc4c6315a8a6"
+    },
+    {
+      "slug": "sync-mortalidade",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "bee0fd53244082128e9e23bf1071ee1c2198ad9b944257e1b6c3079270df9b29"
+    },
+    {
+      "slug": "sync-mpgo-atuacao",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "18c032fbf771733832c2d1d803eae45f80977e3909a881275bc734a1da8c9149"
+    },
+    {
+      "slug": "sync-obras",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "36e5591e6616b3c0b8b16208ea270f1881a803466d47fbb88435a80eddae902e"
+    },
+    {
+      "slug": "sync-pagamentos-prefeitura-nucleogov",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "739a7788c8f90c20206b9c10d8136c26aba97ab8bbd569a263cdf401c78dd85d"
+    },
+    {
+      "slug": "sync-pe-de-meia",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "dfe1b517b8009c97b5f920c9473ccadc6ef2350a636316a136c4fd74c7bf53ad"
+    },
+    {
+      "slug": "sync-pncp-licitacoes",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "cf092264dd4ea2b9a5540fd9e8c53ad9f7e6c3ec61cd146c3cc1f7081c50dac0"
+    },
+    {
+      "slug": "sync-portarias",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-postos-combustivel",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5582b7619ef608f8fdd5c766af1624db533bc40df4256959f9bc1e1228bd7235"
+    },
+    {
+      "slug": "sync-prefeitura-diaria",
+      "version": 32,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "0f3a29d06b951019478411feb567dd118360e62fa5b20b1d344844a8a7ec2018"
+    },
+    {
+      "slug": "sync-prefeitura-mensal",
+      "version": 30,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "56d816e78910f8d395ad23a03b6f56dae6d8606790a62b3f8f7df92432091782"
+    },
+    {
+      "slug": "sync-presenca-atas",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "84eaea7d029e72a3e854435c6900a9d171c29c277780bcf5473e71efb307e6e8"
+    },
+    {
+      "slug": "sync-presenca-centi",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "cf0f4b079f82d9ad57cd321b5f7af6463633e3f61c2cbc01a8a074653d578589"
+    },
+    {
+      "slug": "sync-presenca-sessoes",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "1362b99d29bf48d677ec2e0abcb97ea007c8a74224e9a5560ef919cf5d56973f"
+    },
+    {
+      "slug": "sync-prestacao-contas",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "4495482124c40ea9831a660055e18732f9a81a1c8e0210d9dd1024eaf1413873"
+    },
+    {
+      "slug": "sync-processos-escavador",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "84b51f79338d6ac515fea492945aad7b279fbbe08a9ed6da77f5feb39cc91002"
+    },
+    {
+      "slug": "sync-processos-publicos",
+      "version": 11,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "68646c1e02332ee65781f7012fe3c5348f3108c74b4a98c26fbe22f8fbb2383b"
+    },
+    {
+      "slug": "sync-projetos",
+      "version": 28,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "5d4d555df012149e8cbc3eeb78ab90176ee7c281a67153ff6a7a8678985ed5aa"
+    },
+    {
+      "slug": "sync-receitas-mensais",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "f8a64cf64c1b04126e78d6ae05871184e56f87e6ae3a6c717ae8212f536caf53"
+    },
+    {
+      "slug": "sync-remuneracao-vereadores",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-estabelecimentos",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-hiv",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-hiv-casos",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "e2c1dca249cd78722662d709e02f0619486d1939bdc3e5b2d5f26a05c59e95aa"
+    },
+    {
+      "slug": "sync-saude-indicadores",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "0bb785493b8fdc2d06835e1c1d62c9236cabccf09d4f55a106971b13fe3614de"
+    },
+    {
+      "slug": "sync-saude-sesgo",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-saude-srag",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-seguranca",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "sync-tcm-go-piracanjuba",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "77e5c194212316a2421a0a186c610f011bd2c93dd3adcc4df1fa3e59599df43a"
+    },
+    {
+      "slug": "sync-tjgo-processos",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "aacc4b34c47405b2e5bff22b9f46bd3956a911e63b3ad72f22233f3470688d7c"
+    },
+    {
+      "slug": "sync-transferencias-federais",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "259cf2683f07d0c5b031a9ce145acf5581ea53f2daa39baee7fecc0719f8076b"
+    },
+    {
+      "slug": "sync-tse-doadores",
+      "version": 7,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9dc111fc31f6e4e69471190e32c7c128e516a09e215356cc43cf3a1c5f5874e4"
+    },
+    {
+      "slug": "sync-tse-eleicoes",
+      "version": 14,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "755af25633d9d41061e8b687aebee253bf656447d94db21a4e5c77ad9c548947"
+    },
+    {
+      "slug": "sync-vereadores",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "184639603b351ffaa9f9f0ff0071f1dd86a2d7b2d66715448fb5655953367635"
+    },
+    {
+      "slug": "sync-votacoes",
+      "version": 24,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b9ef91baf6829da52205f2da82b784a49531877f3259a3352bac3703be8617a4"
+    },
+    {
+      "slug": "transcribe-audio",
+      "version": 25,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2480202d4d366096a76382db7ca73e33cb7196cff8d9feb21512a2dac8b24ccd"
+    },
+    {
+      "slug": "unsubscribe-push",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": null
+    },
+    {
+      "slug": "watchdog-dados-anuais",
+      "version": 4,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "9bc90cdc7816f81a79123743a216c1083d7d3ef6ef9fcc0872d20a5848ccd27c"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "pr": 31,
+  "url": "https://github.com/gianlucaferro/piracanjuba-next/pull/31",
+  "merge": "c25dc22a2e737e60d080853f74d793be01c0a2cd",
+  "code_commit": "ed4e5da19b4400fc2ceb3807df150cd9afc6f613",
+  "head_quality": {
+    "id": 41775382478,
+    "status": "success"
+  },
+  "main_quality": {
+    "id": 41775928611,
+    "status": "success"
+  },
+  "vercel": {
+    "id": "dpl_AYwoXtgyGR9yuc6PrEELEXmd71ar",
+    "state": "READY",
+    "target": "production",
+    "aliases": [
+      "piracanjuba.ai",
+      "www.piracanjuba.ai",
+      "piracanjuba-next.vercel.app",
+      "piracanjuba-next-gianlucaferros-projects.vercel.app",
+      "piracanjuba-next-git-main-gianlucaferros-projects.vercel.app"
+    ],
+    "ready_at": "2026-11-04T04:54:23.358Z"
+  },
+  "post_merge_http": [
+    "OK /: 200",
+    "OK /horarios-onibus: 200",
+    "OK /plantao-farmacias: 200",
+    "OK /prefeitura/servidores: 200",
+    "OK /camara/servidores: 200",
+    "OK /prefeitura/contratos: 200",
+    "OK /grupos-economicos: 200",
+    "OK /acompanhar: 200",
+    "OK /coleta-lixo: 200",
+    "OK /contatos: 200",
+    "OK /saude: 200",
+    "OK /educacao: 200",
+    "OK /clima: 200",
+    "OK /compra-e-venda: 200",
+    "OK /zap-pba: 200",
+    "OK /vereadores: 200",
+    "OK /sitemap.xml: 200",
+    "OK /robots.txt: 200"
+  ],
+  "review": {
+    "independent_review": "approved",
+    "code_reviewed_by_bot_at": "ed4e5da19b4400fc2ceb3807df150cd9afc6f613",
+    "final_script_changes_reviewed_directly": true,
+    "bot_rerun_pending_at_merge": true
+  }
+}
