@@ -1,0 +1,1228 @@
+{
+  "project_id": "oinweocqcptwxqsztlcl",
+  "captured_at": "2026-11-04T02:52:58.757553+00:00",
+  "reviewer": "supabase_quota_docs",
+  "scope": "Somente leitura de catalogo, policies, ACL e bucket; nenhuma leitura de admin_sessions, fotos ou dados de clientes. Nenhum deploy, SQL de escrita ou chamada de negocio.",
+  "source_commit": "9dd395429d5e6a36212f620ba933b6c7cfced25e",
+  "baseline_comparison": {
+    "rls": true,
+    "bucket": true,
+    "grants": true,
+    "policies": true,
+    "table_acl": true,
+    "column_acl": true
+  },
+  "drift": false,
+  "baseline_files": [
+    "outputs/public-writes-2026-11-03/live-metadata.json",
+    "outputs/public-writes-2026-11-03/live-acl.json"
+  ],
+  "edge_function": {
+    "slug": "admin-farmacia-update",
+    "exists": false,
+    "catalog_total": 140,
+    "expected_verify_jwt": true,
+    "local_entrypoint": "supabase/functions/admin-farmacia-update/index.ts",
+    "local_dependencies": [
+      "supabase/functions/_shared/farmacia-admin.ts",
+      "supabase/functions/_shared/farmacia-admin-store.ts",
+      "supabase/functions/_shared/admin-session-auth.ts"
+    ],
+    "remote_dependency": "https://esm.sh/@supabase/supabase-js@2",
+    "secrets": "Somente variaveis SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY existentes no runtime; nenhum valor consultado."
+  },
+  "source_hashes_match_validation": true,
+  "sha256": {
+    "src/components/admin/FarmaciaFotosAdmin.tsx": "43e9b8b1ce38ee70146d6995fed24970ba1c262203e8b10562cd530304ffaa32",
+    "supabase/config.toml": "4cbf6e9db3094063cbd5ec2f990dc0cf4d519c2f57f0d77a3a90506443b4e856",
+    "supabase/migrations/20261104030000_restringe_escritas_publicas.sql": "0b4a60859143c4db9267faff3ee7092a0bdeb5d1045c2d58111d4882f9a335af",
+    "supabase/rollbacks/20261104030000_restringe_escritas_publicas.sql": "ea636e83784aab0e423d63852b17485fe34b88ad239be5326a78eea0ae6c65fd",
+    "supabase/functions/admin-farmacia-update/index.ts": "14af2f770e0f4860f1148d5adeb564054d484177237191cdf54f5eb8a7113d32",
+    "supabase/functions/_shared/farmacia-admin.ts": "a5e20c35f25726c7115a206469cee73789f2a392c2b23dd54aad1f54f195134f",
+    "supabase/functions/_shared/farmacia-admin-store.ts": "1bcd8e7f32f23a718073579a98d1733cec7cdfd1315e1d40478e1d2f9829c353",
+    "supabase/functions/_shared/farmacia-admin.test.ts": "15461205f5955b3291d4e2b065883996728e7d50a4d43e574bee2a9b12c918cb",
+    "tests/sql/public-writes.test.sql": "ae18089a0c16a2d02834f4b9dc5fc496d6bcd834001ccd960db3138d7f0748c0",
+    "tests/e2e/farmacia-admin.spec.ts": "f2e9f5b307b8b863d61e1bc7b415561c0faf96432cc79150ab717be83b7aab24",
+    "supabase/functions/_shared/admin-session-auth.ts": "8f8f0dcc99072c24506b108d5111bf3287dac14db609551e9a94f0a427d53b9c"
+  },
+  "publication_order": [
+    "Concluir PR29 dependente, sem sobrescrever fontes de terceiros.",
+    "Publicar apenas admin-farmacia-update com todas as dependencias locais e verify_jwt=true antes de disponibilizar frontend da PR30.",
+    "Conferir canario nao mutante de recusa sem sessao. Nao consultar admin_sessions nesta verificacao.",
+    "Publicar frontend PR30 e verificar paginas publicas e carregamento do painel; paineis antigos devem ser recarregados.",
+    "Aplicar somente a migration 20261104030000_restringe_escritas_publicas.sql em transacao, com autorizacao especifica ja informada ao root.",
+    "Executar query de verificacao somente leitura; manter frontend novo apos restricoes SQL."
+  ],
+  "limits": [
+    "Fotografia temporal; root e unico escritor de producao e deve comparar novamente se houver alteracao concorrente.",
+    "Nenhum teste mutante real de upload, telefone ou remocao executado.",
+    "Rollback SQL completo reabre permissoes vulneraveis e exige decisao especifica, nunca automatico.",
+    "Confirmacao de autenticacao real do painel e monitor fica a cargo do root; este preflight nao acessou dados de sessao."
+  ],
+  "metadata_backup": {
+    "rls": [
+      {
+        "rls": true,
+        "table": "objects"
+      },
+      {
+        "rls": true,
+        "table": "sync_job_registry"
+      },
+      {
+        "rls": true,
+        "table": "farmacia_fotos"
+      }
+    ],
+    "bucket": {
+      "id": "farmacia-fotos",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    "grants": [
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "farmacia_fotos",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "YES",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "DELETE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "INSERT",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "REFERENCES",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRIGGER",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "TRUNCATE",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "table_name": "sync_job_registry",
+        "is_grantable": "NO",
+        "table_schema": "public",
+        "table_catalog": "postgres",
+        "privilege_type": "UPDATE",
+        "with_hierarchy": "NO"
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "DELETE",
+        "qual": "true",
+        "roles": [
+          "public"
+        ],
+        "tablename": "farmacia_fotos",
+        "permissive": "PERMISSIVE",
+        "policyname": "farmacia_fotos_delete",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "farmacia_fotos",
+        "permissive": "PERMISSIVE",
+        "policyname": "farmacia_fotos_insert",
+        "schemaname": "public",
+        "with_check": "true"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "true",
+        "roles": [
+          "public"
+        ],
+        "tablename": "farmacia_fotos",
+        "permissive": "PERMISSIVE",
+        "policyname": "farmacia_fotos_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "true",
+        "roles": [
+          "public"
+        ],
+        "tablename": "farmacia_fotos",
+        "permissive": "PERMISSIVE",
+        "policyname": "farmacia_fotos_update",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "qual": "true",
+        "roles": [
+          "public"
+        ],
+        "tablename": "sync_job_registry",
+        "permissive": "PERMISSIVE",
+        "policyname": "Service role full access",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "(bucket_id = 'anuncios'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Auth update anuncios storage",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "(bucket_id = 'farmacia-fotos'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Auth update farmacia storage",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Auth upload anuncios storage",
+        "schemaname": "storage",
+        "with_check": "(bucket_id = 'anuncios'::text)"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Auth upload farmacia storage",
+        "schemaname": "storage",
+        "with_check": "(bucket_id = 'farmacia-fotos'::text)"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(bucket_id = 'classificados'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Leitura pública fotos classificados",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(bucket_id = 'anuncios'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Public read anuncios storage",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(bucket_id = 'farmacia-fotos'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Public read farmacia storage",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Service role can upload to temp",
+        "schemaname": "storage",
+        "with_check": "((bucket_id = 'temp-uploads'::text) AND (auth.role() = 'service_role'::text))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "((bucket_id = 'temp-uploads'::text) AND (auth.role() = 'service_role'::text))",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Temp uploads readable by service role",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "Upload público fotos classificados",
+        "schemaname": "storage",
+        "with_check": "(bucket_id = 'classificados'::text)"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(bucket_id = 'vereadores-fotos'::text)",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "vereadores-fotos public read",
+        "schemaname": "storage",
+        "with_check": null
+      }
+    ],
+    "table_acl": [
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "sync_job_registry",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "postgres",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "anon",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "authenticated",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "INSERT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "SELECT"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "DELETE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "table": "farmacia_fotos",
+        "grantee": "service_role",
+        "grantable": false,
+        "privilege": "MAINTAIN"
+      }
+    ],
+    "column_acl": null,
+    "captured_at": "2026-11-04T02:52:58.757553+00:00"
+  }
+}

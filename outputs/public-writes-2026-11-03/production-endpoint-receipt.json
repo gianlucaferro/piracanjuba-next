@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-04T03:02:10.206Z",
+  "authorization": "Autorizacao explicita do operador para corte SQL apos publicar endpoint e frontend compativeis.",
+  "project": "oinweocqcptwxqsztlcl",
+  "deployment": {
+    "id": "fae55cb7-ef98-4c7e-9391-9675af315b7f",
+    "slug": "admin-farmacia-update",
+    "name": "admin-farmacia-update",
+    "status": "ACTIVE",
+    "version": 1,
+    "created_at": 1793761252359,
+    "updated_at": 1793761252359,
+    "verify_jwt": true,
+    "import_map": false,
+    "entrypoint_path": "file:///tmp/user_fn_oinweocqcptwxqsztlcl_fae55cb7-ef98-4c7e-9391-9675af315b7f_1/source/functions/admin-farmacia-update/index.ts",
+    "ezbr_sha256": "59c98cbd47cb330d134e91d846169db90509b8d7f0dc1b1254ab160a480be378"
+  },
+  "source_verification": {
+    "version": 1,
+    "verify_jwt": true,
+    "ezbr_sha256": "59c98cbd47cb330d134e91d846169db90509b8d7f0dc1b1254ab160a480be378",
+    "files": [
+      {
+        "name": "functions/admin-farmacia-update/index.ts",
+        "exact": true
+      },
+      {
+        "name": "functions/_shared/farmacia-admin.ts",
+        "exact": true
+      },
+      {
+        "name": "functions/_shared/farmacia-admin-store.ts",
+        "exact": true
+      },
+      {
+        "name": "functions/_shared/admin-session-auth.ts",
+        "exact": true
+      }
+    ]
+  },
+  "migration_applied": false,
+  "frontend_published": false,
+  "order": "endpoint, frontend, migration"
+}
