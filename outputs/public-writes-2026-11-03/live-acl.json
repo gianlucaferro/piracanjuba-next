@@ -1,0 +1,390 @@
+{
+  "table_acl": [
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "sync_job_registry",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "INSERT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "DELETE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRUNCATE"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "REFERENCES"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRIGGER"
+    },
+    {
+      "table": "farmacia_fotos",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "MAINTAIN"
+    }
+  ],
+  "checked_at": "2026-11-04T00:41:33.630034+00:00",
+  "column_acl": null
+}
