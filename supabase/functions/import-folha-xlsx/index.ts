@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 // deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { preparePushCallerRequest, notifyPushFromCaller } from "../_shared/push-caller-auth.ts";
 // deno-lint-ignore no-import-prefix
 import * as XLSX from "https://esm.sh/xlsx@0.18.5";
 import { servidorOriginKey } from "../_shared/servidor-origin.ts";
@@ -9,16 +10,20 @@ import { mapIdsByOrigin } from "../_shared/persistence-guards.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, x-cron-secret, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const prepared = await preparePushCallerRequest(req, corsHeaders, 8 * 1024);
+  if ("response" in prepared) return prepared.response;
+  const { body: requestBody, serviceRoleKey } = prepared;
 
   try {
-    const { file_url, competencia, orgao_tipo } = await req.json();
+    const { file_url, competencia, orgao_tipo } = requestBody as {
+      file_url: string;
+      competencia: string;
+      orgao_tipo?: string;
+    };
 
     if (!file_url || !competencia) {
       return new Response(
@@ -193,7 +198,7 @@ Deno.serve(async (req) => {
 
     const sb = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      serviceRoleKey,
     );
 
     // Upsert servidores
@@ -289,21 +294,18 @@ Deno.serve(async (req) => {
       ];
       const mesNome = meses[parseInt(mesStr)] || competencia;
       try {
-        await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-          },
-          body: JSON.stringify({
+        await notifyPushFromCaller(
+          Deno.env.get("SUPABASE_URL")!,
+          serviceRoleKey,
+          {
             title: `💰 Folha de ${mesNome}/${anoStr} disponível`,
             body:
               `A folha de pagamento de ${mesNome} já está disponível com ${remCriadas} registros.`,
             topic: "geral",
             url: "/prefeitura",
             dedup_key: `folha_${competencia}`,
-          }),
-        });
+          },
+        );
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
         console.error("Push notification error:", message);

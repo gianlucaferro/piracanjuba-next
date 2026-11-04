@@ -1,0 +1,50 @@
+[
+  {
+    "function": "import-folha-manual",
+    "case": "public",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 4.131
+  },
+  {
+    "function": "import-folha-manual",
+    "case": "anon",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.882
+  },
+  {
+    "function": "import-folha-manual",
+    "case": "wrong-secret",
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "seconds": 0.201
+  },
+  {
+    "function": "import-folha-manual",
+    "case": "authorized-dry-run",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "seconds": 0.202
+  },
+  {
+    "function": "import-folha-manual",
+    "case": "options",
+    "status": 204,
+    "expected": 204,
+    "passed": true,
+    "seconds": 0.211
+  },
+  {
+    "function": "import-folha-manual",
+    "case": "get",
+    "status": 405,
+    "expected": 405,
+    "passed": true,
+    "seconds": 0.291
+  }
+]

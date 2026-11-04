@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "content_type": "application/octet-stream",
+  "bytes": 376261,
+  "sha256": "569c79466aa6526f9cff41b09ea31c25f7d80d9f8aa821b4f9fc015c686380af",
+  "prefix_hex": "45535a4950322e330000000400000100",
+  "path": "work/send-push-recovery/send-push.body"
+}

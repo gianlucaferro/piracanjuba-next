@@ -2,11 +2,12 @@
 
 // deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { preparePushCallerRequest, notifyPushFromCaller } from "../_shared/push-caller-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, x-cron-secret, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const BASE_URL = "https://piracanjuba.centi.com.br";
@@ -126,9 +127,9 @@ function parseLicitacoesHtml(html: string): ScrapedLicitacao[] {
 // ===================== MAIN HANDLER =====================
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const prepared = await preparePushCallerRequest(req, corsHeaders, 8 * 1024);
+  if ("response" in prepared) return prepared.response;
+  const { serviceRoleKey } = prepared;
 
   const reqUrl = new URL(req.url);
   const anoParam = reqUrl.searchParams.get("ano"); // optional: filter to single year
@@ -138,7 +139,7 @@ Deno.serve(async (req) => {
     reqUrl.searchParams.get("include_legacy_licitacoes") !== "1";
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const serviceKey = serviceRoleKey;
   const supabase = createClient(supabaseUrl, serviceKey);
 
   const { data: logEntry } = await supabase
@@ -243,13 +244,10 @@ Deno.serve(async (req) => {
     if (newContratos > 0) {
       const today = new Date().toISOString().slice(0, 10);
       try {
-        await fetch(`${supabaseUrl}/functions/v1/send-push`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-          },
-          body: JSON.stringify({
+        await notifyPushFromCaller(
+          supabaseUrl,
+          serviceRoleKey,
+          {
             title: `📋 ${newContratos} novo${
               newContratos > 1 ? "s" : ""
             } contrato${newContratos > 1 ? "s" : ""} da Prefeitura`,
@@ -261,8 +259,8 @@ Deno.serve(async (req) => {
             topic: "geral",
             url: "/prefeitura",
             dedup_key: `contratos_${today}`,
-          }),
-        });
+          },
+        );
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
         console.error("Push notification error:", message);
