@@ -21,6 +21,25 @@ const server = createServer((request, response) => {
     const search = url.searchParams.get("nome")?.replace(/^ilike\./, "").replaceAll("%", "").toLowerCase();
     if (search) data = data.filter((row) => row.nome.toLowerCase().includes(search));
   }
+  if (url.pathname === "/rest/v1/remuneracao_servidores") {
+    data = [
+      ...Array.from({ length: 32 }, (_, i) => ({ id: `camara-mensal-${String(i).padStart(2, "0")}`, servidor_id: `camara-${i}`, competencia: "2026-10", tipo_folha: "MENSAL", bruto: 3000, servidores: { nome: `CAM Servidor ${String(i + 1).padStart(4, "0")}`, cargo: "Assessor", orgao_tipo: "camara" } })),
+      { id: "camara-rescisao-00", servidor_id: "camara-0", competencia: "2026-11", tipo_folha: "RESCISÃO", bruto: 2407.68, servidores: { nome: "CAM Servidor 0001", cargo: "Assessor", orgao_tipo: "camara" } },
+      // O registro municipal mais recente não pode definir a competência da Câmara.
+      { id: "prefeitura-mensal-00", servidor_id: "prefeitura-0", competencia: "2026-12", tipo_folha: "MENSAL", bruto: 999999.99, servidores: { nome: "PREF Servidor 0001", cargo: "Professor", orgao_tipo: "prefeitura" } },
+    ];
+    for (const column of ["servidores.orgao_tipo", "servidor_id", "competencia", "tipo_folha"]) {
+      const filter = url.searchParams.get(column);
+      if (!filter) continue;
+      data = data.filter((row) => {
+        const value = column === "servidores.orgao_tipo" ? row.servidores.orgao_tipo : row[column];
+        if (filter.startsWith("eq.")) return value === filter.slice(3);
+        if (filter.startsWith("ilike.")) return value.toLowerCase() === filter.slice(6).toLowerCase();
+        if (filter.startsWith("in.(")) return filter.slice(4, -1).split(",").map((item) => item.replaceAll('"', "")).includes(value);
+        return true;
+      });
+    }
+  }
   if (url.pathname === "/rest/v1/inmet_clima_diario") {
     data = [
       { data: "2026-11-03", temperatura_media: null, temperatura_max: null, temperatura_min: null, precipitacao_mm: null, umidade_media: null, vento_velocidade_max: null },

@@ -47,7 +47,7 @@ export const fetchFolhaStats = unstable_cache(
     const { data } = await supabase
       .from("folha_servidor")
       .select("ano, mes, cargo, lotacao");
-    if (!data) return null;
+    if (!data?.length) return null;
     const ultimaRef = data
       .map((r) => ({ ano: r.ano, mes: r.mes }))
       .sort((a, b) => b.ano - a.ano || b.mes - a.mes)[0];

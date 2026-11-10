@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import VereadorCard from "@/components/VereadorCard";
+import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import { VereadorCardSkeleton } from "@/components/CardSkeleton";
 import { fetchVereadores } from "@/data/api";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,9 @@ export function VereadoresContent() {
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="container">
+        <div className="mb-6">
+          <ResumoFolhaCamara />
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="relative flex-1 max-w-sm">

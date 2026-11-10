@@ -27,6 +27,7 @@ import DiariasTab from "@/components/camara/DiariasTab";
 import ResolucoesTab from "@/components/camara/ResolucoesTab";
 import AtosTab from "@/components/camara/AtosTab";
 import TransmissaoCard from "@/components/camara/TransmissaoCard";
+import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 
 const tabs = [
@@ -125,6 +126,7 @@ function ServidoresCamaraTab() {
       <p className="text-sm text-muted-foreground">
         Assessores e demais servidores da Câmara Municipal de Piracanjuba. Dados obtidos do portal de transparência legislativo.
       </p>
+      <ResumoFolhaCamara />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Buscar servidor por nome..." value={search}
