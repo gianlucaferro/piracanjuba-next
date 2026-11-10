@@ -1,0 +1,24 @@
+{
+  "servidores": {
+    "before": 1844,
+    "after": 1844,
+    "new": 0,
+    "removed": 0,
+    "changed_business_fields": 0
+  },
+  "remuneracao_servidores": {
+    "before": 4419,
+    "after": 4419,
+    "new": 0,
+    "removed": 0,
+    "changed_business_fields": 0,
+    "changes_by_competencia": {}
+  },
+  "prefeitura_folha_nucleogov": {
+    "before": 4323,
+    "after": 4323,
+    "new": 0,
+    "removed": 0,
+    "changed_business_fields": 0
+  }
+}

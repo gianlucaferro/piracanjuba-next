@@ -1,0 +1,491 @@
+{
+  "function": "sync-folha-prefeitura-nucleogov",
+  "status": 200,
+  "seconds": 9.626,
+  "body": {
+    "success": true,
+    "status": "success",
+    "dataset": "folha",
+    "source": "nucleogov",
+    "dry_run": true,
+    "requested_competencia": "2026-11",
+    "reviewed_competencias": [
+      "2026-11",
+      "2026-10",
+      "2026-09",
+      "2026-08"
+    ],
+    "scope": "2026-10",
+    "fallback_used": true,
+    "fetched": 956,
+    "source_total": 956,
+    "complete": true,
+    "writes": {
+      "canonical": 0,
+      "compatibility": 0,
+      "servidores": 0,
+      "discarded": 0
+    },
+    "by_orgao": [
+      {
+        "orgao_id": 22,
+        "orgao_nome": "PODER EXECUTIVO PIRACANJUBA",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 23,
+        "orgao_nome": "FUNDO DE MANUTENCAO E DESENVOLVIMENTO DA EDUCACAO BASICA",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 44,
+        "orgao_nome": "PIRACANJUBA - FUNPREPI",
+        "fetched": 511,
+        "source_total": 511,
+        "pages_fetched": 3
+      },
+      {
+        "orgao_id": 55,
+        "orgao_nome": "PIRACANJUBA - F M S",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 56,
+        "orgao_nome": "FUNDO MUNICIPAL DO MEIO AMBIENTE",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 66,
+        "orgao_nome": " PIRACANJUBA - FMCA",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 67,
+        "orgao_nome": "PIRACANJUBA - FMAS",
+        "fetched": 119,
+        "source_total": 119,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 68,
+        "orgao_nome": "FMC - FUNDO MUNICIPAL DA CULTURA",
+        "fetched": 9,
+        "source_total": 9,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 70,
+        "orgao_nome": "FMLET - FUNDO MUNIC. LAZER, ESPORTE E TURISMO",
+        "fetched": 8,
+        "source_total": 8,
+        "pages_fetched": 1
+      },
+      {
+        "orgao_id": 71,
+        "orgao_nome": " FME - FUNDO MUNICIPAL DE EDUCAÇÃO",
+        "fetched": 309,
+        "source_total": 309,
+        "pages_fetched": 2
+      },
+      {
+        "orgao_id": 72,
+        "orgao_nome": "FUNDO MUNICIPAL DE DIREITOS DO IDOSO",
+        "fetched": 0,
+        "source_total": 0,
+        "pages_fetched": 1
+      }
+    ],
+    "by_competencia": [
+      {
+        "competencia": "2026-11",
+        "fetched": 0,
+        "source_total": 0,
+        "source_complete": true,
+        "pages_fetched": 11,
+        "by_orgao": [
+          {
+            "orgao_id": 22,
+            "orgao_nome": "PODER EXECUTIVO PIRACANJUBA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 23,
+            "orgao_nome": "FUNDO DE MANUTENCAO E DESENVOLVIMENTO DA EDUCACAO BASICA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 44,
+            "orgao_nome": "PIRACANJUBA - FUNPREPI",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 55,
+            "orgao_nome": "PIRACANJUBA - F M S",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 56,
+            "orgao_nome": "FUNDO MUNICIPAL DO MEIO AMBIENTE",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 66,
+            "orgao_nome": " PIRACANJUBA - FMCA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 67,
+            "orgao_nome": "PIRACANJUBA - FMAS",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 68,
+            "orgao_nome": "FMC - FUNDO MUNICIPAL DA CULTURA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 70,
+            "orgao_nome": "FMLET - FUNDO MUNIC. LAZER, ESPORTE E TURISMO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 71,
+            "orgao_nome": " FME - FUNDO MUNICIPAL DE EDUCAÇÃO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 72,
+            "orgao_nome": "FUNDO MUNICIPAL DE DIREITOS DO IDOSO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          }
+        ],
+        "status": "success",
+        "writes": {
+          "canonical": 0,
+          "compatibility": 0,
+          "servidores": 0,
+          "discarded": 0
+        }
+      },
+      {
+        "competencia": "2026-10",
+        "fetched": 956,
+        "source_total": 956,
+        "source_complete": true,
+        "pages_fetched": 14,
+        "by_orgao": [
+          {
+            "orgao_id": 22,
+            "orgao_nome": "PODER EXECUTIVO PIRACANJUBA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 23,
+            "orgao_nome": "FUNDO DE MANUTENCAO E DESENVOLVIMENTO DA EDUCACAO BASICA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 44,
+            "orgao_nome": "PIRACANJUBA - FUNPREPI",
+            "fetched": 511,
+            "source_total": 511,
+            "pages_fetched": 3
+          },
+          {
+            "orgao_id": 55,
+            "orgao_nome": "PIRACANJUBA - F M S",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 56,
+            "orgao_nome": "FUNDO MUNICIPAL DO MEIO AMBIENTE",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 66,
+            "orgao_nome": " PIRACANJUBA - FMCA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 67,
+            "orgao_nome": "PIRACANJUBA - FMAS",
+            "fetched": 119,
+            "source_total": 119,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 68,
+            "orgao_nome": "FMC - FUNDO MUNICIPAL DA CULTURA",
+            "fetched": 9,
+            "source_total": 9,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 70,
+            "orgao_nome": "FMLET - FUNDO MUNIC. LAZER, ESPORTE E TURISMO",
+            "fetched": 8,
+            "source_total": 8,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 71,
+            "orgao_nome": " FME - FUNDO MUNICIPAL DE EDUCAÇÃO",
+            "fetched": 309,
+            "source_total": 309,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 72,
+            "orgao_nome": "FUNDO MUNICIPAL DE DIREITOS DO IDOSO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          }
+        ],
+        "status": "success",
+        "writes": {
+          "canonical": 0,
+          "compatibility": 0,
+          "servidores": 0,
+          "discarded": 0
+        }
+      },
+      {
+        "competencia": "2026-09",
+        "fetched": 1700,
+        "source_total": 1700,
+        "source_complete": true,
+        "pages_fetched": 16,
+        "by_orgao": [
+          {
+            "orgao_id": 22,
+            "orgao_nome": "PODER EXECUTIVO PIRACANJUBA",
+            "fetched": 252,
+            "source_total": 252,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 23,
+            "orgao_nome": "FUNDO DE MANUTENCAO E DESENVOLVIMENTO DA EDUCACAO BASICA",
+            "fetched": 101,
+            "source_total": 101,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 44,
+            "orgao_nome": "PIRACANJUBA - FUNPREPI",
+            "fetched": 523,
+            "source_total": 523,
+            "pages_fetched": 3
+          },
+          {
+            "orgao_id": 55,
+            "orgao_nome": "PIRACANJUBA - F M S",
+            "fetched": 372,
+            "source_total": 372,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 56,
+            "orgao_nome": "FUNDO MUNICIPAL DO MEIO AMBIENTE",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 66,
+            "orgao_nome": " PIRACANJUBA - FMCA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 67,
+            "orgao_nome": "PIRACANJUBA - FMAS",
+            "fetched": 117,
+            "source_total": 117,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 68,
+            "orgao_nome": "FMC - FUNDO MUNICIPAL DA CULTURA",
+            "fetched": 10,
+            "source_total": 10,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 70,
+            "orgao_nome": "FMLET - FUNDO MUNIC. LAZER, ESPORTE E TURISMO",
+            "fetched": 8,
+            "source_total": 8,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 71,
+            "orgao_nome": " FME - FUNDO MUNICIPAL DE EDUCAÇÃO",
+            "fetched": 317,
+            "source_total": 317,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 72,
+            "orgao_nome": "FUNDO MUNICIPAL DE DIREITOS DO IDOSO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          }
+        ],
+        "status": "success",
+        "writes": {
+          "canonical": 0,
+          "compatibility": 0,
+          "servidores": 0,
+          "discarded": 0
+        }
+      },
+      {
+        "competencia": "2026-08",
+        "fetched": 1654,
+        "source_total": 1654,
+        "source_complete": true,
+        "pages_fetched": 15,
+        "by_orgao": [
+          {
+            "orgao_id": 22,
+            "orgao_nome": "PODER EXECUTIVO PIRACANJUBA",
+            "fetched": 225,
+            "source_total": 225,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 23,
+            "orgao_nome": "FUNDO DE MANUTENCAO E DESENVOLVIMENTO DA EDUCACAO BASICA",
+            "fetched": 102,
+            "source_total": 102,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 44,
+            "orgao_nome": "PIRACANJUBA - FUNPREPI",
+            "fetched": 514,
+            "source_total": 514,
+            "pages_fetched": 3
+          },
+          {
+            "orgao_id": 55,
+            "orgao_nome": "PIRACANJUBA - F M S",
+            "fetched": 373,
+            "source_total": 373,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 56,
+            "orgao_nome": "FUNDO MUNICIPAL DO MEIO AMBIENTE",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 66,
+            "orgao_nome": " PIRACANJUBA - FMCA",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 67,
+            "orgao_nome": "PIRACANJUBA - FMAS",
+            "fetched": 105,
+            "source_total": 105,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 68,
+            "orgao_nome": "FMC - FUNDO MUNICIPAL DA CULTURA",
+            "fetched": 9,
+            "source_total": 9,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 70,
+            "orgao_nome": "FMLET - FUNDO MUNIC. LAZER, ESPORTE E TURISMO",
+            "fetched": 9,
+            "source_total": 9,
+            "pages_fetched": 1
+          },
+          {
+            "orgao_id": 71,
+            "orgao_nome": " FME - FUNDO MUNICIPAL DE EDUCAÇÃO",
+            "fetched": 317,
+            "source_total": 317,
+            "pages_fetched": 2
+          },
+          {
+            "orgao_id": 72,
+            "orgao_nome": "FUNDO MUNICIPAL DE DIREITOS DO IDOSO",
+            "fetched": 0,
+            "source_total": 0,
+            "pages_fetched": 1
+          }
+        ],
+        "status": "success",
+        "writes": {
+          "canonical": 0,
+          "compatibility": 0,
+          "servidores": 0,
+          "discarded": 0
+        }
+      }
+    ],
+    "window_fetched": 4310,
+    "window_writes": {
+      "canonical": 0,
+      "compatibility": 0,
+      "servidores": 0,
+      "discarded": 0
+    },
+    "duration_ms": 8405
+  }
+}

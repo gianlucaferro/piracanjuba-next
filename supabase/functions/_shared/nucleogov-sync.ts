@@ -14,10 +14,11 @@ import {
   type ContratosOrgaoCoverage,
   fetchContratosPrefeitura,
 } from "./nucleogov-contratos.ts";
+import { fetchFolhaPrefeituraWindow } from "./nucleogov-folha.ts";
 import {
-  fetchFolhaPrefeitura,
-  type FolhaOrgaoCoverage,
-} from "./nucleogov-folha.ts";
+  folhaCompetencias,
+  preserveServidorUpdates,
+} from "./folha-retroativa.ts";
 import {
   type JsonRecord,
   normalizeAditivo,
@@ -127,6 +128,7 @@ async function upsertChunks(
   rows: JsonRecord[],
   onConflict: string,
   chunkSize = 100,
+  onWritten?: (count: number) => void,
 ): Promise<number> {
   const conflictFields = onConflict.split(",").map((field) => field.trim());
   const uniqueRows = new Map<string, JsonRecord>();
@@ -149,6 +151,7 @@ async function upsertChunks(
       );
     }
     written += chunk.length;
+    onWritten?.(chunk.length);
   }
   return written;
 }
@@ -219,12 +222,12 @@ function ensureUsableResult(
 }
 
 async function syncPagedDataset(
-  dataset: "contratos" | "aditivos" | "fiscais" | "folha" | "atos",
+  dataset: "contratos" | "aditivos" | "fiscais" | "atos",
   body: JsonRecord,
 ): Promise<
   CentiListResult<JsonRecord> & {
     scope: string;
-    by_orgao?: FolhaOrgaoCoverage[] | ContratosOrgaoCoverage[];
+    by_orgao?: ContratosOrgaoCoverage[];
   }
 > {
   const config = DATASET_CONFIG[dataset];
@@ -251,23 +254,6 @@ async function syncPagedDataset(
       dataset,
       year: body.allYears === true ? undefined : Number(extra.ano),
       allYears: body.allYears === true,
-      pageSize,
-      maxPages,
-    });
-  }
-
-  if (dataset === "folha") {
-    const requestedYear = body.year === undefined
-      ? currentYear()
-      : boundedInteger(body.year, currentYear(), 2000, currentYear());
-    const requestedMonth = body.month === undefined
-      ? new Date().getUTCMonth() + 1
-      : boundedInteger(body.month, 1, 1, 12);
-
-    return await fetchFolhaPrefeitura({
-      year: requestedYear,
-      month: requestedMonth,
-      forced: body.month !== undefined,
       pageSize,
       maxPages,
     });
@@ -471,38 +457,82 @@ async function writeAtos(supabase: SupabaseClient, raw: JsonRecord[]) {
   return { canonical, compatibility, discarded: raw.length - rows.length };
 }
 
-async function writeFolha(supabase: SupabaseClient, raw: JsonRecord[]) {
+type FolhaWrites = {
+  canonical: number;
+  compatibility: number;
+  servidores: number;
+  discarded: number;
+};
+type FolhaProgress = { step: string; writes: FolhaWrites };
+const emptyFolhaWrites = (): FolhaWrites => ({
+  canonical: 0,
+  compatibility: 0,
+  servidores: 0,
+  discarded: 0,
+});
+
+async function writeFolha(
+  supabase: SupabaseClient,
+  raw: JsonRecord[],
+  competencia: string,
+  cadastroCompetencias: Map<number, string>,
+  progress: FolhaProgress,
+): Promise<FolhaWrites> {
   const rows = raw.map(normalizeFolha).filter((row) => row !== null);
-  const canonical = await upsertChunks(
+  progress.writes.discarded = raw.length - rows.length;
+  if (progress.writes.discarded > 0) {
+    throw new Error(
+      "folha: registro sem normalizacao, competencia nao gravada",
+    );
+  }
+  const servidores = rows
+    .filter((row) => cadastroCompetencias.get(row.portal_id) === competencia)
+    .map((row) => ({
+      nucleogov_portal_id: row.portal_id,
+      origem_chave: `prefeitura:nucleogov:${row.portal_id}`,
+      nome: row.nome,
+      cargo: row.cargo,
+      orgao_tipo: "prefeitura",
+      fonte_url: row.fonte_url,
+      matricula: row.matricula,
+      lotacao: row.lotacao,
+      data_admissao: row.data_admissao,
+      tipo_admissao: row.tipo_admissao,
+      decreto_admissao: row.decreto,
+      carga_horaria: row.carga_horaria,
+      situacao_funcional: row.situacao,
+      updated_at: row.updated_at,
+    }));
+  progress.step = "cadastro_guard";
+  const currentServidores = await preserveServidorUpdates(
+    supabase,
+    servidores,
+    competencia,
+  );
+  progress.step = "canonical";
+  await upsertChunks(
     supabase,
     "prefeitura_folha_nucleogov",
     rows,
     "chave",
+    100,
+    (count) => {
+      progress.writes.canonical += count;
+    },
   );
-
-  const servidores = rows.map((row) => ({
-    nucleogov_portal_id: row.portal_id,
-    origem_chave: `prefeitura:nucleogov:${row.portal_id}`,
-    nome: row.nome,
-    cargo: row.cargo,
-    orgao_tipo: "prefeitura",
-    fonte_url: row.fonte_url,
-    matricula: row.matricula,
-    lotacao: row.lotacao,
-    data_admissao: row.data_admissao,
-    tipo_admissao: row.tipo_admissao,
-    decreto_admissao: row.decreto,
-    carga_horaria: row.carga_horaria,
-    situacao_funcional: row.situacao,
-    updated_at: row.updated_at,
-  }));
+  progress.step = "servidores";
   await upsertChunks(
     supabase,
     "servidores",
-    servidores,
+    currentServidores,
     "origem_chave",
+    100,
+    (count) => {
+      progress.writes.servidores += count;
+    },
   );
 
+  progress.step = "identidades";
   const servidorIds = new Map<number, string>();
   const portalIds = [...new Set(rows.map((row) => row.portal_id))];
   for (let index = 0; index < portalIds.length; index += 100) {
@@ -513,28 +543,263 @@ async function writeFolha(supabase: SupabaseClient, raw: JsonRecord[]) {
       .in("nucleogov_portal_id", portalIds.slice(index, index + 100));
     if (error) throw new Error(`mapa folha/servidores: ${error.message}`);
     for (const servidor of data ?? []) {
+      if (servidorIds.has(servidor.nucleogov_portal_id)) {
+        throw new Error("folha: identidade de servidor duplicada");
+      }
       servidorIds.set(servidor.nucleogov_portal_id, servidor.id);
     }
   }
+  if (portalIds.some((id) => !servidorIds.has(id))) {
+    throw new Error("folha: identidade de servidor ausente");
+  }
 
-  const remuneracoes = rows
-    .filter((row) => servidorIds.has(row.portal_id))
-    .map((row) => ({
-      servidor_id: servidorIds.get(row.portal_id)!,
-      competencia: `${row.ano}-${String(row.mes).padStart(2, "0")}`,
-      bruto: row.total_proventos,
-      liquido: row.total_liquido,
-      tipo_folha: row.tipo_folha ?? "NORMAL",
-      fonte_url: row.fonte_url,
-      updated_at: row.updated_at,
-    }));
-  const compatibility = await upsertChunks(
+  progress.step = "remuneracoes";
+  const remuneracoes = rows.map((row) => ({
+    servidor_id: servidorIds.get(row.portal_id)!,
+    competencia,
+    bruto: row.total_proventos,
+    liquido: row.total_liquido,
+    tipo_folha: row.tipo_folha ?? "NORMAL",
+    fonte_url: row.fonte_url,
+    updated_at: row.updated_at,
+  }));
+  await upsertChunks(
     supabase,
     "remuneracao_servidores",
     remuneracoes,
     "servidor_id,competencia,tipo_folha",
+    100,
+    (count) => {
+      progress.writes.compatibility += count;
+    },
   );
-  return { canonical, compatibility, discarded: raw.length - rows.length };
+  return progress.writes;
+}
+
+async function handleFolha(
+  req: Request,
+  supabase: SupabaseClient,
+  functionName: string,
+): Promise<Response> {
+  const startedAt = Date.now();
+  let body: JsonRecord;
+  let year: number;
+  let month: number;
+  let forced: boolean;
+  let dryRun: boolean;
+  let pageSize: number;
+  let maxPages: number;
+  try {
+    const text = req.method === "POST" ? await req.text() : "";
+    const parsed: unknown = text.trim() ? JSON.parse(text) : {};
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("Corpo deve ser um objeto JSON");
+    }
+    body = parsed as JsonRecord;
+    const hasYear = Object.hasOwn(body, "year");
+    const hasMonth = Object.hasOwn(body, "month");
+    if (hasYear !== hasMonth) throw new Error("Informe year e month juntos");
+    forced = hasYear;
+    const now = new Date();
+    const strictInteger = (value: unknown, min: number, max: number) => {
+      if (
+        (typeof value !== "number" && typeof value !== "string") ||
+        !/^\d+$/.test(String(value)) ||
+        !Number.isSafeInteger(Number(value)) || Number(value) < min ||
+        Number(value) > max
+      ) throw new Error("Parametro inteiro invalido na folha");
+      return Number(value);
+    };
+    year = forced
+      ? strictInteger(body.year, 2000, now.getUTCFullYear())
+      : now.getUTCFullYear();
+    month = forced ? strictInteger(body.month, 1, 12) : now.getUTCMonth() + 1;
+    if (year === now.getUTCFullYear() && month > now.getUTCMonth() + 1) {
+      throw new Error("Competencia futura nao permitida");
+    }
+    if (body.dry_run !== undefined && typeof body.dry_run !== "boolean") {
+      throw new Error("dry_run deve ser booleano");
+    }
+    const queryDryRun = new URL(req.url).searchParams.get("dry_run");
+    if (
+      queryDryRun !== null && queryDryRun !== "true" && queryDryRun !== "false"
+    ) {
+      throw new Error("dry_run na URL deve ser true ou false");
+    }
+    if (
+      queryDryRun !== null && body.dry_run !== undefined &&
+      body.dry_run !== (queryDryRun === "true")
+    ) {
+      throw new Error("dry_run divergente entre URL e JSON");
+    }
+    dryRun = body.dry_run === true || queryDryRun === "true";
+    pageSize = body.pageSize === undefined
+      ? 250
+      : strictInteger(body.pageSize, 25, 500);
+    maxPages = body.maxPages === undefined
+      ? 10
+      : strictInteger(body.maxPages, 1, 40);
+  } catch (error) {
+    return jsonResponse({ success: false, error: String(error) }, 400);
+  }
+
+  const periods = folhaCompetencias(year, month, forced);
+  const requestedCompetencia = periods[0].competencia;
+  let logId: string | null = null;
+  const byCompetencia: JsonRecord[] = [];
+  try {
+    if (!dryRun) {
+      logId = await startLog(supabase, functionName, {
+        ...body,
+        requested_competencia: requestedCompetencia,
+        reviewed_competencias: periods.map((period) => period.competencia),
+      });
+    }
+    const sources = await fetchFolhaPrefeituraWindow({
+      year,
+      month,
+      forced,
+      pageSize,
+      maxPages,
+    });
+    // Mesmo sem remuneracao persistida, a coleta mais recente tem prioridade cadastral.
+    const cadastroCompetencias = new Map<number, string>();
+    for (const entry of sources) {
+      for (const row of entry.source?.dados ?? []) {
+        const id = Number(row.id);
+        if (!cadastroCompetencias.has(id)) {
+          cadastroCompetencias.set(id, entry.competencia);
+        }
+      }
+    }
+    for (const entry of sources) {
+      const progress: FolhaProgress = {
+        step: "source",
+        writes: emptyFolhaWrites(),
+      };
+      const source = entry.source;
+      if (!source) {
+        byCompetencia.push({
+          competencia: entry.competencia,
+          status: "error",
+          step: "source",
+          error: entry.error,
+          writes: progress.writes,
+        });
+        continue;
+      }
+      const details = {
+        competencia: entry.competencia,
+        fetched: source.dados.length,
+        source_total: source.total,
+        source_complete: source.complete,
+        pages_fetched: source.pagesFetched,
+        by_orgao: source.by_orgao,
+      };
+      try {
+        if (!source.complete || source.dados.length !== source.total) {
+          throw new Error("folha: coleta incompleta, competencia nao gravada");
+        }
+        if (!dryRun) {
+          await writeFolha(
+            supabase,
+            source.dados,
+            entry.competencia,
+            cadastroCompetencias,
+            progress,
+          );
+          progress.step = "state";
+          await saveState(
+            supabase,
+            "folha",
+            entry.competencia,
+            source.dados.length,
+            source.total,
+            true,
+          );
+        }
+        byCompetencia.push({
+          ...details,
+          status: "success",
+          writes: progress.writes,
+        });
+      } catch (error) {
+        byCompetencia.push({
+          ...details,
+          status: "error",
+          step: progress.step,
+          error: error instanceof Error ? error.message : String(error),
+          writes: progress.writes,
+        });
+      }
+    }
+    const failures = byCompetencia.filter((entry) => entry.status === "error");
+    const complete = failures.length === 0;
+    const status = complete
+      ? "success"
+      : failures.length === periods.length
+      ? "error"
+      : "partial";
+    const latest = sources.find((entry) =>
+      (entry.source?.dados.length ?? 0) > 0
+    ) ?? sources[0];
+    const latestDetails = byCompetencia.find((entry) =>
+      entry.competencia === latest.competencia
+    );
+    const windowWrites = emptyFolhaWrites();
+    for (const entry of byCompetencia) {
+      const writes = entry.writes as FolhaWrites;
+      for (const key of Object.keys(windowWrites) as (keyof FolhaWrites)[]) {
+        windowWrites[key] += writes[key];
+      }
+    }
+    const details = {
+      dataset: "folha",
+      source: "nucleogov",
+      dry_run: dryRun,
+      requested_competencia: requestedCompetencia,
+      reviewed_competencias: periods.map((period) => period.competencia),
+      scope: latest.competencia,
+      fallback_used: latest.competencia !== requestedCompetencia,
+      fetched: latest.source?.dados.length ?? 0,
+      source_total: latest.source?.total ?? null,
+      complete,
+      writes: latestDetails?.writes ?? emptyFolhaWrites(),
+      by_orgao: latest.source?.by_orgao ?? [],
+      by_competencia: byCompetencia,
+      window_fetched: sources.reduce(
+        (sum, entry) => sum + (entry.source?.dados.length ?? 0),
+        0,
+      ),
+      window_writes: windowWrites,
+      duration_ms: Date.now() - startedAt,
+    };
+    if (logId) {
+      const { error } = await supabase.from("sync_log").update({
+        status,
+        detalhes: details,
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
+      if (error) throw new Error(`sync_log finish: ${error.message}`);
+    }
+    return jsonResponse(
+      { success: complete, status, ...details },
+      complete ? 200 : 500,
+    );
+  } catch (error) {
+    const details = {
+      dataset: "folha",
+      source: "nucleogov",
+      dry_run: dryRun,
+      requested_competencia: requestedCompetencia,
+      reviewed_competencias: periods.map((period) => period.competencia),
+      by_competencia: byCompetencia,
+      error: error instanceof Error ? error.message : String(error),
+      duration_ms: Date.now() - startedAt,
+    };
+    if (logId) await finishLog(supabase, logId, "error", details);
+    return jsonResponse({ success: false, status: "error", ...details }, 500);
+  }
 }
 
 function formatDateBR(date: Date): string {
@@ -682,6 +947,9 @@ export function createNucleoGovSyncHandler(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+    if (dataset === "folha") {
+      return await handleFolha(req, supabase, functionName);
+    }
     const startedAt = Date.now();
     let logId: string | null = null;
     let scope: JsonRecord = {};
@@ -756,9 +1024,6 @@ export function createNucleoGovSyncHandler(
             break;
           case "fiscais":
             writes = await writeFiscais(supabase, result.dados);
-            break;
-          case "folha":
-            writes = await writeFolha(supabase, result.dados);
             break;
           case "atos":
             writes = await writeAtos(supabase, result.dados);

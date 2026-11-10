@@ -10,10 +10,12 @@ import {
   assertPersistenceSucceeded,
   mapIdsByOrigin,
 } from "../_shared/persistence-guards.ts";
+import { CENTI_BASE_CAMARA, centiCall } from "../_shared/centi-client.ts";
+
 import {
-  CENTI_BASE_CAMARA,
-  centiListAllWithMeta,
-} from "../_shared/centi-client.ts";
+  folhaCompetencias,
+  preserveServidorUpdates,
+} from "../_shared/folha-retroativa.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -111,338 +113,482 @@ function parsePortalRow(row: JsonRecord): ScrapedServidor | null {
   };
 }
 
-async function fetchFolha(
-  mes: number,
-  ano: number,
-): Promise<{
+type Competencia = { ano: number; mes: number; competencia: string };
+type FolhaSource = Competencia & {
   dados: ScrapedServidor[];
-  total: number | null;
+  total: number;
   complete: boolean;
-}> {
-  const result = await centiListAllWithMeta<JsonRecord>(
-    "/cidadao/transparencia/servidores_cnt",
-    "servidores_cnt/listar",
-    {
-      base: CENTI_BASE_CAMARA,
-      extra: { ano: String(ano), mes: String(mes) },
-      pageSize: 100,
-      maxPages: 30,
-    },
-  );
-  const dados = result.dados
-    .map(parsePortalRow)
-    .filter((row): row is ScrapedServidor => row !== null);
-  if (result.dados.length > 0 && dados.length !== result.dados.length) {
-    throw new Error(
-      `Folha Câmara descartou ${
-        result.dados.length - dados.length
-      } registros sem identidade`,
-    );
+};
+type MonthResult = Competencia & {
+  status: "pending" | "success" | "dry_run" | "error";
+  stage: "collection" | "persistence" | "complete";
+  source_total: number | null;
+  source_complete: boolean;
+  registros_folha: number;
+  servidores: number;
+  servidores_atualizados: number;
+  remuneracoes: number;
+  error?: string;
+};
+
+function asRecord(value: unknown): JsonRecord {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Folha Câmara: resposta da fonte inválida");
   }
-  return {
-    dados,
-    total: result.total,
-    complete: result.complete,
-  };
+  return value as JsonRecord;
+}
+
+async function fetchFolha(mes: number, ano: number) {
+  const dados: ScrapedServidor[] = [];
+  const identities = new Set<string>();
+  let total: number | null = null;
+  const pageSize = 100;
+  for (let page = 0; page < 30; page++) {
+    const response = await centiCall(
+      "/cidadao/transparencia/servidores_cnt",
+      [{
+        acao: "servidores_cnt/listar",
+        extra: { ano: String(ano), mes: String(mes) },
+        limit: { offset: page * pageSize, pageSize },
+      }],
+      CENTI_BASE_CAMARA,
+      { timeoutMs: 20_000 },
+    );
+    const result = asRecord(Object.values(response)[0]);
+    if (result.error || result.erro || result.success === false) {
+      throw new Error("Folha Câmara: fonte informou erro na consulta");
+    }
+    const reported = result.total === null || result.total === undefined ||
+        result.total === ""
+      ? NaN
+      : Number(result.total);
+    if (
+      !Number.isSafeInteger(reported) || reported < 0 ||
+      !Array.isArray(result.dados)
+    ) {
+      throw new Error("Folha Câmara: resposta sem total ou dados válidos");
+    }
+    if (total !== null && total !== reported) {
+      throw new Error("Folha Câmara: total mudou durante a paginação");
+    }
+    total = reported;
+    for (const value of result.dados) {
+      const row = asRecord(value);
+      if (Number(row.ano) !== ano || Number(row.mes) !== mes) {
+        throw new Error(
+          "Folha Câmara: registro fora da competência solicitada",
+        );
+      }
+      const parsed = parsePortalRow(row);
+      if (!parsed) throw new Error("Folha Câmara: registro sem identidade");
+      const identity = JSON.stringify([
+        parsed.origemChave,
+        parsed.tipoFolha,
+        row.tipo_movimentacao ?? "",
+      ]);
+      if (identities.has(identity)) {
+        throw new Error("Folha Câmara: registro repetido entre páginas");
+      }
+      identities.add(identity);
+      dados.push(parsed);
+    }
+    if (dados.length > total) {
+      throw new Error("Folha Câmara: registros excedem o total informado");
+    }
+    if (dados.length === total) return { dados, total, complete: true };
+    if (result.dados.length < pageSize) break;
+  }
+  throw new Error(
+    `Folha Câmara: paginação incompleta ${dados.length}/${total ?? "?"}`,
+  );
 }
 
 function currentMonth(now = new Date()) {
-  const date = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
-  );
-  return {
-    ano: date.getUTCFullYear(),
-    mes: date.getUTCMonth() + 1,
-  };
+  return { ano: now.getUTCFullYear(), mes: now.getUTCMonth() + 1 };
 }
 
-async function fetchMostRecentFolha(
-  requestedYear: number,
-  requestedMonth: number,
-  forced: boolean,
-) {
-  const attempts = forced ? 1 : 4;
-  for (let fallback = 0; fallback < attempts; fallback++) {
-    const date = new Date(Date.UTC(
-      requestedYear,
-      requestedMonth - 1 - fallback,
-      1,
-    ));
-    const ano = date.getUTCFullYear();
-    const mes = date.getUTCMonth() + 1;
-    const result = await fetchFolha(mes, ano);
-    if (result.dados.length > 0 || forced && result.total === 0) {
-      return {
-        ...result,
-        ano,
-        mes,
-        competencia: `${ano}-${String(mes).padStart(2, "0")}`,
-      };
+function uniqueRemuneracoes(rows: ScrapedServidor[]): ScrapedServidor[] {
+  const unique = new Map<string, ScrapedServidor>();
+  for (const row of rows) {
+    const key = `${row.origemChave}\u0000${row.tipoFolha}`;
+    const previous = unique.get(key);
+    if (!previous || previous.bruto === null && row.bruto !== null) {
+      unique.set(key, row);
     }
   }
-  throw new Error("Nenhuma competência recente da Câmara encontrada");
+  return [...unique.values()];
 }
 
-Deno.serve(async (req) => {
+function uniqueServidores(rows: ScrapedServidor[]): ScrapedServidor[] {
+  const unique = new Map<string, ScrapedServidor>();
+  for (const row of rows) {
+    const previous = unique.get(row.origemChave);
+    if (!previous || !previous.cargo && row.cargo) {
+      unique.set(row.origemChave, row);
+    }
+  }
+  return [...unique.values()];
+}
+
+async function fetchFolhaWindow(
+  year: number,
+  month: number,
+  explicit: boolean,
+) {
+  const sources: FolhaSource[] = [];
+  const results: MonthResult[] = [];
+  for (const period of folhaCompetencias(year, month, explicit)) {
+    const result: MonthResult = {
+      ...period,
+      status: "pending",
+      stage: "collection",
+      source_total: null,
+      source_complete: false,
+      registros_folha: 0,
+      servidores: 0,
+      servidores_atualizados: 0,
+      remuneracoes: 0,
+    };
+    results.push(result);
+    try {
+      const source = await fetchFolha(period.mes, period.ano);
+      if (!source.complete) throw new Error("Folha Câmara: coleta incompleta");
+      const dados = uniqueRemuneracoes(source.dados);
+      sources.push({ ...source, ...period, dados });
+      Object.assign(result, {
+        source_total: source.total,
+        source_complete: true,
+        registros_folha: dados.length,
+        servidores: uniqueServidores(dados).length,
+      });
+    } catch (error) {
+      result.status = "error";
+      result.error = error instanceof Error ? error.message : String(error);
+    }
+  }
+  return { sources, results };
+}
+
+function responseJson(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function dryRunFlag(value: unknown): boolean {
+  if (
+    value === undefined || value === null || value === false ||
+    value === "false" || value === "0"
+  ) return false;
+  if (value === true || value === "true" || value === "1") return true;
+  throw new Error("dry_run deve ser true ou false");
+}
+
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
   if (!checkCentiAuth(req)) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Unauthorized" }),
-      {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return responseJson({ success: false, error: "Unauthorized" }, 401);
   }
 
+  const startedAt = Date.now();
   const url = new URL(req.url);
   const mesParam = url.searchParams.get("mes");
   const anoParam = url.searchParams.get("ano");
-  if ((mesParam && !anoParam) || (!mesParam && anoParam)) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Informe mes e ano juntos" }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
+  const forced = mesParam !== null || anoParam !== null;
+  const fallback = currentMonth();
+  const requestedMonth = mesParam !== null ? Number(mesParam) : fallback.mes;
+  const requestedYear = anoParam !== null ? Number(anoParam) : fallback.ano;
+  if (
+    forced &&
+    (mesParam === null || anoParam === null || !mesParam.trim() ||
+      !anoParam.trim())
+  ) {
+    return responseJson(
+      { success: false, error: "Informe mes e ano juntos" },
+      400,
     );
   }
-  const fallback = currentMonth();
-  const requestedMonth = mesParam
-    ? Number.parseInt(mesParam, 10)
-    : fallback.mes;
-  const requestedYear = anoParam ? Number.parseInt(anoParam, 10) : fallback.ano;
   if (
     !Number.isInteger(requestedMonth) || requestedMonth < 1 ||
-    requestedMonth > 12 || !Number.isInteger(requestedYear) ||
-    requestedYear < 2000 || requestedYear > new Date().getUTCFullYear()
+    requestedMonth > 12 ||
+    !Number.isInteger(requestedYear) || requestedYear < 2000 ||
+    requestedYear > fallback.ano ||
+    requestedYear === fallback.ano && requestedMonth > fallback.mes
   ) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Competência inválida" }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return responseJson({ success: false, error: "Competência inválida" }, 400);
   }
-  const forced = Boolean(mesParam && anoParam);
+  let dryRun: boolean;
+  try {
+    const text = req.method === "POST" ? await req.text() : "";
+    const body = text.trim() ? asRecord(JSON.parse(text)) : {};
+    const queryFlag = url.searchParams.get("dry_run");
+    if (body.dry_run !== undefined && typeof body.dry_run !== "boolean") {
+      throw new Error("dry_run JSON deve ser booleano");
+    }
+    if (
+      queryFlag !== null && body.dry_run !== undefined &&
+      dryRunFlag(queryFlag) !== body.dry_run
+    ) {
+      throw new Error("dry_run divergente na URL e no corpo");
+    }
+    dryRun = dryRunFlag(queryFlag ?? body.dry_run);
+  } catch {
+    return responseJson({
+      success: false,
+      error: "Corpo JSON ou dry_run inválido",
+    }, 400);
+  }
   const requestedCompetencia = `${requestedYear}-${
     String(requestedMonth).padStart(2, "0")
   }`;
-
-  const sb = createClient(
+  // Simulação não instancia cliente nem escreve logs, cadastros ou remunerações.
+  const sb = dryRun ? null : createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
-
-  const { data: log, error: logStartError } = await sb.from("sync_log")
-    .insert({
-      tipo: "camara_servidores",
-      status: "running",
-      detalhes: { requestedCompetencia, forced },
-    })
-    .select("id").single();
-  if (logStartError) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: `sync_log start: ${logStartError.message}`,
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
-  }
-  const logId = log?.id;
-
+  let logId: string | null = null;
+  let results: MonthResult[] = [];
+  let stage = "start";
   try {
-    const source = await fetchMostRecentFolha(
+    if (sb) {
+      const { data, error } = await sb.from("sync_log").insert({
+        tipo: "camara_servidores",
+        status: "running",
+        detalhes: {
+          requested_competencia: requestedCompetencia,
+          forced,
+          revision_months: forced ? 1 : 4,
+        },
+      }).select("id").single();
+      assertPersistenceSucceeded("sync_log start", error);
+      logId = data?.id ?? null;
+    }
+    stage = "collection";
+    const window = await fetchFolhaWindow(
       requestedYear,
       requestedMonth,
       forced,
     );
-    const { ano, mes, competencia } = source;
-    if (!source.complete) {
-      throw new Error(
-        `Folha Câmara incompleta: ${source.dados.length}/${
-          source.total ?? "?"
-        }`,
+    const { sources } = window;
+    results = window.results;
+    const latestByOrigin = new Map<
+      string,
+      { row: ScrapedServidor; competencia: string }
+    >();
+    for (const source of sources) {
+      for (const row of uniqueServidores(source.dados)) {
+        if (!latestByOrigin.has(row.origemChave)) {
+          latestByOrigin.set(row.origemChave, {
+            row,
+            competencia: source.competencia,
+          });
+        }
+      }
+    }
+
+    let adopted = 0;
+    stage = "identity";
+    if (sb && latestByOrigin.size > 0) {
+      const storedCamara: { id: string; nome: string; origem_chave: string }[] =
+        [];
+      for (let offset = 0;; offset += 500) {
+        const { data, error } = await sb.from("servidores")
+          .select("id, nome, origem_chave").eq("orgao_tipo", "camara")
+          .order("id").range(offset, offset + 499);
+        assertPersistenceSucceeded("Busca identidades Câmara", error);
+        storedCamara.push(...(data ?? []));
+        if ((data ?? []).length < 500) break;
+      }
+      // Uma origem repetida em meses diferentes continua sendo um só vínculo.
+      const adoptions = planLegacyOriginAdoptions(
+        [...latestByOrigin.values()].map(({ row }) => row),
+        storedCamara,
+        "camara:nome:",
       );
-    }
-
-    // Deduplicate pelo vínculo e tipo de folha. Nome não identifica pessoa.
-    const seen = new Map<string, number>();
-    const all: ScrapedServidor[] = [];
-    for (const servidor of source.dados) {
-      const remunerationKey =
-        `${servidor.origemChave}\u0000${servidor.tipoFolha}`;
-      const existingIdx = seen.get(remunerationKey);
-      if (existingIdx === undefined) {
-        seen.set(remunerationKey, all.length);
-        all.push(servidor);
-      } else if (
-        servidor.bruto !== null && all[existingIdx].bruto === null
-      ) {
-        all[existingIdx] = servidor;
-      }
-    }
-    console.log(`Total unique Câmara: ${all.length}`);
-
-    const servidoresPorOrigem = new Map<string, ScrapedServidor>();
-    for (const servidor of all) {
-      const existing = servidoresPorOrigem.get(servidor.origemChave);
-      if (!existing || (!existing.cargo && servidor.cargo)) {
-        servidoresPorOrigem.set(servidor.origemChave, servidor);
-      }
-    }
-    const serverEntries = [...servidoresPorOrigem.values()];
-
-    // Adota o ID historico apenas quando nome e origem formam uma
-    // correspondencia 1 para 1. Homonimos permanecem separados.
-    const { data: storedCamara, error: storedCamaraError } = await sb
-      .from("servidores")
-      .select("id, nome, origem_chave")
-      .eq("orgao_tipo", "camara")
-      .limit(1000);
-    if (storedCamaraError) {
-      throw new Error(`Busca identidades Câmara: ${storedCamaraError.message}`);
-    }
-    const adoptions = planLegacyOriginAdoptions(
-      serverEntries,
-      storedCamara || [],
-      "camara:nome:",
-    );
-    for (const adoption of adoptions) {
-      const { error } = await sb.from("servidores")
-        .update({
+      for (const adoption of adoptions) {
+        const { error } = await sb.from("servidores").update({
           origem_chave: adoption.nextOrigin,
           fonte_url: SOURCE_URL,
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", adoption.id)
-        .eq("origem_chave", adoption.previousOrigin)
-        .select("id")
-        .single();
-      if (error) {
-        throw new Error(
-          `Adoção de identidade ${adoption.id}: ${error.message}`,
-        );
+        }).eq("id", adoption.id).eq("origem_chave", adoption.previousOrigin)
+          .select("id").single();
+        assertPersistenceSucceeded("Adoção de identidade Câmara", error);
+        adopted++;
       }
     }
-    console.log(`Identidades históricas adotadas: ${adoptions.length}`);
 
-    // Batch upsert servidores with orgao_tipo = 'camara'
-    const BATCH = 200;
-    const srvBatches: PromiseLike<void>[] = [];
-    for (let i = 0; i < serverEntries.length; i += BATCH) {
-      const batch = serverEntries.slice(i, i + BATCH).map((s) => ({
-        nucleogov_portal_id: s.portalId,
-        nome: s.nome,
-        cargo: s.cargo,
-        matricula: s.matricula,
-        lotacao: s.lotacao,
-        data_admissao: s.dataAdmissao,
-        tipo_admissao: s.tipoAdmissao,
-        decreto_admissao: s.decreto,
-        carga_horaria: s.cargaHoraria,
-        situacao_funcional: s.situacao,
-        fonte_url: SOURCE_URL,
-        orgao_tipo: "camara",
-        origem_chave: s.origemChave,
-      }));
-      srvBatches.push(
-        sb.from("servidores").upsert(batch, { onConflict: "origem_chave" })
-          .then(({ error }) => {
-            if (error) throw new Error(`Srv batch ${i}: ${error.message}`);
-          }),
-      );
+    stage = "persistence";
+    for (const source of sources) {
+      const result = results.find((value) =>
+        value.competencia === source.competencia
+      )!;
+      if (!sb) {
+        result.status = "dry_run";
+        result.stage = "complete";
+        continue;
+      }
+      result.stage = "persistence";
+      try {
+        const serverEntries = uniqueServidores(source.dados);
+        const candidates = serverEntries
+          .filter((row) =>
+            latestByOrigin.get(row.origemChave)?.competencia ===
+              source.competencia
+          )
+          .map((row) => ({
+            nucleogov_portal_id: row.portalId,
+            nome: row.nome,
+            cargo: row.cargo,
+            matricula: row.matricula,
+            lotacao: row.lotacao,
+            data_admissao: row.dataAdmissao,
+            tipo_admissao: row.tipoAdmissao,
+            decreto_admissao: row.decreto,
+            carga_horaria: row.cargaHoraria,
+            situacao_funcional: row.situacao,
+            fonte_url: SOURCE_URL,
+            orgao_tipo: "camara",
+            origem_chave: row.origemChave,
+          }));
+        const updates = await preserveServidorUpdates(
+          sb,
+          candidates,
+          source.competencia,
+        );
+        const batchSize = 200;
+        for (let offset = 0; offset < updates.length; offset += batchSize) {
+          const batch = updates.slice(offset, offset + batchSize);
+          const { error } = await sb.from("servidores").upsert(batch, {
+            onConflict: "origem_chave",
+          });
+          assertPersistenceSucceeded(`Servidores Câmara lote ${offset}`, error);
+          result.servidores_atualizados += batch.length;
+        }
+        const dbSrvs: { id: string; origem_chave: string }[] = [];
+        const originKeys = serverEntries.map((row) => row.origemChave);
+        for (let offset = 0; offset < originKeys.length; offset += batchSize) {
+          const { data, error } = await sb.from("servidores").select(
+            "id, origem_chave",
+          )
+            .in("origem_chave", originKeys.slice(offset, offset + batchSize));
+          assertPersistenceSucceeded(
+            `Busca servidores Câmara lote ${offset}`,
+            error,
+          );
+          dbSrvs.push(...(data ?? []));
+        }
+        const originMap = mapIdsByOrigin(dbSrvs, originKeys);
+        const remuneracoes = source.dados.filter((row) => row.bruto !== null)
+          .map((row) => ({
+            servidor_id: originMap.get(row.origemChave)!,
+            competencia: source.competencia,
+            bruto: row.bruto,
+            liquido: row.liquido,
+            tipo_folha: row.tipoFolha,
+            fonte_url: SOURCE_URL,
+          }));
+        for (
+          let offset = 0;
+          offset < remuneracoes.length;
+          offset += batchSize
+        ) {
+          const batch = remuneracoes.slice(offset, offset + batchSize);
+          const { error } = await sb.from("remuneracao_servidores").upsert(
+            batch,
+            {
+              onConflict: "servidor_id,competencia,tipo_folha",
+            },
+          );
+          assertPersistenceSucceeded(
+            `Remunerações Câmara lote ${offset}`,
+            error,
+          );
+          result.remuneracoes += batch.length;
+        }
+        result.status = "success";
+        result.stage = "complete";
+      } catch (error) {
+        result.status = "error";
+        result.error = error instanceof Error ? error.message : String(error);
+      }
     }
-    await Promise.all(srvBatches);
 
-    // Resolve IDs somente pelas mesmas chaves usadas no upsert.
-    const dbSrvs: { id: string; origem_chave: string }[] = [];
-    const originKeys = serverEntries.map((row) => row.origemChave);
-    for (let i = 0; i < originKeys.length; i += BATCH) {
-      const { data, error } = await sb.from("servidores")
-        .select("id, origem_chave")
-        .in("origem_chave", originKeys.slice(i, i + BATCH));
-      if (error) throw new Error(`Busca servidores ${i}: ${error.message}`);
-      dbSrvs.push(...(data || []));
-    }
-    const originMap = mapIdsByOrigin(dbSrvs, originKeys);
-    console.log(`originMap Câmara: ${originMap.size}`);
-
-    // Build remunerações and upsert
-    const rems = all
-      .filter((s) => s.bruto !== null && originMap.has(s.origemChave))
-      .map((s) => ({
-        servidor_id: originMap.get(s.origemChave)!,
-        competencia,
-        bruto: s.bruto,
-        liquido: s.liquido,
-        tipo_folha: s.tipoFolha,
-        fonte_url: SOURCE_URL,
-      }));
-
-    let remCriadas = 0;
-    const remBatches: PromiseLike<number>[] = [];
-    for (let i = 0; i < rems.length; i += BATCH) {
-      const batch = rems.slice(i, i + BATCH);
-      remBatches.push(
-        sb.from("remuneracao_servidores").upsert(batch, {
-          onConflict: "servidor_id,competencia,tipo_folha",
-        }).select("id").then(({ data, error }) => {
-          if (error) throw new Error(`Rem batch ${i}: ${error.message}`);
-          return (data || []).length;
-        }),
-      );
-    }
-    const remResults = await Promise.all(remBatches);
-    remCriadas = remResults.reduce((a, b) => a + b, 0);
-
+    const failed = results.some((result) => result.status === "error");
+    const status = failed
+      ? results.some((result) => result.status !== "error")
+        ? "partial"
+        : "error"
+      : "success";
+    const latest = sources.find((source) => source.dados.length > 0) ??
+      sources[0];
+    const latestResult = results.find((result) =>
+      result.competencia === latest?.competencia
+    );
     const result = {
+      success: !failed,
+      status,
+      dry_run: dryRun,
       requested_competencia: requestedCompetencia,
-      fallback_used: competencia !== requestedCompetencia,
-      competencia,
-      ano,
-      mes,
-      source_total: source.total,
-      source_complete: source.complete,
-      servidores: serverEntries.length,
-      registros_folha: all.length,
-      remuneracoes: remCriadas,
-      identidades_historicas_adotadas: adoptions.length,
-      status: "success",
+      reviewed_competencias: results.map((result) => result.competencia),
+      por_competencia: results,
+      fallback_used: latest
+        ? latest.competencia !== requestedCompetencia
+        : false,
+      competencia: latest?.competencia ?? requestedCompetencia,
+      ano: latest?.ano ?? requestedYear,
+      mes: latest?.mes ?? requestedMonth,
+      source_total: latest?.total ?? null,
+      source_complete: latest?.complete ?? false,
+      window_complete: results.every((result) => result.source_complete),
+      servidores: latestResult?.servidores ?? 0,
+      registros_folha: latestResult?.registros_folha ?? 0,
+      remuneracoes: latestResult?.remuneracoes ?? 0,
+      registros_folha_janela: results.reduce(
+        (sum, result) => sum + result.registros_folha,
+        0,
+      ),
+      remuneracoes_janela: results.reduce(
+        (sum, result) => sum + result.remuneracoes,
+        0,
+      ),
+      servidores_unicos_janela: latestByOrigin.size,
+      identidades_historicas_adotadas: adopted,
+      duration_ms: Date.now() - startedAt,
     };
-
-    if (logId) {
-      const { error: logFinishError } = await sb.from("sync_log").update({
-        status: "success",
+    stage = "log";
+    if (sb && logId) {
+      const { error } = await sb.from("sync_log").update({
+        status,
         detalhes: result,
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
-      assertPersistenceSucceeded("sync_log finish", logFinishError);
+      assertPersistenceSucceeded("sync_log finish", error);
     }
-
-    return new Response(JSON.stringify({ success: true, ...result }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return responseJson(result, failed ? 500 : 200);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Erro:", message);
-    if (logId) {
-      await sb.from("sync_log").update({
+    const result = {
+      success: false,
+      status: "error",
+      dry_run: dryRun,
+      requested_competencia: requestedCompetencia,
+      reviewed_competencias: results.map((result) => result.competencia),
+      por_competencia: results,
+      stage,
+      error: message,
+      duration_ms: Date.now() - startedAt,
+    };
+    if (sb && logId) {
+      const { error: logError } = await sb.from("sync_log").update({
         status: "error",
-        detalhes: { error: message },
+        detalhes: result,
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
+      if (logError) console.error("sync_log error finish failed");
     }
-    return new Response(JSON.stringify({ success: false, error: message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return responseJson(result, 500);
   }
 });

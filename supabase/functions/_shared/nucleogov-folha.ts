@@ -6,6 +6,7 @@ import {
   type CentiListResult,
 } from "./centi-client.ts";
 import { type JsonRecord } from "./nucleogov-normalize.ts";
+import { folhaCompetencias } from "./folha-retroativa.ts";
 
 export const FOLHA_PREFEITURA_REFERER = "/cidadao/transparencia/servidores_cnt";
 const ACTION = "servidores_cnt/listar";
@@ -28,7 +29,11 @@ function record(value: unknown): JsonRecord {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("Folha: resposta da fonte invalida");
   }
-  return value as JsonRecord;
+  const result = value as JsonRecord;
+  if (result.error || result.erro || result.success === false) {
+    throw new Error("Folha: fonte informou erro na resposta");
+  }
+  return result;
 }
 
 async function listOrgaos(): Promise<Orgao[]> {
@@ -160,61 +165,119 @@ async function fetchOrgao(
   );
 }
 
-export async function fetchFolhaPrefeitura(options: {
+type FolhaOptions = {
   year: number;
   month: number;
   forced: boolean;
   pageSize: number;
   maxPages: number;
-}): Promise<FolhaPrefeituraResult> {
-  const orgaos = await listOrgaos();
-  const attempts = options.forced ? 1 : 4;
-  for (let fallback = 0; fallback < attempts; fallback++) {
-    const date = new Date(
-      Date.UTC(options.year, options.month - 1 - fallback, 1),
+};
+
+async function fetchCompetencia(
+  orgaos: Orgao[],
+  year: number,
+  month: number,
+  options: Pick<FolhaOptions, "pageSize" | "maxPages">,
+): Promise<FolhaPrefeituraResult> {
+  const dados: JsonRecord[] = [];
+  const byOrgao: FolhaOrgaoCoverage[] = [];
+  const originOrgaos = new Map<number, number>();
+  // Duas requisicoes simultaneas limitam a carga na fonte municipal.
+  for (let index = 0; index < orgaos.length; index += 2) {
+    const settled = await Promise.allSettled(
+      orgaos.slice(index, index + 2).map((orgao) =>
+        fetchOrgao(orgao, year, month, options.pageSize, options.maxPages)
+      ),
     );
-    const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const dados: JsonRecord[] = [];
-    const byOrgao: FolhaOrgaoCoverage[] = [];
-    const originOrgaos = new Map<number, number>();
-    // Duas requisicoes simultaneas limitam a carga na fonte municipal.
-    for (let index = 0; index < orgaos.length; index += 2) {
-      const results = await Promise.all(
-        orgaos.slice(index, index + 2).map((orgao) =>
-          fetchOrgao(orgao, year, month, options.pageSize, options.maxPages)
-        ),
-      );
-      for (const result of results) {
-        for (const row of result.dados) {
-          const id = Number(row.id);
-          const orgao = Number(row.orgao_id);
-          const existing = originOrgaos.get(id);
-          if (existing !== undefined && existing !== orgao) {
-            throw new Error(
-              "Folha: identificador de vinculo reutilizado entre orgaos",
-            );
-          }
-          originOrgaos.set(id, orgao);
-          dados.push(row);
+    const failed = settled.find((result) => result.status === "rejected");
+    if (failed?.status === "rejected") throw failed.reason;
+    for (const entry of settled) {
+      if (entry.status !== "fulfilled") continue;
+      const result = entry.value;
+      for (const row of result.dados) {
+        const id = Number(row.id);
+        const orgao = Number(row.orgao_id);
+        const existing = originOrgaos.get(id);
+        if (existing !== undefined && existing !== orgao) {
+          throw new Error(
+            "Folha: identificador de vinculo reutilizado entre orgaos",
+          );
         }
-        byOrgao.push(result.coverage);
+        originOrgaos.set(id, orgao);
+        dados.push(row);
       }
+      byOrgao.push(result.coverage);
     }
-    if (dados.length > 0 || options.forced) {
-      return {
-        dados,
-        total: byOrgao.reduce((sum, orgao) => sum + orgao.source_total, 0),
-        pagesFetched: byOrgao.reduce(
-          (sum, orgao) => sum + orgao.pages_fetched,
-          0,
-        ),
-        complete: true,
-        maxPagesReached: false,
-        scope: `${year}-${String(month).padStart(2, "0")}`,
-        by_orgao: byOrgao,
-      };
+  }
+  return {
+    dados,
+    total: byOrgao.reduce((sum, orgao) => sum + orgao.source_total, 0),
+    pagesFetched: byOrgao.reduce((sum, orgao) => sum + orgao.pages_fetched, 0),
+    complete: true,
+    maxPagesReached: false,
+    scope: `${year}-${String(month).padStart(2, "0")}`,
+    by_orgao: byOrgao,
+  };
+}
+
+export type FolhaPrefeituraWindowEntry =
+  & {
+    ano: number;
+    mes: number;
+    competencia: string;
+  }
+  & (
+    | { source: FolhaPrefeituraResult; error?: never }
+    | { source?: never; error: string }
+  );
+
+/** Coleta toda a janela antes da persistencia e isola falhas por competencia. */
+export async function fetchFolhaPrefeituraWindow(
+  options: FolhaOptions,
+): Promise<FolhaPrefeituraWindowEntry[]> {
+  const orgaos = await listOrgaos();
+  const results: FolhaPrefeituraWindowEntry[] = [];
+  for (
+    const period of folhaCompetencias(
+      options.year,
+      options.month,
+      options.forced,
+    )
+  ) {
+    try {
+      results.push({
+        ...period,
+        source: await fetchCompetencia(orgaos, period.ano, period.mes, options),
+      });
+    } catch (error) {
+      results.push({
+        ...period,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
+  }
+  return results;
+}
+
+/** Mantem a descoberta legada para consumidores que pedem apenas uma folha. */
+export async function fetchFolhaPrefeitura(
+  options: FolhaOptions,
+): Promise<FolhaPrefeituraResult> {
+  const orgaos = await listOrgaos();
+  for (
+    const period of folhaCompetencias(
+      options.year,
+      options.month,
+      options.forced,
+    )
+  ) {
+    const source = await fetchCompetencia(
+      orgaos,
+      period.ano,
+      period.mes,
+      options,
+    );
+    if (source.dados.length > 0 || options.forced) return source;
   }
   throw new Error(
     "Folha: nenhuma competencia publicada nos orgaos consultados",
