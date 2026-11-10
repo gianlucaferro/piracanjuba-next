@@ -27,6 +27,7 @@ const server = createServer((request, response) => {
       { id: "camara-rescisao-00", servidor_id: "camara-0", competencia: "2026-11", tipo_folha: "RESCISÃO", bruto: 2407.68, servidores: { nome: "CAM Servidor 0001", cargo: "Assessor", orgao_tipo: "camara" } },
       // O registro municipal mais recente não pode definir a competência da Câmara.
       { id: "prefeitura-mensal-00", servidor_id: "prefeitura-0", competencia: "2026-12", tipo_folha: "MENSAL", bruto: 999999.99, servidores: { nome: "PREF Servidor 0001", cargo: "Professor", orgao_tipo: "prefeitura" } },
+      { id: "prefeitura-mensal-anterior-00", servidor_id: "prefeitura-0", competencia: "2026-10", tipo_folha: "MENSAL", bruto: 3000, servidores: { nome: "PREF Servidor 0001", cargo: "Professor", orgao_tipo: "prefeitura" } },
     ];
     for (const column of ["servidores.orgao_tipo", "servidor_id", "competencia", "tipo_folha"]) {
       const filter = url.searchParams.get(column);
@@ -34,10 +35,25 @@ const server = createServer((request, response) => {
       data = data.filter((row) => {
         const value = column === "servidores.orgao_tipo" ? row.servidores.orgao_tipo : row[column];
         if (filter.startsWith("eq.")) return value === filter.slice(3);
+        if (filter.startsWith("lt.")) return value < filter.slice(3);
         if (filter.startsWith("ilike.")) return value.toLowerCase() === filter.slice(6).toLowerCase();
         if (filter.startsWith("in.(")) return filter.slice(4, -1).split(",").map((item) => item.replaceAll('"', "")).includes(value);
         return true;
       });
+    }
+  }
+  if (url.pathname === "/rest/v1/prefeitura_folha_nucleogov") {
+    // A projeção retorna somente metadados públicos dos órgãos, sem o payload de pessoas.
+    data = [
+      { chave: "cobertura-2026-10-44", ano: 2026, mes: 10, tipo_folha: "MENSAL", orgao_id: "44", orgao_nome: "FUNPREPI" },
+      { chave: "cobertura-2026-12-44", ano: 2026, mes: 12, tipo_folha: "MENSAL", orgao_id: "44", orgao_nome: "FUNPREPI" },
+    ];
+    const periods = [...(url.searchParams.get("or") ?? "").matchAll(/and\(ano\.eq\.(\d+),mes\.eq\.(\d+)\)/g)];
+    if (periods.length) data = data.filter((row) => periods.some((period) => row.ano === Number(period[1]) && row.mes === Number(period[2])));
+    for (const column of ["ano", "mes", "tipo_folha"]) {
+      const filter = url.searchParams.get(column);
+      if (filter?.startsWith("eq.")) data = data.filter((row) => String(row[column]) === filter.slice(3));
+      if (filter?.startsWith("ilike.")) data = data.filter((row) => String(row[column]).toLowerCase() === filter.slice(6).toLowerCase());
     }
   }
   if (url.pathname === "/rest/v1/inmet_clima_diario") {

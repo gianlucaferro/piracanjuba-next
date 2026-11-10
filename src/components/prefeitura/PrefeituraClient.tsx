@@ -35,6 +35,7 @@ import PullToRefresh from "@/components/PullToRefresh";
 import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
+import ResumoFolhaPrefeitura from "@/components/prefeitura/ResumoFolhaPrefeitura";
 import FunprepiTab from "@/components/prefeitura/FunprepiTab";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 import GrupoEconomicoBadge from "@/components/transparencia/GrupoEconomicoBadge";
@@ -451,6 +452,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
 
   return (
     <div className="space-y-4">
+      <ResumoFolhaPrefeitura />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Buscar servidor por nome..." value={search}
