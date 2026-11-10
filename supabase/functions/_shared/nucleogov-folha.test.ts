@@ -1,5 +1,8 @@
 /// <reference lib="deno.ns" />
-import { fetchFolhaPrefeitura } from "./nucleogov-folha.ts";
+import {
+  fetchFolhaPrefeitura,
+  fetchFolhaPrefeituraWindow,
+} from "./nucleogov-folha.ts";
 
 type Row = Record<string, unknown>;
 function equal(actual: unknown, expected: unknown) {
@@ -218,4 +221,125 @@ Deno.test("folha detecta pagina repetida mesmo quando total parece completo", as
     }, async () => {
     await rejects(() => fetchFolhaPrefeitura(options), "registro repetido");
   });
+});
+
+Deno.test("janela revisa meses anteriores mesmo quando o atual ja tem rescisao", async () => {
+  const calls: Record<string, string>[] = [];
+  await withPortal(
+    portalFor({
+      "11:22": [row(1, 22, 11, "RESCISAO")],
+      "10:22": [row(1, 22, 10)],
+      "9:55": [row(2, 55, 9, "13 SALARIO")],
+    }, calls),
+    async () => {
+      const results = await fetchFolhaPrefeituraWindow({
+        ...options,
+        month: 11,
+        forced: false,
+      });
+      equal(results.map((result) => result.competencia), [
+        "2026-11",
+        "2026-10",
+        "2026-09",
+        "2026-08",
+      ]);
+      equal(results.map((result) => result.source?.total), [1, 1, 1, 0]);
+      equal(
+        calls.filter((call) => call.acao.endsWith("listarOrgaos")).length,
+        1,
+      );
+      equal(calls.filter((call) => call.orgao).length, 12);
+    },
+  );
+});
+
+Deno.test("janela atravessa janeiro sem confundir ano da competencia", async () => {
+  const calls: Record<string, string>[] = [];
+  await withPortal(
+    portalFor({ "12:22": [row(1, 22, 12)] }, calls),
+    async () => {
+      const results = await fetchFolhaPrefeituraWindow({
+        ...options,
+        year: 2027,
+        month: 1,
+        forced: false,
+      });
+      equal(results.map((result) => result.competencia), [
+        "2027-01",
+        "2026-12",
+        "2026-11",
+        "2026-10",
+      ]);
+      equal(results[1].source?.total, 1);
+      equal([
+        ...new Set(
+          calls.filter((call) => call.mes === "12").map((call) => call.ano),
+        ),
+      ], ["2026"]);
+    },
+  );
+});
+
+Deno.test("janela explicita vazia nao consulta competencias adicionais", async () => {
+  const calls: Record<string, string>[] = [];
+  await withPortal(portalFor({ "8:55": [row(2, 55)] }, calls), async () => {
+    const results = await fetchFolhaPrefeituraWindow({ ...options, month: 9 });
+    equal(results.length, 1);
+    equal(results[0].source?.total, 0);
+    equal([
+      ...new Set(calls.filter((call) => call.orgao).map((call) => call.mes)),
+    ], ["9"]);
+  });
+});
+
+Deno.test("erro logico com total zero nao vira ausencia publicada nem bloqueia os outros meses", async () => {
+  const normal = portalFor({ "10:22": [row(1, 22, 10)] });
+  await withPortal(
+    (params) =>
+      params.mes === "11" && params.orgao === "22"
+        ? {
+          dados: [],
+          total: 0,
+          orgao_filtrado: "22",
+          error: "consulta indisponivel",
+        }
+        : normal(params),
+    async () => {
+      const results = await fetchFolhaPrefeituraWindow({
+        ...options,
+        month: 11,
+        forced: false,
+      });
+      equal(results[0].source, undefined);
+      equal(results[0].error?.includes("fonte informou erro"), true);
+      equal(results[1].source?.total, 1);
+      equal(results[2].source?.total, 0);
+    },
+  );
+});
+
+Deno.test("janela rejeita mes com total alterado e preserva os resultados dos demais", async () => {
+  const normal = portalFor({ "10:22": [row(1, 22, 10)] });
+  await withPortal(
+    (params) =>
+      params.mes === "11" && params.orgao === "22"
+        ? {
+          dados: params.limit.startsWith("0,")
+            ? [row(1, 22, 11), row(2, 22, 11)]
+            : [row(3, 22, 11)],
+          total: params.limit.startsWith("0,") ? 3 : 4,
+          orgao_filtrado: "22",
+        }
+        : normal(params),
+    async () => {
+      const results = await fetchFolhaPrefeituraWindow({
+        ...options,
+        month: 11,
+        forced: false,
+      });
+      equal(results[0].source, undefined);
+      equal(results[0].error?.includes("total mudou"), true);
+      equal(results[1].source?.total, 1);
+    },
+  );
 });
