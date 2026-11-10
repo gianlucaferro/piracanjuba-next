@@ -1,0 +1,86 @@
+{
+  "function": "sync-camara-servidores",
+  "status": 200,
+  "seconds": 2.459,
+  "body": {
+    "success": true,
+    "status": "success",
+    "dry_run": true,
+    "requested_competencia": "2026-11",
+    "reviewed_competencias": [
+      "2026-11",
+      "2026-10",
+      "2026-09",
+      "2026-08"
+    ],
+    "por_competencia": [
+      {
+        "ano": 2026,
+        "mes": 11,
+        "competencia": "2026-11",
+        "status": "dry_run",
+        "stage": "complete",
+        "source_total": 1,
+        "source_complete": true,
+        "registros_folha": 1,
+        "servidores": 1,
+        "servidores_atualizados": 0,
+        "remuneracoes": 0
+      },
+      {
+        "ano": 2026,
+        "mes": 10,
+        "competencia": "2026-10",
+        "status": "dry_run",
+        "stage": "complete",
+        "source_total": 36,
+        "source_complete": true,
+        "registros_folha": 36,
+        "servidores": 36,
+        "servidores_atualizados": 0,
+        "remuneracoes": 0
+      },
+      {
+        "ano": 2026,
+        "mes": 9,
+        "competencia": "2026-09",
+        "status": "dry_run",
+        "stage": "complete",
+        "source_total": 36,
+        "source_complete": true,
+        "registros_folha": 36,
+        "servidores": 36,
+        "servidores_atualizados": 0,
+        "remuneracoes": 0
+      },
+      {
+        "ano": 2026,
+        "mes": 8,
+        "competencia": "2026-08",
+        "status": "dry_run",
+        "stage": "complete",
+        "source_total": 36,
+        "source_complete": true,
+        "registros_folha": 36,
+        "servidores": 36,
+        "servidores_atualizados": 0,
+        "remuneracoes": 0
+      }
+    ],
+    "fallback_used": false,
+    "competencia": "2026-11",
+    "ano": 2026,
+    "mes": 11,
+    "source_total": 1,
+    "source_complete": true,
+    "window_complete": true,
+    "servidores": 1,
+    "registros_folha": 1,
+    "remuneracoes": 0,
+    "registros_folha_janela": 109,
+    "remuneracoes_janela": 0,
+    "servidores_unicos_janela": 36,
+    "identidades_historicas_adotadas": 0,
+    "duration_ms": 1333
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "project_id": "oinweocqcptwxqsztlcl",
+  "implementation_commit": "c876c9a82b08b4d08f80123318742894ca2becd9",
+  "functions": [
+    {
+      "name": "sync-camara-servidores",
+      "version": 31,
+      "verify_jwt": false,
+      "updated_at": 1794354570231,
+      "ezbr_sha256": "946a23200d812bdeac6540e5227be9078631f1af2bc6ca9f680c26789fa6ae3b",
+      "files": [
+        "functions/sync-camara-servidores/index.ts",
+        "functions/_shared/centi-auth.ts",
+        "functions/_shared/servidor-origin.ts",
+        "functions/_shared/persistence-guards.ts",
+        "functions/_shared/centi-client.ts",
+        "functions/_shared/folha-retroativa.ts"
+      ],
+      "readback_equal": true
+    },
+    {
+      "name": "sync-folha-prefeitura-nucleogov",
+      "version": 8,
+      "verify_jwt": false,
+      "updated_at": 1794354576423,
+      "ezbr_sha256": "198d8b1aabcdc841f0883b68cab4734e1e17ec37115fe2170bc70469239d0272",
+      "files": [
+        "functions/sync-folha-prefeitura-nucleogov/index.ts",
+        "functions/_shared/nucleogov-sync.ts",
+        "functions/_shared/centi-client.ts",
+        "functions/_shared/centi-auth.ts",
+        "functions/_shared/nucleogov-contratos.ts",
+        "functions/_shared/nucleogov-folha.ts",
+        "functions/_shared/nucleogov-normalize.ts",
+        "functions/_shared/folha-retroativa.ts"
+      ],
+      "readback_equal": true
+    }
+  ]
+}
+

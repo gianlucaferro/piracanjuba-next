@@ -29,7 +29,19 @@ Revisar automaticamente o mes atual e os tres anteriores nos coletores da Prefei
 - Simulacao com os handlers locais e fontes oficiais: Camara, 109 registros (1, 36, 36, 36 de 2026-11 a 2026-08), 4,6 segundos no Dell. Prefeitura, 4310 registros (0, 956, 1700, 1654), 29,7 segundos na consulta completa pelo M5.
 - A fonte da Prefeitura apresentou respostas com erro em tentativas anteriores. A validacao as rejeitou, sem confundir com ausencia de publicacao; nova consulta completa passou. Nenhuma validacao de integridade foi removida para contornar a falha externa.
 - Simulacao local usa credenciais ficticias e permissao de rede restrita aos dois portais oficiais, sem acesso de rede ao Supabase.
-- Pendentes: CI, conferir pacote ativo apos publicar, simular sem gravacoes e executar importacao controlada. Comparar snapshot e conferir logs.
+- CI do codigo no PR [34](https://github.com/gianlucaferro/piracanjuba-next/pull/34), run [42926132022](https://github.com/gianlucaferro/piracanjuba-next/actions/runs/42926132022), aprovada: 304 testes Node, 195 Deno e 52 Playwright, total 551. Preview Vercel aprovado.
+
+## Publicacao e verificacao em producao
+
+- Camara v31 e Prefeitura v8 publicadas a partir do commit `c876c9a82b08b4d08f80123318742894ca2becd9`. Os seis e oito arquivos dos respectivos pacotes foram recuperados da producao e comparados integralmente ao codigo enviado, sem divergencias. `verify_jwt: false` preservado e autenticacao propria ativa; chamadas sem credencial retornaram HTTP401.
+- Simulacao autenticada em producao: HTTP200 e success=true nas duas funcoes, quatro competencias revisadas, sem gravacoes. Camara 2,459 segundos; Prefeitura 9,626 segundos. Logs antigos continuaram como ultimos registros ate iniciar a importacao real.
+- Importacao real autorizada: HTTP200 e success=true, Camara 3,353 segundos e Prefeitura 14,712 segundos, abaixo do timeout do cron. Logs finais de ambos em success, todas as quatro competencias em sucesso.
+- Camara reprocessou 109 remuneracoes: 2026-11 (1), 2026-10 (36), 2026-09 (36), 2026-08 (36).
+- Prefeitura reprocessou 4310 registros canonicos e remuneracoes: 2026-11 (0), 2026-10 (956), 2026-09 (1700), 2026-08 (1654). Nenhum registro foi descartado pela normalizacao.
+- Snapshot posterior comparado ao anterior: 1844 servidores, 4419 remuneracoes e 4323 linhas canonicas preservados. Zero inclusoes, exclusoes ou alteracoes nos valores e campos cadastrais de negocio conferidos. Mudancas de timestamps sao esperadas; o estado de consulta de 2026-11 foi acrescentado. A primeira revisao confirma idempotencia com os dados oficiais disponiveis neste momento, sem novas publicacoes a importar.
+- Respostas agregadas, metadados publicados e comparacao de snapshots nesta pasta. Os snapshots completos permanecem privados em work, fora do Git e do worker.
+- Nenhuma migration, mudanca de cron, credencial ou schema. O cron mensal auxiliar sync-folha-camara ja consulta 12 meses e escreve em folha_servidor, sem interferir nas tabelas usadas por estes coletores.
+- A cobertura da publicacao oficial permanece parcial: a Prefeitura ainda nao publicou registros de 2026-11, e a Camara possui somente uma rescisao desse mes. A nova janela nao fabrica registros ausentes na fonte.
 
 ## Rollback
 
