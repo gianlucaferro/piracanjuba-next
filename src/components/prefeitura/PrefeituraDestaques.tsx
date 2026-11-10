@@ -1,13 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, Trophy, Share2, BarChart3, PieChart, Building2, Wallet } from "lucide-react";
+import { DollarSign, Trophy, Share2, BarChart3, PieChart, Building2 } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { formatCurrency } from "@/lib/formatters";
 import ReceitasMensaisCharts from "./ReceitasMensaisCharts";
 import type { Database } from "@/lib/supabase/types";
-import { normalizarServidorRemuneracao, somarFolhaPorOrgao, type RelacaoServidor, type RemuneracaoFolha } from "./folha-destaques";
+import { normalizarServidorRemuneracao, type RelacaoServidor } from "./folha-destaques";
+import ResumoFolhaPrefeitura from "./ResumoFolhaPrefeitura";
 
 type RemuneracaoDestaque = Pick<Database["public"]["Tables"]["remuneracao_servidores"]["Row"], "bruto" | "liquido" | "servidor_id" | "tipo_folha"> & {
   servidores: RelacaoServidor;
@@ -163,53 +164,6 @@ async function fetchTopFornecedores() {
   return Array.from(map.values()).sort((a, b) => b.valor - a.valor).slice(0, 5);
 }
 
-async function fetchFolhaTotal() {
-  // Pegar a ultima competencia QUE CONTEM dados da Prefeitura (nao
-  // necessariamente a global). Se a Camara ja publicou um mes a mais
-  // que a Prefeitura, esse mes nao serve aqui — mostraria 0 / 0
-  // servidores na coluna Prefeitura. Usar essa comp para ambos os
-  // orgaos garante apresentacao consistente do mesmo periodo.
-  const { data: latestPref } = await supabase
-    .from("remuneracao_servidores")
-    .select("competencia, servidores!inner(orgao_tipo)")
-    .eq("servidores.orgao_tipo", "prefeitura")
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (!latestPref) return null;
-  const competencia = latestPref.competencia as string;
-
-  // Soma agregada por orgao para a competencia escolhida, via inner
-  // join com servidores e filtro orgao_tipo. Paginar via .range() para
-  // contornar o limite default de 1000 rows do Supabase REST (a Prefeitura
-  // tem ~1.400 servidores em competencias completas).
-  let prefTotal = 0, prefCount = 0, camTotal = 0, camCount = 0;
-  const PAGE = 1000;
-  for (let offset = 0; ; offset += PAGE) {
-    const { data: rems } = await supabase
-      .from("remuneracao_servidores")
-      .select("bruto, servidores!inner(orgao_tipo)")
-      .eq("competencia", competencia)
-      .order("id", { ascending: true })
-      .range(offset, offset + PAGE - 1)
-      .returns<RemuneracaoFolha[]>();
-    if (!rems || rems.length === 0) break;
-    const totais = somarFolhaPorOrgao(rems);
-    prefTotal += totais.prefeitura.total;
-    prefCount += totais.prefeitura.count;
-    camTotal += totais.camara.total;
-    camCount += totais.camara.count;
-    if (rems.length < PAGE) break;
-  }
-
-  return {
-    competencia,
-    prefeitura: { total: prefTotal, count: prefCount },
-    camara: { total: camTotal, count: camCount },
-    geral: { total: prefTotal + camTotal, count: prefCount + camCount },
-  };
-}
-
 async function fetchComparativoCidades() {
   const { data } = await supabase
     .from("arrecadacao_comparativo")
@@ -249,12 +203,6 @@ export default function PrefeituraDestaques() {
   const { data: topFornecedores } = useQuery({
     queryKey: ["top-fornecedores"],
     queryFn: fetchTopFornecedores,
-    staleTime: 30 * 60 * 1000,
-  });
-
-  const { data: folhaTotal } = useQuery({
-    queryKey: ["folha-total"],
-    queryFn: fetchFolhaTotal,
     staleTime: 30 * 60 * 1000,
   });
 
@@ -392,42 +340,7 @@ export default function PrefeituraDestaques() {
         );
       })()}
 
-      {/* Card 4: Folha de pagamento total */}
-      {folhaTotal && (() => {
-        const mesRef = formatCompetencia(folhaTotal.competencia);
-        return (
-        <div className="stat-card">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-accent" />
-              Folha de pagamento mensal
-            </h3>
-            <ShareWhatsApp text={`Folha de pagamento de Piracanjuba (${mesRef}):\n\n• Prefeitura: ${formatCurrency(folhaTotal.prefeitura.total)} (${folhaTotal.prefeitura.count} servidores)\n• Câmara: ${formatCurrency(folhaTotal.camara.total)} (${folhaTotal.camara.count} servidores)\n• Total: ${formatCurrency(folhaTotal.geral.total)} (${folhaTotal.geral.count} servidores)`} />
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">
-            Quanto o município gasta com salários em {mesRef}. Valores brutos (antes dos descontos).
-          </p>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-lg bg-primary/5 p-3 text-center">
-              <p className="text-xs text-muted-foreground">Prefeitura</p>
-              <p className="text-base font-bold text-primary">{formatCurrency(folhaTotal.prefeitura.total)}</p>
-              <p className="text-xs text-muted-foreground">{folhaTotal.prefeitura.count} servidores</p>
-            </div>
-            <div className="rounded-lg bg-accent/5 p-3 text-center">
-              <p className="text-xs text-muted-foreground">Câmara</p>
-              <p className="text-base font-bold text-accent">{formatCurrency(folhaTotal.camara.total)}</p>
-              <p className="text-xs text-muted-foreground">{folhaTotal.camara.count} servidores</p>
-            </div>
-            <div className="rounded-lg bg-muted p-3 text-center">
-              <p className="text-xs text-muted-foreground">Total</p>
-              <p className="text-base font-bold text-foreground">{formatCurrency(folhaTotal.geral.total)}</p>
-              <p className="text-xs text-muted-foreground">{folhaTotal.geral.count} servidores</p>
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">Competência: {mesRef}. Fonte: Portal de Transparência.</p>
-        </div>
-        );
-      })()}
+      <ResumoFolhaPrefeitura />
 
       {/* Card 5: Top 5 fornecedores */}
       {topFornecedores && topFornecedores.length > 0 && (() => {
