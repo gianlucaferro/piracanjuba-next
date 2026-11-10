@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Users, Briefcase } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
+import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import {
   fetchFolhaUltimaCompetencia,
   fetchFolhaStats,
@@ -43,15 +44,17 @@ export default async function FolhaCamaraPage() {
         </p>
       </header>
 
+      <ResumoFolhaCamara />
+
       {stats && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="stat-card">
-              <p className="text-xs uppercase text-muted-foreground tracking-wider">Competência atual</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Período do cadastro</p>
               <p className="text-base font-bold text-foreground mt-0.5">{stats.ultima_referencia}</p>
             </div>
             <div className="stat-card">
-              <p className="text-xs uppercase text-muted-foreground tracking-wider">Servidores na folha</p>
+              <p className="text-xs uppercase text-muted-foreground tracking-wider">Pessoas no cadastro</p>
               <p className="text-2xl font-extrabold text-blue-700 mt-0.5">{stats.total_servidores_ultima}</p>
             </div>
             <div className="stat-card">

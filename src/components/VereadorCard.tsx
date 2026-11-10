@@ -6,7 +6,7 @@ import Image from "next/image";
 import { DollarSign, Vote, Wallet, Info, ArrowRight, HandCoins } from "lucide-react";
 import type { Vereador } from "@/data/api";
 import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador, fetchDoacoesCampanhaPorVereador } from "@/data/api";
-import { fetchCamaraDiarias, fetchCamaraCustoTotal } from "@/data/camaraApi";
+import { fetchCamaraResumoFolha } from "@/data/camaraApi";
 import { Badge } from "@/components/ui/badge";
 import ShareButton from "@/components/ShareButton";
 import { formatCurrency, getInitials } from "@/lib/formatters";
@@ -33,15 +33,9 @@ export default function VereadorCard({ v }: { v: Vereador }) {
     queryFn: () => fetchRemuneracaoByVereador(v.id),
   });
 
-  const { data: allDiarias } = useQuery({
-    queryKey: ["camara-diarias"],
-    queryFn: fetchCamaraDiarias,
-    staleTime: 10 * 60 * 1000,
-  });
-
-  const { data: custoTotalCamara } = useQuery({
-    queryKey: ["camara-custo-total"],
-    queryFn: fetchCamaraCustoTotal,
+  const { data: resumoFolha, isError: erroResumoFolha } = useQuery({
+    queryKey: ["camara-resumo-folha"],
+    queryFn: fetchCamaraResumoFolha,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -59,16 +53,10 @@ export default function VereadorCard({ v }: { v: Vereador }) {
     ? (remuneracao.bruto ?? remuneracao.subsidio_referencia)
     : null;
 
-  // Diárias pessoais do vereador
-  const primeiroNome = v.nome.split(" ")[0].toLowerCase();
-  const diariasTotal = (allDiarias || [])
-    .filter((d) => d.beneficiario?.toLowerCase().includes(primeiroNome))
-    .reduce((s, d) => s + (d.valor || 0), 0);
-
-  // Custo total para o contribuinte: subsídio anual + diárias + rateio do custo da Câmara
-  const rateioCamara = custoTotalCamara ? (custoTotalCamara.folhaMensal * 12) / NUM_VEREADORES : 0;
-  const custoTotalAnual = salario
-    ? (salario * 12) + diariasTotal + rateioCamara
+  // A folha mensal já contém os subsídios dos vereadores.
+  const mensal = erroResumoFolha ? null : resumoFolha?.mensal;
+  const estimativaAnualFolha = mensal?.bruto != null
+    ? (mensal.bruto * 12) / NUM_VEREADORES
     : null;
 
   return (
@@ -148,27 +136,31 @@ export default function VereadorCard({ v }: { v: Vereador }) {
         </div>
       )}
 
-      {/* Custo total para o contribuinte */}
-      {custoTotalAnual !== null && custoTotalAnual > 0 && (
+      {/* Projeção do rateio da folha mensal disponível */}
+      {estimativaAnualFolha !== null && (
         <div className="mt-2 flex items-center gap-2 rounded-md bg-warning/10 border border-warning/20 p-2.5">
           <Wallet className="w-4 h-4 text-warning flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground">
-              {formatCurrency(custoTotalAnual)}
+              {formatCurrency(estimativaAnualFolha)}
               <span className="text-xs font-normal text-muted-foreground">/ano</span>
             </p>
             <Tooltip>
               <TooltipTrigger type="button" className="relative z-20 text-xs text-muted-foreground inline-flex items-center gap-0.5 cursor-help text-left rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                Custo total para o contribuinte <Info className="w-3 h-3" />
+                Parcela estimada da folha anual <Info className="w-3 h-3" />
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
                 <p className="text-sm">
-                  Subsídio anual ({formatCurrency(salario! * 12)})
-                  {diariasTotal > 0 ? ` + Diárias (${formatCurrency(diariasTotal)})` : ""}
-                  {rateioCamara > 0 ? ` + Rateio do custo da Câmara por vereador (${formatCurrency(rateioCamara)}) — inclui assessores, funcionários e estrutura` : ""}
+                  Projeção de 12 meses da folha mensal de {mensal?.competencia}, dividida pelos {NUM_VEREADORES} vereadores.
+                  Os subsídios já integram esta folha. Rescisões, outros pagamentos e diárias ficam fora desta projeção.
+                  {" "}Não representa a despesa anual realizada.
                 </p>
               </TooltipContent>
             </Tooltip>
+            <p className="text-xs text-muted-foreground mt-1">Base mensal: {mensal?.competencia}</p>
+            {resumoFolha?.publicacaoParcial && (
+              <p className="text-xs text-muted-foreground mt-1">Publicação parcial em {resumoFolha.ultimaCompetencia}.</p>
+            )}
           </div>
         </div>
       )}

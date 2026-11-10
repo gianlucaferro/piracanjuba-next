@@ -1,4 +1,5 @@
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { resumirFolhaCamara, type RegistroFolhaCamara, type ResumoFolhaCamara } from "@/lib/camara-folha";
 const supabase = createBrowserSupabaseClient();
 
 // Types
@@ -147,38 +148,42 @@ export async function fetchPresencaSessoes(ano?: number): Promise<PresencaSessao
   return (data || []) as PresencaSessao[];
 }
 
-// Fetch total monthly payroll cost of the Câmara (latest competência)
-export async function fetchCamaraCustoTotal(): Promise<{ folhaMensal: number; totalServidores: number } | null> {
-  // Get all camara servidores IDs
-  const { data: servidores } = await supabase
-    .from("servidores")
-    .select("id")
-    .eq("orgao_tipo", "camara");
+export async function fetchCamaraResumoFolha(): Promise<ResumoFolhaCamara | null> {
+  const ultimaCompetencia = async (apenasMensal: boolean) => {
+    let query = supabase.from("remuneracao_servidores")
+      .select("competencia, servidores!inner(orgao_tipo)")
+      .eq("servidores.orgao_tipo", "camara");
+    if (apenasMensal) query = query.ilike("tipo_folha", "MENSAL");
+    const { data, error } = await query.order("competencia", { ascending: false }).limit(1).maybeSingle();
+    if (error) throw error;
+    return data?.competencia ?? null;
+  };
 
-  if (!servidores?.length) return null;
-
-  const ids = servidores.map((s) => s.id);
-
-  // Get latest competência only among Câmara servidores.
-  const { data: latest } = await supabase
-    .from("remuneracao_servidores")
-    .select("competencia")
-    .in("servidor_id", ids)
-    .order("competencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (!latest) return null;
-
-  // Sum bruto for all camara servidores in latest competência
-  const { data: remuneracoes } = await supabase
-    .from("remuneracao_servidores")
-    .select("bruto")
-    .eq("competencia", latest.competencia)
-    .in("servidor_id", ids);
-
-  const folhaMensal = (remuneracoes || []).reduce((s, r) => s + (r.bruto || 0), 0);
-  return { folhaMensal, totalServidores: remuneracoes?.length || 0 };
+  const [recente, mensal] = await Promise.all([ultimaCompetencia(false), ultimaCompetencia(true)]);
+  if (!recente) return null;
+  const competencias = [...new Set([recente, ...(mensal ? [mensal] : [])])];
+  const registros: RegistroFolhaCamara[] = [];
+  const pageSize = 1000;
+  let expectedCount: number | null = null;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error, count } = await supabase.from("remuneracao_servidores")
+      .select("id, servidor_id, competencia, tipo_folha, bruto, servidores!inner(orgao_tipo)", { count: "exact" })
+      .eq("servidores.orgao_tipo", "camara")
+      .in("competencia", competencias)
+      .order("id", { ascending: true })
+      .range(offset, offset + pageSize - 1);
+    if (error) throw error;
+    if (count === null || (expectedCount !== null && count !== expectedCount)) {
+      throw new Error("Não foi possível confirmar o total de registros da folha da Câmara.");
+    }
+    expectedCount = count;
+    registros.push(...(data ?? []));
+    if (registros.length === expectedCount) break;
+    if (!data?.length || data.length < pageSize || registros.length > expectedCount) {
+      throw new Error("A consulta da folha da Câmara retornou registros incompletos.");
+    }
+  }
+  return resumirFolhaCamara(registros);
 }
 
 export async function fetchPresencaAnos(): Promise<number[]> {
