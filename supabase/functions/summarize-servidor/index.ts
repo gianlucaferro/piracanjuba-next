@@ -1,207 +1,147 @@
+// deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { hasCronOrServiceRoleAuth } from "../_shared/service-role-auth.ts";
-import { AdminBodyTooLargeError, readAdminActionBody } from "../_shared/admin-session-auth.ts";
-import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
+import {
+  AdminBodyTooLargeError,
+  readAdminActionBody,
+} from "../_shared/admin-session-auth.ts";
+import {
+  type LancamentoIndividual,
+  montarRespostaResumoServidor,
+  type ServidorIndividual,
+} from "../_shared/servidor-resumo.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+const headers = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+};
+const PAGE_SIZE = 250;
+const MAX_RECORDS = 5_000;
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers });
+}
 
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers });
+  if (req.method !== "POST") {
+    return new Response(null, {
+      status: 405,
+      headers: { ...headers, Allow: "POST, OPTIONS" },
+    });
+  }
+  let body: Record<string, unknown>;
   try {
-    let body: Record<string, unknown>;
-    try { body = await readAdminActionBody(req, 8_192); }
-    catch (error) {
-      return new Response(JSON.stringify({ error: "Corpo da requisição inválido ou muito grande." }), {
-        status: error instanceof AdminBodyTooLargeError ? 413 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const internal = hasCronOrServiceRoleAuth(req, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("CRON_SECRET"));
-    if (!internal && (body.model !== undefined || body.provider !== undefined)) {
-      return new Response(JSON.stringify({ error: "Parâmetros administrativos não permitidos." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    const servidor_id = body?.servidor_id;
-    // Modelo parametrizavel. Default gemini-2.5-flash (estavel e rapido; o preview
-    // tinha cota free apertada). Override por body.model permite teste A/B.
-    const model = typeof body?.model === "string" ? body.model : "gemini-2.5-flash";
-    if (typeof servidor_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(servidor_id)) {
-      return new Response(JSON.stringify({ error: "servidor_id é obrigatório" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
+    body = await readAdminActionBody(req, 8_192);
+  } catch (error) {
+    return json(
+      { error: "Corpo da requisição inválido ou muito grande." },
+      error instanceof AdminBodyTooLargeError ? 413 : 400,
+    );
+  }
+  const internal = hasCronOrServiceRoleAuth(
+    req,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+    Deno.env.get("CRON_SECRET"),
+  );
+  if (!internal && (body.model !== undefined || body.provider !== undefined)) {
+    return json({ error: "Parâmetros administrativos não permitidos." }, 403);
+  }
+  const requestedId = body.servidor_id;
+  if (
+    typeof requestedId !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      requestedId,
+    )
+  ) {
+    return json({
+      error: "servidor_id é obrigatório e deve ser um UUID válido.",
+    }, 400);
+  }
+  const servidorId = requestedId.toLowerCase();
+  try {
     const sb = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-
-    // Fetch servidor
-    const { data: servidor, error: sErr } = await sb
-      .from("servidores")
-      .select("*")
-      .eq("id", servidor_id)
-      .single();
-    if (sErr || !servidor) {
-      return new Response(JSON.stringify({ error: "Servidor não encontrado" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Fetch latest remuneração
-    const { data: remuneracoes } = await sb
-      .from("remuneracao_servidores")
-      .select("*")
-      .eq("servidor_id", servidor_id)
-      .order("competencia", { ascending: false })
-      .limit(3);
-
-    const latestRem = remuneracoes?.[0];
-    const remInfo = latestRem
-      ? `Competência mais recente (${latestRem.competencia}): Bruto R$ ${latestRem.bruto?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} | Líquido R$ ${latestRem.liquido?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
-      : "Sem dados de remuneração disponíveis.";
-
-    // Cache por conteudo: a chave inclui o que alimenta o resumo (cargo + competencia +
-    // valores). Se o salario muda (nova competencia ou correcao do mesmo mes), a chave
-    // muda e o resumo se regenera sozinho. Assim nunca servimos salario desatualizado.
-    const cacheChave = `${servidor_id}:${servidor.cargo ?? ""}:${latestRem?.competencia ?? "sem"}:${latestRem?.bruto ?? 0}:${latestRem?.liquido ?? 0}`;
-    const cacheAno = latestRem?.competencia
-      ? Number(String(latestRem.competencia).slice(0, 4))
-      : new Date().getFullYear();
-
-    const { data: cached } = await sb
-      .from("resumos_ia_cache")
-      .select("resumo")
-      .eq("contexto", "servidor")
-      .eq("chave", cacheChave)
-      .eq("ano", cacheAno)
+    const { data: servidor, error: servidorError } = await sb.from("servidores")
+      .select("id,nome,cargo,orgao_tipo,fonte_url")
+      .eq("id", servidorId)
       .maybeSingle();
-
-    if (cached?.resumo) {
-      return new Response(
-        JSON.stringify({
-          servidor: { nome: servidor.nome, cargo: servidor.cargo },
-          remuneracoes: remuneracoes || [],
-          resumo: cached.resumo,
-          cached: true,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (servidorError) throw new Error("Falha na leitura do cadastro");
+    if (!servidor) return json({ error: "Servidor não encontrado." }, 404);
+    if (servidor.id !== servidorId || typeof servidor.nome !== "string") {
+      throw new Error("Cadastro retornado fora do escopo");
     }
-
-    const prompt = `Você é um assistente de transparência pública municipal de Piracanjuba, GO.
-Gere um resumo curto (3-5 frases) sobre este servidor público, explicando de forma acessível ao cidadão:
-- O que faz o cargo "${servidor.cargo || "não informado"}"
-- Qual a importância dessa função para o município
-- Dados de remuneração MAIS RECENTES (use APENAS os dados abaixo, não invente valores)
-
-Servidor: ${servidor.nome}
-Cargo: ${servidor.cargo || "Não informado"}
-Remuneração mais recente:
-${remInfo}
-
-Responda em português, de forma clara e objetiva. Não invente dados. Sempre mencione a competência (mês/ano) ao citar valores.`;
-
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-
-    // Provider: por padrao usa OpenRouter quando ha OPENROUTER_API_KEY (consumir saldo
-    // pago, sem rate limit). body.provider="gemini" força o free tier. Pra reverter tudo
-    // pro Gemini free: basta remover o secret OPENROUTER_API_KEY.
-    const useOR = body?.provider !== "gemini" && OPENROUTER_API_KEY;
-    const aiUrl = useOR
-      ? "https://openrouter.ai/api/v1/chat/completions"
-      : "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-    const aiKey = useOR ? OPENROUTER_API_KEY! : GEMINI_API_KEY;
-    if (!aiKey) throw new Error("Nenhuma chave de IA configurada");
-
-    // Fallback de modelo no Gemini free (cota por modelo). No OpenRouter, 1 modelo barato.
-    const modelos = useOR
-      ? ["google/gemini-2.5-flash-lite"]
-      : body?.model
-        ? [model]
-        : ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
-
-    const _g = await aiGuard(sb, req, "summarize-servidor");
-    if (!_g.allowed) return guardBlockedResponse(_g);
-
-    let resumo = "";
-    let ultimoStatus = 0;
-    for (const m of modelos) {
-      const aiResponse = await fetch(aiUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${aiKey}`,
-          "Content-Type": "application/json",
-          ...(useOR ? { "HTTP-Referer": "https://piracanjuba.ai", "X-Title": "Piracanjuba.ai" } : {}),
-        },
-        body: JSON.stringify({
-          model: m,
-          max_tokens: 2_048,
-          messages: [
-            { role: "system", content: "Você é um assistente de transparência pública. Seja conciso e informativo." },
-            { role: "user", content: prompt },
-          ],
-          // Trava de custo: no OpenRouter, nao deixa cair pra outro provider/modelo mais caro.
-          ...(useOR ? { provider: { allow_fallbacks: false } } : {}),
-        }),
-        signal: AbortSignal.timeout(60_000),
-      });
-
-      if (aiResponse.ok) {
-        const aiData = await aiResponse.json();
-        resumo = aiData.choices?.[0]?.message?.content || "";
-        if (resumo) break;
+    const remuneracoes: LancamentoIndividual[] = [];
+    const ids = new Set<string>();
+    let expectedCount: number | null = null;
+    for (let offset = 0; offset < MAX_RECORDS; offset += PAGE_SIZE) {
+      const { data, error, count } = await sb.from("remuneracao_servidores")
+        .select(
+          "id,servidor_id,competencia,tipo_folha,bruto,liquido,fonte_url",
+          { count: "exact" },
+        )
+        .eq("servidor_id", servidorId)
+        .order("competencia", { ascending: false })
+        .order("id", { ascending: true })
+        .range(offset, offset + PAGE_SIZE - 1);
+      if (error) throw new Error("Falha na leitura das remuneracoes");
+      if (
+        !Array.isArray(data) || !Number.isSafeInteger(count) ||
+        count === null || count < 0 || count > MAX_RECORDS
+      ) {
+        throw new Error("Consulta de remuneracoes incompleta");
       }
-      ultimoStatus = aiResponse.status;
-      // 429 (cota) e 503 (sobrecarga) -> tenta o proximo modelo. 402 (creditos) -> aborta.
-      if (aiResponse.status === 402) break;
-    }
-
-    if (!resumo) {
-      if (ultimoStatus === 402) {
-        return new Response(JSON.stringify({ error: "Créditos de IA esgotados." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (expectedCount !== null && expectedCount !== count) {
+        throw new Error("Quantidade de remuneracoes alterada durante consulta");
+      }
+      expectedCount = count;
+      for (const row of data) {
+        if (
+          row.servidor_id !== servidorId || typeof row.id !== "string" ||
+          ids.has(row.id)
+        ) {
+          throw new Error("Remuneracao duplicada ou fora do escopo");
+        }
+        ids.add(row.id);
+        remuneracoes.push({
+          id: row.id,
+          competencia: row.competencia,
+          tipo_folha: row.tipo_folha,
+          bruto: row.bruto,
+          liquido: row.liquido,
+          fonte_url: row.fonte_url,
         });
       }
-      return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em instantes." }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (remuneracoes.length > expectedCount) {
+        throw new Error("Total de remuneracoes inconsistente");
+      }
+      if (remuneracoes.length === expectedCount) break;
+      if (data.length < PAGE_SIZE) {
+        throw new Error("Pagina de remuneracoes incompleta");
+      }
     }
-
-    // Salva no cache (so quando gerou de verdade, nunca o fallback de erro)
-    if (resumo && resumo !== "Não foi possível gerar o resumo.") {
-      await sb.from("resumos_ia_cache").upsert({
-        contexto: "servidor",
-        chave: cacheChave,
-        ano: cacheAno,
-        resumo,
-      }, { onConflict: "contexto,chave,ano" });
+    if (remuneracoes.length !== expectedCount) {
+      throw new Error("Historico de remuneracoes incompleto");
     }
-
-    return new Response(
-      JSON.stringify({
-        servidor: {
-          nome: servidor.nome,
-          cargo: servidor.cargo,
-        },
-        remuneracoes: remuneracoes || [],
-        resumo,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    const resposta = montarRespostaResumoServidor(
+      servidor as ServidorIndividual,
+      remuneracoes,
     );
-  } catch (error) {
-    console.error("Erro:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Erro desconhecido" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return json(resposta);
+  } catch {
+    // Nao transformar indisponibilidade em ausencia de folha nem expor detalhes do banco.
+    console.error("Falha ao consultar resumo individual do servidor");
+    return json({
+      error:
+        "Não foi possível consultar os dados do servidor. Tente novamente.",
+    }, 503);
   }
 });

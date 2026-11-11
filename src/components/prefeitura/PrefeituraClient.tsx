@@ -28,7 +28,7 @@ import {
   fetchDespesas, fetchContratos, fetchLicitacoes,
   fetchDiarias, fetchObras, fetchSecretariosRemuneracao,
   fetchExecutivoRemuneracao,
-  type Contrato, type Licitacao, type Secretaria, type Obra, type RemuneracaoServidor
+  type Contrato, type Licitacao, type Secretaria, type Obra
 } from "@/data/prefeituraApi";
 import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -36,6 +36,7 @@ import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import PrefeituraDestaques from "@/components/prefeitura/PrefeituraDestaques";
 import ResumoFolhaPrefeitura from "@/components/prefeitura/ResumoFolhaPrefeitura";
+import ServidorResumoDialog from "@/components/servidores/ServidorResumoDialog";
 import FunprepiTab from "@/components/prefeitura/FunprepiTab";
 import SituacaoCadastralBadge from "@/components/transparencia/SituacaoCadastralBadge";
 import GrupoEconomicoBadge from "@/components/transparencia/GrupoEconomicoBadge";
@@ -402,35 +403,6 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const [selectedServidor, setSelectedServidor] = useState<{ id: string; nome: string; cargo: string | null } | null>(null);
-  const [resumoData, setResumoData] = useState<{ resumo: string; remuneracoes: RemuneracaoServidor[] } | null>(null);
-  const [loadingResumo, setLoadingResumo] = useState(false);
-  const cacheServidor = useRef<Record<string, { resumo: string; remuneracoes: RemuneracaoServidor[] }>>({});
-
-  const handleClickServidor = async (s: { id: string; nome: string; cargo: string | null }) => {
-    setSelectedServidor(s);
-    if (cacheServidor.current[s.id]) {
-      setResumoData(cacheServidor.current[s.id]);
-      setLoadingResumo(false);
-      return;
-    }
-    setResumoData(null);
-    setLoadingResumo(true);
-    try {
-      const { data, error } = await supabase.functions.invoke<{ error?: string; resumo?: string; remuneracoes?: RemuneracaoServidor[] }>("summarize-servidor", {
-        body: { servidor_id: s.id },
-      });
-      if (error) throw error;
-      const r = data?.error
-        ? { resumo: data.error, remuneracoes: [] }
-        : { resumo: data?.resumo || "Não foi possível gerar o resumo no momento.", remuneracoes: data?.remuneracoes || [] };
-      cacheServidor.current[s.id] = r;
-      setResumoData(r);
-    } catch {
-      setResumoData({ resumo: "Não foi possível gerar o resumo no momento.", remuneracoes: [] });
-    } finally {
-      setLoadingResumo(false);
-    }
-  };
 
   const exportCsv = async () => {
     if (exporting) return;
@@ -460,7 +432,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
       </div>
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para ver um resumo gerado por IA."}
+          {totalCount > 0 ? `${totalCount} servidores encontrados · Página ${page + 1} de ${totalPages}` : "Clique no nome do servidor para consultar seu resumo."}
         </p>
         {totalCount > 0 && (
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={exporting}>
@@ -479,14 +451,14 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
       {servidores.length > 0 && (
         <div className="space-y-2">
           {servidores.map((s) => (
-            <button key={s.id} onClick={() => handleClickServidor(s)}
+            <button key={s.id} onClick={() => setSelectedServidor(s)}
               className="stat-card card-hover block w-full text-left flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground text-sm">{s.nome}</p>
                 {s.cargo && <p className="text-sm text-muted-foreground">{s.cargo}</p>}
               </div>
               <span className="text-sm text-primary flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Ver resumo IA
+                <FileText className="w-3 h-3" /> Ver resumo
               </span>
             </button>
           ))}
@@ -507,51 +479,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
         </div>
       )}
 
-      <Dialog open={!!selectedServidor} onOpenChange={(open) => !open && setSelectedServidor(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-base flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              {selectedServidor?.nome}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {selectedServidor?.cargo && (
-              <Badge variant="secondary">{selectedServidor.cargo}</Badge>
-            )}
-
-            {resumoData?.remuneracoes && resumoData.remuneracoes.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Remuneração recente</p>
-                {resumoData.remuneracoes.map((r) => (
-                  <div key={r.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-                    <span className="text-sm text-muted-foreground">{r.competencia}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-muted-foreground">Bruto: <span className="font-semibold text-foreground">{formatCurrency(r.bruto)}</span></span>
-                      <span className="text-sm text-muted-foreground">Líquido: <span className="font-semibold text-accent">{formatCurrency(r.liquido)}</span></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="rounded-lg bg-muted/50 border p-4">
-              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-accent" /> Resumo gerado por IA
-              </p>
-              {loadingResumo ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" /> Gerando resumo...
-                </div>
-              ) : (
-                <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">
-                  {resumoData?.resumo}
-                </p>
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ServidorResumoDialog servidor={selectedServidor} orgaoTipo="prefeitura" onClose={() => setSelectedServidor(null)} />
     </div>
   );
 }

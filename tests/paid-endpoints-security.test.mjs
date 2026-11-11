@@ -26,7 +26,7 @@ async function sandbox({ slug, client = {}, fetcher, env = {}, extra = {} } = {}
     },
     ...extra,
   });
-  for (const name of ["_shared/service-role-auth.ts", "_shared/admin-session-auth.ts", "_shared/ratelimit.ts", ...(slug ? [slug + "/index.ts"] : [])]) {
+  for (const name of ["_shared/service-role-auth.ts", "_shared/admin-session-auth.ts", "_shared/ratelimit.ts", ...(slug === "summarize-servidor" ? ["_shared/servidor-resumo.ts"] : []), ...(slug ? [slug + "/index.ts"] : [])]) {
     const text = await readFile(new URL(name, base), "utf8");
     const stripped = text.replace(/^import[\s\S]*?;\n/gm, "").replace(/^export /gm, "");
     vm.runInContext(stripTypeScriptTypes(stripped), context, { filename: name });
@@ -115,58 +115,54 @@ test("ai-search valida pergunta e corpo antes da quota", async () => {
   assert.equal(reservations, 0);
 });
 
-test("backfill mantém lote e encadeamento privado e para em quota indisponível", async () => {
+test("backfill privado encerra sem gerar cache ou consumir quota", async () => {
   let queries = 0;
   const { context, calls } = await sandbox({ slug: "backfill-servidor-resumos", client: {
-    rpc: async (_name, args) => {
-      queries++;
-      assert.ok(args.lim === 10 || args.lim === 100000);
-      return { data: args.lim === 10 ? [{ id: "fixture-id" }, { id: "outro" }] : [], error: null };
-    },
-  }, fetcher: async (_url, options) => {
-    assert.equal(options.headers.Authorization, "Bearer fixture-service");
-    return new Response("{}", { status: 503 });
+    rpc: async () => { queries++; throw new Error("Backfill deterministico nao deve consultar banco"); },
   } });
   const response = await context.handler(request({ batch_size: 10 }, { "x-cron-secret": "fixture-cron" }));
-  assert.equal(response.status, 503);
+  assert.equal(response.status, 200);
   const result = await response.json();
-  assert.equal(result.quotaParou, true);
-  assert.equal(result.success, false);
-  assert.equal(calls.fetch.length, 1);
-  assert.equal(queries, 2);
+  assert.equal(result.skipped, true);
+  assert.equal(result.reason, "resumos_deterministicos");
+  assert.equal(result.success, true);
+  assert.equal(result.gerados, 0);
+  assert.equal(calls.fetch.length, 0);
+  assert.equal(calls.client, 0);
+  assert.equal(queries, 0);
 });
 
-function summaryClient(cached, quotaError) {
+function summaryClient(readError) {
   const reads = [];
   return {
     reads,
-    rpc: async () => {
-      if (cached) throw new Error("Cache não deve consumir quota");
-      return { data: null, error: quotaError };
-    },
+    rpc: async () => { throw new Error("Resumo deterministico nao deve consumir quota"); },
     from(table) {
       reads.push(table);
-      const data = table === "servidores" ? { nome: "Fixture", cargo: "Professor" }
-        : table === "remuneracao_servidores" ? [{ competencia: "2026-10", bruto: 100, liquido: 90 }]
-        : cached ? { resumo: "Resumo em cache" } : null;
-      return { select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; },
-        single: async () => ({ data, error: null }), maybeSingle: async () => ({ data, error: null }),
-        then(resolve, reject) { return Promise.resolve({ data, error: null }).then(resolve, reject); } };
+      if (!["servidores", "remuneracao_servidores"].includes(table)) throw new Error("Cache antigo nao deve ser consultado");
+      const data = table === "servidores" ? { id: serverId, nome: "Fixture", cargo: "Professor", orgao_tipo: "prefeitura", fonte_url: null }
+        : [{ id: "rem-1", servidor_id: serverId, competencia: "2026-10", tipo_folha: "MENSAL", bruto: 100, liquido: 90, fonte_url: null }];
+      return { select() { return this; }, eq() { return this; }, order() { return this; }, range() { return this; },
+        maybeSingle: async () => ({ data, error: readError ?? null }),
+        then(resolve, reject) { return Promise.resolve({ data, count: data.length, error: readError ?? null }).then(resolve, reject); } };
     },
   };
 }
 const serverId = "123e4567-e89b-12d3-a456-426614174000";
-test("resumo em cache continua público e não chama quota nem provedor", async () => {
-  const { context, calls } = await sandbox({ slug: "summarize-servidor", client: summaryClient(true) });
+test("resumo individual continua publico sem consultar cache, quota ou provedor", async () => {
+  const client = summaryClient();
+  const { context, calls } = await sandbox({ slug: "summarize-servidor", client });
   const response = await context.handler(request({ servidor_id: serverId }));
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).cached, true);
+  assert.equal((await response.json()).cached, false);
   assert.equal(calls.fetch.length, 0);
+  assert.deepEqual(client.reads, ["servidores", "remuneracao_servidores"]);
 });
-test("resumo sem cache bloqueia geração quando quota falha", async () => {
-  const { context, calls } = await sandbox({ slug: "summarize-servidor", client: summaryClient(false, { message: "offline" }) });
+test("resumo individual informa falha de leitura sem gerar texto financeiro", async () => {
+  const { context, calls } = await sandbox({ slug: "summarize-servidor", client: summaryClient({ message: "offline" }) });
   const response = await context.handler(request({ servidor_id: serverId }));
   assert.equal(response.status, 503);
+  assert.equal((await response.json()).resumo, undefined);
   assert.equal(calls.fetch.length, 0);
 });
 test("visitante não altera provider ou modelo de resumo", async () => {
