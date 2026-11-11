@@ -1,0 +1,39 @@
+{
+  "project_id": "oinweocqcptwxqsztlcl",
+  "source_commit": "032046ba1523d9b16c0d75a6321482f175325221",
+  "vercel_deployment": "dpl_GvkHFN7Wr13Bh5WmkqcmZ5C8Z4vy",
+  "functions": [
+    {
+      "name": "summarize-servidor",
+      "version": 30,
+      "verify_jwt": false,
+      "ezbr_sha256": "622e05578a46f8db02b1cd9914a58812e4837457c3f4cf91e4208e1e33952a0b",
+      "files": [
+        "functions/summarize-servidor/index.ts",
+        "functions/_shared/service-role-auth.ts",
+        "functions/_shared/admin-session-auth.ts",
+        "functions/_shared/ratelimit.ts",
+        "functions/_shared/ai.ts"
+      ]
+    },
+    {
+      "name": "backfill-servidor-resumos",
+      "version": 6,
+      "verify_jwt": false,
+      "ezbr_sha256": "b7bc7720babd81f84959953c533387e39b6acac5528fd0251c8e50b51c4820eb",
+      "files": [
+        "functions/backfill-servidor-resumos/index.ts",
+        "functions/_shared/service-role-auth.ts",
+        "functions/_shared/admin-session-auth.ts"
+      ]
+    }
+  ],
+  "database": {
+    "remuneracoes": 20526,
+    "servidores": 1844,
+    "cache_servidor": 3966,
+    "cache_digest": "1785aaf775fe32fced6ed28bf9e8d62e",
+    "crons": null
+  }
+}
+
