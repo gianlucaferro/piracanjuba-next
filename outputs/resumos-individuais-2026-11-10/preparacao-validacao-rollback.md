@@ -26,7 +26,7 @@ Base Git `032046ba1523d9b16c0d75a6321482f175325221`. Fonte local conferida integ
 
 Publicar primeiro as duas Edge Functions e conferir todos os arquivos ativos. A resposta nova preserva resumo/remuneracoes para o cliente anterior. Conferir os seis casos reais no endpoint publicado, sem gerar IA, e validar o backfill sem efeitos. Depois publicar o frontend, que exige o contrato dados_oficiais, e conferir os modais e rotas publicas.
 
-Os resultados finais de publicacao sao registrados na nota canonica `Sessoes/2026-11-10 Codex - Piracanjuba.ai - resumos individuais de servidores.md` do Obsidian e nos artefatos privados em work.
+Os resultados finais de publicacao sao registrados na nota canonica `/Users/gianlucaferro/dev/obsidian/GianlucaObsidian/Sessões/2026-11-10 Codex - Piracanjuba.ai - resumos individuais de servidores.md` e nos artefatos privados em work.
 
 ## Rollback
 
