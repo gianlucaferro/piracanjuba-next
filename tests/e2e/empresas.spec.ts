@@ -42,5 +42,15 @@ test("nome que não é de empresa responde 404 e as seções mantêm a navegaç�
   const sobre = await page.goto("/sobre");
   expect(sobre?.status()).toBe(200);
   await expect(page.locator(BARRA_INFERIOR)).toHaveCount(1);
+  // Controle positivo: os mesmos seletores encontram o chat e a barra fora das páginas de empresa.
+  await expect(page.locator(CHAT)).toHaveCount(1);
   if (isMobile) await expect(page.locator(BARRA_INFERIOR)).toBeVisible();
+});
+
+test("endereço digitado com maiúscula ou acento leva à página da empresa", async ({ page }) => {
+  await page.goto("/VitorinoPerfumes");
+  await expect(page).toHaveURL(/\/vitorinoperfumes$/);
+  await page.goto("/apare%C3%A7a");
+  await expect(page).toHaveURL(/\/apareca$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Apareça Ai" })).toBeVisible();
 });

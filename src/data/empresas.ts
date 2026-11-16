@@ -80,8 +80,15 @@ export type Empresa = {
   seo: {
     titulo: string;
     descricao: string;
+    /** Imagem de compartilhamento, 1200x630. */
     imagem: string;
-    tipoSchema: "Store" | "ProfessionalService";
+    /** Logo para os dados estruturados (o Google pede ao menos 112x112), se diferente do logo da página. */
+    logoSchema?: string;
+    /**
+     * "Store" para loja com atendimento no local. Empresa só online usa
+     * "Organization": os tipos de negócio local exigem endereço físico.
+     */
+    tipoSchema: "Store" | "Organization";
   };
   tema: TemaEmpresa;
   fontes: "vitorino" | "apareca";
@@ -122,7 +129,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       {
         titulo: "Perfumes de grife",
         texto:
-          "Clássicos e lançamentos de marcas como Chanel, Yves Saint Laurent, Tom Ford e Giorgio Armani.",
+          "Clássicos e lançamentos de marcas como Chanel, Yves Saint Laurent, Dior e Giorgio Armani.",
       },
       {
         titulo: "Perfumes de nicho",
@@ -220,7 +227,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     },
     painelTopo: {
       frase: "Apareça quando procurarem por você.",
-      itens: ["Site completo ou página única", "Google Meu Negócio", "ChatGPT e Gemini"],
+      itens: ["Site completo ou página única", "Google Meu Negócio", "Organização para ChatGPT e Gemini"],
     },
     sobre: [
       "A Apareça Ai cria sites e organiza a presença de pequenos negócios e profissionais liberais no Google, no Google Meu Negócio e em ferramentas de inteligência artificial como ChatGPT e Gemini.",
@@ -261,7 +268,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       {
         titulo: "Prazo combinado",
         texto:
-          "Projetos diretos ficam no ar em até 15 dias depois que as informações são enviadas e aprovadas.",
+          "Projetos diretos podem entrar no ar em até 15 dias depois que as informações são enviadas e aprovadas. Projetos maiores têm cronograma próprio.",
       },
       { titulo: "Você aprova antes", texto: "Nada é publicado sem o seu OK." },
       {
@@ -291,7 +298,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       detalhe: "Atendimento online pelo WhatsApp para Piracanjuba, região e todo o Brasil.",
     },
     vinculo:
-      "A Apareça Ai é uma marca da Ferro Labs Tecnologia, empresa que desenvolve e mantém o Piracanjuba.ai, em parceria com o Grupo V3.",
+      "A Apareça Ai é uma marca da Ferro Labs Tecnologia em parceria com o Grupo V3. A Ferro Labs desenvolve e mantém o Piracanjuba.ai.",
     chamadaFinal: {
       titulo: "Seu negócio aparece quando procuram por ele?",
       texto: "Peça um diagnóstico gratuito e veja o que dá para melhorar.",
@@ -301,7 +308,8 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       descricao:
         "Criação de sites, página única, Google Meu Negócio e presença em inteligência artificial para negócios de Piracanjuba (GO). Diagnóstico gratuito pelo WhatsApp.",
       imagem: "/empresas/apareca/og.png",
-      tipoSchema: "ProfessionalService",
+      logoSchema: "/empresas/apareca/logo.png",
+      tipoSchema: "Organization",
     },
     tema: {
       fundo: "#faf5ec",

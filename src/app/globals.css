@@ -296,3 +296,12 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Páginas de empresa no celular: a barra fixa de WhatsApp não pode cobrir o
+   elemento focado pelo teclado (WCAG 2.2, critério 2.4.11). 48rem = md. */
+@media (width < 48rem) {
+  html:has([data-barra-empresa]),
+  html:has([data-barra-empresa]) body {
+    scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}

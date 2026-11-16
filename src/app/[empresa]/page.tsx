@@ -44,7 +44,7 @@ function schemaEmpresa(empresa: Empresa) {
     url: empresa.contato.site?.url ?? pagina,
     mainEntityOfPage: pagina,
     image: `${SITE_URL}${empresa.foto?.src ?? empresa.seo.imagem}`,
-    logo: `${SITE_URL}${empresa.logo.src}`,
+    logo: `${SITE_URL}${empresa.seo.logoSchema ?? empresa.logo.src}`,
     telephone: `+${empresa.contato.whatsapp}`,
     ...(atendimento === "presencial"
       ? {

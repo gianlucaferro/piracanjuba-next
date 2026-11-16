@@ -14,6 +14,38 @@ export function ehSlugEmpresa(valor: string): valor is SlugEmpresa {
   return (SLUGS_EMPRESAS as readonly string[]).includes(valor);
 }
 
+function normalizarSegmento(segmento: string): string {
+  let texto = segmento;
+  try {
+    texto = decodeURIComponent(segmento);
+  } catch {
+    // Codificação inválida: compara o texto como veio.
+  }
+  return texto
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Endereço digitado com maiúscula, acento, hífen ou espaço a mais, como
+ * "/VitorinoPerfumes", "/apareça" ou "/vitorino-perfumes": devolve o caminho
+ * certo da empresa para redirecionar. Devolve null quando o caminho já é o
+ * certo ou não é de empresa. Útil porque o endereço circula em material
+ * impresso e é digitado à mão.
+ */
+export function caminhoCanonicoEmpresa(caminho: string): string | null {
+  const partes = caminho.split("/").filter(Boolean);
+  if (partes.length !== 1) return null;
+  const [segmento] = partes;
+  if (ehSlugEmpresa(segmento)) return null;
+  const normalizado = normalizarSegmento(segmento);
+  if (!normalizado) return null;
+  const slug = SLUGS_EMPRESAS.find((s) => s.replace(/-/g, "") === normalizado);
+  return slug ? `/${slug}` : null;
+}
+
 /** true quando o caminho é exatamente a página de uma empresa, como "/apareca" ou "/apareca/". */
 export function ehPaginaDeEmpresa(caminho: string | null | undefined): boolean {
   if (!caminho) return false;

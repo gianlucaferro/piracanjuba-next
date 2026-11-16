@@ -13,7 +13,9 @@ import { CLASSES_FONTES } from "./fontes";
 // um outdoor.
 
 const TITULO: CSSProperties = { fontFamily: "var(--fonte-marca-titulo), Georgia, serif" };
-const REL_EXTERNO = "sponsored noopener noreferrer";
+// Sem noreferrer: o site da empresa precisa ver que a visita veio do
+// Piracanjuba.ai (o navegador envia só a origem, sem o caminho).
+const REL_EXTERNO = "sponsored noopener";
 
 function LinkExterno({
   href,
@@ -105,7 +107,7 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
                   alt={empresa.logo.alt}
                   width={empresa.logo.largura}
                   height={empresa.logo.altura}
-                  priority
+                  loading="eager"
                   className="h-16 w-auto md:h-20"
                 />
               ) : (
@@ -114,7 +116,7 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
                   alt={empresa.logo.alt}
                   width={empresa.logo.largura}
                   height={empresa.logo.altura}
-                  priority
+                  loading="eager"
                   unoptimized
                   className="h-16 w-16 rounded-2xl md:h-20 md:w-20"
                 />
@@ -164,7 +166,8 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
               alt={empresa.foto.alt}
               width={empresa.foto.largura}
               height={empresa.foto.altura}
-              priority
+              loading="eager"
+              fetchPriority="high"
               sizes="(min-width: 768px) 420px, 100vw"
               className="aspect-square w-full rounded-3xl object-cover shadow-lg"
             />
@@ -345,7 +348,9 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
         </p>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--marca-borda)] bg-[var(--marca-superficie)]/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden">
+      <div
+        data-barra-empresa
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--marca-borda)] bg-[var(--marca-superficie)]/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden">
         <BotaoWhatsapp empresa={empresa} rotulo="Chamar no WhatsApp" className="w-full" />
       </div>
     </div>
