@@ -8,6 +8,7 @@ import MobileBottomNav from "./MobileBottomNav";
 import QueryProvider from "@/components/providers/QueryProvider";
 import ChatWidget from "@/components/chat/ChatWidget";
 import FollowingBanner from "@/components/FollowingBanner";
+import SomenteNoPortal from "./SomenteNoPortal";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,9 +34,12 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        <FollowingBanner />
+        <SomenteNoPortal>
+          <FollowingBanner />
+        </SomenteNoPortal>
         <main className="flex-1 pb-20 md:pb-0">{children}</main>
 
+        <SomenteNoPortal>
         <section className="border-t bg-accent/5 py-6 hidden md:block">
           <div className="container">
             <Link
@@ -61,6 +65,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             </Link>
           </div>
         </section>
+        </SomenteNoPortal>
 
         <footer className="border-t bg-card hidden md:block">
           <div className="container py-8">
@@ -127,8 +132,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
 
-        <MobileBottomNav />
-        <ChatWidget />
+        <SomenteNoPortal>
+          <MobileBottomNav />
+          <ChatWidget />
+        </SomenteNoPortal>
       </div>
     </QueryProvider>
   );

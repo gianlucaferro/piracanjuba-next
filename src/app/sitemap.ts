@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { BUS_CHECKED_AT } from "@/data/horariosOnibus";
+import { EMPRESAS } from "@/data/empresas";
+import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
 
 const SITE_URL = "https://piracanjuba.ai";
 
@@ -47,6 +49,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...prefeituraAbas.map((a) => ({ url: `${SITE_URL}/prefeitura/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
     ...camaraAbas.map((a) => ({ url: `${SITE_URL}/camara/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
+
+  // Páginas de empresa (piracanjuba.ai/<slug>), com a data da última conferência da ficha.
+  const empresaRoutes: MetadataRoute.Sitemap = SLUGS_EMPRESAS.map((slug) => ({
+    url: `${SITE_URL}/${slug}`,
+    lastModified: new Date(`${EMPRESAS[slug].conferidoEm}T12:00:00-03:00`),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
 
   // Anúncios ativos do classificados (dinâmico)
   const dynamicRoutes: MetadataRoute.Sitemap = [];
@@ -95,5 +105,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap dynamic routes failed:", e);
   }
 
-  return [...staticRoutes, ...tabRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...tabRoutes, ...empresaRoutes, ...dynamicRoutes];
 }

@@ -4,6 +4,7 @@
 import { numericTooltip } from "@/lib/chart-formatters";
 
 import { useMemo, type ElementType } from "react";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
@@ -210,7 +211,7 @@ export default function Agro({
         />
 
         {/* Cross link pra /meio-ambiente — onde mostramos a transicao 1985-2024 */}
-        <a
+        <Link
           href="/meio-ambiente"
           className="stat-card card-hover flex items-center justify-between gap-4 group"
         >
@@ -226,7 +227,7 @@ export default function Agro({
           <span className="text-sm text-primary font-medium whitespace-nowrap group-hover:translate-x-1 transition-transform">
             Ver no Meio Ambiente →
           </span>
-        </a>
+        </Link>
 
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

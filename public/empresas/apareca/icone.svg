@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" width="72" height="72" role="img" aria-label="apareça.ai">
+  <rect x="0" y="0" width="72" height="72" rx="20" fill="#1B1A14"/>
+  <g transform="translate(18,18) scale(1.5)">
+    <path d="M12 2C7.6 2 4 5.5 4 9.9c0 5.6 6.9 11.1 7.45 11.5.33.24.77.24 1.1 0C13.1 21 20 15.5 20 9.9 20 5.5 16.4 2 12 2z" fill="#E85D1C"/>
+    <path d="M12 5.7c.42 2.4 1.08 3.24 3.48 3.72-2.4.48-3.06 1.32-3.48 3.72-.42-2.4-1.08-3.24-3.48-3.72 2.4-.48 3.06-1.32 3.48-3.72z" fill="#FAF5EC"/>
+  </g>
+</svg>
