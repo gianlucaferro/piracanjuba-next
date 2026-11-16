@@ -20,6 +20,7 @@ import {
   MessageSquare,
   Info,
   Trophy,
+  Newspaper,
 } from "lucide-react";
 
 const mobileMainNav = [
@@ -40,6 +41,7 @@ const mobileMoreNav = [
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
   { to: "/nota-pba", label: "Nota PBA", icon: Trophy },
   { to: "/anuncie", label: "Anuncie", icon: HeartHandshake },
+  { to: "/na-midia", label: "Na mídia", icon: Newspaper },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];
 

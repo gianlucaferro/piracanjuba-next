@@ -83,6 +83,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                   <HeartHandshake className="w-3.5 h-3.5 text-primary" />
                   Anuncie
                 </Link>
+                <Link href="/na-midia" className="hover:text-foreground transition-colors">
+                  Na mídia
+                </Link>
                 <Link href="/sobre" className="hover:text-foreground transition-colors">
                   Fontes oficiais
                 </Link>
