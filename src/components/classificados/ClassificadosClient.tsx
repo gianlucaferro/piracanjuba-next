@@ -2475,7 +2475,12 @@ export default function CompraEVendaPBA() {
                     size="sm"
                     variant="ghost"
                     className="gap-1.5 h-9 text-muted-foreground hover:text-destructive"
-                    onClick={signOut}
+                    onClick={async () => {
+                      const { error } = await signOut();
+                      if (error) {
+                        toast.error("Você saiu deste aparelho, mas não foi possível encerrar a sessão nos outros.");
+                      }
+                    }}
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="hidden sm:inline">Sair</span>

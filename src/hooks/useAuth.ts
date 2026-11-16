@@ -73,9 +73,15 @@ export function useAuth() {
     return { error };
   };
 
+  // Desde o supabase-js 2.119.0, se a saída global falhar (rede ou servidor),
+  // a sessão local é mantida. Nesse caso saímos ao menos deste navegador.
   const signOut = async () => {
     const supabase = createBrowserSupabaseClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      await supabase.auth.signOut({ scope: "local" });
+    }
+    return { error };
   };
 
   return {
