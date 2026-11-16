@@ -20,6 +20,7 @@ Piracanjuba.ai é uma plataforma independente que utiliza inteligência artifici
 - [Benefícios Sociais](https://piracanjuba.ai/beneficios-sociais): Bolsa Família, BPC, Pé-de-Meia e outros programas sociais.
 - [Impostos](https://piracanjuba.ai/arrecadacao): Arrecadação municipal, IPTU, ISS, ITBI e comparativo com outros municípios de Goiás.
 - [Sobre](https://piracanjuba.ai/sobre): Metodologia, fontes oficiais e informações sobre o projeto.
+- [Na mídia](https://piracanjuba.ai/na-midia): Reportagens e entrevistas sobre o Piracanjuba.ai na revista piauí, CartaCapital, Times Brasil, UOL, O Popular, CBN Goiânia e Mais Goiás.
 
 ## Dados Disponíveis
 

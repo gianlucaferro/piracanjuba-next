@@ -32,7 +32,8 @@ import {
   fetchEmendas,
   fetchContratosResumo,
 } from "@/lib/data/home";
-import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
+import { AnuncioBannerPadrao } from "@/components/AnuncioBanner";
+import NaMidiaFaixa from "@/components/home/NaMidiaFaixa";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
 import TodayInPiracanjuba from "@/components/home/TodayInPiracanjuba";
@@ -151,8 +152,8 @@ export default async function HomePage() {
       <div className="container py-8 space-y-10">
         <TodayInPiracanjuba />
 
-        {/* Anúncio destaque */}
-        <AnuncioBannerDestaque />
+        {/* Na mídia: logos dos principais veículos que citaram o projeto */}
+        <NaMidiaFaixa />
 
         {/* Destaque: Nota de transparência da cidade (PNTP/ATRICON) */}
         <Link

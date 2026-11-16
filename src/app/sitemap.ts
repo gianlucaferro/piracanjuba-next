@@ -36,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/historia-pba`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/nota-pba`, lastModified: now, changeFrequency: "yearly", priority: 0.8 },
     { url: `${SITE_URL}/sobre`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${SITE_URL}/na-midia`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/noticias`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
   ];
 
