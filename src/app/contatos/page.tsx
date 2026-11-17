@@ -1,6 +1,13 @@
 import { Phone, ExternalLink, Smartphone } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
+import {
+  HORARIO_PREFEITURA,
+  TELEFONES,
+  formatarTelefone,
+  linkTelefone,
+  type TelefonePublico,
+} from "@/data/telefones";
 
 export const metadata = pageMetadata({
   title: "Contatos Úteis de Piracanjuba GO",
@@ -9,72 +16,75 @@ export const metadata = pageMetadata({
   path: "/contatos",
 });
 
-type ContatoItem = {
-  nome: string;
-  numero: string;
-  display: string;
-  tipo?: "whatsapp" | "telefone" | "link";
-  mensagem?: string;
-  url?: string;
-};
+type ContatoItem =
+  | { nome: string; telefone: TelefonePublico; detalhe?: string; mensagem?: string }
+  | { nome: string; url: string; display: string };
 
 const contatos: { categoria: string; itens: ContatoItem[] }[] = [
   {
     categoria: "Segurança",
     itens: [
-      { nome: "Polícia Militar 1", numero: "5564999719063", display: "(64) 99971-9063" },
-      { nome: "Polícia Militar 2", numero: "5564999714141", display: "(64) 99971-4141" },
-      { nome: "CPE 10 (GPT)", numero: "5564999713304", display: "(64) 99971-3304" },
-      { nome: "Bombeiros Piracanjuba", numero: "5562984940249", display: "(62) 98494-0249" },
-      { nome: "Delegacia de Polícia Civil", numero: "556434052014", display: "(64) 3405-2014" },
+      { nome: "Polícia Militar 1", telefone: TELEFONES.policiaMilitar1 },
+      { nome: "Polícia Militar 2", telefone: TELEFONES.policiaMilitar2 },
+      { nome: "CPE 10 (GPT)", telefone: TELEFONES.cpe10 },
+      { nome: "Bombeiros Piracanjuba", telefone: TELEFONES.bombeiros },
+      { nome: "Delegacia de Polícia Civil", telefone: TELEFONES.delegacia },
+      { nome: "Delegacia de Polícia Civil (celular)", telefone: TELEFONES.delegaciaCelular },
       {
         nome: "Delegacia Virtual (Registre Ocorrência Online)",
-        numero: "",
         display: "raivirtual.ssp.go.gov.br",
-        tipo: "link",
         url: "https://raivirtual.ssp.go.gov.br/#/",
       },
-      {
-        nome: "Conselho Tutelar",
-        numero: "5564999621487",
-        display: "(64) 99962-1487",
-        tipo: "telefone",
-      },
+      { nome: "Conselho Tutelar", telefone: TELEFONES.conselhoTutelar },
     ],
   },
   {
     categoria: "Saúde",
     itens: [
-      { nome: "Base do SAMU", numero: "5564996265935", display: "(64) 99626-5935", tipo: "telefone" },
-      { nome: "CAPS", numero: "5564996269555", display: "(64) 99626-9555" },
+      { nome: "Base do SAMU", telefone: TELEFONES.samu },
+      { nome: "CAPS", telefone: TELEFONES.caps },
     ],
   },
   {
     categoria: "Serviços Públicos",
     itens: [
-      { nome: "Prefeitura Municipal", numero: "556492382040", display: "(64) 9238-2040" },
-      { nome: "Secretaria de Obras", numero: "5564992437140", display: "(64) 99243-7140" },
-      { nome: "Secretaria Assistência Social", numero: "5564999558619", display: "(64) 99955-8619" },
-      { nome: "Secretaria de Esportes", numero: "5564999558619", display: "(64) 99955-8619" },
-      { nome: "CREAS", numero: "5564996023899", display: "(64) 99602-3899" },
-      { nome: "Cad Único / Bolsa Família", numero: "5564999849676", display: "(64) 99984-9676" },
-      { nome: "SINE", numero: "5564992970908", display: "(64) 99297-0908" },
-      { nome: "SAMARH", numero: "5564992980070", display: "(64) 99298-0070" },
-      { nome: "Gabinete Sec. Educação", numero: "5564920002303", display: "(64) 92000-2303" },
-      { nome: "Secretaria de Saúde", numero: "5564996015760", display: "(64) 9601-5760" },
-      { nome: "Secretaria de Educação", numero: "556434054069", display: "(64) 3405-4069", tipo: "telefone" },
-      { nome: "Clínica de Castração", numero: "5564920015516", display: "(64) 92001-5516" },
-      { nome: "Dept. Fiscalização e Postura", numero: "5564920002295", display: "(64) 92000-2295" },
+      {
+        nome: "Prefeitura Municipal (telefone fixo)",
+        telefone: TELEFONES.prefeituraFixo,
+        detalhe: HORARIO_PREFEITURA,
+      },
+      { nome: "Prefeitura Municipal (WhatsApp)", telefone: TELEFONES.prefeituraCelular },
+      { nome: "Secretaria de Obras", telefone: TELEFONES.secObras },
+      { nome: "Secretaria Assistência Social", telefone: TELEFONES.secAssistenciaSocial },
+      { nome: "Secretaria de Esportes", telefone: TELEFONES.secEsportes },
+      { nome: "CREAS", telefone: TELEFONES.creas },
+      { nome: "Cad Único / Bolsa Família", telefone: TELEFONES.cadUnico },
+      { nome: "SINE", telefone: TELEFONES.sine },
+      { nome: "SAMARH", telefone: TELEFONES.samarh },
+      { nome: "Gabinete Sec. Educação", telefone: TELEFONES.gabineteEducacao },
+      { nome: "Secretaria de Saúde", telefone: TELEFONES.secSaude },
+      { nome: "Secretaria de Educação", telefone: TELEFONES.secEducacao },
+      { nome: "Clínica de Castração", telefone: TELEFONES.clinicaCastracao },
+      { nome: "Dept. Fiscalização e Postura", telefone: TELEFONES.fiscalizacaoPostura },
       {
         nome: "Troca de Lâmpada de Poste",
-        numero: "5564933008200",
-        display: "(64) 93300-8200",
+        telefone: TELEFONES.trocaLampada,
         mensagem:
           "Olá, gostaria de solicitar a troca de lâmpada de poste.\n\nNúmero do poste: \n\nEndereço: \n\nAnexe foto do local.",
       },
     ],
   },
 ];
+
+// Fontes oficiais dos números conferidos que aparecem nesta página.
+const fontesConferidas = Array.from(
+  new Map(
+    contatos
+      .flatMap((grupo) => grupo.itens)
+      .flatMap((item) => ("telefone" in item && item.telefone.fonte ? [item.telefone.fonte] : []))
+      .map((fonte) => [fonte.url, fonte] as const),
+  ).values(),
+);
 
 export default function ContatosUteisPage() {
   return (
@@ -94,19 +104,14 @@ export default function ContatosUteisPage() {
           <h2 className="text-lg font-semibold text-foreground mb-3">{grupo.categoria}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {grupo.itens.map((item) => {
-              const isTelefone = item.tipo === "telefone";
-              const isLink = item.tipo === "link";
-              const href = isLink
-                ? item.url!
-                : isTelefone
-                ? `tel:+${item.numero}`
-                : `https://wa.me/${item.numero}${
-                    item.mensagem ? `?text=${encodeURIComponent(item.mensagem)}` : ""
-                  }`;
+              const isLink = "url" in item;
+              const isTelefone = !isLink && item.telefone.canal === "telefone";
+              const href = isLink ? item.url : linkTelefone(item.telefone, item.mensagem);
+              const display = isLink ? item.display : formatarTelefone(item.telefone.numero);
               const opensNew = !isTelefone;
               return (
                 <a
-                  key={item.numero || item.url}
+                  key={item.nome}
                   href={href}
                   target={opensNew ? "_blank" : undefined}
                   rel={opensNew ? "noopener noreferrer" : undefined}
@@ -129,7 +134,10 @@ export default function ContatosUteisPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{item.nome}</p>
-                    <p className="text-sm text-muted-foreground">{item.display}</p>
+                    <p className="text-sm text-muted-foreground">{display}</p>
+                    {!isLink && item.detalhe && (
+                      <p className="text-xs text-muted-foreground">{item.detalhe}</p>
+                    )}
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </a>
@@ -138,6 +146,28 @@ export default function ContatosUteisPage() {
           </div>
         </section>
       ))}
+
+      {fontesConferidas.length > 0 && (
+        <p className="text-xs text-muted-foreground border-t border-border pt-4">
+          Telefones da Prefeitura, das secretarias de Saúde, Assistência Social, Esportes,
+          Obras e Agricultura e da Delegacia conferidos em{" "}
+          {fontesConferidas[0].conferidoEm} nas fontes oficiais:{" "}
+          {fontesConferidas.map((fonte, i) => (
+            <span key={fonte.url}>
+              {i > 0 && "; "}
+              <a
+                href={fonte.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                {fonte.nome}
+              </a>
+            </span>
+          ))}
+          .
+        </p>
+      )}
     </div>
   );
 }
