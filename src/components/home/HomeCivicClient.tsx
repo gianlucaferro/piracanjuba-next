@@ -19,6 +19,7 @@ import {
   fetchPortariasBusca,
   fetchServidoresBusca,
 } from "@/data/homeApi";
+import { hrefAbaCamara, hrefAbaPrefeitura } from "@/lib/abas-orgaos";
 
 export function HomeCivicSearch({ variant = "card" }: { variant?: "card" | "hero" }) {
   const [search, setSearch] = useState("");
@@ -44,23 +45,23 @@ export function HomeCivicSearch({ variant = "card" }: { variant?: "card" | "hero
       ...servidores
         .filter((s) => includes(s.nome) || includes(s.cargo))
         .slice(0, 5)
-        .map((s) => ({ type: "Servidor", title: s.nome, sub: s.cargo || "Servidor público", href: `/prefeitura?tab=servidores&q=${encodeURIComponent(s.nome)}`, icon: User })),
+        .map((s) => ({ type: "Servidor", title: s.nome, sub: s.cargo || "Servidor público", href: `${hrefAbaPrefeitura("servidores")}?busca=${encodeURIComponent(s.nome)}`, icon: User })),
       ...projetos
         .filter((p) => includes(p.ementa) || includes(p.autor_texto) || includes(`${p.numero}/${p.ano}`))
         .slice(0, 5)
-        .map((p) => ({ type: "Projeto", title: `${p.tipo} nº ${p.numero}/${p.ano}`, sub: p.ementa, href: "/camara?tab=projetos", icon: FileText })),
+        .map((p) => ({ type: "Projeto", title: `${p.tipo} nº ${p.numero}/${p.ano}`, sub: p.ementa, href: hrefAbaCamara("projetos"), icon: FileText })),
       ...leis
         .filter((l) => includes(l.ementa) || includes(l.numero))
         .slice(0, 4)
-        .map((l) => ({ type: "Lei", title: `Lei nº ${l.numero}`, sub: l.ementa, href: "/prefeitura?tab=leis", icon: FileText })),
+        .map((l) => ({ type: "Lei", title: `Lei nº ${l.numero}`, sub: l.ementa, href: hrefAbaPrefeitura("leis"), icon: FileText })),
       ...decretos
         .filter((d) => includes(d.ementa) || includes(d.numero))
         .slice(0, 4)
-        .map((d) => ({ type: "Decreto", title: `Decreto nº ${d.numero}`, sub: d.ementa, href: "/prefeitura?tab=decretos", icon: FileText })),
+        .map((d) => ({ type: "Decreto", title: `Decreto nº ${d.numero}`, sub: d.ementa, href: hrefAbaPrefeitura("decretos"), icon: FileText })),
       ...portarias
         .filter((p) => includes(p.ementa) || includes(p.numero))
         .slice(0, 4)
-        .map((p) => ({ type: "Portaria", title: `Portaria nº ${p.numero}`, sub: p.ementa, href: "/prefeitura?tab=portarias", icon: FileText })),
+        .map((p) => ({ type: "Portaria", title: `Portaria nº ${p.numero}`, sub: p.ementa, href: hrefAbaPrefeitura("portarias"), icon: FileText })),
     ].slice(0, 18);
   }, [hasSearch, q, vereadores, servidores, projetos, leis, decretos, portarias]);
 

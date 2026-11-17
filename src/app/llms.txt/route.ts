@@ -14,7 +14,7 @@ export async function GET() {
   const texto = montarLlmsTxt({
     urls,
     empresas: empresasParaLlms(SLUGS_EMPRESAS.map((slug) => EMPRESAS[slug])),
-    atualizadoEm: new Date(),
+    geradoEm: new Date(),
   });
   return new Response(texto, {
     headers: { "Content-Type": "text/plain; charset=utf-8" },

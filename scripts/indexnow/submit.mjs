@@ -1,7 +1,7 @@
 // Avisa o IndexNow (Bing, Yandex e demais participantes) sobre as URLs do
-// piracanjuba.ai que mudaram na implantação de produção. Roda no workflow
-// Production smoke, depois do smoke, e também pelo workflow_dispatch.
-// Desenho, limites e como simular: scripts/indexnow/README.md.
+// piracanjuba.ai que mudaram na implantação de produção. Roda no job indexnow do
+// workflow Production smoke, depois que o job smoke passa, e também pelo
+// workflow_dispatch. Desenho, limites e como simular: scripts/indexnow/README.md.
 //
 // Variáveis de ambiente (o workflow preenche):
 //   GITHUB_TOKEN, GITHUB_REPOSITORY    leitura das implantações (deployments: read)
@@ -9,12 +9,13 @@
 //   INDEXNOW_MANUAL_URLS               lista do workflow_dispatch; vazia = cálculo automático
 //   INDEXNOW_DRY_RUN=true              só mostra o que seria enviado
 //
-// Código de saída 1 marca o passo como falho no log; o workflow usa
-// continue-on-error, então o job de smoke não cai por causa do IndexNow.
+// Código de saída 1 deixa o job indexnow vermelho (o job smoke não depende dele).
+// Para repetir o envio da mesma implantação, "Re-run failed jobs" na execução
+// original recalcula a mesma janela. 5xx e erro de rede têm até duas novas
+// tentativas curtas (withRetry); 429 e demais 4xx não se repetem.
 import { execFileSync } from "node:child_process";
 import {
   INDEXNOW_ENDPOINT,
-  INDEXNOW_KEY,
   KEY_LOCATION,
   SITEMAP_URL,
   buildPayload,
@@ -24,11 +25,14 @@ import {
   describeIndexNowStatus,
   hasSuccessStatus,
   isIndexNowSuccess,
+  keyFileProblem,
+  missingDynamicRoutes,
   parseManualUrls,
   parseSitemap,
   selectUrls,
   urlsChangedByLastmod,
   urlsForRouteDirs,
+  withRetry,
 } from "./indexnow-lib.mjs";
 
 const env = process.env;
@@ -45,13 +49,25 @@ function warning(message) {
   console.log(`::warning title=IndexNow::${message}`);
 }
 
+// fetch com novas tentativas para 5xx e erro de rede (ver withRetry). O prazo
+// (AbortSignal.timeout) é novo a cada tentativa: um sinal já esgotado abortaria
+// a tentativa seguinte na hora.
+function fetchWithRetry(label, url, init, timeoutMs) {
+  return withRetry(() => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) }), {
+    onRetry: ({ attempt, reason, delayMs }) =>
+      console.log(`${label}: tentativa ${attempt} falhou (${reason}); nova tentativa em ${delayMs / 1000} s.`),
+  });
+}
+
 async function github(path) {
   const repository = env.GITHUB_REPOSITORY;
   if (!repository || !env.GITHUB_TOKEN) throw new Error("GITHUB_REPOSITORY e GITHUB_TOKEN são obrigatórios no modo automático.");
-  const response = await fetch(`https://api.github.com/repos/${repository}${path}`, {
-    headers: { accept: "application/vnd.github+json", authorization: `Bearer ${env.GITHUB_TOKEN}`, "user-agent": USER_AGENT },
-    signal: AbortSignal.timeout(20_000),
-  });
+  const response = await fetchWithRetry(
+    `API do GitHub ${path}`,
+    `https://api.github.com/repos/${repository}${path}`,
+    { headers: { accept: "application/vnd.github+json", authorization: `Bearer ${env.GITHUB_TOKEN}`, "user-agent": USER_AGENT } },
+    20_000,
+  );
   if (!response.ok) throw new Error(`API do GitHub respondeu HTTP ${response.status} em ${path}`);
   return response.json();
 }
@@ -77,8 +93,10 @@ async function firstSuccessful(candidates) {
   return null;
 }
 
-// Implantação atual: a do evento ou, no workflow_dispatch sem URLs, a última de
-// produção bem-sucedida (serve para refazer um envio que falhou).
+// Implantação atual: a do evento (também num re-run, que reaproveita o payload
+// original) ou, no workflow_dispatch sem URLs, a última de produção bem-sucedida.
+// Por isso o dispatch vazio só refaz o envio da implantação mais recente; para
+// uma mais antiga, o caminho é "Re-run failed jobs" na execução original.
 async function currentDeployment(deployments) {
   if (env.INDEXNOW_DEPLOYMENT_ID) {
     const fromEvent = { id: env.INDEXNOW_DEPLOYMENT_ID, sha: env.INDEXNOW_DEPLOYMENT_SHA, created_at: env.INDEXNOW_DEPLOYMENT_CREATED_AT };
@@ -109,10 +127,34 @@ function hasCommit(sha) {
   }
 }
 
+// Leitura comum (o sitemap): segue redirecionamento, que aqui não traz risco.
 async function fetchText(url) {
-  const response = await fetch(url, { headers: { "user-agent": USER_AGENT }, signal: AbortSignal.timeout(30_000) });
+  const response = await fetchWithRetry(url, url, { headers: { "user-agent": USER_AGENT } }, 30_000);
   if (!response.ok) throw new Error(`${url} respondeu HTTP ${response.status}`);
   return response.text();
+}
+
+// Arquivo da chave: sem seguir redirecionamento, porque o IndexNow valida o
+// keyLocation do payload, que precisa responder 200 na URL exata.
+async function checkPublishedKey() {
+  const response = await fetchWithRetry(
+    KEY_LOCATION,
+    KEY_LOCATION,
+    { headers: { "user-agent": USER_AGENT }, redirect: "manual" },
+    30_000,
+  );
+  let body = "";
+  if (response.status === 200) {
+    body = await response.text();
+  } else {
+    try {
+      await response.body?.cancel();
+    } catch {
+      // Sem corpo para liberar.
+    }
+  }
+  const problem = keyFileProblem(response.status, body, response.headers.get("location"));
+  if (problem) throw new Error(`${problem}; envio cancelado.`);
 }
 
 async function automaticUrls(entries) {
@@ -163,6 +205,15 @@ async function main() {
   } else {
     entries = parseSitemap(await fetchText(SITEMAP_URL));
     console.log(`Sitemap de produção: ${entries.length} URLs.`);
+    // Sitemap parcial (banco fora do ar na geração) não serve para calcular a
+    // janela: falhar aqui deixa o job vermelho, e o re-run da execução recalcula
+    // a mesma janela quando o sitemap voltar completo.
+    const missing = missingDynamicRoutes(entries);
+    if (missing.length) {
+      throw new Error(
+        `Sitemap de produção sem nenhuma URL ${missing.map((prefix) => `${prefix}<slug>`).join(", ")}; provável falha do banco na geração do sitemap, que fica em cache por até 1 hora. Nada enviado. Depois que o sitemap voltar completo, use "Re-run failed jobs" nesta execução.`,
+      );
+    }
     sources = await automaticUrls(entries);
     if (!sources) return;
   }
@@ -184,16 +235,20 @@ async function main() {
     return;
   }
 
-  // A chave precisa estar publicada antes do envio; um 403 pode queimar a chave.
-  const published = (await fetchText(KEY_LOCATION)).trim();
-  if (published !== INDEXNOW_KEY) throw new Error(`${KEY_LOCATION} não contém a chave; envio cancelado.`);
+  // A chave precisa estar publicada no keyLocation antes do envio; sem ela, o
+  // IndexNow recusa com 403.
+  await checkPublishedKey();
 
-  const response = await fetch(INDEXNOW_ENDPOINT, {
-    method: "POST",
-    headers: { "content-type": "application/json; charset=utf-8", "user-agent": USER_AGENT },
-    body: JSON.stringify(buildPayload(selection.urls)),
-    signal: AbortSignal.timeout(30_000),
-  });
+  const response = await fetchWithRetry(
+    "IndexNow",
+    INDEXNOW_ENDPOINT,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8", "user-agent": USER_AGENT },
+      body: JSON.stringify(buildPayload(selection.urls)),
+    },
+    30_000,
+  );
   const body = (await response.text()).slice(0, 500);
   const reason = describeIndexNowStatus(response.status);
   if (!isIndexNowSuccess(response.status)) {

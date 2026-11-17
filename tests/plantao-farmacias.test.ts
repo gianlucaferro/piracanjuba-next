@@ -94,13 +94,23 @@ test("semana vira à meia-noite de Brasília mesmo com o servidor em UTC (Vercel
   }
 });
 
-test("fora da escala a semana vigente é nula, e a home mantém a última semana como antes", () => {
+test("fora da escala a semana vigente é nula; getSemanaAtual ainda devolve a última semana", () => {
   const depoisDoFim = new Date("2027-03-10T15:00:00Z");
   assert.equal(getSemanaVigente(depoisDoFim), null);
   assert.equal(getSemanaAtual(depoisDoFim), PLANTAO_FARMACIAS.length - 1);
   const antesDoInicio = new Date("2026-03-01T15:00:00Z");
   assert.equal(getSemanaVigente(antesDoInicio), null);
   assert.equal(getSemanaAtual(antesDoInicio), 0);
+});
+
+test("home e página param de mostrar plantão quando a escala acaba (2027-02-27 em Brasília)", () => {
+  // A última semana da escala começa em 2027-02-20; a home usa getSemanaVigente desde
+  // 2026-11-17 e mostra o aviso de fora da escala em vez de repetir essa semana.
+  const ultimoDia = new Date("2027-02-27T02:59:00Z"); // 2027-02-26 23:59 em Brasília
+  assert.equal(inicioDe(getSemanaVigente(ultimoDia)), "2027-02-20");
+  const diaSeguinte = new Date("2027-02-27T03:00:00Z"); // 2027-02-27 00:00 em Brasília
+  assert.equal(getSemanaVigente(diaSeguinte), null);
+  assert.equal(organizarEscala(diaSeguinte).atual, null);
 });
 
 test("período com ano cobre mesmo mês, virada de mês e virada de ano", () => {

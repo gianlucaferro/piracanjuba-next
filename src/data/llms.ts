@@ -18,8 +18,11 @@
 //   população residente de 2026 para o município 5217104: 25.436) e indicador
 //   29167 (área territorial de 2025: 2.374,232 km²).
 //
-// Este arquivo não importa nada em tempo de execução, para que o teste rode
-// direto no node --test. Os dados das empresas chegam por parâmetro.
+// Em tempo de execução, este arquivo só importa src/data/notaTransparencia.ts, que
+// não importa nada, para que o teste rode direto no node --test (por isso o
+// import leva a extensão .ts). Os dados das empresas chegam por parâmetro.
+
+import { NOTA_PNTP } from "./notaTransparencia.ts";
 
 export const SITE_URL = "https://piracanjuba.ai";
 
@@ -70,7 +73,11 @@ export type EntradaLlms = {
   /** URLs absolutas devolvidas pelo sitemap. */
   urls: string[];
   empresas: EmpresaLlms[];
-  atualizadoEm: Date;
+  /**
+   * Momento em que o texto foi gerado (a rota se regenera a cada hora). Sai como
+   * "Gerado em", e não "Atualizado em", porque não indica mudança de conteúdo.
+   */
+  geradoEm: Date;
 };
 
 const SECAO_TRANSPARENCIA = "Transparência";
@@ -217,7 +224,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/vereadores",
         titulo: "Vereadores de Piracanjuba",
-        descricao: "Lista dos vereadores com partido, mandato, contato e produção legislativa, com link para o perfil de cada um.",
+        descricao: "Lista dos vereadores com partido, cargo na Mesa Diretora, votos na eleição e contato, com link para o perfil de cada um.",
       },
       {
         caminho: "/atuacao-parlamentar",
@@ -237,7 +244,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/nota-pba",
         titulo: "Nota de transparência",
-        descricao: "Notas da Prefeitura e da Câmara no Ranking Nacional da Transparência (PNTP/ATRICON), posição no ranking de Goiás e link para a fonte oficial.",
+        descricao: `Posição da Prefeitura e da Câmara no Ranking da Transparência ${NOTA_PNTP.ano} do TCM-GO (Programa Nacional de Transparência Pública, PNTP/ATRICON), com o ranking dos ${NOTA_PNTP.executivo.total} municípios de Goiás e link para os PDFs oficiais.`,
       },
       {
         caminho: "/grupos-economicos",
@@ -379,6 +386,13 @@ export const SECOES_LLMS: SecaoLlms[] = [
         titulo: "Notícias",
         descricao: "Notícias sobre Piracanjuba e região, reunidas de fontes oficiais e veículos locais.",
       },
+      // Página de venda do próprio portal, sem selo de patrocinada: fica aqui, e não
+      // sob o aviso de "Páginas de empresas", que vale só para as páginas pagas.
+      {
+        caminho: "/anuncie",
+        titulo: "Anuncie sua empresa",
+        descricao: "Como contratar uma página própria de empresa no Piracanjuba.ai: o que inclui, preço e forma de pagamento.",
+      },
       {
         caminho: "/privacidade",
         titulo: "Política de privacidade",
@@ -390,13 +404,9 @@ export const SECOES_LLMS: SecaoLlms[] = [
     titulo: SECAO_EMPRESAS,
     aviso:
       "Páginas pagas por empresas, identificadas no próprio site como \"Página patrocinada\". O conteúdo é da empresa e não faz parte da cobertura de transparência do Piracanjuba.ai.",
-    paginas: [
-      {
-        caminho: "/anuncie",
-        titulo: "Anuncie sua empresa",
-        descricao: "Como contratar uma página própria de empresa no Piracanjuba.ai: o que inclui, preço e forma de pagamento.",
-      },
-    ],
+    // Sob o aviso entram só as páginas de empresa (SLUGS_EMPRESAS), que chegam por
+    // parâmetro; nenhuma página do próprio portal fica aqui.
+    paginas: [],
   },
 ];
 
@@ -407,7 +417,7 @@ export const GRUPOS_DINAMICOS: GrupoDinamicoLlms[] = [
     titulo: "Perfis dos vereadores",
     caminhoIndice: "/vereadores",
     resumo: (n) =>
-      `${n} ${n === 1 ? "perfil individual" : "perfis individuais"} em /vereadores/<nome>, com projetos de lei, atuação parlamentar, moções e requerimentos, cota parlamentar, remuneração mensal e financiadores de campanha.`,
+      `${n} ${n === 1 ? "perfil individual" : "perfis individuais"} em /vereadores/<nome>, com projetos de lei, atuação parlamentar, moções e requerimentos, declaração oficial da Câmara de que não há cota parlamentar, remuneração mensal e financiadores de campanha.`,
     listarNoCompleto: true,
   },
   {
@@ -549,12 +559,12 @@ function textoEmpresa(empresa: EmpresaLlms): string {
 }
 
 /** Texto de /llms.txt. */
-export function montarLlmsTxt({ urls, empresas, atualizadoEm }: EntradaLlms): string {
+export function montarLlmsTxt({ urls, empresas, geradoEm }: EntradaLlms): string {
   const blocos: string[] = [
     "# Piracanjuba.ai",
     `> ${DESCRICAO_CURTA}`,
     NATUREZA_DO_PROJETO,
-    `Atualizado em: ${dataIso(atualizadoEm)}. Versão ampliada, com o município, as fontes e o detalhe de cada página: [llms-full.txt](${SITE_URL}/llms-full.txt). Lista completa de endereços: [sitemap.xml](${SITE_URL}/sitemap.xml).`,
+    `Gerado em: ${dataIso(geradoEm)}. Versão ampliada, com o município, as fontes e o detalhe de cada página: [llms-full.txt](${SITE_URL}/llms-full.txt). Lista completa de endereços: [sitemap.xml](${SITE_URL}/sitemap.xml).`,
   ];
 
   for (const secao of classificarCaminhos(urls, empresas)) {
@@ -580,11 +590,11 @@ export function montarLlmsTxt({ urls, empresas, atualizadoEm }: EntradaLlms): st
 }
 
 /** Texto de /llms-full.txt. */
-export function montarLlmsFullTxt({ urls, empresas, atualizadoEm }: EntradaLlms): string {
+export function montarLlmsFullTxt({ urls, empresas, geradoEm }: EntradaLlms): string {
   const blocos: string[] = [
     "# Piracanjuba.ai: conteúdo ampliado para agentes",
     `> ${DESCRICAO_CURTA}`,
-    `Versão ampliada do [llms.txt](${SITE_URL}/llms.txt). Atualizado em: ${dataIso(atualizadoEm)}. As páginas listadas são as que o [sitemap.xml](${SITE_URL}/sitemap.xml) publica nesta data.`,
+    `Versão ampliada do [llms.txt](${SITE_URL}/llms.txt). Gerado em: ${dataIso(geradoEm)}. As páginas listadas são as que o [sitemap.xml](${SITE_URL}/sitemap.xml) publica nesta data.`,
     "## Sobre o projeto",
     [
       NATUREZA_DO_PROJETO,

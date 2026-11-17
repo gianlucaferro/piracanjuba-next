@@ -21,6 +21,18 @@ export function temPagamento(linha: LinhaRemuneracao): boolean {
   return num(linha.bruto) > 0 || num(linha.liquido) > 0;
 }
 
+/**
+ * subsidio_referencia acima de zero. A sincronização grava 0 quando a folha vem
+ * sem salário base legível (coluna NOT NULL): esse 0 não é subsídio e nunca deve
+ * aparecer como "R$ 0,00".
+ */
+export function temSubsidio(linha: Pick<LinhaRemuneracao, "subsidio_referencia">): boolean {
+  return num(linha.subsidio_referencia) > 0;
+}
+
+/** Texto para quando a folha não traz o subsídio (nenhuma competência com subsídio > 0). */
+export const SUBSIDIO_NAO_INFORMADO = "Subsídio não informado na folha";
+
 /** Linhas com pagamento, da competência mais recente para a mais antiga. */
 export function remuneracoesComPagamento<T extends LinhaRemuneracao>(linhas: T[]): T[] {
   return linhas
@@ -41,7 +53,7 @@ export type ResumoSubsidio = {
  * outras verbas pagas no mês.
  */
 export function resumirSubsidio(linhas: LinhaRemuneracao[]): ResumoSubsidio | null {
-  const validas = remuneracoesComPagamento(linhas).filter((l) => num(l.subsidio_referencia) > 0);
+  const validas = remuneracoesComPagamento(linhas).filter(temSubsidio);
   if (validas.length === 0) return null;
   const competencia = validas[0].competencia;
   const valores = Array.from(
@@ -52,6 +64,27 @@ export function resumirSubsidio(linhas: LinhaRemuneracao[]): ResumoSubsidio | nu
     ),
   ).sort((a, b) => a - b);
   return { competencia, valores };
+}
+
+export type SubsidioCompetencia = {
+  /** Competência (AAAA-MM) de onde o subsídio foi lido. */
+  competencia: string;
+  valor: number;
+};
+
+/**
+ * Subsídio de um vereador: a competência mais recente com pagamento publicado e
+ * subsidio_referencia acima de zero (a mesma regra de resumirSubsidio). Usado no
+ * card de /camara e no perfil. Sem nenhuma linha assim, null: a tela mostra
+ * SUBSIDIO_NAO_INFORMADO, nunca o bruto com o rótulo de subsídio.
+ */
+export function subsidioMaisRecente(linhas: LinhaRemuneracao[]): SubsidioCompetencia | null {
+  const linha = remuneracoesComPagamento(linhas).find(temSubsidio);
+  if (!linha) return null;
+  return {
+    competencia: linha.competencia,
+    valor: Math.round(num(linha.subsidio_referencia) * 100) / 100,
+  };
 }
 
 export function formatarReais(valor: number): string {

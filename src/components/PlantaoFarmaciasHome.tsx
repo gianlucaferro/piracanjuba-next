@@ -3,8 +3,9 @@ import { ArrowRight, Pill, Share2 } from "lucide-react";
 import { FarmaciaPlantaoCard, type FarmaciaMeta } from "@/components/FarmaciaPlantaoCard";
 import {
   PLANTAO_FARMACIAS,
+  formatPeriodoEscala,
   getPeriodo,
-  getSemanaAtual,
+  getSemanaVigente,
   getShareWhatsAppLink,
 } from "@/data/plantaoFarmacias";
 import { fetchFarmaciasMeta } from "@/lib/data/listings";
@@ -37,11 +38,47 @@ function normalizeFarmaciaMeta(meta: {
   };
 }
 
+function Cabecalho() {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <h2
+        id="heading-plantao"
+        className="text-lg font-semibold text-foreground flex items-center gap-2"
+      >
+        <Pill className="h-5 w-5 text-primary" />
+        Plantão de Farmácias
+      </h2>
+      <Link
+        href="/plantao-farmacias"
+        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+      >
+        Escala de farmácias de plantão <ArrowRight className="h-3 w-3" />
+      </Link>
+    </div>
+  );
+}
+
 export default async function PlantaoFarmaciasHome() {
-  const semanaAtualIdx = getSemanaAtual();
-  const semana = PLANTAO_FARMACIAS[semanaAtualIdx];
+  // Mesma regra de /plantao-farmacias: fora da escala publicada não há semana vigente,
+  // e a home não repete a última semana como se fosse o plantão de hoje.
+  const semanaAtualIdx = getSemanaVigente();
+  const semana = semanaAtualIdx === null ? undefined : PLANTAO_FARMACIAS[semanaAtualIdx];
+  if (semanaAtualIdx === null || !semana) {
+    return (
+      <section aria-labelledby="heading-plantao" className="space-y-3">
+        <Cabecalho />
+        <p className="text-sm text-muted-foreground">
+          A escala publicada cobre de {formatPeriodoEscala(0, PLANTAO_FARMACIAS.length - 1)} e não
+          inclui a data de hoje. Confirme o plantão diretamente com as farmácias e veja a{" "}
+          <Link href="/plantao-farmacias" className="text-primary underline">
+            escala completa das farmácias de plantão
+          </Link>
+          .
+        </p>
+      </section>
+    );
+  }
   const nextSemana = PLANTAO_FARMACIAS[semanaAtualIdx + 1];
-  if (!semana) return null;
 
   const periodo = getPeriodo(semana, nextSemana);
   const fotosMeta = (await fetchFarmaciasMeta())
@@ -58,21 +95,7 @@ export default async function PlantaoFarmaciasHome() {
 
   return (
     <section aria-labelledby="heading-plantao" className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <h2
-          id="heading-plantao"
-          className="text-lg font-semibold text-foreground flex items-center gap-2"
-        >
-          <Pill className="h-5 w-5 text-primary" />
-          Plantão de Farmácias
-        </h2>
-        <Link
-          href="/plantao-farmacias"
-          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-        >
-          Escala de farmácias de plantão <ArrowRight className="h-3 w-3" />
-        </Link>
-      </div>
+      <Cabecalho />
 
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm text-muted-foreground">

@@ -60,7 +60,10 @@ export const TELEFONES = {
 
   // Prefeitura e secretarias
   prefeituraFixo: { numero: "556434054045", canal: "telefone", fonte: FONTES_TELEFONES.sitePrefeitura },
-  prefeituraCelular: { numero: "5564992382040", canal: "whatsapp", fonte: FONTES_TELEFONES.cadastroAutoridades },
+  // O Cadastro de Autoridades traz só o número, sem marcar WhatsApp (o mesmo PDF
+  // marca WhatsApp em outros contatos), e o Fale conosco não o cita: fica como
+  // telefone até uma fonte oficial indicar WhatsApp (conferido em 2026-11-17).
+  prefeituraCelular: { numero: "5564992382040", canal: "telefone", fonte: FONTES_TELEFONES.cadastroAutoridades },
   secObras: { numero: "5564992437140", canal: "whatsapp", fonte: FONTES_TELEFONES.secretariado },
   secAssistenciaSocial: { numero: "5564999558619", canal: "whatsapp", fonte: FONTES_TELEFONES.secretariado },
   secEsportes: { numero: "5564992980102", canal: "whatsapp", fonte: FONTES_TELEFONES.secretariado },

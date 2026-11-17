@@ -49,6 +49,7 @@ test("serviços diferentes não compartilham o mesmo número", () => {
 test("números corrigidos em 2026-11-17 batem com as fontes oficiais", () => {
   assert.equal(formatarTelefone(TELEFONES.prefeituraFixo.numero), "(64) 3405-4045");
   assert.equal(formatarTelefone(TELEFONES.prefeituraCelular.numero), "(64) 99238-2040");
+  assert.equal(TELEFONES.prefeituraCelular.canal, "telefone");
   assert.equal(formatarTelefone(TELEFONES.secSaude.numero), "(64) 99601-5760");
   assert.equal(formatarTelefone(TELEFONES.secAssistenciaSocial.numero), "(64) 99955-8619");
   assert.equal(formatarTelefone(TELEFONES.secEsportes.numero), "(64) 99298-0102");

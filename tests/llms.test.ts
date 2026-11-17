@@ -15,6 +15,7 @@ import {
   montarLlmsTxt,
   paginaCurada,
 } from "../src/data/llms.ts";
+import { NOTA_PNTP } from "../src/data/notaTransparencia.ts";
 import { ABAS_CAMARA, ABAS_PREFEITURA, ROTAS_ESTATICAS } from "../src/lib/sitemap-rotas.ts";
 
 const RAIZ = new URL("..", import.meta.url).pathname;
@@ -68,7 +69,7 @@ const ENTRADA = {
     `${SITE_URL}/compra-e-venda/0b7c1f8e-0000-4000-8000-000000000001`,
   ],
   empresas: EMPRESAS_LLMS,
-  atualizadoEm: new Date("2026-11-17T15:00:00Z"),
+  geradoEm: new Date("2026-11-17T15:00:00Z"),
 };
 const LLMS = montarLlmsTxt(ENTRADA);
 const LLMS_FULL = montarLlmsFullTxt(ENTRADA);
@@ -113,7 +114,10 @@ test("llms.txt segue o formato do llmstxt.org e linka a versão ampliada", () =>
   assert.equal(linhas[0], "# Piracanjuba.ai");
   assert.match(linhas[2], /^> /);
   assert.ok(LLMS.includes(`[llms-full.txt](${SITE_URL}/llms-full.txt)`));
-  assert.ok(LLMS.includes("Atualizado em: 2026-11-17."));
+  // A data é a da geração (a rota se regenera a cada hora), não de mudança do conteúdo.
+  assert.ok(LLMS.includes("Gerado em: 2026-11-17."));
+  assert.ok(LLMS_FULL.includes("Gerado em: 2026-11-17."));
+  for (const texto of [LLMS, LLMS_FULL]) assert.doesNotMatch(texto, /Atualizado em/);
   for (const secao of ["Transparência", "Serviços da cidade", "Dados e indicadores", "Sobre e imprensa", "Páginas de empresas", "Fontes oficiais"]) {
     assert.ok(LLMS.includes(`\n## ${secao}\n`), `seção ${secao} ausente`);
   }
@@ -140,6 +144,32 @@ test("páginas de empresas vêm com o aviso de página paga e o vínculo declara
     assert.ok(secao.includes(`[${empresa.nome}]`));
     if (empresa.vinculo) assert.ok(secao.includes(empresa.vinculo));
   }
+  // Sob o aviso de página paga só entram as páginas de empresa; /anuncie é do
+  // próprio portal e fica em "Sobre e imprensa".
+  const linksDaSecao = [...secao.matchAll(/^- \[[^\]]+\]\(([^)]+)\)/gm)].map((m) => m[1]);
+  assert.deepEqual(linksDaSecao.sort(), SLUGS_EMPRESAS.map((slug) => `${SITE_URL}/${slug}`).sort());
+  const sobre = LLMS.slice(LLMS.indexOf("## Sobre e imprensa"), LLMS.indexOf("## Páginas de empresas"));
+  assert.ok(sobre.includes(`[Anuncie sua empresa](${SITE_URL}/anuncie)`));
+  assert.ok(SECOES_LLMS.find((s) => s.titulo === "Páginas de empresas")?.paginas.length === 0);
+});
+
+test("descrições dizem só o que a tela mostra", () => {
+  // /vereadores mostra partido, cargo na Mesa, votos e contato, sem produção legislativa.
+  assert.match(paginaCurada("/vereadores")?.descricao ?? "", /cargo na Mesa Diretora, votos na eleição e contato/);
+  for (const texto of [LLMS, LLMS_FULL]) {
+    assert.doesNotMatch(texto, /produção legislativa/);
+    // O perfil traz a declaração de que não há cota, não uma cota.
+    assert.doesNotMatch(texto, /(?<!não há )cota parlamentar/);
+    assert.match(texto, /declaração oficial da Câmara de que não há cota parlamentar/);
+  }
+});
+
+test("nota de transparência cita o ranking do TCM-GO pelo nome oficial e com o ano dos dados", () => {
+  const descricao = paginaCurada("/nota-pba")?.descricao ?? "";
+  assert.ok(descricao.includes(`Ranking da Transparência ${NOTA_PNTP.ano} do TCM-GO`));
+  assert.ok(descricao.includes("Programa Nacional de Transparência Pública, PNTP/ATRICON"));
+  assert.ok(descricao.includes(`dos ${NOTA_PNTP.executivo.total} municípios de Goiás`));
+  for (const texto of [LLMS, LLMS_FULL]) assert.doesNotMatch(texto, /Ranking Nacional/i);
 });
 
 test("caminho do sitemap sem descrição não some: vai para Outras páginas", () => {

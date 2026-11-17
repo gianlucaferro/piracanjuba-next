@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { ArrowLeft, Pill, Share2 } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchFarmaciasMeta } from "@/lib/data/listings";
@@ -25,7 +26,10 @@ export const metadata = pageMetadata({
   path: "/plantao-farmacias",
 });
 
-export const revalidate = 3600;
+// Sem `revalidate`: a página é renderizada a cada requisição (await connection() no
+// início do componente). Como ISR de 1 hora, o primeiro visitante depois da virada
+// de sábado à meia-noite recebia a semana anterior, com a farmácia 24 horas errada.
+// Só o cadastro das farmácias (fetchFarmaciasMeta) continua em cache.
 
 // Cópia integral do PDF da escala, versionada no repositório público do site
 // (docs/fontes/plantao-farmacias/README.md traz a transcrição e o SHA-256).
@@ -102,6 +106,9 @@ function SchemaMarkup({
 }
 
 export default async function PlantaoFarmaciasPage() {
+  // A semana vigente depende do relógio de Brasília: decide-se na requisição, nunca no
+  // prerender (next/server connection, docs 03-api-reference/04-functions/connection.md).
+  await connection();
   const escala = organizarEscala();
   const fotosMeta = (await fetchFarmaciasMeta())
     .map(normalizeFarmaciaMeta)

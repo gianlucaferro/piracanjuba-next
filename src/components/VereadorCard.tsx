@@ -5,14 +5,36 @@ import Link from "next/link";
 import Image from "next/image";
 import { DollarSign, Vote, Wallet, Info, ArrowRight, HandCoins } from "lucide-react";
 import type { Vereador } from "@/data/api";
-import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchRemuneracaoByVereador, fetchDoacoesCampanhaPorVereador } from "@/data/api";
+import { fetchProjetosCountByVereador, fetchAtuacaoCountByVereador, fetchDoacoesCampanhaPorVereador } from "@/data/api";
 import { fetchCamaraResumoFolha } from "@/data/camaraApi";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import {
+  SUBSIDIO_NAO_INFORMADO,
+  remuneracoesComPagamento,
+  subsidioMaisRecente,
+  type LinhaRemuneracao,
+} from "@/app/vereadores/remuneracao";
 import { Badge } from "@/components/ui/badge";
 import ShareButton from "@/components/ShareButton";
 import { formatCurrency, getInitials } from "@/lib/formatters";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const NUM_VEREADORES = 11;
+
+// Folha recente do vereador (até 24 competências, como o perfil). O card precisa de
+// mais de uma linha: o subsídio vem da competência mais recente com pagamento e
+// subsidio_referencia > 0 (src/app/vereadores/remuneracao.ts), não do bruto da última.
+async function fetchFolhaRecenteVereador(vereadorId: string): Promise<LinhaRemuneracao[]> {
+  const supabase = createBrowserSupabaseClient();
+  const { data, error } = await supabase
+    .from("remuneracao_mensal")
+    .select("competencia, bruto, liquido, subsidio_referencia")
+    .eq("vereador_id", vereadorId)
+    .order("competencia", { ascending: false })
+    .limit(24);
+  if (error) throw error;
+  return (data || []) as LinhaRemuneracao[];
+}
 
 export default function VereadorCard({ v }: { v: Vereador }) {
   const initials = getInitials(v.nome);
@@ -28,9 +50,9 @@ export default function VereadorCard({ v }: { v: Vereador }) {
     queryFn: () => fetchAtuacaoCountByVereador(v.id),
   });
 
-  const { data: remuneracao } = useQuery({
-    queryKey: ["remuneracao-latest", v.id],
-    queryFn: () => fetchRemuneracaoByVereador(v.id),
+  const { data: folhaVereador } = useQuery({
+    queryKey: ["remuneracao-folha-recente", v.id],
+    queryFn: () => fetchFolhaRecenteVereador(v.id),
   });
 
   const { data: resumoFolha, isError: erroResumoFolha } = useQuery({
@@ -49,9 +71,10 @@ export default function VereadorCard({ v }: { v: Vereador }) {
   const projectCounts = counts || { apresentados: 0, aprovados: 0, recusados: 0, tramitacao: 0 };
   const atuacaoCounts = atuacao || { indicacoes: 0, mocoes: 0, requerimentos: 0, total: 0 };
 
-  const salario = remuneracao
-    ? (remuneracao.bruto ?? remuneracao.subsidio_referencia)
-    : null;
+  // Mesma regra de /vereadores e do perfil: subsídio, não o bruto (que soma 1/3 de
+  // férias e outras verbas). Sem subsídio informado, o card diz isso em vez de R$ 0,00.
+  const subsidio = folhaVereador ? subsidioMaisRecente(folhaVereador) : null;
+  const temFolhaPublicada = folhaVereador ? remuneracoesComPagamento(folhaVereador).length > 0 : false;
 
   // A folha mensal já contém os subsídios dos vereadores.
   const mensal = erroResumoFolha ? null : resumoFolha?.mensal;
@@ -124,14 +147,18 @@ export default function VereadorCard({ v }: { v: Vereador }) {
       </div>
 
       {/* Remuneração */}
-      {salario !== null && (
+      {temFolhaPublicada && (
         <div className="mt-3 flex items-center gap-2 rounded-md bg-accent/20 border border-accent/30 p-2.5">
           <DollarSign className="w-4 h-4 text-accent flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-foreground">{formatCurrency(salario)}</p>
-            <p className="text-xs text-muted-foreground">
-              Subsídio mensal {remuneracao?.competencia ? `(${remuneracao.competencia})` : ""}
-            </p>
+            {subsidio ? (
+              <>
+                <p className="text-sm font-bold text-foreground">{formatCurrency(subsidio.valor)}</p>
+                <p className="text-xs text-muted-foreground">Subsídio mensal ({subsidio.competencia})</p>
+              </>
+            ) : (
+              <p className="text-sm font-medium text-foreground">{SUBSIDIO_NAO_INFORMADO}</p>
+            )}
           </div>
         </div>
       )}

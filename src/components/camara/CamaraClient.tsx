@@ -26,7 +26,15 @@ import TransmissaoCard from "@/components/camara/TransmissaoCard";
 import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import ServidorResumoDialog from "@/components/servidores/ServidorResumoDialog";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
-import { ABA_PADRAO_CAMARA, hrefAbaCamara, tituloAbaCamara } from "@/lib/abas-orgaos";
+import { usePathname } from "next/navigation";
+import {
+  ABA_PADRAO_CAMARA,
+  abaDoCaminho,
+  abaExibida,
+  hrefAbaCamara,
+  tituloAbaCamara,
+  type EscolhaAba,
+} from "@/lib/abas-orgaos";
 
 const tabs = [
   { value: "vereadores", label: "Vereadores", icon: Users },
@@ -188,16 +196,26 @@ function TransmissaoTab() {
 }
 
 export default function CamaraMunicipal({ aba }: { aba?: string }) {
-  const [activeTab, setActiveTab] = useState(aba || ABA_PADRAO_CAMARA);
+  // A aba ativa vem da URL. Assim o link do rodapé para outra aba, o Voltar e o Avançar
+  // mostram a aba do endereço mesmo quando o Next reaproveita este componente montado.
+  const pathname = usePathname();
+  const abaDaUrl = abaDoCaminho(pathname, "camara") ?? aba ?? ABA_PADRAO_CAMARA;
+  const [escolha, setEscolha] = useState<EscolhaAba | null>(null);
+  // A URL mudou depois do clique: a escolha cumpriu o papel e sai, para não voltar a valer
+  // se o endereço retornar ao do clique (link do rodapé para a aba de origem).
+  if (escolha !== null && escolha.url !== pathname) setEscolha(null);
+  const activeTab = abaExibida(escolha, pathname, abaDaUrl);
   // Troca de aba reflete na URL (/camara/<aba>) sem navegação de servidor, pra SEO e
   // link compartilhável. A aba "vereadores" (padrão) fica em /camara.
   // Cada aba também é um <a href> (ver TabsTrigger), para robôs seguirem o link.
+  // replaceState com estado null é a forma documentada pelo Next para o roteador (e o
+  // usePathname) acompanhar a URL nova sem buscar nada no servidor nem remontar a página.
   const onTabChange = useCallback((v: string) => {
-    setActiveTab(v);
+    setEscolha({ aba: v, url: pathname });
     if (typeof window !== "undefined") {
-      window.history.replaceState(window.history.state, "", hrefAbaCamara(v));
+      window.history.replaceState(null, "", hrefAbaCamara(v));
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <Layout>

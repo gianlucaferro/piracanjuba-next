@@ -28,7 +28,7 @@ import {
   ScrollText,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
-import { NOTA_PNTP } from "@/data/notaTransparencia";
+import { NOTA_PNTP, temSelo, type NivelPntp } from "@/data/notaTransparencia";
 import { pageMetadata } from "@/lib/seo";
 import {
   fetchIndicadores,
@@ -51,6 +51,9 @@ export const metadata = pageMetadata({
 });
 
 export const revalidate = 3600;
+
+// Mesma convenção de /nota-pba: "selo Ouro" quando o nível dá selo, "nível Intermediário" nos demais.
+const nivelPntpTexto = (nivel: NivelPntp) => (temSelo(nivel) ? `selo ${nivel}` : `nível ${nivel}`);
 
 function MiniCard({
   label,
@@ -174,7 +177,11 @@ export default async function HomePage() {
                 Nota de transparência da cidade · {NOTA_PNTP.ano}
               </p>
               <p className="text-sm sm:text-base font-bold text-foreground leading-snug">
-                Piracanjuba ficou em {NOTA_PNTP.executivo.posicao}º de {NOTA_PNTP.executivo.total} municípios de Goiás no Ranking da Transparência.
+                {/* A posição é de cada poder, não da cidade: Prefeitura e Câmara são avaliadas em separado. */}
+                No Ranking da Transparência {NOTA_PNTP.ano} do TCM-GO, a Prefeitura de Piracanjuba ficou em{" "}
+                {NOTA_PNTP.executivo.posicao}º de {NOTA_PNTP.executivo.total} municípios de Goiás (
+                {nivelPntpTexto(NOTA_PNTP.executivo.nivel)}); a Câmara Municipal, em {NOTA_PNTP.legislativo.posicao}º (
+                {nivelPntpTexto(NOTA_PNTP.legislativo.nivel)}).
               </p>
             </div>
             <span className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 group-hover:underline shrink-0">

@@ -28,8 +28,11 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { toast } from "sonner";
 import PullToRefresh from "@/components/PullToRefresh";
+import { estadoListaAtuacao } from "@/lib/atuacao-carregamento";
 
 const TIPOS = ["Todos", "Indicação", "Requerimento", "Moção", "Projeto de Lei"] as const;
+// Lista vazia estável enquanto os projetos não chegam (o useMemo de filteredProjetos depende dela).
+const SEM_PROJETOS: Projeto[] = [];
 
 // Unified item type for display
 type UnifiedItem = {
@@ -142,11 +145,12 @@ function AtuacaoParlamentarPage({ embutido = false }: { embutido?: boolean }) {
   });
 
   // Projetos query (fetch when Todos or Projeto de Lei)
-  const { data: projetos = [], isLoading: isLoadingProjetos, isSuccess: projetosCarregados, isError: erroProjetos } = useQuery({
+  const { data: projetosData, isLoading: isLoadingProjetos, isError: erroProjetos } = useQuery({
     queryKey: ["projetos"],
     queryFn: fetchProjetos,
     enabled: isTodosFilter || isProjetoFilter,
   });
+  const projetos = projetosData ?? SEM_PROJETOS;
 
   const { data: vereadores = [] } = useQuery({
     queryKey: ["vereadores"],
@@ -212,16 +216,16 @@ function AtuacaoParlamentarPage({ embutido = false }: { embutido?: boolean }) {
 
   const isLoading = isProjetoFilter ? isLoadingProjetos : isLoadingAtuacao;
   // A contagem só sai com os dados do filtro carregados. Antes disso o HTML dizia "0 resultados",
-  // inclusive para robôs que não rodam JavaScript.
-  const atuacaoCarregada = paginatedData !== undefined;
-  const dadosProntos = isProjetoFilter
-    ? projetosCarregados
-    : isTodosFilter
-      ? atuacaoCarregada && projetosCarregados
-      : atuacaoCarregada;
-  const falhouCarregamento = !dadosProntos && (
-    isProjetoFilter ? erroProjetos : isTodosFilter ? erroAtuacao || erroProjetos : erroAtuacao
+  // inclusive para robôs que não rodam JavaScript. Carregado = tem dados no cache: um refetch que
+  // falha (PullToRefresh, volta à aba depois do staleTime) não troca a lista pela mensagem de erro.
+  // No filtro "Todos", se só uma das consultas falhar, a lista sai com a outra e um aviso.
+  const estadoLista = estadoListaAtuacao(
+    isProjetoFilter ? "projetos" : isTodosFilter ? "todos" : "atuacao",
+    { carregada: paginatedData !== undefined, falhou: erroAtuacao },
+    { carregada: projetosData !== undefined, falhou: erroProjetos },
   );
+  const dadosProntos = estadoLista.pronta;
+  const falhouCarregamento = estadoLista.erro;
 
   const handleOpenResumo = async (item: UnifiedItem) => {
     setSelectedItem(item);
@@ -358,6 +362,14 @@ function AtuacaoParlamentarPage({ embutido = false }: { embutido?: boolean }) {
             </button>
           )}
         </div>
+
+        {estadoLista.faltando && (
+          <p role="status" className="text-sm text-muted-foreground mb-4">
+            {estadoLista.faltando === "projetos"
+              ? "Os projetos de lei não carregaram agora; a lista mostra só indicações, requerimentos e moções. Tente de novo em instantes."
+              : "Indicações, requerimentos e moções não carregaram agora; a lista mostra só os projetos de lei. Tente de novo em instantes."}
+          </p>
+        )}
 
         {/* Results */}
         {falhouCarregamento ? (

@@ -21,10 +21,17 @@ export const BUILD_STAMP_MIN_REPEAT = 10;
 const PAGE_FILE = /^page\.(tsx|ts|jsx|js|mdx)$/;
 const APP_DIR = "src/app/";
 
-// Arquivos de dados cujo conteúdo é o conteúdo da própria página: mudou o arquivo,
-// a página mudou. O valor é a pasta da rota dentro de src/app. Os *Api.ts ficam de
-// fora de propósito: são código de busca, como um componente compartilhado, e não
-// o texto publicado. Arquivo de dados novo com página própria entra aqui.
+// Arquivos cujo conteúdo é o conteúdo publicado de páginas que a subida de pasta
+// (routeDirForChangedFile) não alcança: mudou o arquivo, a página mudou. O valor é
+// a lista de pastas de rota dentro de src/app. Entram aqui:
+// - arquivos de dados de src/data com página própria (texto publicado);
+// - helpers de src/app usados por uma page filha dinâmica, como os de
+//   src/app/vereadores usados por vereadores/[slug]: a subida de pasta para na
+//   page pai e não chega à filha. A subida continua valendo, então
+//   tratamento.ts leva também /vereadores, que não o usa; o envio a mais é
+//   inofensivo.
+// Os *Api.ts ficam de fora de propósito: são código de busca, como um componente
+// compartilhado, e não o texto publicado. Arquivo novo nesses casos entra aqui.
 export const DATA_FILE_ROUTES = Object.freeze({
   "src/data/horariosOnibus.ts": ["horarios-onibus"],
   "src/data/horariosOnibus-registros.json": ["horarios-onibus"],
@@ -34,6 +41,9 @@ export const DATA_FILE_ROUTES = Object.freeze({
   "src/data/paginaEmpresa.ts": ["anuncie"],
   "src/data/empresas.ts": ["[empresa]"],
   "src/data/empresas-slugs.ts": ["[empresa]"],
+  "src/data/telefones.ts": ["contatos", "seguranca", "beneficios-sociais"],
+  "src/app/vereadores/tratamento.ts": ["vereadores/[slug]"],
+  "src/app/vereadores/remuneracao.ts": ["vereadores", "vereadores/[slug]"],
 });
 
 // --- Rotas do App Router -----------------------------------------------------
@@ -193,6 +203,27 @@ function tagText(block, tag) {
   return match ? decodeXml(match[1].trim()) : null;
 }
 
+// Prefixos de rotas dinâmicas que sempre têm linhas no banco (a Câmara sempre tem
+// vereadores). O src/app/sitemap.ts publica só as rotas fixas, com HTTP 200, quando
+// a consulta ao Supabase falha, e esse sitemap fica em cache por até uma hora.
+// Sem nenhuma URL desses prefixos, o sitemap saiu parcial e a janela da
+// implantação não pode ser calculada com ele.
+export const REQUIRED_DYNAMIC_PREFIXES = Object.freeze(["/vereadores/"]);
+
+// Prefixos de REQUIRED_DYNAMIC_PREFIXES sem nenhuma URL do tipo <prefixo><slug>
+// no sitemap. Lista vazia: o sitemap está completo para esse critério.
+export function missingDynamicRoutes(entries, prefixes = REQUIRED_DYNAMIC_PREFIXES) {
+  const pathnames = entries.map((entry) => sameOriginUrl(entry.loc)?.pathname).filter(Boolean);
+  return prefixes.filter(
+    (prefix) =>
+      !pathnames.some((pathname) => {
+        if (!pathname.startsWith(prefix)) return false;
+        const rest = pathname.slice(prefix.length).replace(/\/$/, "");
+        return rest.length > 0 && !rest.includes("/");
+      }),
+  );
+}
+
 // Lê um <urlset> e devolve [{ loc, lastmod }]. Um índice de sitemaps não tem
 // <url>, então volta vazio, e o envio automático não manda nada.
 export function parseSitemap(xml) {
@@ -298,6 +329,20 @@ export function isIndexNowSuccess(status) {
   return status === 200 || status === 202;
 }
 
+// Conferência do arquivo da chave antes do envio. O keyLocation do payload precisa
+// responder 200 na URL exata, sem redirecionamento (o submit.mjs busca com
+// redirect "manual"), e conter a chave. Devolve o motivo para cancelar, ou null.
+// Status 0 é o redirecionamento opaco que o fetch pode devolver no modo manual.
+export function keyFileProblem(status, body, location = null) {
+  if (status === 0 || (status >= 300 && status < 400)) {
+    const destino = location ? ` para ${location}` : "";
+    return `${KEY_LOCATION} redireciona (HTTP ${status}${destino}); o keyLocation precisa responder 200 sem redirecionamento`;
+  }
+  if (status !== 200) return `${KEY_LOCATION} respondeu HTTP ${status}`;
+  if (String(body ?? "").trim() !== INDEXNOW_KEY) return `${KEY_LOCATION} não contém a chave`;
+  return null;
+}
+
 // Significado dos códigos segundo indexnow.org/documentation, conferido em 2026-11-17.
 export function describeIndexNowStatus(status) {
   const reasons = {
@@ -325,4 +370,54 @@ export function candidatePreviousDeployments(deployments, current) {
 
 export function hasSuccessStatus(statuses) {
   return statuses.some((status) => status.state === "success");
+}
+
+// --- Novas tentativas --------------------------------------------------------------
+
+// Espera antes de cada nova tentativa: até duas a mais, curtas, para caber no
+// tempo do passo. Valem só para falha passageira (5xx e erro de rede).
+export const RETRY_DELAYS_MS = Object.freeze([5_000, 15_000]);
+
+// 5xx é falha do servidor e pode passar. 429 nunca é repetido: o IndexNow trata
+// excesso de requisições como spam. Os demais 4xx são definitivos.
+export function isRetryableStatus(status) {
+  return status >= 500 && status <= 599;
+}
+
+// Erro de rede do fetch do Node ("fetch failed": DNS, conexão recusada ou
+// derrubada) ou tempo esgotado do AbortSignal.timeout.
+export function isNetworkError(error) {
+  if (!error || typeof error !== "object") return false;
+  if (error.name === "TimeoutError") return true;
+  return error.name === "TypeError" && error.message === "fetch failed";
+}
+
+function sleepMs(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Executa attempt() (uma chamada de fetch) e repete com espera quando a resposta é
+// 5xx ou quando o fetch lança erro de rede. Esgotadas as tentativas, devolve a
+// última resposta ou lança o último erro, para quem chamou decidir. Qualquer outro
+// erro sobe na hora. sleep e onRetry são injetáveis para o teste.
+export async function withRetry(attempt, { delaysMs = RETRY_DELAYS_MS, sleep = sleepMs, onRetry = () => {} } = {}) {
+  for (let index = 0; ; index++) {
+    let reason;
+    try {
+      const response = await attempt();
+      if (!isRetryableStatus(response.status) || index >= delaysMs.length) return response;
+      reason = `HTTP ${response.status}`;
+      // Libera a conexão da resposta descartada.
+      try {
+        await response.body?.cancel();
+      } catch {
+        // Corpo já consumido ou inexistente.
+      }
+    } catch (error) {
+      if (!isNetworkError(error) || index >= delaysMs.length) throw error;
+      reason = error.message;
+    }
+    onRetry({ attempt: index + 1, reason, delayMs: delaysMs[index] });
+    await sleep(delaysMs[index]);
+  }
 }

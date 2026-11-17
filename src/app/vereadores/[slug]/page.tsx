@@ -29,7 +29,12 @@ import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
 import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
 import AtividadesLegislativasPanel from "@/components/camara/AtividadesLegislativasPanel";
-import { remuneracoesComPagamento } from "../remuneracao";
+import {
+  SUBSIDIO_NAO_INFORMADO,
+  remuneracoesComPagamento,
+  subsidioMaisRecente,
+  temSubsidio,
+} from "../remuneracao";
 import { perfilDe, tratamentoParlamentar } from "../tratamento";
 
 export const revalidate = 3600;
@@ -107,7 +112,13 @@ export default async function VereadorPage({
   const remuneracoes = remuneracoesComPagamento(result.remuneracoes);
   const ultimaRemuneracao = remuneracoes[0];
   const ultimoBruto = Number(ultimaRemuneracao?.bruto || 0);
-  const ultimoSubsidio = Number(ultimaRemuneracao?.subsidio_referencia || 0);
+  // Subsídio da competência mais recente com subsidio_referencia > 0 (mesma regra de
+  // /vereadores): o 0 gravado quando a folha vem sem salário base não vira "R$ 0,00".
+  const subsidio = subsidioMaisRecente(result.remuneracoes);
+  const brutoNaMesmaCompetencia =
+    subsidio !== null && subsidio.competencia === ultimaRemuneracao?.competencia;
+  const mostrarBruto =
+    ultimaRemuneracao !== undefined && (!brutoNaMesmaCompetencia || ultimoBruto !== subsidio?.valor);
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
 
@@ -191,20 +202,25 @@ export default async function VereadorPage({
           <p className="text-sm uppercase tracking-wider text-muted-foreground">
             Subsídio mensal
           </p>
-          <p className="text-xl font-bold text-foreground mt-1">
-            {ultimaRemuneracao ? fmtBRL(ultimoSubsidio) : "Sem folha publicada"}
-          </p>
-          {ultimaRemuneracao && (
+          {subsidio ? (
             <>
+              <p className="text-xl font-bold text-foreground mt-1">{fmtBRL(subsidio.valor)}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Competência {ultimaRemuneracao.competencia}
+                Competência {subsidio.competencia}
               </p>
-              {ultimoBruto !== ultimoSubsidio && (
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Bruto pago na competência: {fmtBRL(ultimoBruto)}
-                </p>
-              )}
             </>
+          ) : (
+            <p className="text-base font-semibold text-foreground mt-1">
+              {ultimaRemuneracao ? SUBSIDIO_NAO_INFORMADO : "Sem folha publicada"}
+            </p>
+          )}
+          {mostrarBruto && ultimaRemuneracao && (
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {brutoNaMesmaCompetencia
+                ? "Bruto pago na competência"
+                : `Bruto pago em ${ultimaRemuneracao.competencia}`}
+              : {fmtBRL(ultimoBruto)}
+            </p>
           )}
         </div>
         <div className="stat-card">
@@ -437,7 +453,7 @@ export default async function VereadorPage({
                       {fmtBRL(Number(r.liquido))}
                     </td>
                     <td className="px-4 py-2 text-right text-muted-foreground">
-                      {fmtBRL(Number(r.subsidio_referencia))}
+                      {temSubsidio(r) ? fmtBRL(Number(r.subsidio_referencia)) : "Não informado"}
                     </td>
                   </tr>
                 ))}

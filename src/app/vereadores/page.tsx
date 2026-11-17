@@ -9,7 +9,7 @@ import { fetchSubsidioAtualVereadores } from "./subsidio-atual";
 export const metadata = pageMetadata({
   title: "Vereadores de Piracanjuba GO",
   description:
-    "Lista completa dos vereadores de Piracanjuba: partido, mandato, atuação parlamentar, contato e produção legislativa.",
+    "Lista completa dos vereadores de Piracanjuba: partido, cargo na Mesa Diretora, votos na eleição, contato e subsídio mensal, com link para o perfil de cada um.",
   path: "/vereadores",
 });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useMemo, useEffect, useSyncExternalStore } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import type { Database } from "@/lib/supabase/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -50,7 +50,14 @@ import { ExportChangedError } from "@/lib/stable-export";
 import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
-import { ABA_PADRAO_PREFEITURA, hrefAbaPrefeitura, tituloAbaPrefeitura } from "@/lib/abas-orgaos";
+import {
+  ABA_PADRAO_PREFEITURA,
+  abaDaUrlPrefeitura,
+  abaExibida,
+  hrefAbaPrefeitura,
+  tituloAbaPrefeitura,
+  type EscolhaAba,
+} from "@/lib/abas-orgaos";
 
 type Decreto = Database["public"]["Tables"]["decretos"]["Row"];
 type Portaria = Database["public"]["Tables"]["portarias"]["Row"];
@@ -3165,20 +3172,32 @@ function semTokenAdminNoServidor() {
 
 export default function Prefeitura({ financiadoresExecutivo, aba }: { financiadoresExecutivo?: React.ReactNode; aba?: string }) {
   const queryClient = useQueryClient();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const initialTab = aba || searchParams.get("tab") || ABA_PADRAO_PREFEITURA;
+  const tabDaQuery = searchParams.get("tab");
   const initialBusca = searchParams.get("busca") || "";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  // A aba ativa vem da URL (/prefeitura/<aba>, ou ?tab= na raiz). Assim o link do rodapé
+  // para outra aba, o Voltar e o Avançar mostram a aba do endereço mesmo quando o Next
+  // reaproveita este componente montado.
+  const abaDaUrl = abaDaUrlPrefeitura(pathname, tabDaQuery) ?? (aba || tabDaQuery || ABA_PADRAO_PREFEITURA);
+  const urlAtual = `${pathname}?${searchParams.toString()}`;
+  const [escolha, setEscolha] = useState<EscolhaAba | null>(null);
+  // A URL mudou depois do clique: a escolha cumpriu o papel e sai, para não voltar a valer
+  // se o endereço retornar ao do clique. A aba "admin" não muda a URL e fica até ela mudar.
+  if (escolha !== null && escolha.url !== urlAtual) setEscolha(null);
+  const activeTab = abaExibida(escolha, urlAtual, abaDaUrl);
   const temTokenAdmin = useSyncExternalStore(assinarTokenAdmin, lerTokenAdmin, semTokenAdminNoServidor);
   // Troca de aba reflete na URL (/prefeitura/<aba>) sem navegação de servidor,
   // pra SEO (rota indexável) e link compartilhável. A aba "visão geral" fica em /prefeitura.
   // Cada aba pública também é um <a href> (ver TabsTrigger), para robôs seguirem o link.
+  // replaceState com estado null é a forma documentada pelo Next para o roteador (e o
+  // usePathname) acompanhar a URL nova sem buscar nada no servidor nem remontar a página.
   const onTabChange = useCallback((v: string) => {
-    setActiveTab(v);
+    setEscolha({ aba: v, url: urlAtual });
     if (typeof window !== "undefined" && v !== "admin") {
-      window.history.replaceState(window.history.state, "", hrefAbaPrefeitura(v));
+      window.history.replaceState(null, "", hrefAbaPrefeitura(v));
     }
-  }, []);
+  }, [urlAtual]);
 
   // Prefetch contratos + aditivos + CNPJ assim que a página monta (antes de clicar na aba)
   useEffect(() => {
