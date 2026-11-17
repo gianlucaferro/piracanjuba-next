@@ -19,9 +19,12 @@ test("anuncie vende a página de empresa com preço, exemplos e WhatsApp", async
   expect(hrefs.length).toBeGreaterThanOrEqual(3);
   for (const href of hrefs) expect(href).toContain("https://wa.me/5564992375458?text=");
 
-  // Os antigos planos de banner e os números de audiência não conferidos saíram.
-  const texto = await page.locator("main").innerText();
-  expect(texto).not.toMatch(/visitas por dia|R\$ 200|R\$ 400|Destaque|centenas de moradores/);
+  // Os antigos planos de banner e os números de audiência não conferidos saíram,
+  // inclusive das respostas fechadas do FAQ (textContent) e da descrição da página.
+  const antigos = /visitas por dia|R\$ 200|R\$ 400|Destaque|centenas de moradores/;
+  expect(await page.locator("main").textContent()).not.toMatch(antigos);
+  await expect(page.locator('meta[name="description"]')).not.toHaveAttribute("content", antigos);
+  await expect(page.locator('meta[property="og:description"]')).not.toHaveAttribute("content", antigos);
 });
 
 test("perguntas frequentes abrem e mostram a resposta", async ({ page }) => {

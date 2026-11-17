@@ -25,7 +25,10 @@ import { linkWhatsapp } from "@/lib/whatsapp";
 // piracanjuba.ai/<slug>. Termos decididos pelo operador em 2026-11-16:
 // preço público de R$ 600 em pagamento único, sem mensalidade, página no ar
 // sem prazo (enquanto o portal existir), sem os antigos planos de banner e
-// sem números de audiência (nunca foram conferidos).
+// sem números de audiência (nunca foram conferidos). Também do operador, no
+// mesmo dia: exceções de saída com aviso de 30 dias se o portal encerrar,
+// correção de contato sem custo, e nenhuma regra publicada sobre propaganda
+// política (cada caso é decidido na conversa).
 
 const PRECO = PRECO_PAGINA_EMPRESA_TEXTO;
 const WHATSAPP_COMERCIAL = "5564992375458";
@@ -34,7 +37,7 @@ const MENSAGEM =
 
 export const metadata = pageMetadata({
   title: `Página da sua empresa por ${PRECO}`,
-  description: `Página própria da sua empresa em piracanjuba.ai/suaempresa, com logo, fotos, serviços e botão de WhatsApp. Pagamento único de ${PRECO}, sem mensalidade.`,
+  description: `Página própria da sua empresa em piracanjuba.ai/suaempresa, com logo, foto, serviços e botão de WhatsApp. Pagamento único de ${PRECO}, sem mensalidade.`,
   path: "/anuncie",
 });
 
@@ -67,12 +70,13 @@ const PERGUNTAS = [
   },
   {
     pergunta: "Por quanto tempo a página fica no ar?",
-    resposta: "Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir.",
+    resposta:
+      "Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir. Ela só sai antes disso a pedido da empresa, se a empresa encerrar as atividades, por ordem judicial ou se a informação ficar falsa e não puder ser corrigida. Se o portal for encerrado, a empresa é avisada com 30 dias de antecedência.",
   },
   {
     pergunta: "Posso editar ou postar na página depois?",
     resposta:
-      "A página funciona como um outdoor: o conteúdo é definido na criação e não tem área para a empresa editar ou postar. Ajustes posteriores são combinados pelo WhatsApp.",
+      "A página funciona como um outdoor: o conteúdo é definido na criação e não tem área para a empresa editar ou postar. Correções de telefone, endereço e horário são feitas sem custo; outras mudanças de conteúdo são orçadas pelo WhatsApp.",
   },
   {
     pergunta: "Preciso ter site?",
@@ -91,8 +95,7 @@ const PERGUNTAS = [
   },
   {
     pergunta: "Qualquer empresa pode anunciar?",
-    resposta:
-      "Empresas, comércios e profissionais de Piracanjuba e região. O portal não publica propaganda política: partidos, candidatos e mandatos.",
+    resposta: "Empresas, comércios e profissionais de Piracanjuba e região.",
   },
   {
     pergunta: "Como é o pagamento?",
@@ -168,7 +171,7 @@ export default function AnunciePage() {
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
           Um outdoor digital: uma página só da sua empresa, no endereço piracanjuba.ai/suaempresa, com
-          logo, fotos, serviços, contato e botão de WhatsApp.
+          logo, foto, serviços, contato e botão de WhatsApp.
         </p>
         <p className="text-lg font-semibold text-foreground">
           {PRECO} em pagamento único, sem mensalidade.
@@ -236,7 +239,7 @@ export default function AnunciePage() {
         </div>
 
         <div className="stat-card space-y-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Investimento</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-foreground/75">Investimento</p>
           <p className="text-4xl font-extrabold text-foreground">{PRECO}</p>
           <ul className="space-y-2 text-sm text-foreground">
             {["Pagamento único", "Sem mensalidade", "No ar enquanto o portal existir", "Textos e montagem pela equipe do portal"].map(
@@ -249,6 +252,9 @@ export default function AnunciePage() {
             )}
           </ul>
           <BotaoWhatsapp rotulo="Falar no WhatsApp" />
+          <p className="text-xs text-foreground/75">
+            Vendido pela Ferro Labs Tecnologia LTDA, CNPJ 66.034.538/0001-25, que mantém o Piracanjuba.ai.
+          </p>
         </div>
       </section>
 
@@ -282,7 +288,7 @@ export default function AnunciePage() {
           horários de ônibus, o Zap PBA e os classificados, além dos dados públicos da Prefeitura e da Câmara.
         </p>
         <p className="text-foreground">
-          O portal já foi assunto de reportagens em {listaComE(veiculos)}.{" "}
+          O portal já apareceu na imprensa, em reportagens, entrevistas e citações: {listaComE(veiculos)}.{" "}
           <Link href="/na-midia" className="font-medium text-primary underline-offset-4 hover:underline">
             Ver as matérias
           </Link>
@@ -311,7 +317,7 @@ export default function AnunciePage() {
                   />
                 </span>
               </summary>
-              <p className="mt-2 text-muted-foreground">{item.resposta}</p>
+              <p className="mt-2 text-foreground/75">{item.resposta}</p>
             </details>
           ))}
         </div>
@@ -324,7 +330,7 @@ export default function AnunciePage() {
         <h2 id="anuncie-final" className="text-2xl font-bold text-foreground md:text-3xl">
           Quer a página da sua empresa?
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-foreground/75">
           {PRECO} em pagamento único. Chame no WhatsApp e tire as dúvidas.
         </p>
         <BotaoWhatsapp rotulo="Quero a página da minha empresa" />

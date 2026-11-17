@@ -52,7 +52,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                   <HeartHandshake className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#25D366]">
+                  <p className="text-sm font-semibold text-foreground">
                     Anuncie no Piracanjuba<span className="text-[#25D366]">.ai</span>
                   </p>
                   <p className="text-xs text-muted-foreground">

@@ -358,7 +358,7 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/anuncie"
-                className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium bg-[#25D366] text-white hover:bg-[#1da851] transition-colors"
+                className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium bg-[#15803d] text-white hover:bg-[#166534] transition-colors"
               >
                 Saiba mais
                 <ArrowRight className="w-4 h-4" />
