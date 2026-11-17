@@ -3,6 +3,7 @@ import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import {
   DESCONTO_PAGINA_EMPRESA_TEXTO,
   PIX_RECEBEDOR,
+  PRAZO_PAGINA_EMPRESA_TEXTO,
   PRECO_CHEIO_PAGINA_EMPRESA_TEXTO,
   PRECO_PAGINA_EMPRESA_TEXTO,
   WHATSAPP_COMERCIAL,
@@ -20,7 +21,7 @@ const INCLUI = [
 const DEPOIS = [
   "A equipe confere o pagamento e chama você no WhatsApp.",
   "Você envia o logo e as fotos da empresa.",
-  "Escrevemos a página, você revisa e ela vai ao ar.",
+  `Escrevemos a página, você revisa e ela vai ao ar ${PRAZO_PAGINA_EMPRESA_TEXTO}.`,
 ];
 
 export default function ResumoPedido() {

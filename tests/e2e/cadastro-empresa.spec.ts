@@ -28,6 +28,7 @@ test("cadastro registra o pedido e mostra o PIX da Ferro Labs com o código", as
   await expect(page).toHaveURL(/\/anuncie\/cadastro$/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { level: 1, name: "Cadastro da página de empresa" })).toBeVisible();
+  await expect(page.getByText("Escrevemos a página, você revisa e ela vai ao ar em até 7 dias após o envio do material.")).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "Dados" }).first()).toHaveAttribute("aria-current", "step");
   await expect(page.getByRole("radio", { name: /Cartão de crédito/ })).toBeEnabled();
   await expect(page.getByRole("radio", { name: /PIX/ })).toBeChecked();
