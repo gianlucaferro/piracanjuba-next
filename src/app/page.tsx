@@ -23,9 +23,12 @@ import {
   Trophy,
   Network,
   BusFront,
+  Users,
+  ClipboardList,
+  ScrollText,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
-import { NOTA_PNTP } from "@/data/notaTransparencia";
+import { NOTA_PNTP, temSelo, type NivelPntp } from "@/data/notaTransparencia";
 import { pageMetadata } from "@/lib/seo";
 import {
   fetchIndicadores,
@@ -48,6 +51,9 @@ export const metadata = pageMetadata({
 });
 
 export const revalidate = 3600;
+
+// Mesma convenção de /nota-pba: "selo Ouro" quando o nível dá selo, "nível Intermediário" nos demais.
+const nivelPntpTexto = (nivel: NivelPntp) => (temSelo(nivel) ? `selo ${nivel}` : `nível ${nivel}`);
 
 function MiniCard({
   label,
@@ -171,11 +177,15 @@ export default async function HomePage() {
                 Nota de transparência da cidade · {NOTA_PNTP.ano}
               </p>
               <p className="text-sm sm:text-base font-bold text-foreground leading-snug">
-                Piracanjuba ficou em {NOTA_PNTP.executivo.posicao}º de {NOTA_PNTP.executivo.total} municípios de Goiás no Ranking da Transparência.
+                {/* A posição é de cada poder, não da cidade: Prefeitura e Câmara são avaliadas em separado. */}
+                No Ranking da Transparência {NOTA_PNTP.ano} do TCM-GO, a Prefeitura de Piracanjuba ficou em{" "}
+                {NOTA_PNTP.executivo.posicao}º de {NOTA_PNTP.executivo.total} municípios de Goiás (
+                {nivelPntpTexto(NOTA_PNTP.executivo.nivel)}); a Câmara Municipal, em {NOTA_PNTP.legislativo.posicao}º (
+                {nivelPntpTexto(NOTA_PNTP.legislativo.nivel)}).
               </p>
             </div>
             <span className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 group-hover:underline shrink-0">
-              Ver nota <ArrowRight className="w-4 h-4" />
+              Ver nota de transparência <ArrowRight className="w-4 h-4" />
             </span>
           </div>
         </Link>
@@ -220,7 +230,8 @@ export default async function HomePage() {
           </Link>
         </section>
 
-        {/* Compra e Venda + atalhos de transparência */}
+        {/* Compra e Venda + atalhos de transparência (a última linha, da Câmara,
+            dá link no HTML para /vereadores: achado LINK-02 da auditoria de SEO de 2026-11-17) */}
         <section aria-label="Mais serviços" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Link href="/compra-e-venda" className="stat-card card-hover flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0">
@@ -286,6 +297,36 @@ export default async function HomePage() {
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-teal-600 transition-colors" aria-hidden />
           </Link>
+          <Link href="/vereadores" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-primary" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Vereadores de Piracanjuba</p>
+              <p className="text-sm text-muted-foreground">Partido, mandato e atuação de cada vereador</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" aria-hidden />
+          </Link>
+          <Link href="/atuacao-parlamentar" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+              <ClipboardList className="w-5 h-5 text-amber-600 dark:text-amber-400" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Atuação parlamentar</p>
+              <p className="text-sm text-muted-foreground">Requerimentos, indicações e moções dos vereadores</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-amber-600 transition-colors" aria-hidden />
+          </Link>
+          <Link href="/camara/projetos" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+              <ScrollText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Projetos de lei da Câmara</p>
+              <p className="text-sm text-muted-foreground">Projetos, resoluções e decretos legislativos</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-indigo-600 transition-colors" aria-hidden />
+          </Link>
         </section>
 
         {/* Plantão de Farmácias */}
@@ -302,7 +343,7 @@ export default async function HomePage() {
               Contatos Úteis
             </h2>
             <Link href="/contatos" className="text-sm text-primary hover:underline flex items-center gap-1">
-              Ver todos <ArrowRight className="w-3 h-3" />
+              Ver todos os contatos <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -361,7 +402,7 @@ export default async function HomePage() {
                 href="/anuncie"
                 className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium bg-[#15803d] text-white hover:bg-[#166534] transition-colors"
               >
-                Saiba mais
+                Anunciar minha empresa
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -469,7 +510,7 @@ export default async function HomePage() {
               <Link href="/emendas" className="stat-card card-hover flex items-center gap-3 group">
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">{emendas.length} emendas registradas</p>
-                  <p className="text-sm font-semibold text-foreground">Ver detalhes →</p>
+                  <p className="text-sm font-semibold text-foreground">Ver emendas parlamentares →</p>
                 </div>
               </Link>
             </div>

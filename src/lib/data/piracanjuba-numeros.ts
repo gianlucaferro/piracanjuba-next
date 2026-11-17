@@ -51,6 +51,6 @@ async function fetchPiracanjubaNumerosUncached(): Promise<PiracanjubaNumeros> {
 /** Cache 24h — dados anuais mudam pouco. */
 export const fetchPiracanjubaNumeros = unstable_cache(
   fetchPiracanjubaNumerosUncached,
-  ["piracanjuba-numeros-ibge"],
+  ["piracanjuba-numeros-ibge-v2"],
   { revalidate: 60 * 60 * 24, tags: ["piracanjuba-numeros"] },
 );

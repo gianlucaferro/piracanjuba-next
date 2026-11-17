@@ -72,7 +72,7 @@ export default function SubscriptionForm() {
         <h2 className="text-lg font-semibold text-foreground">Assinar alertas</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Receba um resumo semanal com novos projetos, votações e atualizações da Câmara
+        Receba um resumo semanal com novos projetos e atualizações da Câmara
         e Prefeitura diretamente no seu e-mail.
       </p>
       <form onSubmit={handleSubmit} className="space-y-3">

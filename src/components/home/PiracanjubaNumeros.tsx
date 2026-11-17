@@ -16,12 +16,14 @@ function fmtMoeda(n: number | undefined | null) {
   }).format(n * 1000);
 }
 
-function fmtMoedaSimples(n: number | undefined | null) {
+// PIB per capita do IBGE já vem em reais, com centavos (ex.: 52716.61).
+function fmtMoedaCentavos(n: number | undefined | null) {
   if (!n) return "—";
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(n);
 }
 
@@ -71,8 +73,8 @@ export default async function PiracanjubaNumeros() {
           <CardNumero
             icon={<Wallet className="w-4 h-4 text-emerald-600" />}
             label="PIB per capita"
-            valor={fmtMoedaSimples(dados.pibPerCapita.valor)}
-            sub={`Referência ${dados.pibPerCapita.ano}`}
+            valor={fmtMoedaCentavos(dados.pibPerCapita.valor)}
+            sub={`IBGE, referência ${dados.pibPerCapita.ano}`}
           />
         )}
 

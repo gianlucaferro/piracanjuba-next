@@ -87,7 +87,7 @@ const faqJsonLd = {
       name: "O que é o Piracanjuba.ai?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "O Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Centraliza dados oficiais da Prefeitura e Câmara de Piracanjuba (GO) — contratos, licitações, salários de servidores, despesas, projetos de lei, votações — em uma única interface clara e acessível, com links de volta às fontes originais para verificação.",
+        text: "O Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Centraliza dados oficiais da Prefeitura e da Câmara de Piracanjuba (GO), como contratos, licitações, salários de servidores, despesas e projetos de lei, em uma única interface clara e acessível, com links de volta às fontes originais para verificação.",
       },
     },
     {
@@ -119,7 +119,7 @@ const faqJsonLd = {
       name: "Que tipo de dados o Piracanjuba.ai mostra?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura (contratos, licitações, servidores, salários, FUNPREPI, despesas, obras, decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos), educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais, arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão, coleta de lixo, contatos úteis, marketplace local).",
+        text: "Câmara Municipal (vereadores, projetos, atas), Prefeitura (contratos, licitações, servidores, salários, FUNPREPI, despesas, obras, decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos), educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais, arrecadação, clima diário e utilidades para o cotidiano (farmácias de plantão, coleta de lixo, contatos úteis, marketplace local).",
       },
     },
     {
@@ -275,7 +275,7 @@ export default function SobrePage() {
                   Câmara Municipal
                 </h3>
                 <p className="text-sm text-foreground/85 leading-relaxed">
-                  Vereadores, projetos de lei, votações, atos administrativos, contratos,
+                  Vereadores, projetos de lei, atos administrativos, contratos,
                   licitações, despesas, receitas, diárias e remunerações.
                 </p>
               </div>
@@ -431,10 +431,10 @@ export default function SobrePage() {
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
               É o primeiro portal de transparência municipal otimizado por inteligência
-              artificial do Brasil. Centraliza dados oficiais da Prefeitura e Câmara de
-              Piracanjuba (GO) — contratos, licitações, salários de servidores, despesas,
-              projetos de lei, votações — em uma única interface clara e acessível, com
-              links de volta às fontes originais para verificação.
+              artificial do Brasil. Centraliza dados oficiais da Prefeitura e da Câmara de
+              Piracanjuba (GO), como contratos, licitações, salários de servidores, despesas
+              e projetos de lei, em uma única interface clara e acessível, com links de
+              volta às fontes originais para verificação.
             </p>
           </details>
 
@@ -485,7 +485,7 @@ export default function SobrePage() {
               <span className="text-muted-foreground text-xl group-open:rotate-45 transition-transform">+</span>
             </summary>
             <p className="text-sm text-foreground/85 leading-relaxed mt-3">
-              Câmara Municipal (vereadores, projetos, votações, atas), Prefeitura
+              Câmara Municipal (vereadores, projetos, atas), Prefeitura
               (contratos, licitações, servidores, salários, FUNPREPI, despesas, obras,
               decretos, portarias, leis, TCM-GO), saúde (dengue, profissionais, estabelecimentos),
               educação (IDEB, escolas), agronegócio, segurança pública, benefícios sociais,

@@ -24,10 +24,12 @@ export default function DespesasTab() {
   const [page, setPage] = useState(0);
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
-  const { data: despesas, isLoading } = useQuery({
+  const { data: despesas, isLoading, isError } = useQuery({
     queryKey: ["camara-despesas", ano],
     queryFn: () => fetchCamaraDespesas(ano),
   });
+  // Contagem e total só com os dados do ano na mão: no carregamento diziam "0 despesas · R$ 0,00".
+  const carregado = despesas !== undefined;
 
   const filtered = useMemo(() => {
     return (despesas || []).filter((d) =>
@@ -80,14 +82,16 @@ export default function DespesasTab() {
         </Select>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{filtered.length} despesas · Total: {formatCurrency(totalValor)}</p>
-        {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Download className="w-3.5 h-3.5" /> CSV
-          </button>
-        )}
-      </div>
+      {carregado && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{filtered.length} despesas · Total: {formatCurrency(totalValor)}</p>
+          {filtered.length > 0 && (
+            <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Monthly chart */}
       {!isLoading && (despesas || []).length > 0 && (
@@ -108,7 +112,13 @@ export default function DespesasTab() {
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !paged.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar as despesas da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !paged.length && (
         <div className="stat-card text-center py-8">
           <Receipt className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem despesas em {ano}</h3>

@@ -14,6 +14,7 @@ import {
   BarChart3, Info, Phone, Scale
 } from "lucide-react";
 import { fetchSegurancaIndicadores, type SegurancaIndicador } from "@/data/segurancaApi";
+import { TELEFONES, formatarTelefone } from "@/data/telefones";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
 
 function formatNumber(n: number | null) {
@@ -289,7 +290,7 @@ function EmergencyNumbers() {
     { name: "Bombeiros Piracanjuba", number: "(62) 98494-0249", desc: "WhatsApp direto", whatsapp: "5562984940249" },
     { name: "SAMU", number: "192", desc: "Emergências médicas", whatsapp: null },
     { name: "Polícia Civil", number: "197", desc: "Denúncias e registros de ocorrência", whatsapp: null },
-    { name: "Delegacia de Piracanjuba", number: "(64) 3405-1275", desc: "Delegacia Regional", whatsapp: null },
+    { name: "Delegacia de Piracanjuba", number: formatarTelefone(TELEFONES.delegacia.numero), desc: "Polícia Civil (19ª DRP)", whatsapp: null },
     { name: "Disque Denúncia", number: "181", desc: "Denúncias anônimas", whatsapp: null },
   ];
 

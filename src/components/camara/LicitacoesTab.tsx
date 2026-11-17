@@ -14,7 +14,9 @@ import { getTooltip } from "@/lib/glossario";
 
 export default function LicitacoesTab() {
   const [search, setSearch] = useState("");
-  const { data: licitacoes, isLoading } = useQuery({ queryKey: ["camara-licitacoes"], queryFn: fetchCamaraLicitacoes });
+  const { data: licitacoes, isLoading, isError } = useQuery({ queryKey: ["camara-licitacoes"], queryFn: fetchCamaraLicitacoes });
+  // Contagem só com os dados na mão: no carregamento dizia "0 licitações encontradas".
+  const carregado = licitacoes !== undefined;
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
   const filtered = (licitacoes || []).filter((l) =>
@@ -43,18 +45,26 @@ export default function LicitacoesTab() {
         <Input placeholder="Buscar licitação..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" aria-label="Buscar licitação" />
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{filtered.length} licitações encontradas</p>
-        {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Download className="w-3.5 h-3.5" /> CSV
-          </button>
-        )}
-      </div>
+      {carregado && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{filtered.length} licitações encontradas</p>
+          {filtered.length > 0 && (
+            <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          )}
+        </div>
+      )}
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !filtered.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar as licitações da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !filtered.length && (
         <div className="stat-card text-center py-8">
           <Gavel className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem licitações</h3>

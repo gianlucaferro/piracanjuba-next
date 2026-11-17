@@ -18,7 +18,9 @@ import GruposContratosAviso from "@/components/transparencia/GruposContratosAvis
 
 export default function ContratosTab() {
   const [search, setSearch] = useState("");
-  const { data: contratos, isLoading } = useQuery({ queryKey: ["camara-contratos"], queryFn: fetchCamaraContratos });
+  const { data: contratos, isLoading, isError } = useQuery({ queryKey: ["camara-contratos"], queryFn: fetchCamaraContratos });
+  // Contagem e total só com os dados na mão: no carregamento (e no HTML do servidor) diziam "0 contratos".
+  const carregado = contratos !== undefined;
 
   const filtered = (contratos || []).filter((c) =>
     !search || [c.objeto, c.credor, c.numero].some((f) => f?.toLowerCase().includes(search.toLowerCase()))
@@ -163,18 +165,20 @@ export default function ContratosTab() {
         <Input placeholder="Buscar contrato..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{filtered.length} contratos · Total: {formatCurrency(totalValor)}</p>
-        {filtered.length > 0 && (
-          <button onClick={() => downloadCSV(
-            `contratos-camara-${new Date().toISOString().slice(0, 10)}.csv`,
-            ["Número", "Credor", "Objeto", "Valor", "Status", "Início Vigência", "Fim Vigência"],
-            filtered.map((c) => [c.numero, c.credor, c.objeto, c.valor, c.status, c.vigencia_inicio, c.vigencia_fim])
-          )} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Download className="w-3.5 h-3.5" /> CSV
-          </button>
-        )}
-      </div>
+      {carregado && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{filtered.length} contratos · Total: {formatCurrency(totalValor)}</p>
+          {filtered.length > 0 && (
+            <button onClick={() => downloadCSV(
+              `contratos-camara-${new Date().toISOString().slice(0, 10)}.csv`,
+              ["Número", "Credor", "Objeto", "Valor", "Status", "Início Vigência", "Fim Vigência"],
+              filtered.map((c) => [c.numero, c.credor, c.objeto, c.valor, c.status, c.vigencia_inicio, c.vigencia_fim])
+            )} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          )}
+        </div>
+      )}
 
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -183,7 +187,13 @@ export default function ContratosTab() {
         </div>
       )}
 
-      {!isLoading && !filtered.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar os contratos da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !filtered.length && (
         <div className="stat-card text-center py-8">
           <FileSignature className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem contratos</h3>

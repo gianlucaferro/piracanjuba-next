@@ -19,6 +19,7 @@ import {
   Calendar, FileText, Lightbulb, Phone, Share2, MapPin, ClipboardList,
 } from "lucide-react";
 import { fetchBeneficiosSociais, type BeneficioSocial } from "@/data/beneficiosSociaisApi";
+import { TELEFONES, formatarTelefone } from "@/data/telefones";
 import { fetchCdeSubsidios, type CdeSubsidio } from "@/data/cdeApi";
 import {
   calcularTotalOficialAnual,
@@ -797,9 +798,9 @@ function MetodologiaSection() {
 // ========== CONTATOS DE ASSISTÊNCIA SOCIAL ==========
 function ContatosSociaisSection() {
   const contatos = [
-    { nome: "CadÚnico / Bolsa Família", telefone: "(64) 99984-9676", whatsapp: "5564999849676", desc: "Cadastro e consulta de benefícios" },
-    { nome: "CREAS", telefone: "(64) 99602-389", whatsapp: "556499602389", desc: "Centro de Referência — atendimento a famílias" },
-    { nome: "Sec. Assistência Social", telefone: "(64) 99238-2040", whatsapp: "5564992382040", desc: "Secretaria Municipal" },
+    { nome: "CadÚnico / Bolsa Família", telefone: formatarTelefone(TELEFONES.cadUnico.numero), whatsapp: TELEFONES.cadUnico.numero, desc: "Cadastro e consulta de benefícios" },
+    { nome: "CREAS", telefone: formatarTelefone(TELEFONES.creas.numero), whatsapp: TELEFONES.creas.numero, desc: "Centro de Referência: atendimento a famílias" },
+    { nome: "Sec. Assistência Social", telefone: formatarTelefone(TELEFONES.secAssistenciaSocial.numero), whatsapp: TELEFONES.secAssistenciaSocial.numero, desc: "Secretaria Municipal" },
   ];
 
   return (
@@ -891,7 +892,7 @@ function CalendarioPagamentoSection() {
 function ComoSeCadastrarSection() {
   const passos = [
     { num: 1, titulo: "Reúna os documentos", desc: "CPF, RG, comprovante de endereço e renda de todos da família. Certidão de nascimento das crianças." },
-    { num: 2, titulo: "Vá ao CRAS ou CadÚnico", desc: "Procure o CRAS de Piracanjuba ou ligue para (64) 99984-9676 para agendar o cadastro no CadÚnico." },
+    { num: 2, titulo: "Vá ao CRAS ou CadÚnico", desc: `Procure o CRAS de Piracanjuba ou ligue para ${formatarTelefone(TELEFONES.cadUnico.numero)} para agendar o cadastro no CadÚnico.` },
     { num: 3, titulo: "Faça a entrevista", desc: "Um atendente vai perguntar sobre a renda, composição familiar e condições de moradia." },
     { num: 4, titulo: "Aguarde a análise", desc: "Após o cadastro, o governo federal analisa o perfil. A inclusão no Bolsa Família leva 30 a 90 dias." },
     { num: 5, titulo: "Acompanhe pelo app", desc: "Baixe o app Caixa Tem para acompanhar pagamentos. Mantenha dados atualizados a cada 2 anos." },

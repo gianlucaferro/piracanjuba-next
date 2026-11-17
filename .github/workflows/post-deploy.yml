@@ -1,13 +1,27 @@
 name: Production smoke
 on:
   deployment_status:
-permissions:
-  contents: read
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "URLs para o IndexNow, só https://piracanjuba.ai/..., separadas por espaço, vírgula ou linha. Vazio: refaz o cálculo automático da última implantação de produção (para uma implantação mais antiga, use Re-run failed jobs na execução dela)."
+        required: false
+        default: ""
+        type: string
+      simular:
+        description: "Só listar no log o que seria enviado ao IndexNow, sem enviar"
+        required: false
+        default: false
+        type: boolean
+# Nada por padrão; cada job pede só o que usa.
+permissions: {}
 jobs:
   smoke:
-    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -19,3 +33,36 @@ jobs:
           package-manager-cache: false
       - name: Verify public production routes
         run: node scripts/validation/http-smoke.mjs https://piracanjuba.ai
+  # Job próprio, só depois do smoke verde. Falha do IndexNow deixa este job
+  # vermelho (X no commit e na lista do Actions) sem tocar no resultado do smoke.
+  # Para repetir o envio da mesma implantação: "Re-run failed jobs" nesta
+  # execução, que reaproveita o evento original. Ver scripts/indexnow/README.md.
+  indexnow:
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      deployments: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.deployment.sha }}
+          # Histórico completo: o IndexNow compara o commit desta implantação com o da anterior.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      # Valores do evento e dos inputs entram só por env, nunca interpolados no run.
+      - name: Notify IndexNow about changed URLs
+        timeout-minutes: 5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INDEXNOW_DEPLOYMENT_ID: ${{ github.event.deployment.id }}
+          INDEXNOW_DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+          INDEXNOW_DEPLOYMENT_CREATED_AT: ${{ github.event.deployment.created_at }}
+          INDEXNOW_MANUAL_URLS: ${{ inputs.urls }}
+          INDEXNOW_DRY_RUN: ${{ inputs.simular }}
+        run: node scripts/indexnow/submit.mjs

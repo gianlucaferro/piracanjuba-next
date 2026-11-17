@@ -17,7 +17,7 @@ export function ProjetosContent() {
   const [origemFilter, setOrigemFilter] = useState("todos");
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
-  const { data: projetos = [], isLoading } = useQuery({
+  const { data: projetos = [], isLoading, isError } = useQuery({
     queryKey: ["projetos"],
     queryFn: fetchProjetos,
   });
@@ -88,6 +88,10 @@ export function ProjetosContent() {
             <div key={i} className="stat-card animate-pulse h-32" />
           ))}
         </div>
+      ) : isError && projetos.length === 0 ? (
+        <p role="alert" className="stat-card text-center py-12 text-muted-foreground">
+          Não foi possível carregar os projetos agora. Tente novamente em instantes.
+        </p>
       ) : filtered.length === 0 ? (
         <div className="stat-card text-center py-12">
           <p className="text-muted-foreground">Nenhum projeto encontrado.</p>

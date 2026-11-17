@@ -3,6 +3,33 @@ import type { Metadata } from "next";
 
 const SITE_URL = "https://piracanjuba.ai";
 
+/** Imagem de compartilhamento padrão (1200x630), usada quando a página não tem imagem própria. */
+export const OG_IMAGEM_PADRAO = {
+  url: "/og/piracanjuba-ai.png",
+  width: 1200,
+  height: 630,
+  alt: "Piracanjuba.ai: transparência pública de Piracanjuba, GO",
+} as const;
+
+/**
+ * Diretivas de robots das páginas indexáveis. Ficam no layout raiz e chegam às páginas por
+ * herança: o merge de metadata do Next é raso e a chave definida no segmento mais próximo da
+ * página substitui a do layout inteira (node_modules/next/dist/docs/01-app/03-api-reference/
+ * 04-functions/generate-metadata.md, seção "Merging"). Por isso pageMetadata só devolve a
+ * chave robots quando a página é noindex; nas demais a chave fica ausente e vale esta.
+ */
+export const ROBOTS_INDEXAVEL = {
+  index: true,
+  follow: true,
+  googleBot: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
+  },
+} as const satisfies NonNullable<Metadata["robots"]>;
+
 export function pageMetadata(opts: {
   title: string;
   description: string;
@@ -14,13 +41,15 @@ export function pageMetadata(opts: {
   noIndex?: boolean;
 }): Metadata {
   const url = opts.path ? `${SITE_URL}${opts.path}` : SITE_URL;
-  const image = opts.image || "/icon-192.png";
+  const ogImage = opts.image ? { url: opts.image, alt: opts.imageAlt ?? opts.title } : OG_IMAGEM_PADRAO;
 
   return {
     title: opts.title,
     description: opts.description,
-    alternates: { canonical: opts.path || "/" },
-    robots: opts.noIndex ? { index: false, follow: false } : undefined,
+    // Sem path, sem canonical: melhor nenhum do que apontar para a home por engano.
+    ...(opts.path ? { alternates: { canonical: opts.path } } : {}),
+    // Chave ausente (e não undefined) quando indexável, para herdar ROBOTS_INDEXAVEL do layout.
+    ...(opts.noIndex ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       type: opts.type || "website",
       locale: "pt_BR",
@@ -28,13 +57,13 @@ export function pageMetadata(opts: {
       siteName: "Piracanjuba.ai",
       title: opts.title,
       description: opts.description,
-      images: [{ url: image, alt: opts.imageAlt ?? opts.title }],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: opts.title,
       description: opts.description,
-      images: [image],
+      images: [ogImage],
     },
   };
 }
@@ -150,11 +179,7 @@ export function siteIdentityGraph() {
         inLanguage: "pt-BR",
         publisher: { "@id": ID.org },
         about: { "@id": ID.municipio },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: `${SITE_URL}/?q={search_term_string}`,
-          "query-input": "required name=search_term_string",
-        },
+        // Sem potentialAction/SearchAction: a home não lê ?q=, e a ação declarada não funcionava.
       },
       // 2. A ORGANIZACAO (Piracanjuba.ai como veiculo de jornalismo civico)
       {
@@ -162,7 +187,7 @@ export function siteIdentityGraph() {
         "@id": ID.org,
         name: "Piracanjuba.ai",
         url: SITE_URL,
-        logo: `${SITE_URL}/icon-512.png`,
+        logo: `${SITE_URL}/favicon.png`, // 512x512 em public/ (icon-512.png não existe)
         description:
           "Iniciativa cidadã independente de transparência municipal. Agrega dados oficiais com IA — sem vínculo com prefeitura, câmara ou qualquer órgão público.",
         disambiguatingDescription:

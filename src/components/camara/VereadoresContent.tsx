@@ -22,7 +22,7 @@ export function VereadoresContent() {
     await queryClient.invalidateQueries({ queryKey: ["vereadores"] });
   }, [queryClient]);
 
-  const { data: vereadores = [], isLoading } = useQuery({
+  const { data: vereadores = [], isLoading, isError } = useQuery({
     queryKey: ["vereadores"],
     queryFn: fetchVereadores,
   });
@@ -83,6 +83,10 @@ export function VereadoresContent() {
               <VereadorCardSkeleton key={i} />
             ))}
           </div>
+        ) : isError && vereadores.length === 0 ? (
+          <p role="alert" className="stat-card text-center py-12 text-muted-foreground">
+            Não foi possível carregar os vereadores agora. Tente novamente em instantes.
+          </p>
         ) : filtered.length === 0 ? (
           <div className="stat-card text-center py-12">
             <p className="text-muted-foreground">Nenhum vereador encontrado.</p>
@@ -107,7 +111,7 @@ export default function VereadoresPage() {
     <Layout>
       <SEO
         title="Vereadores de Piracanjuba GO — Mandato 2025–2028"
-        description="Piracanjuba GO — Conheça os 11 vereadores: projetos de lei, votações, remuneração, presença em sessões e atuação parlamentar. Mandato 2025–2028."
+        description="Piracanjuba GO: conheça os 11 vereadores, com projetos de lei, remuneração e atuação parlamentar. Mandato 2025 a 2028."
         path="/vereadores"
       />
       <div className="container py-8">

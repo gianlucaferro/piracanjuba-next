@@ -28,8 +28,11 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 const supabase = createBrowserSupabaseClient();
 import { toast } from "sonner";
 import PullToRefresh from "@/components/PullToRefresh";
+import { estadoListaAtuacao } from "@/lib/atuacao-carregamento";
 
 const TIPOS = ["Todos", "Indicação", "Requerimento", "Moção", "Projeto de Lei"] as const;
+// Lista vazia estável enquanto os projetos não chegam (o useMemo de filteredProjetos depende dela).
+const SEM_PROJETOS: Projeto[] = [];
 
 // Unified item type for display
 type UnifiedItem = {
@@ -93,7 +96,7 @@ const statusStyles: Record<string, string> = {
   apresentado: "bg-primary/10 text-primary border-primary/20",
 };
 
-function AtuacaoParlamentarPage() {
+function AtuacaoParlamentarPage({ embutido = false }: { embutido?: boolean }) {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -134,7 +137,7 @@ function AtuacaoParlamentarPage() {
     search: debouncedSearch.trim() || undefined,
   }), [tipoFilter, vereadorFilter, anoFilter, debouncedSearch, isTodosFilter, isProjetoFilter]);
 
-  const { data: paginatedData, isLoading: isLoadingAtuacao } = useQuery({
+  const { data: paginatedData, isLoading: isLoadingAtuacao, isError: erroAtuacao } = useQuery({
     queryKey: ["atuacao-paginated", atuacaoFilters, page],
     queryFn: () => fetchAtuacaoPaginated(atuacaoFilters, page),
     placeholderData: keepPreviousData,
@@ -142,11 +145,12 @@ function AtuacaoParlamentarPage() {
   });
 
   // Projetos query (fetch when Todos or Projeto de Lei)
-  const { data: projetos = [], isLoading: isLoadingProjetos } = useQuery({
+  const { data: projetosData, isLoading: isLoadingProjetos, isError: erroProjetos } = useQuery({
     queryKey: ["projetos"],
     queryFn: fetchProjetos,
     enabled: isTodosFilter || isProjetoFilter,
   });
+  const projetos = projetosData ?? SEM_PROJETOS;
 
   const { data: vereadores = [] } = useQuery({
     queryKey: ["vereadores"],
@@ -211,6 +215,17 @@ function AtuacaoParlamentarPage() {
   }, [paginatedData, filteredProjetos, page, isProjetoFilter, isTodosFilter]);
 
   const isLoading = isProjetoFilter ? isLoadingProjetos : isLoadingAtuacao;
+  // A contagem só sai com os dados do filtro carregados. Antes disso o HTML dizia "0 resultados",
+  // inclusive para robôs que não rodam JavaScript. Carregado = tem dados no cache: um refetch que
+  // falha (PullToRefresh, volta à aba depois do staleTime) não troca a lista pela mensagem de erro.
+  // No filtro "Todos", se só uma das consultas falhar, a lista sai com a outra e um aviso.
+  const estadoLista = estadoListaAtuacao(
+    isProjetoFilter ? "projetos" : isTodosFilter ? "todos" : "atuacao",
+    { carregada: paginatedData !== undefined, falhou: erroAtuacao },
+    { carregada: projetosData !== undefined, falhou: erroProjetos },
+  );
+  const dadosProntos = estadoLista.pronta;
+  const falhouCarregamento = estadoLista.erro;
 
   const handleOpenResumo = async (item: UnifiedItem) => {
     setSelectedItem(item);
@@ -290,7 +305,12 @@ function AtuacaoParlamentarPage() {
       <div className="container py-8">
         <div className="flex items-center gap-3 mb-6">
           <Megaphone className="w-6 h-6 text-accent" />
-          <h1 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h1>
+          {/* Dentro de /camara/atuacao o H1 é o da Câmara; aqui vira subtítulo. */}
+          {embutido ? (
+            <h2 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h2>
+          ) : (
+            <h1 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h1>
+          )}
         </div>
 
         {/* Filters */}
@@ -332,7 +352,9 @@ function AtuacaoParlamentarPage() {
 
         {/* Stats bar */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <Badge variant="outline" className="text-sm">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
+          {dadosProntos && (
+            <Badge variant="outline" className="text-sm">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
+          )}
           {items.length > 0 && totalPages > 1 && <Badge variant="secondary" className="text-sm">Página {page + 1} de {totalPages}</Badge>}
           {totalCount > 0 && (
             <button onClick={handleExportCSV} className="ml-auto inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
@@ -341,8 +363,20 @@ function AtuacaoParlamentarPage() {
           )}
         </div>
 
+        {estadoLista.faltando && (
+          <p role="status" className="text-sm text-muted-foreground mb-4">
+            {estadoLista.faltando === "projetos"
+              ? "Os projetos de lei não carregaram agora; a lista mostra só indicações, requerimentos e moções. Tente de novo em instantes."
+              : "Indicações, requerimentos e moções não carregaram agora; a lista mostra só os projetos de lei. Tente de novo em instantes."}
+          </p>
+        )}
+
         {/* Results */}
-        {isLoading ? (
+        {falhouCarregamento ? (
+          <p role="alert" className="stat-card text-center py-12 text-muted-foreground">
+            Não foi possível carregar a atuação parlamentar agora. Tente novamente em instantes.
+          </p>
+        ) : isLoading || !dadosProntos ? (
           <div className="space-y-3">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="stat-card animate-pulse h-20" />)}</div>
         ) : items.length === 0 ? (
           <div className="stat-card text-center py-12">
@@ -431,8 +465,8 @@ function AtuacaoParlamentarPage() {
   return atuacaoContent;
 }
 
-export function AtuacaoContent() {
-  return <AtuacaoParlamentarPage />;
+export function AtuacaoContent({ embutido = false }: { embutido?: boolean }) {
+  return <AtuacaoParlamentarPage embutido={embutido} />;
 }
 
 function AtuacaoParlamentarPageWrapper() {

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { caminhoCanonicoEmpresa } from "@/data/empresas-slugs";
+import { hostSemIndexacao } from "@/lib/host-indexavel";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
@@ -8,9 +9,19 @@ export async function middleware(request: NextRequest) {
   if (destino) {
     const url = request.nextUrl.clone();
     url.pathname = destino;
-    return NextResponse.redirect(url, 308);
+    return semIndexacaoForaDoDominio(request, NextResponse.redirect(url, 308));
   }
-  return await updateSession(request);
+  return semIndexacaoForaDoDominio(request, await updateSession(request));
+}
+
+// Cópias do site em *.vercel.app saem com X-Robots-Tag: noindex, para não concorrer com
+// piracanjuba.ai no índice (auditoria SEO de 2026-11-17, IDX-01). O robots.txt continua
+// liberado nesses hosts: o robô precisa rastrear a página para ver o noindex.
+function semIndexacaoForaDoDominio(request: NextRequest, response: NextResponse) {
+  if (hostSemIndexacao(request.headers.get("host") ?? request.nextUrl.host)) {
+    response.headers.set("X-Robots-Tag", "noindex");
+  }
+  return response;
 }
 
 export const config = {

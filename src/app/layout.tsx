@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import SiteLayout from "@/components/layout/SiteLayout";
 import MetricoolTracker from "@/components/MetricoolTracker";
-import { siteIdentityGraph } from "@/lib/seo";
+import { OG_IMAGEM_PADRAO, ROBOTS_INDEXAVEL, siteIdentityGraph } from "@/lib/seo";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -23,29 +23,12 @@ export const metadata: Metadata = {
   },
   description:
     "Piracanjuba GO — Portal de transparência municipal com inteligência artificial. Classificados gratuitos, farmácias de plantão, WhatsApp de comércios, coleta de lixo, vereadores, contratos, licitações, servidores, salários e gastos públicos de Piracanjuba, Goiás.",
-  keywords: [
-    "Piracanjuba",
-    "Piracanjuba GO",
-    "Piracanjuba Goiás",
-    "transparência municipal",
-    "câmara municipal Piracanjuba",
-    "prefeitura Piracanjuba",
-    "vereadores Piracanjuba",
-    "salários servidores Piracanjuba",
-    "contratos prefeitura",
-    "licitações Piracanjuba",
-    "classificados Piracanjuba",
-    "compra e venda Piracanjuba",
-    "farmácia de plantão Piracanjuba",
-    "coleta de lixo Piracanjuba",
-    "zap PBA",
-    "PBA.ai",
-    "transparência pública Goiás",
-  ],
   authors: [{ name: "Ferro Labs Tecnologia LTDA" }],
   creator: "Ferro Labs Tecnologia LTDA",
   publisher: "Ferro Labs Tecnologia LTDA",
-  alternates: { canonical: "/" },
+  // Sem alternates.canonical aqui: cada página define o próprio canonical (pageMetadata), e um
+  // canonical no layout era herdado pelo 404 e por qualquer página nova sem metadata, apontando
+  // para a home (auditoria SEO de 2026-11-17, IDX-11).
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -54,32 +37,16 @@ export const metadata: Metadata = {
     title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
     description:
       "Portal de transparência municipal com IA. Projetos de lei, contratos, licitações, servidores e gastos públicos.",
-    images: [
-      {
-        url: "/icon-192.png",
-        width: 192,
-        height: 192,
-        alt: "Piracanjuba.ai - Transparência municipal com IA",
-      },
-    ],
+    images: [OG_IMAGEM_PADRAO],
   },
   twitter: {
     card: "summary_large_image",
     title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
     description:
       "Portal de transparência municipal com IA. Projetos de lei, contratos, licitações, servidores e gastos públicos.",
-    images: ["/icon-192.png"],
+    images: [OG_IMAGEM_PADRAO],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  robots: ROBOTS_INDEXAVEL,
   verification: {
     google: "yeRY3PHi6DLUuUW1HbbhJ7WHnnJaLcVekdFS6yDrKFo",
   },

@@ -26,6 +26,15 @@ import TransmissaoCard from "@/components/camara/TransmissaoCard";
 import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import ServidorResumoDialog from "@/components/servidores/ServidorResumoDialog";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
+import { usePathname } from "next/navigation";
+import {
+  ABA_PADRAO_CAMARA,
+  abaDoCaminho,
+  abaExibida,
+  hrefAbaCamara,
+  tituloAbaCamara,
+  type EscolhaAba,
+} from "@/lib/abas-orgaos";
 
 const tabs = [
   { value: "vereadores", label: "Vereadores", icon: Users },
@@ -58,7 +67,7 @@ function ServidoresCamaraTab() {
     setPage(0);
   };
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isLoading, isError } = useQuery({
     queryKey: ["servidores-camara", search, page],
     queryFn: () => fetchServidores(search || undefined, undefined, page, PAGE_SIZE, "camara"),
   });
@@ -111,7 +120,12 @@ function ServidoresCamaraTab() {
 
       {exportError && <p role="alert" className="text-sm text-destructive">{exportError}</p>}
       {isLoading && <div className="stat-card animate-pulse h-40" />}
-      {!isLoading && !servidores.length && (
+      {isError && !result && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar os servidores da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+      {result !== undefined && !servidores.length && (
         <div className="stat-card text-center py-8">
           <UserCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem dados de servidores da Câmara</h3>
@@ -182,27 +196,38 @@ function TransmissaoTab() {
 }
 
 export default function CamaraMunicipal({ aba }: { aba?: string }) {
-  const [activeTab, setActiveTab] = useState(aba || "vereadores");
+  // A aba ativa vem da URL. Assim o link do rodapé para outra aba, o Voltar e o Avançar
+  // mostram a aba do endereço mesmo quando o Next reaproveita este componente montado.
+  const pathname = usePathname();
+  const abaDaUrl = abaDoCaminho(pathname, "camara") ?? aba ?? ABA_PADRAO_CAMARA;
+  const [escolha, setEscolha] = useState<EscolhaAba | null>(null);
+  // A URL mudou depois do clique: a escolha cumpriu o papel e sai, para não voltar a valer
+  // se o endereço retornar ao do clique (link do rodapé para a aba de origem).
+  if (escolha !== null && escolha.url !== pathname) setEscolha(null);
+  const activeTab = abaExibida(escolha, pathname, abaDaUrl);
   // Troca de aba reflete na URL (/camara/<aba>) sem navegação de servidor, pra SEO e
   // link compartilhável. A aba "vereadores" (padrão) fica em /camara.
+  // Cada aba também é um <a href> (ver TabsTrigger), para robôs seguirem o link.
+  // replaceState com estado null é a forma documentada pelo Next para o roteador (e o
+  // usePathname) acompanhar a URL nova sem buscar nada no servidor nem remontar a página.
   const onTabChange = useCallback((v: string) => {
-    setActiveTab(v);
+    setEscolha({ aba: v, url: pathname });
     if (typeof window !== "undefined") {
-      window.history.replaceState(window.history.state, "", v === "vereadores" ? "/camara" : `/camara/${v}`);
+      window.history.replaceState(null, "", hrefAbaCamara(v));
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <Layout>
       <SEO
         title="Câmara Municipal de Piracanjuba GO"
-        description="Piracanjuba GO — Câmara Municipal: vereadores, projetos de lei, votações, remunerações, despesas, contratos e atuação parlamentar. Dados oficiais."
+        description="Piracanjuba GO: Câmara Municipal, com vereadores, projetos de lei, remunerações, despesas, contratos e atuação parlamentar. Dados oficiais."
         path="/camara"
       />
       <div className="container py-6">
         <div className="flex items-center gap-3 mb-4">
           <Landmark className="w-7 h-7 text-accent" />
-          <h1 className="text-2xl font-bold text-foreground">Câmara Municipal</h1>
+          <h1 className="text-2xl font-bold text-foreground">{tituloAbaCamara(activeTab)}</h1>
         </div>
       </div>
 
@@ -216,6 +241,7 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
+                    href={hrefAbaCamara(tab.value)}
                     className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0"
                   >
                     <Icon className="w-3.5 h-3.5 mr-1.5" />
@@ -240,7 +266,7 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
           <ProjetosContent />
         </TabsContent>
         <TabsContent value="atuacao">
-          <AtuacaoContent />
+          <AtuacaoContent embutido />
         </TabsContent>
         <TabsContent value="indicacoes">
           <AtosTab tipoCodigo={24} tipoNome="Indicações" descricao="Indicações dos vereadores da Câmara Municipal de Piracanjuba." />
