@@ -1,7 +1,15 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { caminhoCanonicoEmpresa } from "@/data/empresas-slugs";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  // Página de empresa digitada com maiúscula ou acento: redireciona para o endereço certo.
+  const destino = caminhoCanonicoEmpresa(request.nextUrl.pathname);
+  if (destino) {
+    const url = request.nextUrl.clone();
+    url.pathname = destino;
+    return NextResponse.redirect(url, 308);
+  }
   return await updateSession(request);
 }
 
