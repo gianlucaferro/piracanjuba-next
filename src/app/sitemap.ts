@@ -3,51 +3,27 @@ import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { BUS_CHECKED_AT } from "@/data/horariosOnibus";
 import { EMPRESAS } from "@/data/empresas";
 import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
+import { ABAS_CAMARA, ABAS_PREFEITURA, ROTAS_ESTATICAS } from "@/lib/sitemap-rotas";
 
 const SITE_URL = "https://piracanjuba.ai";
 
 export const revalidate = 3600; // 1 hora
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
-  // Páginas estáticas
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
-    { url: `${SITE_URL}/camara`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${SITE_URL}/vereadores`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${SITE_URL}/atuacao-parlamentar`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/prefeitura`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${SITE_URL}/saude`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/educacao`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/agro`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/seguranca`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/beneficios-sociais`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/arrecadacao`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/emendas`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/contatos`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE_URL}/coleta-lixo`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE_URL}/postos-combustivel`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/grupos-economicos`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/investigacoes`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${SITE_URL}/plantao-farmacias`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${SITE_URL}/horarios-onibus`, lastModified: new Date(BUS_CHECKED_AT), changeFrequency: "daily", priority: 0.7 },
-    { url: `${SITE_URL}/zap-pba`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${SITE_URL}/compra-e-venda`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${SITE_URL}/anuncie`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE_URL}/historia-pba`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/nota-pba`, lastModified: now, changeFrequency: "yearly", priority: 0.8 },
-    { url: `${SITE_URL}/sobre`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
-    { url: `${SITE_URL}/na-midia`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE_URL}/noticias`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
-  ];
+  // lastModified só entra quando a rota tem data própria: conferência dos ônibus, ficha da
+  // empresa e updated_at do banco. As demais saem sem <lastmod> (antes recebiam a hora do
+  // build, e o Google tende a ignorar o lastmod do site inteiro quando ele não é preciso).
+  const staticRoutes: MetadataRoute.Sitemap = ROTAS_ESTATICAS.map((rota) => ({
+    url: `${SITE_URL}${rota.path}`,
+    ...(rota.path === "/horarios-onibus" && BUS_CHECKED_AT ? { lastModified: new Date(BUS_CHECKED_AT) } : {}),
+    changeFrequency: rota.changeFrequency,
+    priority: rota.priority,
+  }));
 
   // Abas indexáveis da Prefeitura e da Câmara (rotas próprias para SEO).
-  const prefeituraAbas = ["chefia", "secretarias", "contratos", "servidores", "funprepi", "despesas", "prestacao-contas", "tcm-go", "decretos", "portarias", "leis", "lei-organica", "diarias", "licitacoes", "obras", "veiculos"];
-  const camaraAbas = ["servidores", "contratos", "projetos", "atuacao", "indicacoes", "resolucoes", "decretos-leg", "pautas", "atas", "transmissao", "licitacoes", "despesas", "receitas", "prestacao-contas", "diarias"];
   const tabRoutes: MetadataRoute.Sitemap = [
-    ...prefeituraAbas.map((a) => ({ url: `${SITE_URL}/prefeitura/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
-    ...camaraAbas.map((a) => ({ url: `${SITE_URL}/camara/${a}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...ABAS_PREFEITURA.map((a) => ({ url: `${SITE_URL}/prefeitura/${a}`, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...ABAS_CAMARA.map((a) => ({ url: `${SITE_URL}/camara/${a}`, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
 
   // Páginas de empresa (piracanjuba.ai/<slug>), com a data da última conferência da ficha.
@@ -75,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const ad of ads) {
         dynamicRoutes.push({
           url: `${SITE_URL}/compra-e-venda/${ad.id}`,
-          lastModified: ad.updated_at ? new Date(ad.updated_at) : now,
+          ...(ad.updated_at ? { lastModified: new Date(ad.updated_at) } : {}),
           changeFrequency: "weekly",
           priority: 0.6,
         });
@@ -94,7 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (!v.slug) continue;
         dynamicRoutes.push({
           url: `${SITE_URL}/vereadores/${v.slug}`,
-          lastModified: v.updated_at ? new Date(v.updated_at) : now,
+          ...(v.updated_at ? { lastModified: new Date(v.updated_at) } : {}),
           changeFrequency: "weekly",
           priority: 0.7,
         });
