@@ -9,6 +9,7 @@ import QueryProvider from "@/components/providers/QueryProvider";
 import ChatWidget from "@/components/chat/ChatWidget";
 import FollowingBanner from "@/components/FollowingBanner";
 import SomenteNoPortal from "./SomenteNoPortal";
+import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -51,11 +52,11 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                   <HeartHandshake className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#25D366]">
+                  <p className="text-sm font-semibold text-foreground">
                     Anuncie no Piracanjuba<span className="text-[#25D366]">.ai</span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Seu negócio visto por centenas de moradores todos os dias.
+                    Página própria da sua empresa, por {PRECO_PAGINA_EMPRESA_TEXTO} em pagamento único.
                   </p>
                 </div>
               </div>
