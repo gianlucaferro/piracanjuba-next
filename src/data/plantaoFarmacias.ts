@@ -340,6 +340,13 @@ const COORDS: Record<string, [number, number]> = {
   "Drogaria Do Lar":         [-17.3041, -49.0217],
   "Drogaria Santa Rita":     [-17.30398, -49.02208],
   "Drogaria Piracanjuba":    [-17.30400, -49.02170],
+  // Pinos dos perfis no Google Maps, conferidos em 2026-11-17:
+  // R. Dom Pedro II, 571, Sala 1, Centro (endereço passado pelo operador).
+  "Drogaria Hiper Pop":      [-17.3041424, -49.021731],
+  // R. Prof. Percival Rabêlo (perfil com o WhatsApp (64) 99203-3777, o mesmo da placa).
+  "Drogaria Vitae":          [-17.3007166, -49.0202679],
+  // R. Cônego Olinto, 407 (endereço passado pelo operador).
+  "Drogaria São Marcos":     [-17.304972, -49.0252867],
 };
 
 export function getWazeLink(farmacia: Farmacia): string | null {

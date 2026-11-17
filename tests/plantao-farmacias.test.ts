@@ -5,6 +5,7 @@ import {
   gerarTextoCompartilhamento,
   getPeriodo,
   getTelefoneLink,
+  getWazeLink,
 } from "../src/data/plantaoFarmacias.ts";
 
 test("escala atualizada destaca Vitae em 2026-09-05 e mantém a ordem das demais", () => {
@@ -36,4 +37,29 @@ test("telefone não informado não cria contato inválido; contatos existentes c
   assert.equal(getTelefoneLink({ nome: "Drogaria Vitae", telefone: "", tipo: "fixo" }), null);
   assert.equal(getTelefoneLink({ nome: "Teste", telefone: "(64) 3405-1734", tipo: "fixo" }), "tel:+556434051734");
   assert.ok(getTelefoneLink({ nome: "Teste", telefone: "(64) 99265-4341", tipo: "whatsapp" })?.startsWith("https://wa.me/5564992654341?text="));
+});
+
+test("Hiper Pop, Vitae e São Marcos abrem no Waze nos pinos conferidos em 2026-11-17", () => {
+  assert.equal(
+    getWazeLink({ nome: "Drogaria Hiper Pop", telefone: "", tipo: "fixo" }),
+    "https://waze.com/ul?ll=-17.3041424,-49.021731&navigate=yes&zoom=17",
+  );
+  assert.equal(
+    getWazeLink({ nome: "Drogaria Vitae", telefone: "", tipo: "fixo" }),
+    "https://waze.com/ul?ll=-17.3007166,-49.0202679&navigate=yes&zoom=17",
+  );
+  assert.equal(
+    getWazeLink({ nome: "Drogaria São Marcos", telefone: "", tipo: "fixo" }),
+    "https://waze.com/ul?ll=-17.304972,-49.0252867&navigate=yes&zoom=17",
+  );
+});
+
+test("toda farmácia da escala tem coordenadas para o Waze", () => {
+  const nomes = new Set(
+    PLANTAO_FARMACIAS.flatMap((semana) => [semana.farmacia24h, ...semana.demais])
+      .filter((farmacia) => farmacia != null)
+      .map((farmacia) => farmacia.nome),
+  );
+  const semWaze = [...nomes].filter((nome) => !getWazeLink({ nome, telefone: "", tipo: "fixo" }));
+  assert.deepEqual(semWaze, []);
 });
