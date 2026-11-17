@@ -21,7 +21,7 @@ const datasets = [
     name: "Apontamentos do TCM-GO sobre Piracanjuba",
     description:
       "Acórdãos, pareceres, notificações, decisões e relatórios do Tribunal de Contas dos Municípios do Estado de Goiás envolvendo a Prefeitura, Câmara, fundos e órgãos do município de Piracanjuba. Cada apontamento traz resumo gerado por IA e link direto para o PDF original publicado no domínio tcm.go.gov.br.",
-    url: `${SITE_URL}/prefeitura?tab=tcm-go`,
+    url: `${SITE_URL}/prefeitura/tcm-go`,
     creatorId: SCHEMA_IDS.tcmGo,
     dateModified: today,
     keywords: [
@@ -46,7 +46,7 @@ const datasets = [
     name: "Contratos da Prefeitura de Piracanjuba",
     description:
       "Contratos firmados pela Prefeitura Municipal de Piracanjuba com fornecedores e prestadores de serviço, incluindo valor, vigência, modalidade de licitação e aditivos. Dados extraídos do portal de transparência da Prefeitura.",
-    url: `${SITE_URL}/prefeitura?tab=contratos`,
+    url: `${SITE_URL}/prefeitura/contratos`,
     creatorId: SCHEMA_IDS.prefeitura,
     dateModified: today,
     keywords: [
@@ -69,7 +69,7 @@ const datasets = [
     name: "Servidores Municipais de Piracanjuba",
     description:
       "Folha de pagamento dos servidores da Prefeitura Municipal de Piracanjuba, incluindo cargo, lotação, remuneração bruta e líquida.",
-    url: `${SITE_URL}/prefeitura?tab=servidores`,
+    url: `${SITE_URL}/prefeitura/servidores`,
     creatorId: SCHEMA_IDS.prefeitura,
     dateModified: today,
     keywords: [
@@ -116,7 +116,7 @@ const datasets = [
     name: "Frota de Veículos da Prefeitura de Piracanjuba",
     description:
       "Veículos do poder executivo municipal de Piracanjuba (placa, modelo, ano, secretaria responsável) coletados via DETRAN-GO e dados de transparência municipal.",
-    url: `${SITE_URL}/prefeitura?tab=veiculos`,
+    url: `${SITE_URL}/prefeitura/veiculos`,
     creator: {
       type: "GovernmentOrganization",
       name: "DETRAN-GO + Prefeitura de Piracanjuba",

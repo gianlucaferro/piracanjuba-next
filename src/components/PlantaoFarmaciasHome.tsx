@@ -70,7 +70,7 @@ export default async function PlantaoFarmaciasHome() {
           href="/plantao-farmacias"
           className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
-          Ver escala <ArrowRight className="h-3 w-3" />
+          Escala de farmácias de plantão <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 

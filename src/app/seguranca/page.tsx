@@ -6,7 +6,7 @@ import SegurancaClient from "./SegurancaClient";
 export const metadata = pageMetadata({
   title: "Segurança Pública de Piracanjuba GO",
   description:
-    "Indicadores de segurança pública de Piracanjuba: ocorrências, histórico, seletor de ano, telefones de emergência e metodologia.",
+    "Indicadores de segurança pública de Piracanjuba: ocorrências, histórico, seletor de ano e telefones de emergência.",
   path: "/seguranca",
 });
 

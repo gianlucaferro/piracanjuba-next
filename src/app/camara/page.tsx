@@ -17,8 +17,8 @@ const camaraDatasets = [
   datasetJsonLd({
     name: "Vereadores e atuação parlamentar da Câmara de Piracanjuba",
     description:
-      "Vereadores em exercício na Câmara Municipal de Piracanjuba, com biografia, contatos, projetos de lei autorados, padrão de votação, atos administrativos e atuação parlamentar.",
-    url: `${SITE_URL}/camara?tab=vereadores`,
+      "Vereadores em exercício na Câmara Municipal de Piracanjuba, com biografia, contatos, projetos de lei autorados, atos administrativos e atuação parlamentar.",
+    url: `${SITE_URL}/vereadores`,
     creatorId: SCHEMA_IDS.camara,
     dateModified: today,
     keywords: [
@@ -33,15 +33,13 @@ const camaraDatasets = [
       "partido",
       "mandato",
       "projetos de lei",
-      "presença em sessões",
-      "votos",
     ],
   }),
   datasetJsonLd({
     name: "Atos da Câmara Municipal de Piracanjuba",
     description:
       "Resoluções, decretos legislativos, indicações, requerimentos e demais atos publicados pela Câmara Municipal de Piracanjuba. Cada ato traz resumo gerado por IA e link para o documento original.",
-    url: `${SITE_URL}/camara?tab=atos`,
+    url: `${SITE_URL}/camara/resolucoes`,
     creatorId: SCHEMA_IDS.camara,
     dateModified: today,
     keywords: [
@@ -62,7 +60,7 @@ const camaraDatasets = [
     name: "Atas das sessões da Câmara de Piracanjuba",
     description:
       "Atas das sessões ordinárias e extraordinárias da Câmara Municipal de Piracanjuba, com pauta, votações, registros de fala e decisões. Inclui resumo gerado por IA.",
-    url: `${SITE_URL}/camara?tab=atas`,
+    url: `${SITE_URL}/camara/atas`,
     creatorId: SCHEMA_IDS.camara,
     dateModified: today,
     keywords: [
@@ -76,7 +74,7 @@ const camaraDatasets = [
     name: "Contratos e licitações da Câmara de Piracanjuba",
     description:
       "Contratos firmados pela Câmara Municipal de Piracanjuba e licitações abertas, com fornecedores, valores, vigência e modalidade.",
-    url: `${SITE_URL}/camara?tab=contratos`,
+    url: `${SITE_URL}/camara/contratos`,
     creatorId: SCHEMA_IDS.camara,
     dateModified: today,
     keywords: [
