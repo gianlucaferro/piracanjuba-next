@@ -10,6 +10,7 @@ import ChatWidget from "@/components/chat/ChatWidget";
 import FollowingBanner from "@/components/FollowingBanner";
 import SomenteNoPortal from "./SomenteNoPortal";
 import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
+import { SECOES_RODAPE } from "@/data/secoesRodape";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -70,6 +71,41 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
 
         <footer className="border-t bg-card hidden md:block">
           <div className="container py-8">
+            {/* Seções: links fixos no HTML, com âncora descritiva, para páginas que
+                não recebiam link interno (LINK-02, auditoria de SEO de 2026-11-17).
+                Fica fora das páginas de empresa, que usam a moldura enxuta.
+                prefetch={false}: o rodapé inteiro entra na tela de uma vez, e
+                pré-carregar todas essas rotas a cada página não compensa. */}
+            <SomenteNoPortal>
+              <nav aria-labelledby="rodape-secoes" className="mb-8 pb-8 border-b">
+                <h2
+                  id="rodape-secoes"
+                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4"
+                >
+                  Seções
+                </h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6">
+                  {SECOES_RODAPE.map((grupo) => (
+                    <div key={grupo.titulo}>
+                      <h3 className="text-sm font-semibold text-foreground mb-2">{grupo.titulo}</h3>
+                      <ul className="space-y-1">
+                        {grupo.links.map((link) => (
+                          <li key={link.href}>
+                            <Link
+                              href={link.href}
+                              prefetch={false}
+                              className="inline-block py-0.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              {link.rotulo}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </nav>
+            </SomenteNoPortal>
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Image
@@ -81,7 +117,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 />
                 <span>Piracanjuba.ai — Piracanjuba, GO</span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                 <Link
                   href="/anuncie"
                   className="hover:text-foreground transition-colors flex items-center gap-1"
@@ -92,13 +128,13 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/na-midia" className="hover:text-foreground transition-colors">
                   Na mídia
                 </Link>
-                <Link href="/sobre" className="hover:text-foreground transition-colors">
+                <Link href="/sobre#fontes" className="hover:text-foreground transition-colors">
                   Fontes oficiais
                 </Link>
                 <Link href="/sobre" className="hover:text-foreground transition-colors">
                   Sobre
                 </Link>
-                <Link href="/sobre" className="hover:text-foreground transition-colors">
+                <Link href="/privacidade" className="hover:text-foreground transition-colors">
                   Privacidade
                 </Link>
                 <a
