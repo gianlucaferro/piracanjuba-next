@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { EMPRESAS } from "../src/data/empresas.ts";
 import { SLUGS_EMPRESAS } from "../src/data/empresas-slugs.ts";
@@ -18,7 +19,7 @@ import {
 import { NOTA_PNTP } from "../src/data/notaTransparencia.ts";
 import { ABAS_CAMARA, ABAS_PREFEITURA, ROTAS_ESTATICAS } from "../src/lib/sitemap-rotas.ts";
 
-const RAIZ = new URL("..", import.meta.url).pathname;
+const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 const APP = join(RAIZ, "src/app");
 
 // Caminhos fixos do sitemap, da mesma lista que o src/app/sitemap.ts usa

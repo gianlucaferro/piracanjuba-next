@@ -479,18 +479,25 @@ function formatFarmaciaCompartilhamento(farmacia: Farmacia): string {
   return farmacia.telefone ? `${farmacia.nome}: ${farmacia.telefone}` : farmacia.nome;
 }
 
-export function gerarTextoCompartilhamento(semana: SemanaPlantao, nextSemana?: SemanaPlantao): string {
+// O resolver é o mesmo da tela (aplicarContatoCadastrado): a mensagem leva o telefone
+// cadastrado que a linha mostra e, sem cadastro, o telefone da escala.
+export function gerarTextoCompartilhamento(
+  semana: SemanaPlantao,
+  nextSemana?: SemanaPlantao,
+  resolver: (farmacia: Farmacia) => Farmacia = (farmacia) => farmacia,
+): string {
   const p = getPeriodo(semana, nextSemana);
+  const farmacia24h = semana.farmacia24h && resolver(semana.farmacia24h);
   const lines = [
     "💊 *Plantão de Farmácias em Piracanjuba*",
     `📅 ${p.de} a ${p.ate}`,
     "",
-    ...(semana.farmacia24h
-      ? ["🕐 *Farmácia 24h:*", formatFarmaciaCompartilhamento(semana.farmacia24h)]
+    ...(farmacia24h
+      ? ["🕐 *Farmácia 24h:*", formatFarmaciaCompartilhamento(farmacia24h)]
       : ["Farmácia 24h não informada nesta escala."]),
     "",
-    semana.farmacia24h ? "💊 *Demais farmácias de plantão:*" : "💊 *Farmácias de plantão:*",
-    ...semana.demais.map((farmacia) => `• ${formatFarmaciaCompartilhamento(farmacia)}`),
+    farmacia24h ? "💊 *Demais farmácias de plantão:*" : "💊 *Farmácias de plantão:*",
+    ...semana.demais.map((farmacia) => `• ${formatFarmaciaCompartilhamento(resolver(farmacia))}`),
     "",
     "Veja o calendário completo:",
     "https://piracanjuba.ai/plantao-farmacias",
@@ -500,6 +507,10 @@ export function gerarTextoCompartilhamento(semana: SemanaPlantao, nextSemana?: S
   return lines.join("\n");
 }
 
-export function getShareWhatsAppLink(semana: SemanaPlantao, nextSemana?: SemanaPlantao): string {
-  return `https://wa.me/?text=${encodeURIComponent(gerarTextoCompartilhamento(semana, nextSemana))}`;
+export function getShareWhatsAppLink(
+  semana: SemanaPlantao,
+  nextSemana?: SemanaPlantao,
+  resolver?: (farmacia: Farmacia) => Farmacia,
+): string {
+  return `https://wa.me/?text=${encodeURIComponent(gerarTextoCompartilhamento(semana, nextSemana, resolver))}`;
 }

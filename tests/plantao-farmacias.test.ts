@@ -11,10 +11,12 @@ import {
   getPeriodo,
   getSemanaAtual,
   getSemanaVigente,
+  getShareWhatsAppLink,
   getTelefoneLink,
   getWazeLink,
   organizarEscala,
   type ContatoCadastrado,
+  type Farmacia,
 } from "../src/data/plantaoFarmacias.ts";
 
 const indice = (inicio: string) => PLANTAO_FARMACIAS.findIndex((semana) => semana.inicio === inicio);
@@ -165,4 +167,38 @@ test("contato cadastrado (farmacia_fotos) tem precedência e casa nome com ou se
   const saoSebastiao = { nome: "Drogaria Sao Sebastiao", telefone: "(64) 3405-1734", tipo: "fixo" } as const;
   assert.equal(aplicarContatoCadastrado(saoSebastiao, buscar(saoSebastiao.nome)), saoSebastiao);
   assert.equal(buscar("Farmácia inexistente"), undefined);
+});
+
+test("compartilhar no WhatsApp leva o contato cadastrado que a tela mostra; sem cadastro, o da escala", () => {
+  const idx = indice("2026-11-14");
+  const semana = PLANTAO_FARMACIAS[idx];
+  const seguinte = PLANTAO_FARMACIAS[idx + 1];
+  const buscar = criarBuscaPorNome<ContatoCadastrado>([
+    { nome: "Drogamais", telefone: "(64) 3405-0000", tipo_telefone: "fixo" },
+    { nome: "drogaria vitae", telefone: "(64) 99999-0000", tipo_telefone: null },
+  ]);
+  const resolver = (farmacia: Farmacia) => aplicarContatoCadastrado(farmacia, buscar(farmacia.nome));
+
+  const texto = gerarTextoCompartilhamento(semana, seguinte, resolver);
+  // Farmácia 24h e demais saem com o telefone cadastrado, como nas linhas da página.
+  assert.match(texto, /Farmácia 24h:\*\nDrogamais: \(64\) 3405-0000\n/);
+  assert.ok(texto.includes("• Drogaria Vitae: (64) 99999-0000\n"));
+  assert.ok(!texto.includes("99265-4341"), "telefone da escala da Drogamais não pode sobrar na mensagem");
+  // Sem cadastro, continua o telefone da escala.
+  assert.ok(texto.includes("• Drogaria São Sebastião: (64) 3405-1734\n"));
+  assert.ok(texto.includes("• Drogaria JM Popular: (64) 99203-0312\n"));
+  // O link codifica exatamente esse texto.
+  assert.equal(getShareWhatsAppLink(semana, seguinte, resolver), `https://wa.me/?text=${encodeURIComponent(texto)}`);
+
+  // Sem resolver, a mensagem é a da escala.
+  const daEscala = gerarTextoCompartilhamento(semana, seguinte);
+  assert.match(daEscala, /Farmácia 24h:\*\nDrogamais: \(64\) 99265-4341\n/);
+  assert.ok(daEscala.includes("• Drogaria Vitae\n"));
+  assert.equal(getShareWhatsAppLink(semana, seguinte), `https://wa.me/?text=${encodeURIComponent(daEscala)}`);
+
+  // Semana sem 24h informado: o aviso continua e as demais também passam pelo resolver.
+  const semAviso24h = gerarTextoCompartilhamento(PLANTAO_FARMACIAS[0], PLANTAO_FARMACIAS[1], resolver);
+  assert.match(semAviso24h, /Farmácia 24h não informada nesta escala/);
+  assert.ok(semAviso24h.includes("• Drogamais: (64) 3405-0000\n"));
+  assert.ok(semAviso24h.includes("• Drogaria Vitae: (64) 99999-0000"));
 });

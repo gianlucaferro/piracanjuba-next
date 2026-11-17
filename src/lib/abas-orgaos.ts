@@ -104,6 +104,16 @@ export function abaExibida(escolha: EscolhaAba | null, urlAtual: string, abaDaUr
   return escolha !== null && escolha.url === urlAtual ? escolha.aba : abaDaUrl;
 }
 
+/**
+ * Aba da Prefeitura que pode ficar ativa. A aba "admin" só vale para quem tem o token de /admin
+ * no navegador; sem ele (/prefeitura?tab=admin, por exemplo) cai na visão geral, e o H1 e o
+ * conteúdo seguem a aba devolvida aqui. O servidor nunca tem o token, então o HTML do servidor
+ * e o da hidratação nunca trazem a aba admin.
+ */
+export function abaPermitidaPrefeitura(aba: string, temTokenAdmin: boolean): string {
+  return aba === "admin" && !temTokenAdmin ? ABA_PADRAO_PREFEITURA : aba;
+}
+
 export type CliqueAba = {
   button: number;
   metaKey: boolean;

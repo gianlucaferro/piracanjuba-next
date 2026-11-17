@@ -247,9 +247,26 @@ function sameOriginUrl(value) {
   return url;
 }
 
-// URLs cujo lastmod caiu depois da implantação anterior e até a atual. Um mesmo
-// instante repetido em BUILD_STAMP_MIN_REPEAT URLs ou mais é tratado como hora do
-// build e descartado, para não reenviar o site inteiro a cada deploy.
+// Folga do limite inferior da janela por lastmod. O src/app/sitemap.ts fica em
+// cache por até 1 hora (revalidate = 3600), então o sitemap lido no envio da
+// implantação anterior podia estar até 1 hora atrás do banco e não trazer as
+// mudanças desse intervalo; sem folga, elas cairiam antes do limite inferior da
+// janela seguinte e não sairiam em envio nenhum. 2 horas cobrem o cache com sobra
+// (sitemap vencido servido enquanto se regenera, duração do build). O custo é
+// reenviar as poucas URLs com lastmod real nessas 2 horas, que o envio anterior
+// pode já ter mandado; a hora do build repetida continua descartada, então o site
+// inteiro não volta.
+export const LASTMOD_OVERLAP_MS = 2 * 60 * 60 * 1000;
+
+// Janela do lastmod: da criação da implantação anterior, menos a folga, até a
+// criação da atual.
+export function lastmodWindow(previous, current, overlapMs = LASTMOD_OVERLAP_MS) {
+  return { after: new Date(Date.parse(previous.created_at) - overlapMs), until: new Date(current.created_at) };
+}
+
+// URLs cujo lastmod caiu depois de after e até until (a janela de lastmodWindow).
+// Um mesmo instante repetido em BUILD_STAMP_MIN_REPEAT URLs ou mais é tratado como
+// hora do build e descartado, para não reenviar o site inteiro a cada deploy.
 export function urlsChangedByLastmod(entries, { after, until, minRepeat = BUILD_STAMP_MIN_REPEAT }) {
   const afterMs = after.getTime();
   const untilMs = until.getTime();
@@ -372,6 +389,41 @@ export function hasSuccessStatus(statuses) {
   return statuses.some((status) => status.state === "success");
 }
 
+// Página da lista de implantações: 100 é o máximo da API. O limite de segurança
+// (20 páginas, 2.000 implantações) interrompe a busca, e quem chama trata o limite
+// como falha.
+export const DEPLOYMENTS_PER_PAGE = 100;
+export const MAX_DEPLOYMENT_PAGES = 20;
+
+function newestFirst(deployments) {
+  return [...deployments].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+}
+
+// Busca, página a página e só até onde precisa, a primeira implantação que select
+// deixa passar e que deu certo (succeeded). A API de deployments do GitHub lista da
+// mais nova para a mais antiga; select ordena dentro da página (padrão: da mais
+// nova para a mais antiga). fetchPage(n) devolve a página n, a partir de 1, com até
+// perPage itens; página incompleta é a última. Devolve { deployment, limitReached }:
+// deployment null com limitReached false quer dizer que a lista acabou sem achar;
+// limitReached true quer dizer que maxPages páginas cheias foram lidas sem achar,
+// e aí não dá para concluir que a implantação não existe.
+export async function findSuccessfulDeployment({
+  fetchPage,
+  succeeded,
+  select = newestFirst,
+  perPage = DEPLOYMENTS_PER_PAGE,
+  maxPages = MAX_DEPLOYMENT_PAGES,
+}) {
+  for (let page = 1; page <= maxPages; page++) {
+    const batch = await fetchPage(page);
+    for (const deployment of select(batch)) {
+      if (await succeeded(deployment)) return { deployment, limitReached: false };
+    }
+    if (batch.length < perPage) return { deployment: null, limitReached: false };
+  }
+  return { deployment: null, limitReached: true };
+}
+
 // --- Novas tentativas --------------------------------------------------------------
 
 // Espera antes de cada nova tentativa: até duas a mais, curtas, para caber no
@@ -385,18 +437,21 @@ export function isRetryableStatus(status) {
 }
 
 // Erro de rede do fetch do Node ("fetch failed": DNS, conexão recusada ou
-// derrubada) ou tempo esgotado do AbortSignal.timeout.
+// derrubada antes da resposta; "terminated": conexão caiu no meio do corpo, depois
+// dos cabeçalhos) ou tempo esgotado do AbortSignal.timeout, que também interrompe a
+// leitura do corpo. Formatos conferidos no Node 26.7.0 em 2026-11-17.
 export function isNetworkError(error) {
   if (!error || typeof error !== "object") return false;
   if (error.name === "TimeoutError") return true;
-  return error.name === "TypeError" && error.message === "fetch failed";
+  return error.name === "TypeError" && (error.message === "fetch failed" || error.message === "terminated");
 }
 
 function sleepMs(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Executa attempt() (uma chamada de fetch) e repete com espera quando a resposta é
+// Executa attempt() (uma chamada de fetch, ou fetch e leitura do corpo em
+// readWithRetry) e repete com espera quando a resposta é
 // 5xx ou quando o fetch lança erro de rede. Esgotadas as tentativas, devolve a
 // última resposta ou lança o último erro, para quem chamou decidir. Qualquer outro
 // erro sobe na hora. sleep e onRetry são injetáveis para o teste.
@@ -420,4 +475,29 @@ export async function withRetry(attempt, { delaysMs = RETRY_DELAYS_MS, sleep = s
     onRetry({ attempt: index + 1, reason, delayMs: delaysMs[index] });
     await sleep(delaysMs[index]);
   }
+}
+
+// Leitura com novas tentativas: cada tentativa faz o fetch (doFetch, com prazo novo)
+// e lê o corpo inteiro (readBody, padrão texto). O fetch resolve quando chegam os
+// cabeçalhos, e o corpo pode cair ou estourar o prazo depois; com a leitura dentro
+// da tentativa, essa falha também ganha as novas tentativas de withRetry, com a
+// mesma regra de status (5xx sim, 429 e demais 4xx não). O corpo de um 5xx também é
+// lido, o que libera a conexão antes da tentativa seguinte. Devolve
+// { status, ok, headers, text }. Se a leitura do corpo falhar numa resposta que já é
+// definitiva (fora de 2xx e de 5xx, como 429 e 404), o status vale e o texto fica
+// vazio: a falha de leitura não pode transformar um 4xx em nova tentativa.
+export function readWithRetry(doFetch, { readBody = (response) => response.text(), ...options } = {}) {
+  return withRetry(async () => {
+    const response = await doFetch();
+    let text;
+    try {
+      text = await readBody(response);
+    } catch (error) {
+      if (!response.ok && !isRetryableStatus(response.status)) {
+        return { status: response.status, ok: response.ok, headers: response.headers, text: "" };
+      }
+      throw error;
+    }
+    return { status: response.status, ok: response.ok, headers: response.headers, text };
+  }, options);
 }
