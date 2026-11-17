@@ -32,8 +32,9 @@ export const buscarMunicipio = (id = ID_PIRACANJUBA) =>
 /**
  * Agregados — séries históricas IBGE. Variáveis comuns:
  *  - 6579: População residente estimada (Censo + estimativas anuais)
- *  - 29167: PIB a preços correntes (Contas Regionais)
- *  - 29168: PIB per capita
+ *  - 5938 var 37: PIB a preços correntes, em mil reais (PIB dos Municípios)
+ *  - PIB per capita não existe na tabela 5938: vem da API de pesquisas
+ *    (pesquisa 38, indicador 47001, em reais). Ver pibPerCapitaMunicipal.
  *  - IDHM disponível só pelo Atlas Brasil (não IBGE puro)
  *
  * Tabela 6579 (Estimativas de População):
@@ -79,23 +80,56 @@ export async function populacaoEstimada(): Promise<Record<string, number>> {
   return out;
 }
 
-/** PIB municipal (tabela 5938) — var 37 = PIB a preços correntes, var 6575 = PIB per capita. */
+/**
+ * Converte uma série do IBGE (ano -> texto) em ano -> número. Descarta nulo,
+ * vazio e marcadores sem valor, como "..." e "-".
+ */
+export function serieNumerica(
+  serie: Record<string, string | null> | null | undefined,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [ano, v] of Object.entries(serie ?? {})) {
+    if (v == null || String(v).trim() === "") continue;
+    const n = Number(v);
+    if (Number.isFinite(n)) out[ano] = n;
+  }
+  return out;
+}
+
+/** Resposta de /v1/pesquisas/{pesquisa}/indicadores/{indicador}/resultados/{localidade}. */
+export type IndicadorResposta = Array<{
+  id: number;
+  res: Array<{ localidade: string; res: Record<string, string | null> }>;
+}>;
+
+/** Pesquisa 38 (PIB dos Municípios), indicador 47001: PIB per capita, série revisada, em reais. */
+export const INDICADOR_PIB_PER_CAPITA = 47001;
+
+/** PIB per capita em reais (mesmo número do IBGE Cidades). Retorna mapa ano -> valor. */
+export async function pibPerCapitaMunicipal(
+  id = ID_PIRACANJUBA,
+): Promise<Record<string, number>> {
+  const data = await fetchJson<IndicadorResposta>(
+    `${BASE}/v1/pesquisas/38/indicadores/${INDICADOR_PIB_PER_CAPITA}/resultados/${id}`,
+  );
+  return serieNumerica(data[0]?.res?.[0]?.res);
+}
+
+/**
+ * PIB municipal: total pela tabela 5938 (var 37, em mil reais) e per capita
+ * pelo indicador 47001 (em reais). A var 6575 da tabela 5938 é o valor
+ * adicionado bruto dos serviços, não o PIB per capita.
+ */
 export async function pibMunicipal(): Promise<{
   pibTotal: Record<string, number>;
   pibPerCapita: Record<string, number>;
 }> {
-  const [total, perCapita] = await Promise.all([
+  const [total, pibPerCapita] = await Promise.all([
     fetchAgregado(5938, 37, { periodos: "-5" }),
-    fetchAgregado(5938, 6575, { periodos: "-5" }),
+    pibPerCapitaMunicipal(),
   ]);
-  const parse = (data: AgregadoResposta) => {
-    const serie = data[0]?.resultados?.[0]?.series?.[0]?.serie ?? {};
-    const out: Record<string, number> = {};
-    for (const [ano, v] of Object.entries(serie)) {
-      const n = Number(v);
-      if (Number.isFinite(n)) out[ano] = n;
-    }
-    return out;
+  return {
+    pibTotal: serieNumerica(total[0]?.resultados?.[0]?.series?.[0]?.serie),
+    pibPerCapita,
   };
-  return { pibTotal: parse(total), pibPerCapita: parse(perCapita) };
 }
