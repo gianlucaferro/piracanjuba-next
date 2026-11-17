@@ -1,9 +1,23 @@
 import { expect, test } from "@playwright/test";
 
 const EMPRESAS = [
-  { slug: "vitorinoperfumes", nome: "Vitorino Perfumes", whatsapp: "https://wa.me/5564992472510?text=" },
-  { slug: "apareca", nome: "Apareça Ai", whatsapp: "https://wa.me/5564992638815?text=" },
+  {
+    slug: "vitorinoperfumes",
+    nome: "Vitorino Perfumes",
+    titulo: "Decants de perfume em Piracanjuba",
+    rotulo: "Falar com a Isabella",
+    whatsapp: "https://wa.me/5564992472510?text=",
+  },
+  {
+    slug: "apareca",
+    nome: "Apareça Ai",
+    titulo: "Criação de sites e presença no Google em Piracanjuba",
+    rotulo: "Pedir diagnóstico gratuito",
+    whatsapp: "https://wa.me/5564992638815?text=",
+  },
 ];
+const LINK_WHATSAPP = 'a[href^="https://wa.me/"]';
+const BARRA_EMPRESA = "[data-barra-empresa]";
 
 // A barra inferior do celular (MobileBottomNav); o menu "Mais" do cabeçalho
 // do computador usa o mesmo rótulo e continua nas páginas de empresa.
@@ -15,10 +29,12 @@ for (const empresa of EMPRESAS) {
     const resposta = await page.goto(`/${empresa.slug}`);
     expect(resposta?.status()).toBe(200);
     await expect(page).toHaveTitle(/\| Piracanjuba\.ai$/);
-    await expect(page.getByRole("heading", { level: 1, name: empresa.nome })).toBeVisible();
+    // O h1 traz a proposta com a palavra-chave; o nome fica no logotipo, no rótulo e no title.
+    await expect(page.getByRole("heading", { level: 1, name: empresa.titulo })).toBeVisible();
+    await expect(page.getByText(empresa.nome, { exact: false }).first()).toBeVisible();
     await expect(page.getByText("Página patrocinada", { exact: true })).toBeVisible();
 
-    const links = page.getByRole("link", { name: /WhatsApp/ });
+    const links = page.locator(LINK_WHATSAPP);
     const hrefs = await links.evaluateAll((itens) => itens.map((item) => item.getAttribute("href")));
     expect(hrefs.length).toBeGreaterThanOrEqual(3);
     for (const href of hrefs) expect(href).toContain(empresa.whatsapp);
@@ -29,8 +45,14 @@ for (const empresa of EMPRESAS) {
     // O cabeçalho do portal continua, com o link para a home.
     await expect(page.getByRole("link", { name: "Início" }).first()).toBeVisible();
 
+    // Botão principal do topo com o rótulo da marca.
+    await expect(page.getByRole("link", { name: empresa.rotulo }).first()).toBeInViewport();
+
     if (isMobile) {
-      await expect(page.getByRole("link", { name: /Chamar no WhatsApp/ }).last()).toBeInViewport();
+      // A barra fixa fica fora da tela enquanto o botão do topo aparece e entra depois de rolar.
+      await expect(page.locator(BARRA_EMPRESA)).not.toBeInViewport();
+      await page.mouse.wheel(0, 2400);
+      await expect(page.locator(`${BARRA_EMPRESA} ${LINK_WHATSAPP}`)).toBeInViewport();
     }
   });
 }
@@ -52,5 +74,7 @@ test("endereço digitado com maiúscula ou acento leva à página da empresa", a
   await expect(page).toHaveURL(/\/vitorinoperfumes$/);
   await page.goto("/apare%C3%A7a");
   await expect(page).toHaveURL(/\/apareca$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Apareça Ai" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Criação de sites e presença no Google em Piracanjuba" }),
+  ).toBeVisible();
 });

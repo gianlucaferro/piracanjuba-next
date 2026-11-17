@@ -35,11 +35,13 @@ export function pageMetadata(opts: {
   description: string;
   path?: string;
   image?: string;
+  /** Texto alternativo da imagem de compartilhamento. Padrão: o título da página. */
+  imageAlt?: string;
   type?: "website" | "article";
   noIndex?: boolean;
 }): Metadata {
   const url = opts.path ? `${SITE_URL}${opts.path}` : SITE_URL;
-  const ogImage = opts.image ? { url: opts.image, alt: opts.title } : OG_IMAGEM_PADRAO;
+  const ogImage = opts.image ? { url: opts.image, alt: opts.imageAlt ?? opts.title } : OG_IMAGEM_PADRAO;
 
   return {
     title: opts.title,

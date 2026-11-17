@@ -4,9 +4,11 @@ import type { Empresa } from "@/data/empresas";
 // Fontes das marcas. preload: false porque a rota [empresa] importa todas,
 // mas cada página só usa as da própria empresa: o navegador baixa o arquivo
 // da fonte apenas quando ela aparece na tela.
+// Itálico para o trecho em destaque do título, como no site da loja.
 const vitorinoTitulo = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
   preload: false,
   variable: "--fonte-marca-titulo",
