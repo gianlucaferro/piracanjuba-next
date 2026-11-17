@@ -1,211 +1,334 @@
+import Image from "next/image";
+import Link from "next/link";
 import {
-  Megaphone,
-  Users,
-  Eye,
-  MapPin,
+  ArrowRight,
+  BadgeCheck,
   CheckCircle2,
+  Globe,
+  Megaphone,
   MessageSquare,
-  BarChart3,
-  Star,
+  Newspaper,
+  PenLine,
+  Rocket,
+  Scale,
+  Smartphone,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { pageMetadata } from "@/lib/seo";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
+import { EMPRESAS } from "@/data/empresas";
+import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
+import { MATERIAS_NA_MIDIA } from "@/data/naMidia";
+import { PRECO_PAGINA_EMPRESA, PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
+import { SCHEMA_IDS, breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { linkWhatsapp } from "@/lib/whatsapp";
+
+// Página de vendas do "outdoor digital": a página de empresa em
+// piracanjuba.ai/<slug>. Termos decididos pelo operador em 2026-11-16:
+// preço público de R$ 600 em pagamento único, sem mensalidade, página no ar
+// sem prazo (enquanto o portal existir), sem os antigos planos de banner e
+// sem números de audiência (nunca foram conferidos).
+
+const PRECO = PRECO_PAGINA_EMPRESA_TEXTO;
+const WHATSAPP_COMERCIAL = "5564992375458";
+const MENSAGEM =
+  "Olá! Vi no Piracanjuba.ai e quero uma página para a minha empresa. Pode me passar os detalhes?";
 
 export const metadata = pageMetadata({
-  title: "Anuncie no Piracanjuba.ai — Alcance moradores de Piracanjuba",
-  description:
-    "Anuncie seu negócio no site mais acessado de Piracanjuba. Aproximadamente 300 visitas por dia, público 100% local e qualificado.",
+  title: `Página da sua empresa por ${PRECO}`,
+  description: `Página própria da sua empresa em piracanjuba.ai/suaempresa, com logo, fotos, serviços e botão de WhatsApp. Pagamento único de ${PRECO}, sem mensalidade.`,
   path: "/anuncie",
 });
 
-const WHATSAPP = "5564992375458";
+const INCLUI = [
+  { icone: Globe, texto: "Endereço próprio: piracanjuba.ai/suaempresa" },
+  { icone: BadgeCheck, texto: "Logo, foto, cores e fontes da sua marca" },
+  { icone: PenLine, texto: "Apresentação, produtos ou serviços, diferenciais e como funciona o atendimento" },
+  { icone: MessageSquare, texto: "Botão de WhatsApp com mensagem pronta, mais Instagram e site" },
+  { icone: Smartphone, texto: "Versão para celular com o botão de WhatsApp sempre à mão" },
+  { icone: Rocket, texto: "Preparada para o Google: título, descrição, dados estruturados e sitemap" },
+];
 
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-}) {
+const PASSOS = [
+  { titulo: "Chame no WhatsApp", texto: "Conte o que a sua empresa faz e tire as dúvidas." },
+  {
+    titulo: "Envie o material",
+    texto: "Logo, fotos, contatos e as informações que você quer na página.",
+  },
+  {
+    titulo: "Escrevemos e montamos",
+    texto: "A equipe do portal escreve os textos e monta a página. Você revisa e aprova.",
+  },
+  { titulo: "Página no ar", texto: "Publicada em piracanjuba.ai/suaempresa, pronta para compartilhar." },
+];
+
+const PERGUNTAS = [
+  {
+    pergunta: "É mensalidade?",
+    resposta: `Não. São ${PRECO} em pagamento único, sem mensalidade.`,
+  },
+  {
+    pergunta: "Por quanto tempo a página fica no ar?",
+    resposta: "Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir.",
+  },
+  {
+    pergunta: "Posso editar ou postar na página depois?",
+    resposta:
+      "A página funciona como um outdoor: o conteúdo é definido na criação e não tem área para a empresa editar ou postar. Ajustes posteriores são combinados pelo WhatsApp.",
+  },
+  {
+    pergunta: "Preciso ter site?",
+    resposta:
+      "Não. A página funciona sozinha e, se você tiver site ou Instagram, eles entram como links.",
+  },
+  {
+    pergunta: "A página aparece no Google?",
+    resposta:
+      "Ela é preparada para o Google, com título, descrição, dados estruturados e sitemap. Ninguém pode garantir posição na busca, e o portal não promete isso.",
+  },
+  {
+    pergunta: "Como a página é identificada?",
+    resposta:
+      "Com o selo \"Página patrocinada\". Anunciar não muda o que o portal publica sobre a Prefeitura, a Câmara ou qualquer órgão público.",
+  },
+  {
+    pergunta: "Qualquer empresa pode anunciar?",
+    resposta:
+      "Empresas, comércios e profissionais de Piracanjuba e região. O portal não publica propaganda política: partidos, candidatos e mandatos.",
+  },
+  {
+    pergunta: "Como é o pagamento?",
+    resposta: "A forma de pagamento é combinada pelo WhatsApp.",
+  },
+];
+
+function listaComE(itens: string[]): string {
+  if (itens.length <= 1) return itens.join("");
+  return `${itens.slice(0, -1).join(", ")} e ${itens[itens.length - 1]}`;
+}
+
+/** JSON-LD com "<" escapado, como recomenda o guia de JSON-LD do Next. */
+function jsonLd(dados: unknown) {
+  return { __html: JSON.stringify(dados).replace(/</g, "\\u003c") };
+}
+
+function BotaoWhatsapp({ rotulo }: { rotulo: string }) {
   return (
-    <div className="stat-card text-center">
-      <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
-      <p className="text-2xl font-bold text-foreground">{value}</p>
-      <p className="text-sm text-muted-foreground">{label}</p>
-    </div>
+    <a
+      href={linkWhatsapp(WHATSAPP_COMERCIAL, MENSAGEM)}
+      target="_blank"
+      rel="noopener"
+      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#15803d] px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#166534] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
+    >
+      <WhatsAppIcon className="h-5 w-5 shrink-0" fill="currentColor" />
+      {rotulo}
+      <span className="sr-only"> (abre em nova aba)</span>
+    </a>
   );
 }
 
 export default function AnunciePage() {
-  const msgWhatsApp = encodeURIComponent(
-    "Olá! Vi no Piracanjuba.ai e tenho interesse em anunciar meu negócio. Gostaria de saber mais detalhes."
-  );
-  const msgDestaque = encodeURIComponent(
-    "Olá! Tenho interesse no plano DESTAQUE do Piracanjuba.ai. Gostaria de saber mais."
-  );
+  const exemplos = SLUGS_EMPRESAS.map((slug) => EMPRESAS[slug]);
+  const veiculos = MATERIAS_NA_MIDIA.map((materia) => materia.veiculo);
 
   return (
-    <div className="container py-8 space-y-10 max-w-3xl mx-auto">
-      <div className="text-center space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-          <Megaphone className="w-8 h-8 text-primary" />
+    <div className="container mx-auto max-w-4xl space-y-14 py-8 md:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLd([
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Página de empresa no Piracanjuba.ai",
+            serviceType: "Publicidade local",
+            description: `Página própria da empresa em piracanjuba.ai/suaempresa, com pagamento único de ${PRECO}.`,
+            provider: { "@id": SCHEMA_IDS.publisher },
+            areaServed: { "@type": "City", name: "Piracanjuba, GO" },
+            offers: {
+              "@type": "Offer",
+              price: PRECO_PAGINA_EMPRESA.toFixed(2),
+              priceCurrency: "BRL",
+              url: "https://piracanjuba.ai/anuncie",
+            },
+          },
+          breadcrumbJsonLd([
+            { name: "Início", path: "/" },
+            { name: "Anuncie", path: "/anuncie" },
+          ]),
+        ])}
+      />
+
+      <section aria-labelledby="anuncie-titulo" className="space-y-5 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+          <Megaphone className="h-8 w-8 text-primary" aria-hidden="true" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground">
-          Anuncie no Piracanjuba<span className="text-[#25D366]">.ai</span>
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Para empresas de Piracanjuba
+        </p>
+        <h1 id="anuncie-titulo" className="text-3xl font-extrabold text-foreground md:text-5xl">
+          Sua empresa com página própria no Piracanjuba<span className="text-[#25D366]">.ai</span>
         </h1>
-        <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-          Seu negócio visto por centenas de moradores de Piracanjuba todos os dias.
-          Público 100% local e qualificado.
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          Um outdoor digital: uma página só da sua empresa, no endereço piracanjuba.ai/suaempresa, com
+          logo, fotos, serviços, contato e botão de WhatsApp.
         </p>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={Eye} value="~300" label="visitas por dia" />
-        <StatCard icon={Users} value="~9.000" label="visitas por mês" />
-        <StatCard icon={MapPin} value="100%" label="público local" />
-        <StatCard icon={BarChart3} value="25.373" label="habitantes" />
-      </div>
-
-      <div className="stat-card space-y-4">
-        <h2 className="text-lg font-bold text-foreground">Por que anunciar aqui?</h2>
-        <div className="space-y-3">
-          {[
-            "Seu banner aparece na homepage, entre as seções mais acessadas do site",
-            "Público exclusivamente de Piracanjuba — moradores que buscam informações da cidade",
-            "Mais barato que qualquer outra mídia local (outdoor, rádio, carro de som)",
-            "Relatório mensal com número de visualizações e cliques no seu anúncio",
-            "Sem contrato de fidelidade — cancele quando quiser",
-            "Anúncio configurado em 24h após aprovação",
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-              <p className="text-sm text-foreground">{item}</p>
-            </div>
-          ))}
+        <p className="text-lg font-semibold text-foreground">
+          {PRECO} em pagamento único, sem mensalidade.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <BotaoWhatsapp rotulo="Quero a página da minha empresa" />
+          <a
+            href="#exemplos"
+            className="inline-flex min-h-12 items-center gap-2 rounded-full border px-5 py-3 text-base font-medium text-foreground transition-colors hover:border-primary"
+          >
+            Ver exemplos
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
-      </div>
+      </section>
 
-      <div>
-        <h2 className="text-lg font-bold text-foreground text-center mb-4">
-          Escolha seu plano
+      <section id="exemplos" aria-labelledby="anuncie-exemplos" className="scroll-mt-20 space-y-5">
+        <h2 id="anuncie-exemplos" className="text-2xl font-bold text-foreground">
+          Veja como fica
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="stat-card border-border space-y-4">
-            <div>
-              <Badge variant="secondary" className="mb-2">Padrão</Badge>
-              <h3 className="text-xl font-bold text-foreground">
-                R$ 200<span className="text-sm font-normal text-muted-foreground">/mês</span>
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">Apenas R$ 6,60 por dia</p>
-            </div>
-            <div className="space-y-2">
-              {[
-                "Banner entre as seções da homepage",
-                "Logo + nome do negócio + link",
-                "Visível em todas as visitas à homepage",
-                "Relatório mensal de desempenho",
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> {item}
-                </div>
-              ))}
-            </div>
-            <a
-              href={`https://wa.me/${WHATSAPP}?text=${msgWhatsApp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[#25D366] hover:bg-[#1da851] text-white font-semibold text-sm transition-colors"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Quero anunciar
-            </a>
-          </div>
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {exemplos.map((empresa) => (
+            <li key={empresa.slug}>
+              <Link
+                href={`/${empresa.slug}`}
+                className="stat-card card-hover flex h-full items-center gap-4"
+              >
+                <span className="flex h-16 w-32 shrink-0 items-center justify-center rounded-xl border bg-white p-2">
+                  <Image
+                    src={empresa.logo.src}
+                    alt=""
+                    width={empresa.logo.largura}
+                    height={empresa.logo.altura}
+                    unoptimized={empresa.logo.src.endsWith(".svg")}
+                    className="h-auto max-h-12 w-auto max-w-full object-contain"
+                  />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold text-foreground">{empresa.nome}</span>
+                  <span className="block text-sm text-muted-foreground">{empresa.categoria}</span>
+                  <span className="mt-1 block text-sm font-medium text-primary">
+                    piracanjuba.ai/{empresa.slug}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-          <div className="stat-card border-primary/30 bg-gradient-to-br from-primary/5 to-transparent space-y-4 relative overflow-hidden">
-            <div className="absolute top-3 right-3">
-              <Star className="w-5 h-5 text-primary fill-primary" />
-            </div>
-            <div>
-              <Badge className="mb-2 bg-primary text-primary-foreground">Destaque</Badge>
-              <h3 className="text-xl font-bold text-foreground">
-                R$ 400<span className="text-sm font-normal text-muted-foreground">/mês</span>
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">Apenas R$ 13,30 por dia</p>
-            </div>
-            <div className="space-y-2">
-              {[
-                "Tudo do plano Padrão +",
-                "Posição fixa no topo da homepage",
-                "Banner maior e mais visível",
-                'Selo "Apoiador do Piracanjuba.ai"',
-                "Prioridade na configuração",
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" /> {item}
-                </div>
-              ))}
-            </div>
-            <a
-              href={`https://wa.me/${WHATSAPP}?text=${msgDestaque}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors"
-            >
-              <Star className="w-4 h-4" />
-              Quero o Destaque
-            </a>
-          </div>
+      <section aria-labelledby="anuncie-inclui" className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-start">
+        <div className="space-y-5">
+          <h2 id="anuncie-inclui" className="text-2xl font-bold text-foreground">
+            O que vem na página
+          </h2>
+          <ul className="space-y-3">
+            {INCLUI.map(({ icone: Icone, texto }) => (
+              <li key={texto} className="flex items-start gap-3 text-foreground">
+                <Icone className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                <span>{texto}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
 
-      <div className="stat-card bg-muted/30">
-        <h3 className="font-semibold text-foreground mb-3">Compare com outras mídias</h3>
-        <div className="space-y-2 text-sm">
-          {[
-            { meio: "Carro de som", preco: "R$ 500-800/mês", alcance: "Quem está na rua" },
-            { meio: "Outdoor", preco: "R$ 300-600/mês", alcance: "Quem passa no local" },
-            { meio: "Rádio (spot 30s)", preco: "R$ 400-1.000/mês", alcance: "Audiência difusa" },
-            { meio: "Piracanjuba.ai", preco: "R$ 200/mês", alcance: "~9.000 visitas/mês, 100% local" },
-          ].map((m, i) => (
-            <div
-              key={i}
-              className={`flex items-center justify-between p-2 rounded-lg ${
-                m.meio === "Piracanjuba.ai" ? "bg-primary/10 font-semibold" : ""
-              }`}
-            >
-              <span className="text-foreground">{m.meio}</span>
-              <span className="text-muted-foreground text-sm">{m.preco}</span>
-              <span className="text-sm text-muted-foreground hidden sm:block">
-                {m.alcance}
+        <div className="stat-card space-y-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Investimento</p>
+          <p className="text-4xl font-extrabold text-foreground">{PRECO}</p>
+          <ul className="space-y-2 text-sm text-foreground">
+            {["Pagamento único", "Sem mensalidade", "No ar enquanto o portal existir", "Textos e montagem pela equipe do portal"].map(
+              (item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  {item}
+                </li>
+              ),
+            )}
+          </ul>
+          <BotaoWhatsapp rotulo="Falar no WhatsApp" />
+        </div>
+      </section>
+
+      <section aria-labelledby="anuncie-passos" className="space-y-5">
+        <h2 id="anuncie-passos" className="text-2xl font-bold text-foreground">
+          Como funciona
+        </h2>
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PASSOS.map((passo, indice) => (
+            <li key={passo.titulo} className="stat-card space-y-2">
+              <span className="text-3xl font-extrabold text-primary" aria-hidden="true">
+                {indice + 1}
               </span>
-            </div>
+              <h3 className="font-semibold text-foreground">
+                <span className="sr-only">Passo {indice + 1}: </span>
+                {passo.titulo}
+              </h3>
+              <p className="text-sm text-muted-foreground">{passo.texto}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section aria-labelledby="anuncie-portal" className="stat-card space-y-4">
+        <h2 id="anuncie-portal" className="flex items-center gap-2 text-2xl font-bold text-foreground">
+          <Newspaper className="h-6 w-6 text-primary" aria-hidden="true" />
+          Por que no Piracanjuba.ai
+        </h2>
+        <p className="text-foreground">
+          O Piracanjuba.ai reúne serviços do dia a dia da cidade, como farmácia de plantão, coleta de lixo,
+          horários de ônibus, o Zap PBA e os classificados, além dos dados públicos da Prefeitura e da Câmara.
+        </p>
+        <p className="text-foreground">
+          O portal já foi assunto de reportagens em {listaComE(veiculos)}.{" "}
+          <Link href="/na-midia" className="font-medium text-primary underline-offset-4 hover:underline">
+            Ver as matérias
+          </Link>
+          .
+        </p>
+        <p className="flex items-start gap-2 text-sm text-muted-foreground">
+          <Scale className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          Os veículos falaram do portal, não das empresas anunciantes. As páginas de empresa levam o selo
+          &quot;Página patrocinada&quot; e ficam separadas da cobertura de transparência.
+        </p>
+      </section>
+
+      <section aria-labelledby="anuncie-perguntas" className="space-y-4">
+        <h2 id="anuncie-perguntas" className="text-2xl font-bold text-foreground">
+          Perguntas frequentes
+        </h2>
+        <div className="divide-y rounded-2xl border bg-card">
+          {PERGUNTAS.map((item) => (
+            <details key={item.pergunta} className="group px-5 py-4">
+              <summary className="cursor-pointer list-none font-medium text-foreground [&::-webkit-details-marker]:hidden">
+                <span className="flex items-center justify-between gap-4">
+                  {item.pergunta}
+                  <ArrowRight
+                    className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90"
+                    aria-hidden="true"
+                  />
+                </span>
+              </summary>
+              <p className="mt-2 text-muted-foreground">{item.resposta}</p>
+            </details>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="text-center space-y-4">
-        <h2 className="text-xl font-bold text-foreground">
-          Pronto para aparecer para Piracanjuba?
+      <section
+        aria-labelledby="anuncie-final"
+        className="space-y-4 rounded-3xl bg-primary/10 px-6 py-10 text-center"
+      >
+        <h2 id="anuncie-final" className="text-2xl font-bold text-foreground md:text-3xl">
+          Quer a página da sua empresa?
         </h2>
-        <p className="text-sm text-muted-foreground">
-          Fale conosco pelo WhatsApp. Configuramos seu anúncio em até 24 horas.
+        <p className="text-muted-foreground">
+          {PRECO} em pagamento único. Chame no WhatsApp e tire as dúvidas.
         </p>
-        <a
-          href={`https://wa.me/${WHATSAPP}?text=${msgWhatsApp}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#1da851] text-white font-semibold text-base transition-colors shadow-lg"
-        >
-          <WhatsAppIcon className="w-5 h-5" />
-          Falar no WhatsApp
-        </a>
-        <p className="text-xs text-muted-foreground">
-          WhatsApp: (64) 99237-5458 · Gianluca Ferro
-        </p>
-      </div>
+        <BotaoWhatsapp rotulo="Quero a página da minha empresa" />
+      </section>
     </div>
   );
 }

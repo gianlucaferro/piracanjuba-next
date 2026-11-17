@@ -39,6 +39,7 @@ import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
 import TodayInPiracanjuba from "@/components/home/TodayInPiracanjuba";
 import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
 import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
+import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
 
 export const metadata = pageMetadata({
   title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
@@ -350,9 +351,9 @@ export default async function HomePage() {
                 <Megaphone className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-foreground">Anuncie no Piracanjuba.ai</h3>
+                <h3 className="text-sm font-semibold text-foreground">Sua empresa no Piracanjuba.ai</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Seu negócio visto por centenas de moradores de Piracanjuba todos os dias. Público 100% local e qualificado.
+                  Página própria em piracanjuba.ai/suaempresa, com logo, serviços e botão de WhatsApp. {PRECO_PAGINA_EMPRESA_TEXTO} em pagamento único.
                 </p>
               </div>
               <Link
