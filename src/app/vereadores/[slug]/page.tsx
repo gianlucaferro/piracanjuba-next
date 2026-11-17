@@ -29,6 +29,8 @@ import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 import DiariasCamaraPanel from "@/components/camara/DiariasCamaraPanel";
 import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
 import AtividadesLegislativasPanel from "@/components/camara/AtividadesLegislativasPanel";
+import { remuneracoesComPagamento } from "../remuneracao";
+import { perfilDe, tratamentoParlamentar } from "../tratamento";
 
 export const revalidate = 3600;
 
@@ -52,9 +54,10 @@ export async function generateMetadata({
     });
   }
   const { vereador } = result;
+  const tratamento = tratamentoParlamentar(slug);
   return pageMetadata({
-    title: `${vereador.nome} (${vereador.partido || "s/p"}) — Vereador Piracanjuba GO`,
-    description: `Perfil completo do vereador ${vereador.nome}: partido, atuação parlamentar, projetos, presença em sessões, remuneração e contato.`,
+    title: `${vereador.nome} (${vereador.partido || "s/p"}), ${tratamento} em Piracanjuba GO`,
+    description: `Perfil ${perfilDe(tratamento)} ${vereador.nome} em Piracanjuba GO: partido, atuação parlamentar, projetos de lei, remuneração mensal e contato.`,
     path: `/vereadores/${slug}`,
     image: vereador.foto_url || undefined,
   });
@@ -99,8 +102,12 @@ export default async function VereadorPage({
   const requerimentos = atos.filter((a) => a.tipo === "REQUERIMENTO");
   if (!result) notFound();
 
-  const { vereador, remuneracoes, atuacoes, projetos, custoTotal } = result;
+  const { vereador, atuacoes, projetos, custoTotal } = result;
+  // Competências sem pagamento (bruto e líquido zerados) não são exibidas.
+  const remuneracoes = remuneracoesComPagamento(result.remuneracoes);
   const ultimaRemuneracao = remuneracoes[0];
+  const ultimoBruto = Number(ultimaRemuneracao?.bruto || 0);
+  const ultimoSubsidio = Number(ultimaRemuneracao?.subsidio_referencia || 0);
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
 
@@ -182,14 +189,23 @@ export default async function VereadorPage({
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="stat-card">
           <p className="text-sm uppercase tracking-wider text-muted-foreground">
-            Subsídio último mês
+            Subsídio mensal
           </p>
           <p className="text-xl font-bold text-foreground mt-1">
-            {fmtBRL(Number(ultimaRemuneracao?.bruto || 0))}
+            {ultimaRemuneracao ? fmtBRL(ultimoSubsidio) : "Sem folha publicada"}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {ultimaRemuneracao?.competencia || "—"}
-          </p>
+          {ultimaRemuneracao && (
+            <>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Competência {ultimaRemuneracao.competencia}
+              </p>
+              {ultimoBruto !== ultimoSubsidio && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Bruto pago na competência: {fmtBRL(ultimoBruto)}
+                </p>
+              )}
+            </>
+          )}
         </div>
         <div className="stat-card">
           <p className="text-sm uppercase tracking-wider text-muted-foreground">Custo total</p>
