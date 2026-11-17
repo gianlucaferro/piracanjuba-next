@@ -1,0 +1,212 @@
+/* Página de empresa: peças que ficam mais claras em CSS do que em classes
+   utilitárias (arco, trilho dos passos, acordeão, vitrine com rolagem). As
+   cores vêm das variáveis --marca-* definidas no invólucro da página. */
+
+/* Foco visível em tudo que recebe teclado, na cor da marca. */
+.raiz :focus-visible {
+  outline: 2px solid var(--marca-foco);
+  outline-offset: 3px;
+}
+
+.escuro :focus-visible {
+  outline-color: var(--marca-acento-escuro);
+}
+
+.titulo {
+  font-family: var(--fonte-marca-titulo), Georgia, serif;
+  font-weight: var(--marca-peso-titulo);
+  letter-spacing: var(--marca-espacamento-titulo);
+  font-variant-numeric: lining-nums;
+  text-wrap: balance;
+}
+
+.topo {
+  background-image: var(--marca-luz-topo, none);
+}
+
+.sombra {
+  box-shadow: var(--marca-sombra);
+}
+
+/* Links de texto: sublinhado discreto que ganha a cor da marca. */
+.sublinhado {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  text-decoration-color: var(--marca-borda);
+  transition: text-decoration-color 200ms ease;
+}
+
+.sublinhado:hover {
+  text-decoration-color: var(--marca-primaria);
+}
+
+.escuro .sublinhado {
+  text-decoration-color: color-mix(in srgb, var(--marca-sobre-escuro) 35%, transparent);
+}
+
+.escuro .sublinhado:hover {
+  text-decoration-color: var(--marca-acento-escuro);
+}
+
+/* Botões: sobem 1 px ao passar o mouse e voltam ao pressionar. */
+.botao {
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease,
+    text-decoration-color 200ms ease;
+}
+
+.botao:hover {
+  transform: translateY(-1px);
+}
+
+.botao:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Arco do topo (motivo do site da Vitorino): semicírculo no alto e cantos
+   discretos na base. Os raios em porcentagem valem para a proporção 4:5. */
+.arco {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 50% 50% 1.25rem 1.25rem / 40% 40% 1.25rem 1.25rem;
+  background: var(--marca-luz-midia);
+  box-shadow: var(--marca-sombra);
+}
+
+.arco::after {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--marca-primaria) 26%, transparent);
+  border-radius: 50% 50% 0.75rem 0.75rem / 40% 40% 0.75rem 0.75rem;
+  pointer-events: none;
+}
+
+/* Sombra elíptica de contato na base do produto recortado (nunca halo do
+   alfa, que vira retângulo cinza no claro). */
+.sombraContato {
+  position: absolute;
+  left: 50%;
+  width: 44%;
+  height: 4.5%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgb(51 40 31 / 0.34) 0%,
+    rgb(51 40 31 / 0.12) 45%,
+    rgb(51 40 31 / 0) 72%
+  );
+  filter: blur(2px);
+}
+
+.palcoRecorte {
+  background: var(--marca-luz-midia);
+}
+
+/* Trilho dos passos: vertical no celular, horizontal a partir de 768 px. */
+.passo {
+  position: relative;
+}
+
+.passo:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  background: var(--marca-linha);
+}
+
+@media (width < 48rem) {
+  .passo:not(:last-child)::before {
+    left: 1.5rem;
+    top: 3.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    transform: translateX(-50%);
+  }
+}
+
+@media (width >= 48rem) {
+  .passo:not(:last-child)::before {
+    top: 1.5rem;
+    left: 4rem;
+    right: -1.5rem;
+    height: 2px;
+    transform: translateY(-50%);
+  }
+}
+
+/* Acordeão das perguntas: details e summary nativos, sem o marcador padrão. */
+.pergunta > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.pergunta > summary::-webkit-details-marker {
+  display: none;
+}
+
+.iconeAbrir {
+  transition: transform 200ms ease;
+}
+
+.pergunta[open] .iconeAbrir {
+  transform: rotate(45deg);
+}
+
+/* Vitrine: rolagem horizontal com encaixe no celular, mostrando parte do
+   próximo item. O contêiner que rola (vitrineRolagem) é separado da lista,
+   para receber role="region" e o foco do teclado sem tirar a semântica de
+   lista do ul. */
+@media (width < 48rem) {
+  .vitrineRolagem {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1.25rem;
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+  }
+
+  .vitrineRolagem::-webkit-scrollbar {
+    display: none;
+  }
+
+  .vitrine {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .vitrine > * {
+    flex: 0 0 82%;
+    scroll-snap-align: start;
+  }
+
+  /* Folga no fim da rolagem, igual à margem lateral (1rem do gap + 0,25rem):
+     o padding do contêiner não conta depois de um item que transborda a lista. */
+  .vitrine::after {
+    content: "";
+    flex: 0 0 0.25rem;
+  }
+}
+
+/* O contêiner vai de borda a borda no celular: o contorno do foco fica para
+   dentro, para não ser cortado pela tela. */
+.raiz .vitrineRolagem:focus-visible {
+  outline-offset: -3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botao:hover,
+  .botao:active {
+    transform: none;
+  }
+}
+
+/* Números grandes na fonte de título: algarismos alinhados e de largura fixa
+   (a Cormorant usa algarismos de texto por padrão). */
+.numeros {
+  font-variant-numeric: lining-nums tabular-nums;
+}
