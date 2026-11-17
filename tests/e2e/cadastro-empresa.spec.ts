@@ -26,10 +26,13 @@ test("cadastro registra o pedido e mostra o PIX da Ferro Labs com o código", as
   await page.goto("/anuncie");
   await page.getByRole("link", { name: "Cadastre-se agora" }).first().click();
   await expect(page).toHaveURL(/\/anuncie\/cadastro$/);
-  // Na navegação pelo site, a tag robots da página anterior pode durar um instante antes de
-  // ser trocada; o que vale é o estado final, com uma única tag e noindex.
-  await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  // O robô recebe o HTML servido direto: uma única tag robots, com noindex.
+  const html = await (await page.request.get("/anuncie/cadastro")).text();
+  expect(html.match(/<meta name="robots"[^>]*>/g)).toEqual([expect.stringContaining("noindex")]);
+  // Na navegação pelo site a página também declara noindex. No next dev do CI a tag da
+  // página anterior (/anuncie, indexável) pode continuar no DOM; no build de produção ela é
+  // trocada (conferido na prévia da Vercel em 2026-11-17), por isso a checagem é pela tag noindex.
+  await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(1);
   await expect(page.getByRole("heading", { level: 1, name: "Cadastro da página de empresa" })).toBeVisible();
   await expect(page.getByText("Escrevemos a página, você revisa e ela vai ao ar em até 7 dias após o envio do material.")).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "Dados" }).first()).toHaveAttribute("aria-current", "step");
