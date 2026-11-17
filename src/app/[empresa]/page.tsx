@@ -55,6 +55,7 @@ function schemaEmpresa(empresa: Empresa) {
             addressCountry: "BR",
           },
           areaServed: { "@type": "City", name: `${cidade}, ${uf}` },
+          ...(empresa.endereco.mapaUrl ? { hasMap: empresa.endereco.mapaUrl } : {}),
         }
       : {
           areaServed: [

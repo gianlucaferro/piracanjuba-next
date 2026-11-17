@@ -154,3 +154,18 @@ test("a marca aparece como Apareça Ai no texto visível; o domínio fica só no
     assert.doesNotMatch(texto, /aparec[aç]a\.ai/i, texto);
   }
 });
+
+test("horário e mapa, quando a empresa informa, vêm limpos e com link seguro do Google Maps", () => {
+  for (const empresa of empresas) {
+    const { horario, mapaUrl } = empresa.endereco;
+    if (horario !== undefined) {
+      assert.ok(horario.trim().length > 0, `${empresa.slug}: horário vazio`);
+      assert.doesNotMatch(horario, /[–—]/, `${empresa.slug}: horário com travessão`);
+    }
+    if (mapaUrl !== undefined) {
+      const url = new URL(mapaUrl);
+      assert.equal(url.protocol, "https:", `${empresa.slug}: mapa sem https`);
+      assert.match(url.hostname, /(^|\.)google\.com$|^maps\.app\.goo\.gl$|^goo\.gl$/, `${empresa.slug}: mapa fora do Google Maps`);
+    }
+  }
+});

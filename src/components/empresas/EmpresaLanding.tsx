@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Check, ExternalLink, Globe, MapPin, Megaphone, Star } from "lucide-react";
+import { Check, Clock, ExternalLink, Globe, MapPin, Megaphone, Navigation, Star } from "lucide-react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import type { Empresa } from "@/data/empresas";
@@ -322,6 +322,24 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
               {empresa.endereco.cidade}, {empresa.endereco.uf}
             </p>
             <p className="leading-relaxed text-[var(--marca-texto-suave)]">{empresa.endereco.detalhe}</p>
+            {empresa.endereco.horario && (
+              <p className="flex items-start gap-3 text-lg font-medium">
+                <Clock className="mt-1 h-5 w-5 shrink-0 text-[var(--marca-primaria)]" aria-hidden="true" />
+                <span>
+                  <span className="sr-only">Horário de atendimento: </span>
+                  {empresa.endereco.horario}
+                </span>
+              </p>
+            )}
+            {empresa.endereco.mapaUrl && (
+              <LinkExterno
+                href={empresa.endereco.mapaUrl}
+                className="inline-flex items-center gap-3 font-medium underline-offset-4 hover:underline"
+              >
+                <Navigation className="h-5 w-5 shrink-0" aria-hidden="true" />
+                Ver no mapa
+              </LinkExterno>
+            )}
             {empresa.vinculo && (
               <p className="border-t border-[var(--marca-borda)] pt-4 text-sm leading-relaxed text-[var(--marca-texto-suave)]">
                 {empresa.vinculo}
