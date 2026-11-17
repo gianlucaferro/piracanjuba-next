@@ -32,11 +32,10 @@ import {
   fetchEmendas,
   fetchContratosResumo,
 } from "@/lib/data/home";
-import { AnuncioBannerPadrao } from "@/components/AnuncioBanner";
+import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import NaMidiaFaixa from "@/components/home/NaMidiaFaixa";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
-import TodayInPiracanjuba from "@/components/home/TodayInPiracanjuba";
 import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
 import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicClient";
 import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
@@ -151,10 +150,12 @@ export default async function HomePage() {
       </section>
 
       <div className="container py-8 space-y-10">
-        <TodayInPiracanjuba />
-
-        {/* Na mídia: logos dos principais veículos que citaram o projeto */}
+        {/* Na mídia: logos dos principais veículos que citaram o projeto
+            (no lugar do bloco "Hoje em Piracanjuba", decisão do operador de 2026-11-17) */}
         <NaMidiaFaixa />
+
+        {/* Banners de destaque (rodízio dos anúncios ativos do plano destaque) */}
+        <AnuncioBannerDestaque />
 
         {/* Destaque: Nota de transparência da cidade (PNTP/ATRICON) */}
         <Link

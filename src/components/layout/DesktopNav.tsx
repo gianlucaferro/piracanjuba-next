@@ -21,6 +21,7 @@ import {
   Package,
   Trophy,
   Newspaper,
+  Bell,
 } from "lucide-react";
 
 type NavItem = {
@@ -47,6 +48,7 @@ const moreNav: NavItem[] = [
   { to: "/zap-pba", label: "Zap PBA", icon: MessageSquare },
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
   { to: "/nota-pba", label: "Nota PBA", icon: Trophy },
+  { to: "/acompanhar", label: "Favoritos e avisos", icon: Bell },
   { to: "/na-midia", label: "Na mídia", icon: Newspaper },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];

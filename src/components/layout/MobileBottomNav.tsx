@@ -21,6 +21,7 @@ import {
   Info,
   Trophy,
   Newspaper,
+  Bell,
 } from "lucide-react";
 
 const mobileMainNav = [
@@ -41,6 +42,7 @@ const mobileMoreNav = [
   { to: "/historia-pba", label: "História PBA", icon: BookOpen },
   { to: "/nota-pba", label: "Nota PBA", icon: Trophy },
   { to: "/anuncie", label: "Anuncie", icon: HeartHandshake },
+  { to: "/acompanhar", label: "Favoritos e avisos", icon: Bell },
   { to: "/na-midia", label: "Na mídia", icon: Newspaper },
   { to: "/sobre", label: "Sobre", icon: Info },
 ];

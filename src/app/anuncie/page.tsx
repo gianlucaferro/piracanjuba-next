@@ -5,19 +5,31 @@ import {
   BadgeCheck,
   CheckCircle2,
   Globe,
+  Link2,
+  MapPin,
   Megaphone,
   MessageSquare,
   Newspaper,
   PenLine,
   Rocket,
   Scale,
+  Search,
+  Signpost,
   Smartphone,
+  Wallet,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { EMPRESAS } from "@/data/empresas";
 import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
 import { MATERIAS_NA_MIDIA } from "@/data/naMidia";
-import { PRECO_PAGINA_EMPRESA, PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
+import {
+  DESCONTO_PAGINA_EMPRESA_TEXTO,
+  LINK_STRIPE_PAGINA_EMPRESA,
+  PRECO_CHEIO_PAGINA_EMPRESA_TEXTO,
+  PRECO_PAGINA_EMPRESA,
+  PRECO_PAGINA_EMPRESA_TEXTO,
+  WHATSAPP_COMERCIAL,
+} from "@/data/paginaEmpresa";
 import { SCHEMA_IDS, breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { linkWhatsapp } from "@/lib/whatsapp";
 
@@ -28,10 +40,11 @@ import { linkWhatsapp } from "@/lib/whatsapp";
 // sem números de audiência (nunca foram conferidos). Também do operador, no
 // mesmo dia: exceções de saída com aviso de 30 dias se o portal encerrar,
 // correção de contato sem custo, e nenhuma regra publicada sobre propaganda
-// política (cada caso é decidido na conversa).
+// política (cada caso é decidido na conversa). Em 2026-11-17: preço "de R$ 1.000
+// (riscado) por R$ 600", termos "pagamento único" e "sem mensalidade" em destaque,
+// e os botões "Cadastre-se agora" (checkout em /anuncie/cadastro) e "Entrar em contato".
 
 const PRECO = PRECO_PAGINA_EMPRESA_TEXTO;
-const WHATSAPP_COMERCIAL = "5564992375458";
 const MENSAGEM =
   "Olá! Vi no Piracanjuba.ai e quero uma página para a minha empresa. Pode me passar os detalhes?";
 
@@ -40,6 +53,11 @@ export const metadata = pageMetadata({
   description: `Página própria da sua empresa em piracanjuba.ai/suaempresa, com logo, foto, serviços e botão de WhatsApp. Pagamento único de ${PRECO}, sem mensalidade.`,
   path: "/anuncie",
 });
+
+// Os dois termos que o operador pediu em destaque (2026-11-17).
+const DESTAQUES = ["Pagamento único", "Sem mensalidade"];
+const SELO_DESTAQUE =
+  "inline-flex items-center gap-1.5 rounded-full bg-green-600/10 px-4 py-2 text-lg font-bold text-green-800 ring-1 ring-green-600/40 dark:text-green-300";
 
 const INCLUI = [
   { icone: Globe, texto: "Endereço próprio: piracanjuba.ai/suaempresa" },
@@ -50,11 +68,50 @@ const INCLUI = [
   { icone: Rocket, texto: "Preparada para o Google: título, descrição, dados estruturados e sitemap" },
 ];
 
+// Vantagens de ter a página, pedido do operador em 2026-11-17, incluindo a comparação
+// entre a placa na rua e a página online. Sem números de audiência nem garantia de
+// posição no Google (decisões de 2026-11-16).
+const VANTAGENS = [
+  {
+    icone: Link2,
+    titulo: "Um link só seu",
+    texto: "piracanjuba.ai/suaempresa para a bio do Instagram, grupos de WhatsApp, cartão de visita e QR Code no balcão.",
+  },
+  {
+    icone: Search,
+    titulo: "Encontrada mesmo sem site",
+    texto: "A página já sai pronta para o Google, com título, descrição e dados estruturados, num endereço que o Google já conhece.",
+  },
+  {
+    icone: MapPin,
+    titulo: "Combina com o Perfil da Empresa no Google",
+    texto: "Use a página como o site do seu perfil gratuito do Google, para quem achar você no Maps saber o que você faz.",
+  },
+  {
+    icone: Wallet,
+    titulo: "Sem mensalidade e sem manutenção",
+    texto: "Nada de hospedagem, renovação de domínio ou atualização de segurança: isso fica com o portal.",
+  },
+  {
+    icone: Smartphone,
+    titulo: "Pronta para o celular",
+    texto: "Quem abre pelo celular encontra o botão de WhatsApp com mensagem pronta sempre à mão.",
+  },
+  {
+    icone: PenLine,
+    titulo: "Escrita pela equipe",
+    texto: "Você conta o que a empresa faz; a equipe do portal escreve, monta e você aprova.",
+  },
+];
+
 const PASSOS = [
-  { titulo: "Chame no WhatsApp", texto: "Conte o que a sua empresa faz e tire as dúvidas." },
+  {
+    titulo: "Faça o cadastro",
+    texto: `Preencha os dados da empresa e pague por ${LINK_STRIPE_PAGINA_EMPRESA ? "PIX ou cartão" : "PIX"}.`,
+  },
   {
     titulo: "Envie o material",
-    texto: "Logo, fotos, contatos e as informações que você quer na página.",
+    texto: "Logo, fotos e o que mais você quer na página, pelo WhatsApp.",
   },
   {
     titulo: "Escrevemos e montamos",
@@ -99,7 +156,9 @@ const PERGUNTAS = [
   },
   {
     pergunta: "Como é o pagamento?",
-    resposta: "A forma de pagamento é combinada pelo WhatsApp.",
+    resposta: LINK_STRIPE_PAGINA_EMPRESA
+      ? "No cadastro da página: PIX para o CNPJ da Ferro Labs ou cartão de crédito em uma vez, pelo Stripe."
+      : "No cadastro da página, por PIX para o CNPJ da Ferro Labs. Também dá para combinar pelo WhatsApp.",
   },
 ];
 
@@ -113,18 +172,68 @@ function jsonLd(dados: unknown) {
   return { __html: JSON.stringify(dados).replace(/</g, "\\u003c") };
 }
 
-function BotaoWhatsapp({ rotulo }: { rotulo: string }) {
+function BotaoCadastro() {
+  return (
+    <Link
+      href="/anuncie/cadastro"
+      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#15803d] px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#166534] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
+    >
+      Cadastre-se agora
+      <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+    </Link>
+  );
+}
+
+function BotaoContato() {
   return (
     <a
       href={linkWhatsapp(WHATSAPP_COMERCIAL, MENSAGEM)}
       target="_blank"
       rel="noopener"
-      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#15803d] px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#166534] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
+      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-2 border-[#15803d] px-6 py-3 text-base font-semibold text-[#15803d] transition-colors hover:bg-[#15803d]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d] dark:border-green-400 dark:text-green-300"
     >
       <WhatsAppIcon className="h-5 w-5 shrink-0" fill="currentColor" />
-      {rotulo}
-      <span className="sr-only"> (abre em nova aba)</span>
+      Entrar em contato
+      <span className="sr-only"> pelo WhatsApp (abre em nova aba)</span>
     </a>
+  );
+}
+
+/** Quadro de preço no modelo pedido pelo operador: desconto, de/por e os dois botões. */
+function QuadroPreco({ id }: { id: string }) {
+  return (
+    <div className="stat-card space-y-4 border-2 border-[#15803d]/40">
+      <span className="inline-block rounded-full bg-[#15803d] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+        Desconto de {DESCONTO_PAGINA_EMPRESA_TEXTO}
+      </span>
+      <h2 id={id} className="text-sm font-semibold uppercase tracking-wide text-foreground/75">
+        Página de empresa
+      </h2>
+      <p className="text-foreground/75">
+        de <span className="sr-only">(valor riscado) </span>
+        <span className="text-lg line-through">{PRECO_CHEIO_PAGINA_EMPRESA_TEXTO}</span> por
+      </p>
+      <p className="text-5xl font-extrabold text-foreground">{PRECO}</p>
+      <div className="flex flex-wrap gap-2">
+        {DESTAQUES.map((destaque) => (
+          <span key={destaque} className={SELO_DESTAQUE}>
+            <CheckCircle2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+            {destaque}
+          </span>
+        ))}
+      </div>
+      <div className="flex flex-col gap-3">
+        <BotaoCadastro />
+        <BotaoContato />
+      </div>
+      <a
+        href="#o-que-vem"
+        className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+      >
+        Ver o que está incluso
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </a>
+    </div>
   );
 }
 
@@ -159,33 +268,66 @@ export default function AnunciePage() {
         ])}
       />
 
-      <section aria-labelledby="anuncie-titulo" className="space-y-5 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+      <section
+        aria-labelledby="anuncie-titulo"
+        className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-center"
+      >
+        <div className="space-y-5 text-center md:text-left">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 md:mx-0">
           <Megaphone className="h-8 w-8 text-primary" aria-hidden="true" />
         </div>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-foreground/75">
           Para empresas de Piracanjuba
         </p>
         <h1 id="anuncie-titulo" className="text-3xl font-extrabold text-foreground md:text-5xl">
           Sua empresa com página própria no Piracanjuba<span className="text-[#25D366]">.ai</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+        <p className="mx-auto max-w-2xl text-lg text-foreground/75 md:mx-0">
           Um outdoor digital: uma página só da sua empresa, no endereço piracanjuba.ai/suaempresa, com
           logo, foto, serviços, contato e botão de WhatsApp.
         </p>
-        <p className="text-lg font-semibold text-foreground">
-          {PRECO} em pagamento único, sem mensalidade.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <BotaoWhatsapp rotulo="Quero a página da minha empresa" />
-          <a
-            href="#exemplos"
-            className="inline-flex min-h-12 items-center gap-2 rounded-full border px-5 py-3 text-base font-medium text-foreground transition-colors hover:border-primary"
-          >
-            Ver exemplos
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </a>
+        <a
+          href="#exemplos"
+          className="inline-flex min-h-11 items-center gap-2 text-base font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Ver exemplos de páginas
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </a>
         </div>
+        <QuadroPreco id="anuncie-preco" />
+      </section>
+
+      <section aria-labelledby="anuncie-vantagens" className="space-y-6">
+        <h2 id="anuncie-vantagens" className="text-2xl font-bold text-foreground">
+          Vantagens de ter a página da sua empresa
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2 rounded-2xl border bg-card p-5">
+            <Signpost className="h-7 w-7 text-foreground/75" aria-hidden="true" />
+            <h3 className="font-semibold text-foreground">Placa na rua</h3>
+            <p className="text-foreground/75">Só vê quem passa por aquela rua, na hora em que passa.</p>
+          </div>
+          <div className="space-y-2 rounded-2xl border-2 border-[#15803d]/40 bg-green-600/5 p-5">
+            <Globe className="h-7 w-7 text-[#15803d] dark:text-green-400" aria-hidden="true" />
+            <h3 className="font-semibold text-foreground">Página no Piracanjuba.ai</h3>
+            <p className="text-foreground">
+              Fica no ar 24 horas e qualquer pessoa vê pelo celular, sem sair de casa. E pode aparecer para quem
+              procura no Google pelo seu serviço ou produto em Piracanjuba.
+            </p>
+          </div>
+        </div>
+        <p className="text-foreground/75">
+          Uma não substitui a outra: a placa mostra onde você está, e a página leva o cliente até ela.
+        </p>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {VANTAGENS.map(({ icone: Icone, titulo, texto }) => (
+            <li key={titulo} className="stat-card space-y-2">
+              <Icone className="h-6 w-6 text-primary" aria-hidden="true" />
+              <h3 className="font-semibold text-foreground">{titulo}</h3>
+              <p className="text-sm text-foreground/75">{texto}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section id="exemplos" aria-labelledby="anuncie-exemplos" className="scroll-mt-20 space-y-5">
@@ -211,51 +353,39 @@ export default function AnunciePage() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold text-foreground">{empresa.nome}</span>
-                  <span className="block text-sm text-muted-foreground">{empresa.categoria}</span>
+                  <span className="block text-sm text-foreground/75">{empresa.categoria}</span>
                   <span className="mt-1 block text-sm font-medium text-primary">
                     piracanjuba.ai/{empresa.slug}
                   </span>
                 </span>
-                <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4 shrink-0 text-foreground/75" aria-hidden="true" />
               </Link>
             </li>
           ))}
         </ul>
       </section>
 
-      <section aria-labelledby="anuncie-inclui" className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-start">
-        <div className="space-y-5">
-          <h2 id="anuncie-inclui" className="text-2xl font-bold text-foreground">
-            O que vem na página
-          </h2>
-          <ul className="space-y-3">
-            {INCLUI.map(({ icone: Icone, texto }) => (
-              <li key={texto} className="flex items-start gap-3 text-foreground">
-                <Icone className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-                <span>{texto}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="stat-card space-y-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-          <p className="text-sm font-semibold uppercase tracking-wide text-foreground/75">Investimento</p>
-          <p className="text-4xl font-extrabold text-foreground">{PRECO}</p>
-          <ul className="space-y-2 text-sm text-foreground">
-            {["Pagamento único", "Sem mensalidade", "No ar enquanto o portal existir", "Textos e montagem pela equipe do portal"].map(
-              (item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                  {item}
-                </li>
-              ),
-            )}
-          </ul>
-          <BotaoWhatsapp rotulo="Falar no WhatsApp" />
-          <p className="text-xs text-foreground/75">
-            Vendido pela Ferro Labs Tecnologia LTDA, CNPJ 66.034.538/0001-25, que mantém o Piracanjuba.ai.
-          </p>
-        </div>
+      <section id="o-que-vem" aria-labelledby="anuncie-inclui" className="scroll-mt-20 space-y-5">
+        <h2 id="anuncie-inclui" className="text-2xl font-bold text-foreground">
+          O que vem na página
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {INCLUI.map(({ icone: Icone, texto }) => (
+            <li key={texto} className="flex items-start gap-3 text-foreground">
+              <Icone className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <span>{texto}</span>
+            </li>
+          ))}
+          {["No ar enquanto o portal existir", "Textos e montagem pela equipe do portal"].map((texto) => (
+            <li key={texto} className="flex items-start gap-3 text-foreground">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <span>{texto}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs text-foreground/75">
+          Vendido pela Ferro Labs Tecnologia LTDA, CNPJ 66.034.538/0001-25, que mantém o Piracanjuba.ai.
+        </p>
       </section>
 
       <section aria-labelledby="anuncie-passos" className="space-y-5">
@@ -272,7 +402,7 @@ export default function AnunciePage() {
                 <span className="sr-only">Passo {indice + 1}: </span>
                 {passo.titulo}
               </h3>
-              <p className="text-sm text-muted-foreground">{passo.texto}</p>
+              <p className="text-sm text-foreground/75">{passo.texto}</p>
             </li>
           ))}
         </ol>
@@ -294,7 +424,7 @@ export default function AnunciePage() {
           </Link>
           .
         </p>
-        <p className="flex items-start gap-2 text-sm text-muted-foreground">
+        <p className="flex items-start gap-2 text-sm text-foreground/75">
           <Scale className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           Os veículos falaram do portal, não das empresas anunciantes. As páginas de empresa levam o selo
           &quot;Página patrocinada&quot; e ficam separadas da cobertura de transparência.
@@ -312,7 +442,7 @@ export default function AnunciePage() {
                 <span className="flex items-center justify-between gap-4">
                   {item.pergunta}
                   <ArrowRight
-                    className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90"
+                    className="h-4 w-4 shrink-0 text-foreground/75 transition-transform group-open:rotate-90"
                     aria-hidden="true"
                   />
                 </span>
@@ -331,9 +461,13 @@ export default function AnunciePage() {
           Quer a página da sua empresa?
         </h2>
         <p className="text-foreground/75">
-          {PRECO} em pagamento único. Chame no WhatsApp e tire as dúvidas.
+          De <span className="line-through">{PRECO_CHEIO_PAGINA_EMPRESA_TEXTO}</span> por {PRECO}, em pagamento
+          único e sem mensalidade.
         </p>
-        <BotaoWhatsapp rotulo="Quero a página da minha empresa" />
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <BotaoCadastro />
+          <BotaoContato />
+        </div>
       </section>
     </div>
   );

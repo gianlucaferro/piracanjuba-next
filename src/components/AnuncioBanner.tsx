@@ -50,14 +50,16 @@ function AnuncioCard({ anuncio }: { anuncio: Anuncio }) {
     anuncio.link_destino ||
     (anuncio.whatsapp ? `https://wa.me/${anuncio.whatsapp.replace(/\D/g, "")}` : null);
   const isDestaque = anuncio.plano === "destaque";
+  // Banner que leva a uma página do próprio portal (por exemplo /anuncie) abre na mesma aba.
+  const interno = !!href && (href.startsWith("/") || /^https:\/\/(www\.)?piracanjuba\.ai(\/|$)/.test(href));
 
   if (!anuncio.imagem_url && !href) return null;
 
   return (
     <a
       href={href || "#"}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={interno ? undefined : "_blank"}
+      rel={interno ? undefined : "noopener noreferrer"}
       onClick={() => trackClick(anuncio.id)}
       className={`block rounded-xl overflow-hidden transition-all hover:shadow-md ${
         isDestaque ? "ring-1 ring-primary/20" : ""

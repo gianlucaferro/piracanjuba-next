@@ -23,7 +23,7 @@ export default function PrivacidadePage() {
         Política de Privacidade
       </h1>
       <p className="text-sm text-muted-foreground mb-8">
-        Última atualização: 4 de maio de 2026 · Conforme a Lei Geral de Proteção de
+        Última atualização: 17 de novembro de 2026 · Conforme a Lei Geral de Proteção de
         Dados (Lei 13.709/2018 — LGPD)
       </p>
 
@@ -80,6 +80,11 @@ export default function PrivacidadePage() {
               <strong>Notificações push:</strong> token de dispositivo (apenas se você
               autorizar via popup do navegador)
             </li>
+            <li>
+              <strong>Pedido de página de empresa:</strong> nome, e-mail, WhatsApp, CPF ou
+              CNPJ (opcional) e os dados da empresa informados no cadastro (apenas se você
+              fizer o pedido)
+            </li>
           </ul>
         </section>
 
@@ -103,6 +108,12 @@ export default function PrivacidadePage() {
               <strong>Analytics:</strong> entender quais páginas são mais úteis e melhorar
               a experiência. Dados agregados, sem identificação pessoal.
             </li>
+            <li>
+              <strong>Pedido de página de empresa:</strong> registrar o pedido, conferir o
+              pagamento, falar com você pelo WhatsApp ou e-mail e montar a página. O endereço
+              de internet fica guardado só em forma embaralhada (hash), para limitar envios
+              automáticos.
+            </li>
           </ul>
         </section>
 
@@ -118,6 +129,10 @@ export default function PrivacidadePage() {
             <li>
               <strong>Legítimo interesse</strong> (Art. 7º, IX): para analytics agregado e
               logs de segurança.
+            </li>
+            <li>
+              <strong>Execução de contrato</strong> (Art. 7º, V): para o pedido da página de
+              empresa e o pagamento.
             </li>
             <li>
               <strong>Cumprimento de obrigação legal</strong> (Art. 7º, II): retenção
@@ -189,6 +204,10 @@ export default function PrivacidadePage() {
               <strong>Google Analytics 4</strong> (analytics agregado) — com IP
               anonimizado
             </li>
+            <li>
+              <strong>Stripe</strong> (pagamento com cartão da página de empresa): os dados
+              do cartão são digitados na página do Stripe e não passam pelo Piracanjuba.ai
+            </li>
           </ul>
         </section>
 
@@ -220,6 +239,10 @@ export default function PrivacidadePage() {
             </li>
             <li>
               <strong>Analytics agregado:</strong> 14 meses (padrão GA4)
+            </li>
+            <li>
+              <strong>Pedidos de página de empresa:</strong> pelo prazo exigido pela
+              legislação fiscal e contábil, em geral 5 anos
             </li>
           </ul>
         </section>
