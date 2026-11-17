@@ -1,1598 +1,669 @@
-// Gerado do dataset oficial PNTP 2025 (ATRICON): dados_pntp_2025.zip -> avaliacoes_pntp_2025.xlsx. Atualizar anualmente.
+// Ranking da Transparência 2026 do PNTP (Programa Nacional de Transparência Pública, ATRICON),
+// divulgado pelo TCM-GO em 2026-11-10 para os 246 municípios de Goiás.
+//
+// Fonte: PDFs oficiais do TCM-GO (fonte.rankingExecutivo e fonte.rankingLegislativo), com posição,
+// índice geral, índice essencial e nível. Em 2026-11-17 cada uma das 246 prefeituras e das 246 câmaras
+// foi conferida contra o Radar da Transparência da ATRICON (ciclo 2026): mesmos índices e mesmo nível.
+// Nessa data, o pacote aberto do ciclo 2026 (dados_pntp_2026.zip) ainda não estava publicado em
+// https://pntp.atricon.org.br/dados-abertos/ (a página listava os ciclos 2022 a 2025).
+//
+// Histórico (anterior): dataset PNTP 2025 da ATRICON (dados_pntp_2025.zip -> avaliacoes_pntp_2025.xlsx).
+// Índices, níveis e posições de Piracanjuba batem com o Ranking da Transparência 2025 do TCM-GO, a mesma
+// publicação usada para 2026. Atualizar a cada ciclo anual, quando o TCM-GO divulgar o ranking novo.
+//
+// Índices em fração (0.7462 = 74,62%). O TCM-GO ordena pelo índice geral e desempata pelo índice
+// essencial; quem empata nos dois divide a posição, em ordem alfabética (por isso há posições
+// repetidas seguidas de salto, como 26, 26, 28).
 
-export interface PoderNota { indice: number; nivel: string; essenciais: number | null; posicao: number; total: number }
-export interface RankingItem { pos: number; mun: string; idx: number; niv: string }
+export type NivelPntp =
+  | "Diamante"
+  | "Ouro"
+  | "Prata"
+  | "Elevado"
+  | "Intermediário"
+  | "Básico"
+  | "Inicial"
+  | "Inexistente"
+  | "Não Avaliado";
 
-export const NOTA_PNTP = {
-  "ano": 2025,
-  "executivo": {
-    "indice": 0.5424,
-    "nivel": "Intermediário",
-    "essenciais": 0.6061,
-    "posicao": 231,
-    "total": 246
-  },
-  "legislativo": {
-    "indice": 0.6564,
-    "nivel": "Intermediário",
-    "essenciais": 0.4286,
-    "posicao": 181,
-    "total": 246
-  },
-  "contexto": {
-    "mediaExec": 0.7723,
-    "mediaLeg": 0.667,
-    "primeiroExec": {
-      "mun": "Montes Claros de Goiás",
-      "indice": 0.9689
+/** Resultado de um poder (Executivo ou Legislativo) num ciclo do PNTP. */
+export interface PoderNota {
+  ano: number;
+  indice: number;
+  nivel: NivelPntp;
+  essenciais: number | null;
+  posicao: number;
+  total: number;
+}
+
+/** Linha do ranking estadual: posição oficial, município, índice geral, índice essencial e nível. */
+export interface RankingItem {
+  pos: number;
+  mun: string;
+  idx: number;
+  ess: number;
+  niv: NivelPntp;
+}
+
+export interface NivelContagem {
+  nivel: NivelPntp;
+  count: number;
+}
+
+export interface NotaPntp {
+  /** Ciclo exibido como principal (o do Executivo). */
+  ano: number;
+  /** Data em que o TCM-GO divulgou o ranking (YYYY-MM-DD). */
+  publicadoEm: string;
+  /** Data em que os números foram conferidos na fonte e gravados aqui (YYYY-MM-DD). */
+  conferidoEm: string;
+  executivo: PoderNota;
+  legislativo: PoderNota;
+  anterior: {
+    ano: number;
+    executivo: PoderNota;
+    legislativo: PoderNota;
+    fonte: { nome: string; url: string; rankingExecutivo: string; rankingLegislativo: string; relatorioPdf: string };
+  };
+  contexto: {
+    mediaExec: number;
+    mediaLeg: number;
+    selosExec: number;
+    selosLeg: number;
+    primeiroExec: { mun: string; indice: number };
+    primeiroLeg: { mun: string; indice: number };
+    niveisExec: NivelContagem[];
+    niveisLeg: NivelContagem[];
+  };
+  rankingExec: RankingItem[];
+  rankingLeg: RankingItem[];
+  fonte: {
+    nome: string;
+    url: string;
+    rankingExecutivo: string;
+    rankingLegislativo: string;
+    radar: string;
+  };
+}
+
+export const MUNICIPIO = "Piracanjuba";
+
+/** Níveis que dão selo de transparência no PNTP (exigem 100% dos critérios essenciais). */
+export const NIVEIS_COM_SELO: readonly NivelPntp[] = ["Diamante", "Ouro", "Prata"];
+
+/** Índice geral mínimo do nível Elevado e dos selos (75%). */
+export const CORTE_ELEVADO = 0.75;
+
+export function temSelo(nivel: NivelPntp): boolean {
+  return NIVEIS_COM_SELO.includes(nivel);
+}
+
+/** Linhas do ranking em volta de um município: `raio` linhas acima e abaixo, na ordem oficial. */
+export function vizinhosNoRanking(ranking: readonly RankingItem[], mun: string, raio = 3): RankingItem[] {
+  const i = ranking.findIndex((r) => r.mun === mun);
+  if (i < 0) return [];
+  return ranking.slice(Math.max(0, i - raio), i + raio + 1);
+}
+
+/** Variação de posição entre dois ciclos. Positivo = subiu no ranking (ex.: 231 para 226 dá 5). */
+export function variacaoPosicao(antes: number, depois: number): number {
+  return antes - depois;
+}
+
+/** Nível com mais municípios (em empate, o primeiro da escala). */
+export function nivelMaisComum(niveis: readonly NivelContagem[]): NivelContagem {
+  return niveis.reduce((melhor, n) => (n.count > melhor.count ? n : melhor));
+}
+
+export const NOTA_PNTP: NotaPntp = {
+  ano: 2026,
+  publicadoEm: "2026-11-10",
+  conferidoEm: "2026-11-17",
+  executivo: { ano: 2026, indice: 0.7462, nivel: "Intermediário", essenciais: 0.9474, posicao: 226, total: 246 },
+  legislativo: { ano: 2026, indice: 0.9236, nivel: "Ouro", essenciais: 1, posicao: 90, total: 246 },
+  anterior: {
+    ano: 2025,
+    executivo: { ano: 2025, indice: 0.5424, nivel: "Intermediário", essenciais: 0.6061, posicao: 231, total: 246 },
+    legislativo: { ano: 2025, indice: 0.6564, nivel: "Intermediário", essenciais: 0.4286, posicao: 181, total: 246 },
+    fonte: {
+      nome: "PNTP 2025 (ATRICON, dados_pntp_2025.zip) e Ranking da Transparência 2025 do TCM-GO",
+      url: "https://pntp.atricon.org.br/dados-abertos/",
+      rankingExecutivo: "https://www.tcmgo.tc.br/site/wp-content/uploads/2017/06/Ranking_Final_Executivo_2025.pdf",
+      rankingLegislativo: "https://www.tcmgo.tc.br/site/wp-content/uploads/2017/06/Ranking_Final_Legislativo_2025.pdf",
+      relatorioPdf: "/Piracanjuba-PNTP-2025-Transparencia.pdf",
     },
-    "primeiroLeg": {
-      "mun": "Santa Helena de Goiás",
-      "indice": 0.9344
-    },
-    "niveisExec": [
-      {
-        "nivel": "Diamante",
-        "count": 1
-      },
-      {
-        "nivel": "Ouro",
-        "count": 8
-      },
-      {
-        "nivel": "Prata",
-        "count": 10
-      },
-      {
-        "nivel": "Elevado",
-        "count": 155
-      },
-      {
-        "nivel": "Intermediário",
-        "count": 62
-      },
-      {
-        "nivel": "Básico",
-        "count": 4
-      },
-      {
-        "nivel": "Inicial",
-        "count": 1
-      },
-      {
-        "nivel": "Inexistente",
-        "count": 1
-      },
-      {
-        "nivel": "Não Avaliado",
-        "count": 4
-      }
+  },
+  contexto: {
+    mediaExec: 0.8697,
+    mediaLeg: 0.8608,
+    selosExec: 150,
+    selosLeg: 116,
+    primeiroExec: { mun: "Jaraguá", indice: 0.9854 },
+    primeiroLeg: { mun: "Petrolina de Goiás", indice: 0.9987 },
+    niveisExec: [
+      { nivel: "Diamante", count: 28 },
+      { nivel: "Ouro", count: 109 },
+      { nivel: "Prata", count: 13 },
+      { nivel: "Elevado", count: 75 },
+      { nivel: "Intermediário", count: 20 },
+      { nivel: "Básico", count: 1 },
+      { nivel: "Inicial", count: 0 },
+      { nivel: "Inexistente", count: 0 },
     ],
-    "vizinhosExec": [
-      {
-        "pos": 228,
-        "mun": "Aparecida de Goiânia",
-        "idx": 0.5685,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 229,
-        "mun": "Anhanguera",
-        "idx": 0.5615,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 230,
-        "mun": "Trombas",
-        "idx": 0.5481,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 231,
-        "mun": "Piracanjuba",
-        "idx": 0.5424,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 232,
-        "mun": "Corumbaíba",
-        "idx": 0.5385,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 233,
-        "mun": "Planaltina",
-        "idx": 0.5285,
-        "niv": "Intermediário"
-      },
-      {
-        "pos": 234,
-        "mun": "Três Ranchos",
-        "idx": 0.5244,
-        "niv": "Intermediário"
-      }
-    ]
+    niveisLeg: [
+      { nivel: "Diamante", count: 51 },
+      { nivel: "Ouro", count: 55 },
+      { nivel: "Prata", count: 10 },
+      { nivel: "Elevado", count: 101 },
+      { nivel: "Intermediário", count: 16 },
+      { nivel: "Básico", count: 10 },
+      { nivel: "Inicial", count: 3 },
+      { nivel: "Inexistente", count: 0 },
+    ],
   },
-  "rankingExec": [
-    {
-      "pos": 1,
-      "mun": "Montes Claros de Goiás",
-      "idx": 0.9689,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 2,
-      "mun": "Cabeceiras",
-      "idx": 0.9558,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 3,
-      "mun": "Baliza",
-      "idx": 0.9557,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 4,
-      "mun": "Jaraguá",
-      "idx": 0.9542,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 5,
-      "mun": "Goiânia",
-      "idx": 0.9541,
-      "niv": "Diamante"
-    },
-    {
-      "pos": 6,
-      "mun": "Goiatuba",
-      "idx": 0.9492,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 7,
-      "mun": "Britânia",
-      "idx": 0.9345,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 8,
-      "mun": "Chapadão do Céu",
-      "idx": 0.9337,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 9,
-      "mun": "Arenópolis",
-      "idx": 0.9315,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 10,
-      "mun": "Pirenópolis",
-      "idx": 0.9297,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 11,
-      "mun": "Morrinhos",
-      "idx": 0.9269,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 12,
-      "mun": "Serranópolis",
-      "idx": 0.9221,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 13,
-      "mun": "Rio Verde",
-      "idx": 0.9207,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 14,
-      "mun": "Inaciolândia",
-      "idx": 0.9182,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 15,
-      "mun": "Padre Bernardo",
-      "idx": 0.9141,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 16,
-      "mun": "Araçu",
-      "idx": 0.9138,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 17,
-      "mun": "Professor Jamil",
-      "idx": 0.9128,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 18,
-      "mun": "Indiara",
-      "idx": 0.9103,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 19,
-      "mun": "Cavalcante",
-      "idx": 0.9096,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 20,
-      "mun": "Goianápolis",
-      "idx": 0.9094,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 21,
-      "mun": "Trindade",
-      "idx": 0.9094,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 22,
-      "mun": "Itaberaí",
-      "idx": 0.9088,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 23,
-      "mun": "Aurilândia",
-      "idx": 0.9051,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 24,
-      "mun": "Niquelândia",
-      "idx": 0.9047,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 25,
-      "mun": "Santa Rita do Novo Destino",
-      "idx": 0.9004,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 26,
-      "mun": "Piranhas",
-      "idx": 0.8993,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 27,
-      "mun": "Mambaí",
-      "idx": 0.8991,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 28,
-      "mun": "Pontalina",
-      "idx": 0.8969,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 29,
-      "mun": "Caldazinha",
-      "idx": 0.8964,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 30,
-      "mun": "Ceres",
-      "idx": 0.8945,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 31,
-      "mun": "Bonfinópolis",
-      "idx": 0.8941,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 32,
-      "mun": "Mossâmedes",
-      "idx": 0.8939,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 33,
-      "mun": "Ipameri",
-      "idx": 0.8937,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 34,
-      "mun": "Abadia de Goiás",
-      "idx": 0.8929,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 35,
-      "mun": "Rialma",
-      "idx": 0.8917,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 36,
-      "mun": "Santa Helena de Goiás",
-      "idx": 0.8908,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 37,
-      "mun": "Turvânia",
-      "idx": 0.8857,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 38,
-      "mun": "Caiapônia",
-      "idx": 0.8844,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 39,
-      "mun": "São Patrício",
-      "idx": 0.8826,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 40,
-      "mun": "Itaguari",
-      "idx": 0.882,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 41,
-      "mun": "Itapuranga",
-      "idx": 0.8808,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 42,
-      "mun": "Cristianópolis",
-      "idx": 0.8802,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 43,
-      "mun": "Diorama",
-      "idx": 0.8783,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 44,
-      "mun": "Petrolina de Goiás",
-      "idx": 0.8776,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 45,
-      "mun": "Amorinópolis",
-      "idx": 0.8764,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 46,
-      "mun": "Bela Vista de Goiás",
-      "idx": 0.8748,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 47,
-      "mun": "Itumbiara",
-      "idx": 0.874,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 48,
-      "mun": "Minaçu",
-      "idx": 0.8736,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 49,
-      "mun": "Cidade Ocidental",
-      "idx": 0.8731,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 50,
-      "mun": "Turvelândia",
-      "idx": 0.8731,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 51,
-      "mun": "Carmo do Rio Verde",
-      "idx": 0.8723,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 52,
-      "mun": "Paraúna",
-      "idx": 0.8717,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 53,
-      "mun": "Cromínia",
-      "idx": 0.8692,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 54,
-      "mun": "Terezópolis de Goiás",
-      "idx": 0.8683,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 55,
-      "mun": "Campo Alegre de Goiás",
-      "idx": 0.8677,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 56,
-      "mun": "Caçu",
-      "idx": 0.8672,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 57,
-      "mun": "Palestina de Goiás",
-      "idx": 0.8663,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 58,
-      "mun": "Campestre de Goiás",
-      "idx": 0.8661,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 59,
-      "mun": "Itarumã",
-      "idx": 0.8661,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 60,
-      "mun": "Rubiataba",
-      "idx": 0.8653,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 61,
-      "mun": "Damolândia",
-      "idx": 0.8653,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 62,
-      "mun": "Silvânia",
-      "idx": 0.8652,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 63,
-      "mun": "Jussara",
-      "idx": 0.8644,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 64,
-      "mun": "Cachoeira Alta",
-      "idx": 0.8627,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 65,
-      "mun": "Santa Fé de Goiás",
-      "idx": 0.8624,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 66,
-      "mun": "Mimoso de Goiás",
-      "idx": 0.8606,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 67,
-      "mun": "Gouvelândia",
-      "idx": 0.8605,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 68,
-      "mun": "Quirinópolis",
-      "idx": 0.8602,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 69,
-      "mun": "Santo Antônio da Barra",
-      "idx": 0.858,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 70,
-      "mun": "Leopoldo de Bulhões",
-      "idx": 0.8564,
-      "niv": "Ouro"
-    },
-    {
-      "pos": 71,
-      "mun": "Porangatu",
-      "idx": 0.8561,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 72,
-      "mun": "São João d'Aliança",
-      "idx": 0.8561,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 73,
-      "mun": "Perolândia",
-      "idx": 0.8537,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 74,
-      "mun": "Santa Rosa de Goiás",
-      "idx": 0.8535,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 75,
-      "mun": "Rianápolis",
-      "idx": 0.8533,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 76,
-      "mun": "Jandaia",
-      "idx": 0.8528,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 77,
-      "mun": "Jaupaci",
-      "idx": 0.8528,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 78,
-      "mun": "Santa Rita do Araguaia",
-      "idx": 0.8524,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 79,
-      "mun": "Bonópolis",
-      "idx": 0.8517,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 80,
-      "mun": "Palmeiras de Goiás",
-      "idx": 0.8506,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 81,
-      "mun": "Cristalina",
-      "idx": 0.8496,
-      "niv": "Prata"
-    },
-    {
-      "pos": 82,
-      "mun": "Guapó",
-      "idx": 0.8488,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 83,
-      "mun": "Nova Roma",
-      "idx": 0.8479,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 84,
-      "mun": "Formosa",
-      "idx": 0.8478,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 85,
-      "mun": "Mairipotaba",
-      "idx": 0.8474,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 86,
-      "mun": "Águas Lindas de Goiás",
-      "idx": 0.8454,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 87,
-      "mun": "Rio Quente",
-      "idx": 0.8432,
-      "niv": "Prata"
-    },
-    {
-      "pos": 88,
-      "mun": "Joviânia",
-      "idx": 0.8427,
-      "niv": "Prata"
-    },
-    {
-      "pos": 89,
-      "mun": "Vila Boa",
-      "idx": 0.8422,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 90,
-      "mun": "Paranaiguara",
-      "idx": 0.8417,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 91,
-      "mun": "Anicuns",
-      "idx": 0.8408,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 92,
-      "mun": "Valparaíso de Goiás",
-      "idx": 0.8398,
-      "niv": "Prata"
-    },
-    {
-      "pos": 93,
-      "mun": "São Luiz do Norte",
-      "idx": 0.8397,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 94,
-      "mun": "Edealina",
-      "idx": 0.8383,
-      "niv": "Prata"
-    },
-    {
-      "pos": 95,
-      "mun": "Aragoiânia",
-      "idx": 0.8371,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 96,
-      "mun": "Itaguaru",
-      "idx": 0.8371,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 97,
-      "mun": "Jesúpolis",
-      "idx": 0.8364,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 98,
-      "mun": "Uruana",
-      "idx": 0.836,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 99,
-      "mun": "Campinaçu",
-      "idx": 0.8353,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 100,
-      "mun": "Corumbá de Goiás",
-      "idx": 0.8341,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 101,
-      "mun": "Itapirapuã",
-      "idx": 0.8339,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 102,
-      "mun": "Uruaçu",
-      "idx": 0.8338,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 103,
-      "mun": "Acreúna",
-      "idx": 0.8333,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 104,
-      "mun": "Vianópolis",
-      "idx": 0.8323,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 105,
-      "mun": "Nova Glória",
-      "idx": 0.832,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 106,
-      "mun": "Buriti Alegre",
-      "idx": 0.8315,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 107,
-      "mun": "Pilar de Goiás",
-      "idx": 0.8309,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 108,
-      "mun": "São Francisco de Goiás",
-      "idx": 0.8277,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 109,
-      "mun": "Nova Veneza",
-      "idx": 0.8265,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 110,
-      "mun": "Santa Terezinha de Goiás",
-      "idx": 0.8262,
-      "niv": "Prata"
-    },
-    {
-      "pos": 111,
-      "mun": "Palmelo",
-      "idx": 0.8256,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 112,
-      "mun": "Doverlândia",
-      "idx": 0.8245,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 113,
-      "mun": "São Miguel do Passa Quatro",
-      "idx": 0.8225,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 114,
-      "mun": "Ivolândia",
-      "idx": 0.8213,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 115,
-      "mun": "Campo Limpo de Goiás",
-      "idx": 0.8211,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 116,
-      "mun": "Cocalzinho de Goiás",
-      "idx": 0.8208,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 117,
-      "mun": "Santa Isabel",
-      "idx": 0.8208,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 118,
-      "mun": "Itajá",
-      "idx": 0.8205,
-      "niv": "Prata"
-    },
-    {
-      "pos": 119,
-      "mun": "Pires do Rio",
-      "idx": 0.8199,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 120,
-      "mun": "Hidrolândia",
-      "idx": 0.8196,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 121,
-      "mun": "Ipiranga de Goiás",
-      "idx": 0.8194,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 122,
-      "mun": "Bom Jardim de Goiás",
-      "idx": 0.8168,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 123,
-      "mun": "Itapaci",
-      "idx": 0.8163,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 124,
-      "mun": "Firminópolis",
-      "idx": 0.8158,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 125,
-      "mun": "Goianésia",
-      "idx": 0.8147,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 126,
-      "mun": "Anápolis",
-      "idx": 0.8141,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 127,
-      "mun": "Nerópolis",
-      "idx": 0.813,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 128,
-      "mun": "Montividiu",
-      "idx": 0.8095,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 129,
-      "mun": "Brazabrantes",
-      "idx": 0.8073,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 130,
-      "mun": "Marzagão",
-      "idx": 0.8071,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 131,
-      "mun": "Novo Gama",
-      "idx": 0.8057,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 132,
-      "mun": "Panamá",
-      "idx": 0.8056,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 133,
-      "mun": "Sítio d'Abadia",
-      "idx": 0.8051,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 134,
-      "mun": "Israelândia",
-      "idx": 0.8047,
-      "niv": "Prata"
-    },
-    {
-      "pos": 135,
-      "mun": "Hidrolina",
-      "idx": 0.8046,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 136,
-      "mun": "Santa Tereza de Goiás",
-      "idx": 0.8028,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 137,
-      "mun": "Aparecida do Rio Doce",
-      "idx": 0.8027,
-      "niv": "Prata"
-    },
-    {
-      "pos": 138,
-      "mun": "Caldas Novas",
-      "idx": 0.802,
-      "niv": "Prata"
-    },
-    {
-      "pos": 139,
-      "mun": "Mara Rosa",
-      "idx": 0.8006,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 140,
-      "mun": "Aloândia",
-      "idx": 0.8004,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 141,
-      "mun": "Córrego do Ouro",
-      "idx": 0.8001,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 142,
-      "mun": "Portelândia",
-      "idx": 0.7991,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 143,
-      "mun": "Colinas do Sul",
-      "idx": 0.7973,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 144,
-      "mun": "Água Limpa",
-      "idx": 0.7942,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 145,
-      "mun": "Faina",
-      "idx": 0.7927,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 146,
-      "mun": "Montividiu do Norte",
-      "idx": 0.7919,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 147,
-      "mun": "Lagoa Santa",
-      "idx": 0.79,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 148,
-      "mun": "Alexânia",
-      "idx": 0.7895,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 149,
-      "mun": "Mundo Novo",
-      "idx": 0.7846,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 150,
-      "mun": "Avelinópolis",
-      "idx": 0.7846,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 151,
-      "mun": "Uirapuru",
-      "idx": 0.7841,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 152,
-      "mun": "Senador Canedo",
-      "idx": 0.7831,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 153,
-      "mun": "Cezarina",
-      "idx": 0.7829,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 154,
-      "mun": "Santo Antônio do Descoberto",
-      "idx": 0.7805,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 155,
-      "mun": "Urutaí",
-      "idx": 0.7795,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 156,
-      "mun": "Aruanã",
-      "idx": 0.7794,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 157,
-      "mun": "Novo Brasil",
-      "idx": 0.7745,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 158,
-      "mun": "Santa Cruz de Goiás",
-      "idx": 0.7745,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 159,
-      "mun": "Damianópolis",
-      "idx": 0.7716,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 160,
-      "mun": "Posse",
-      "idx": 0.7714,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 161,
-      "mun": "Nazário",
-      "idx": 0.7712,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 162,
-      "mun": "São Luís de Montes Belos",
-      "idx": 0.7705,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 163,
-      "mun": "Iporá",
-      "idx": 0.7694,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 164,
-      "mun": "Santo Antônio de Goiás",
-      "idx": 0.7655,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 165,
-      "mun": "Divinópolis de Goiás",
-      "idx": 0.7637,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 166,
-      "mun": "Morro Agudo de Goiás",
-      "idx": 0.7617,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 167,
-      "mun": "Alto Horizonte",
-      "idx": 0.761,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 168,
-      "mun": "Vicentinópolis",
-      "idx": 0.7591,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 169,
-      "mun": "Davinópolis",
-      "idx": 0.7573,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 170,
-      "mun": "Abadiânia",
-      "idx": 0.7558,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 171,
-      "mun": "Itauçu",
-      "idx": 0.7551,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 172,
-      "mun": "Moiporá",
-      "idx": 0.754,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 173,
-      "mun": "Crixás",
-      "idx": 0.7534,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 174,
-      "mun": "Araguapaz",
-      "idx": 0.7515,
-      "niv": "Elevado"
-    },
-    {
-      "pos": 175,
-      "mun": "Iaciara",
-      "idx": 0.7484,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 176,
-      "mun": "Guarinos",
-      "idx": 0.7473,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 177,
-      "mun": "Água Fria de Goiás",
-      "idx": 0.7472,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 178,
-      "mun": "Goiás",
-      "idx": 0.7469,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 179,
-      "mun": "São Simão",
-      "idx": 0.7469,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 180,
-      "mun": "Novo Planalto",
-      "idx": 0.7442,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 181,
-      "mun": "Monte Alegre de Goiás",
-      "idx": 0.7429,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 182,
-      "mun": "Americano do Brasil",
-      "idx": 0.7413,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 183,
-      "mun": "Castelândia",
-      "idx": 0.7401,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 184,
-      "mun": "Edéia",
-      "idx": 0.739,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 185,
-      "mun": "Teresina de Goiás",
-      "idx": 0.7359,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 186,
-      "mun": "Santa Bárbara de Goiás",
-      "idx": 0.7352,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 187,
-      "mun": "Barro Alto",
-      "idx": 0.7349,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 188,
-      "mun": "Campos Verdes",
-      "idx": 0.7348,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 189,
-      "mun": "Alvorada do Norte",
-      "idx": 0.7345,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 190,
-      "mun": "Taquaral de Goiás",
-      "idx": 0.7324,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 191,
-      "mun": "Mutunópolis",
-      "idx": 0.7268,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 192,
-      "mun": "Nova América",
-      "idx": 0.7263,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 193,
-      "mun": "Gameleira de Goiás",
-      "idx": 0.7262,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 194,
-      "mun": "Vila Propício",
-      "idx": 0.7222,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 195,
-      "mun": "Caturaí",
-      "idx": 0.7155,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 196,
-      "mun": "Sanclerlândia",
-      "idx": 0.7094,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 197,
-      "mun": "Mozarlândia",
-      "idx": 0.7073,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 198,
-      "mun": "Ouro Verde de Goiás",
-      "idx": 0.6999,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 199,
-      "mun": "Inhumas",
-      "idx": 0.6983,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 200,
-      "mun": "Porteirão",
-      "idx": 0.698,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 201,
-      "mun": "São Miguel do Araguaia",
-      "idx": 0.6948,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 202,
-      "mun": "Aporé",
-      "idx": 0.6943,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 203,
-      "mun": "Varjão",
-      "idx": 0.693,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 204,
-      "mun": "Guarani de Goiás",
-      "idx": 0.6903,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 205,
-      "mun": "Maurilândia",
-      "idx": 0.69,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 206,
-      "mun": "Adelândia",
-      "idx": 0.682,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 207,
-      "mun": "Goiandira",
-      "idx": 0.6745,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 208,
-      "mun": "Cachoeira de Goiás",
-      "idx": 0.6741,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 209,
-      "mun": "Buritinópolis",
-      "idx": 0.6731,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 210,
-      "mun": "Mineiros",
-      "idx": 0.6727,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 211,
-      "mun": "São Domingos",
-      "idx": 0.6663,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 212,
-      "mun": "São João da Paraúna",
-      "idx": 0.6601,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 213,
-      "mun": "Bom Jesus de Goiás",
-      "idx": 0.6522,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 214,
-      "mun": "Goianira",
-      "idx": 0.6497,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 215,
-      "mun": "Ouvidor",
-      "idx": 0.6453,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 216,
-      "mun": "Campinorte",
-      "idx": 0.6437,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 217,
-      "mun": "Orizona",
-      "idx": 0.6374,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 218,
-      "mun": "Guaraíta",
-      "idx": 0.6358,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 219,
-      "mun": "Heitoraí",
-      "idx": 0.633,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 220,
-      "mun": "Cumari",
-      "idx": 0.6274,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 221,
-      "mun": "Formoso",
-      "idx": 0.605,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 222,
-      "mun": "Aragarças",
-      "idx": 0.5996,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 223,
-      "mun": "Amaralina",
-      "idx": 0.5959,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 224,
-      "mun": "Alto Paraíso de Goiás",
-      "idx": 0.5907,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 225,
-      "mun": "Catalão",
-      "idx": 0.5812,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 226,
-      "mun": "Simolândia",
-      "idx": 0.5764,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 227,
-      "mun": "Matrinchã",
-      "idx": 0.571,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 228,
-      "mun": "Aparecida de Goiânia",
-      "idx": 0.5685,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 229,
-      "mun": "Anhanguera",
-      "idx": 0.5615,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 230,
-      "mun": "Trombas",
-      "idx": 0.5481,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 231,
-      "mun": "Piracanjuba",
-      "idx": 0.5424,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 232,
-      "mun": "Corumbaíba",
-      "idx": 0.5385,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 233,
-      "mun": "Planaltina",
-      "idx": 0.5285,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 234,
-      "mun": "Três Ranchos",
-      "idx": 0.5244,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 235,
-      "mun": "Campos Belos",
-      "idx": 0.518,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 236,
-      "mun": "Luziânia",
-      "idx": 0.5065,
-      "niv": "Intermediário"
-    },
-    {
-      "pos": 237,
-      "mun": "Buriti de Goiás",
-      "idx": 0.4445,
-      "niv": "Básico"
-    },
-    {
-      "pos": 238,
-      "mun": "Cachoeira Dourada",
-      "idx": 0.4428,
-      "niv": "Básico"
-    },
-    {
-      "pos": 239,
-      "mun": "Nova Iguaçu de Goiás",
-      "idx": 0.4395,
-      "niv": "Básico"
-    },
-    {
-      "pos": 240,
-      "mun": "Nova Crixás",
-      "idx": 0.3858,
-      "niv": "Básico"
-    },
-    {
-      "pos": 241,
-      "mun": "Flores de Goiás",
-      "idx": 0.0533,
-      "niv": "Inicial"
-    },
-    {
-      "pos": 242,
-      "mun": "Estrela do Norte",
-      "idx": 0.0,
-      "niv": "Não Avaliado"
-    },
-    {
-      "pos": 243,
-      "mun": "Jataí",
-      "idx": 0.0,
-      "niv": "Não Avaliado"
-    },
-    {
-      "pos": 244,
-      "mun": "Nova Aurora",
-      "idx": 0.0,
-      "niv": "Não Avaliado"
-    },
-    {
-      "pos": 245,
-      "mun": "Palminópolis",
-      "idx": 0.0,
-      "niv": "Não Avaliado"
-    },
-    {
-      "pos": 246,
-      "mun": "Fazenda Nova",
-      "idx": 0.0,
-      "niv": "Inexistente"
-    }
+  // Ranking oficial das 246 prefeituras (PDF do TCM-GO, 2026-11-10), na ordem publicada.
+  rankingExec: [
+    { pos: 1, mun: "Jaraguá", idx: 0.9854, ess: 1, niv: "Diamante" },
+    { pos: 2, mun: "Uruana", idx: 0.9767, ess: 1, niv: "Diamante" },
+    { pos: 3, mun: "Santa Rita do Araguaia", idx: 0.9738, ess: 1, niv: "Diamante" },
+    { pos: 4, mun: "Nova Roma", idx: 0.9717, ess: 1, niv: "Diamante" },
+    { pos: 5, mun: "Portelândia", idx: 0.9693, ess: 1, niv: "Diamante" },
+    { pos: 6, mun: "Corumbá de Goiás", idx: 0.9692, ess: 1, niv: "Diamante" },
+    { pos: 7, mun: "Perolândia", idx: 0.9688, ess: 1, niv: "Diamante" },
+    { pos: 8, mun: "Itaberaí", idx: 0.9677, ess: 1, niv: "Diamante" },
+    { pos: 9, mun: "Rio Verde", idx: 0.9652, ess: 1, niv: "Diamante" },
+    { pos: 10, mun: "Caldazinha", idx: 0.9647, ess: 1, niv: "Diamante" },
+    { pos: 11, mun: "Inaciolândia", idx: 0.9639, ess: 1, niv: "Diamante" },
+    { pos: 12, mun: "Uruaçu", idx: 0.961, ess: 1, niv: "Diamante" },
+    { pos: 13, mun: "Cabeceiras", idx: 0.96, ess: 1, niv: "Diamante" },
+    { pos: 14, mun: "Panamá", idx: 0.959, ess: 1, niv: "Diamante" },
+    { pos: 15, mun: "Turvelândia", idx: 0.9588, ess: 1, niv: "Diamante" },
+    { pos: 16, mun: "Goiânia", idx: 0.9585, ess: 1, niv: "Diamante" },
+    { pos: 17, mun: "Serranópolis", idx: 0.9569, ess: 1, niv: "Diamante" },
+    { pos: 18, mun: "Ceres", idx: 0.9555, ess: 1, niv: "Diamante" },
+    { pos: 19, mun: "Gouvelândia", idx: 0.9542, ess: 1, niv: "Diamante" },
+    { pos: 20, mun: "Jaupaci", idx: 0.9541, ess: 1, niv: "Diamante" },
+    { pos: 21, mun: "Santa Bárbara de Goiás", idx: 0.9535, ess: 1, niv: "Diamante" },
+    { pos: 22, mun: "Turvânia", idx: 0.9525, ess: 1, niv: "Diamante" },
+    { pos: 23, mun: "Cachoeira Alta", idx: 0.9523, ess: 1, niv: "Diamante" },
+    { pos: 24, mun: "Valparaíso de Goiás", idx: 0.9514, ess: 0.9474, niv: "Elevado" },
+    { pos: 25, mun: "Campo Limpo de Goiás", idx: 0.9511, ess: 1, niv: "Diamante" },
+    { pos: 26, mun: "Itapuranga", idx: 0.9508, ess: 1, niv: "Diamante" },
+    { pos: 26, mun: "Itumbiara", idx: 0.9508, ess: 1, niv: "Diamante" },
+    { pos: 28, mun: "Leopoldo de Bulhões", idx: 0.9504, ess: 1, niv: "Diamante" },
+    { pos: 29, mun: "Carmo do Rio Verde", idx: 0.9503, ess: 1, niv: "Diamante" },
+    { pos: 30, mun: "Ouro Verde de Goiás", idx: 0.9498, ess: 1, niv: "Ouro" },
+    { pos: 31, mun: "Rio Quente", idx: 0.9488, ess: 1, niv: "Ouro" },
+    { pos: 32, mun: "Chapadão do Céu", idx: 0.9487, ess: 0.8684, niv: "Elevado" },
+    { pos: 33, mun: "Santa Fé de Goiás", idx: 0.9485, ess: 1, niv: "Ouro" },
+    { pos: 34, mun: "Paraúna", idx: 0.9464, ess: 1, niv: "Ouro" },
+    { pos: 35, mun: "Ipameri", idx: 0.9459, ess: 1, niv: "Ouro" },
+    { pos: 36, mun: "Pontalina", idx: 0.9443, ess: 0.8421, niv: "Elevado" },
+    { pos: 37, mun: "Diorama", idx: 0.9431, ess: 1, niv: "Ouro" },
+    { pos: 38, mun: "Baliza", idx: 0.9428, ess: 1, niv: "Ouro" },
+    { pos: 39, mun: "Padre Bernardo", idx: 0.9425, ess: 1, niv: "Ouro" },
+    { pos: 40, mun: "Britânia", idx: 0.9419, ess: 1, niv: "Ouro" },
+    { pos: 41, mun: "Israelândia", idx: 0.94, ess: 1, niv: "Ouro" },
+    { pos: 42, mun: "Adelândia", idx: 0.9376, ess: 1, niv: "Ouro" },
+    { pos: 43, mun: "Quirinópolis", idx: 0.936, ess: 1, niv: "Ouro" },
+    { pos: 44, mun: "Rubiataba", idx: 0.934, ess: 0.8421, niv: "Elevado" },
+    { pos: 45, mun: "Professor Jamil", idx: 0.9339, ess: 1, niv: "Ouro" },
+    { pos: 46, mun: "Itaguaru", idx: 0.9336, ess: 1, niv: "Ouro" },
+    { pos: 47, mun: "Mimoso de Goiás", idx: 0.9332, ess: 1, niv: "Ouro" },
+    { pos: 48, mun: "Taquaral de Goiás", idx: 0.9326, ess: 1, niv: "Ouro" },
+    { pos: 49, mun: "Rianápolis", idx: 0.9323, ess: 1, niv: "Ouro" },
+    { pos: 50, mun: "Cristalina", idx: 0.9321, ess: 1, niv: "Ouro" },
+    { pos: 51, mun: "Goiatuba", idx: 0.9303, ess: 1, niv: "Ouro" },
+    { pos: 52, mun: "Jesúpolis", idx: 0.9299, ess: 1, niv: "Ouro" },
+    { pos: 53, mun: "Bonfinópolis", idx: 0.9285, ess: 1, niv: "Ouro" },
+    { pos: 54, mun: "Firminópolis", idx: 0.9284, ess: 1, niv: "Ouro" },
+    { pos: 55, mun: "Campinaçu", idx: 0.9281, ess: 1, niv: "Ouro" },
+    { pos: 56, mun: "Itarumã", idx: 0.9272, ess: 1, niv: "Ouro" },
+    { pos: 57, mun: "Formosa", idx: 0.927, ess: 1, niv: "Ouro" },
+    { pos: 58, mun: "Vila Boa", idx: 0.9268, ess: 1, niv: "Ouro" },
+    { pos: 59, mun: "Cristianópolis", idx: 0.9267, ess: 1, niv: "Ouro" },
+    { pos: 60, mun: "Mossâmedes", idx: 0.9265, ess: 1, niv: "Ouro" },
+    { pos: 61, mun: "Arenópolis", idx: 0.9262, ess: 1, niv: "Ouro" },
+    { pos: 62, mun: "Águas Lindas de Goiás", idx: 0.9258, ess: 1, niv: "Ouro" },
+    { pos: 63, mun: "Rialma", idx: 0.9245, ess: 1, niv: "Ouro" },
+    { pos: 64, mun: "Mairipotaba", idx: 0.9244, ess: 1, niv: "Ouro" },
+    { pos: 65, mun: "Petrolina de Goiás", idx: 0.9241, ess: 1, niv: "Ouro" },
+    { pos: 66, mun: "Niquelândia", idx: 0.9235, ess: 0.9737, niv: "Elevado" },
+    { pos: 67, mun: "Mambaí", idx: 0.9233, ess: 1, niv: "Ouro" },
+    { pos: 68, mun: "São Luiz do Norte", idx: 0.9229, ess: 1, niv: "Ouro" },
+    { pos: 69, mun: "Anápolis", idx: 0.922, ess: 1, niv: "Ouro" },
+    { pos: 70, mun: "Aragoiânia", idx: 0.9216, ess: 1, niv: "Ouro" },
+    { pos: 71, mun: "Caçu", idx: 0.9208, ess: 1, niv: "Ouro" },
+    { pos: 72, mun: "Santa Helena de Goiás", idx: 0.9206, ess: 1, niv: "Ouro" },
+    { pos: 73, mun: "Crixás", idx: 0.9204, ess: 1, niv: "Ouro" },
+    { pos: 74, mun: "Mozarlândia", idx: 0.9196, ess: 0.8684, niv: "Elevado" },
+    { pos: 75, mun: "Aparecida do Rio Doce", idx: 0.9177, ess: 0.9474, niv: "Elevado" },
+    { pos: 76, mun: "Minaçu", idx: 0.9172, ess: 1, niv: "Ouro" },
+    { pos: 77, mun: "Nova América", idx: 0.914, ess: 1, niv: "Ouro" },
+    { pos: 78, mun: "Ipiranga de Goiás", idx: 0.9136, ess: 1, niv: "Ouro" },
+    { pos: 79, mun: "Nova Glória", idx: 0.9135, ess: 1, niv: "Ouro" },
+    { pos: 80, mun: "Amorinópolis", idx: 0.9133, ess: 1, niv: "Ouro" },
+    { pos: 81, mun: "Buriti de Goiás", idx: 0.9118, ess: 1, niv: "Ouro" },
+    { pos: 82, mun: "Santa Tereza de Goiás", idx: 0.9114, ess: 1, niv: "Ouro" },
+    { pos: 83, mun: "Palestina de Goiás", idx: 0.9113, ess: 0.9737, niv: "Elevado" },
+    { pos: 84, mun: "Senador Canedo", idx: 0.9112, ess: 1, niv: "Ouro" },
+    { pos: 85, mun: "Cromínia", idx: 0.9105, ess: 1, niv: "Ouro" },
+    { pos: 86, mun: "Campos Verdes", idx: 0.9095, ess: 1, niv: "Ouro" },
+    { pos: 87, mun: "Montividiu", idx: 0.9094, ess: 1, niv: "Ouro" },
+    { pos: 88, mun: "Ivolândia", idx: 0.9093, ess: 1, niv: "Ouro" },
+    { pos: 89, mun: "Mutunópolis", idx: 0.9088, ess: 1, niv: "Ouro" },
+    { pos: 90, mun: "Itajá", idx: 0.9087, ess: 1, niv: "Ouro" },
+    { pos: 91, mun: "Piranhas", idx: 0.9071, ess: 1, niv: "Ouro" },
+    { pos: 92, mun: "São Francisco de Goiás", idx: 0.9063, ess: 1, niv: "Ouro" },
+    { pos: 93, mun: "Morro Agudo de Goiás", idx: 0.9043, ess: 1, niv: "Ouro" },
+    { pos: 94, mun: "Santo Antônio do Descoberto", idx: 0.9042, ess: 1, niv: "Ouro" },
+    { pos: 95, mun: "Montes Claros de Goiás", idx: 0.9036, ess: 1, niv: "Ouro" },
+    { pos: 96, mun: "Guaraíta", idx: 0.9034, ess: 1, niv: "Ouro" },
+    { pos: 97, mun: "Silvânia", idx: 0.9008, ess: 1, niv: "Ouro" },
+    { pos: 98, mun: "Novo Brasil", idx: 0.9007, ess: 1, niv: "Ouro" },
+    { pos: 99, mun: "Abadia de Goiás", idx: 0.9004, ess: 1, niv: "Ouro" },
+    { pos: 99, mun: "Santo Antônio de Goiás", idx: 0.9004, ess: 1, niv: "Ouro" },
+    { pos: 99, mun: "Sítio d'Abadia", idx: 0.9004, ess: 1, niv: "Ouro" },
+    { pos: 102, mun: "Goianápolis", idx: 0.9003, ess: 1, niv: "Ouro" },
+    { pos: 103, mun: "Jandaia", idx: 0.8994, ess: 0.8684, niv: "Elevado" },
+    { pos: 104, mun: "Santa Rita do Novo Destino", idx: 0.8993, ess: 1, niv: "Ouro" },
+    { pos: 105, mun: "Cezarina", idx: 0.899, ess: 1, niv: "Ouro" },
+    { pos: 106, mun: "Edéia", idx: 0.8985, ess: 0.9474, niv: "Elevado" },
+    { pos: 107, mun: "Abadiânia", idx: 0.8981, ess: 1, niv: "Ouro" },
+    { pos: 108, mun: "Americano do Brasil", idx: 0.8981, ess: 0.9737, niv: "Elevado" },
+    { pos: 109, mun: "Porteirão", idx: 0.8975, ess: 0.9737, niv: "Elevado" },
+    { pos: 110, mun: "Campo Alegre de Goiás", idx: 0.8972, ess: 1, niv: "Ouro" },
+    { pos: 111, mun: "Novo Gama", idx: 0.8968, ess: 0.9737, niv: "Elevado" },
+    { pos: 112, mun: "Inhumas", idx: 0.8966, ess: 0.9474, niv: "Elevado" },
+    { pos: 113, mun: "Bela Vista de Goiás", idx: 0.8958, ess: 1, niv: "Ouro" },
+    { pos: 114, mun: "Nazário", idx: 0.895, ess: 0.9737, niv: "Elevado" },
+    { pos: 115, mun: "Nerópolis", idx: 0.8944, ess: 1, niv: "Ouro" },
+    { pos: 116, mun: "Bom Jesus de Goiás", idx: 0.8935, ess: 1, niv: "Ouro" },
+    { pos: 117, mun: "São João d'Aliança", idx: 0.8926, ess: 1, niv: "Ouro" },
+    { pos: 117, mun: "Vila Propício", idx: 0.8926, ess: 1, niv: "Ouro" },
+    { pos: 119, mun: "Alvorada do Norte", idx: 0.8923, ess: 1, niv: "Ouro" },
+    { pos: 120, mun: "Posse", idx: 0.8917, ess: 0.8684, niv: "Elevado" },
+    { pos: 121, mun: "Formoso", idx: 0.8902, ess: 1, niv: "Ouro" },
+    { pos: 122, mun: "Cidade Ocidental", idx: 0.8898, ess: 1, niv: "Ouro" },
+    { pos: 123, mun: "Indiara", idx: 0.8879, ess: 1, niv: "Ouro" },
+    { pos: 124, mun: "Campestre de Goiás", idx: 0.8879, ess: 0.9737, niv: "Elevado" },
+    { pos: 125, mun: "Alexânia", idx: 0.8876, ess: 1, niv: "Ouro" },
+    { pos: 126, mun: "Guarinos", idx: 0.8875, ess: 0.8684, niv: "Elevado" },
+    { pos: 127, mun: "Montividiu do Norte", idx: 0.8874, ess: 1, niv: "Ouro" },
+    { pos: 128, mun: "Cavalcante", idx: 0.8864, ess: 1, niv: "Ouro" },
+    { pos: 128, mun: "Santa Isabel", idx: 0.8864, ess: 1, niv: "Ouro" },
+    { pos: 130, mun: "Caiapônia", idx: 0.886, ess: 0.8684, niv: "Elevado" },
+    { pos: 131, mun: "Pilar de Goiás", idx: 0.8833, ess: 1, niv: "Ouro" },
+    { pos: 132, mun: "Santo Antônio da Barra", idx: 0.8822, ess: 1, niv: "Ouro" },
+    { pos: 133, mun: "Uirapuru", idx: 0.8819, ess: 0.9737, niv: "Elevado" },
+    { pos: 134, mun: "Santa Rosa de Goiás", idx: 0.8819, ess: 0.9474, niv: "Elevado" },
+    { pos: 135, mun: "Alto Paraíso de Goiás", idx: 0.8818, ess: 1, niv: "Ouro" },
+    { pos: 136, mun: "Barro Alto", idx: 0.8807, ess: 0.9474, niv: "Elevado" },
+    { pos: 137, mun: "São Patrício", idx: 0.8807, ess: 0.8684, niv: "Elevado" },
+    { pos: 138, mun: "Doverlândia", idx: 0.8798, ess: 1, niv: "Ouro" },
+    { pos: 139, mun: "Aragarças", idx: 0.8796, ess: 1, niv: "Ouro" },
+    { pos: 140, mun: "Buritinópolis", idx: 0.8789, ess: 0.9737, niv: "Elevado" },
+    { pos: 141, mun: "Iporá", idx: 0.8788, ess: 1, niv: "Ouro" },
+    { pos: 142, mun: "São Miguel do Passa Quatro", idx: 0.8784, ess: 1, niv: "Ouro" },
+    { pos: 143, mun: "Guapó", idx: 0.8781, ess: 0.8684, niv: "Elevado" },
+    { pos: 144, mun: "Buriti Alegre", idx: 0.8776, ess: 1, niv: "Ouro" },
+    { pos: 144, mun: "Morrinhos", idx: 0.8776, ess: 1, niv: "Ouro" },
+    { pos: 146, mun: "Edealina", idx: 0.8774, ess: 1, niv: "Ouro" },
+    { pos: 147, mun: "Urutaí", idx: 0.8765, ess: 1, niv: "Ouro" },
+    { pos: 148, mun: "Teresina de Goiás", idx: 0.8757, ess: 0.9474, niv: "Elevado" },
+    { pos: 149, mun: "Vicentinópolis", idx: 0.8755, ess: 1, niv: "Ouro" },
+    { pos: 150, mun: "Pirenópolis", idx: 0.8755, ess: 0.8684, niv: "Elevado" },
+    { pos: 151, mun: "Nova Crixás", idx: 0.8753, ess: 1, niv: "Ouro" },
+    { pos: 152, mun: "Bom Jardim de Goiás", idx: 0.8749, ess: 1, niv: "Ouro" },
+    { pos: 153, mun: "Goianésia", idx: 0.8744, ess: 1, niv: "Ouro" },
+    { pos: 154, mun: "Gameleira de Goiás", idx: 0.8732, ess: 1, niv: "Ouro" },
+    { pos: 155, mun: "Caturaí", idx: 0.873, ess: 1, niv: "Ouro" },
+    { pos: 156, mun: "Aurilândia", idx: 0.8728, ess: 0.7895, niv: "Elevado" },
+    { pos: 157, mun: "Castelândia", idx: 0.8725, ess: 1, niv: "Ouro" },
+    { pos: 158, mun: "Varjão", idx: 0.8712, ess: 0.8158, niv: "Elevado" },
+    { pos: 159, mun: "Guarani de Goiás", idx: 0.8691, ess: 0.9737, niv: "Elevado" },
+    { pos: 160, mun: "Araguapaz", idx: 0.8685, ess: 0.8684, niv: "Elevado" },
+    { pos: 161, mun: "Hidrolina", idx: 0.8641, ess: 0.9737, niv: "Elevado" },
+    { pos: 162, mun: "Porangatu", idx: 0.8596, ess: 0.7895, niv: "Elevado" },
+    { pos: 163, mun: "Damolândia", idx: 0.8578, ess: 1, niv: "Ouro" },
+    { pos: 164, mun: "Palmelo", idx: 0.857, ess: 1, niv: "Ouro" },
+    { pos: 165, mun: "Anicuns", idx: 0.8568, ess: 1, niv: "Ouro" },
+    { pos: 166, mun: "Nova Veneza", idx: 0.855, ess: 1, niv: "Ouro" },
+    { pos: 167, mun: "Mara Rosa", idx: 0.854, ess: 1, niv: "Ouro" },
+    { pos: 168, mun: "São Simão", idx: 0.853, ess: 1, niv: "Ouro" },
+    { pos: 169, mun: "Estrela do Norte", idx: 0.8527, ess: 0.9737, niv: "Elevado" },
+    { pos: 170, mun: "Itapaci", idx: 0.8521, ess: 0.6842, niv: "Elevado" },
+    { pos: 171, mun: "Davinópolis", idx: 0.8502, ess: 1, niv: "Ouro" },
+    { pos: 172, mun: "Marzagão", idx: 0.8501, ess: 1, niv: "Ouro" },
+    { pos: 173, mun: "Joviânia", idx: 0.8493, ess: 0.9737, niv: "Elevado" },
+    { pos: 174, mun: "Avelinópolis", idx: 0.8478, ess: 0.9737, niv: "Elevado" },
+    { pos: 175, mun: "Divinópolis de Goiás", idx: 0.8476, ess: 0.9737, niv: "Elevado" },
+    { pos: 176, mun: "Araçu", idx: 0.8458, ess: 1, niv: "Prata" },
+    { pos: 177, mun: "Aruanã", idx: 0.845, ess: 0.7895, niv: "Elevado" },
+    { pos: 178, mun: "Itauçu", idx: 0.8449, ess: 0.9737, niv: "Elevado" },
+    { pos: 179, mun: "Iaciara", idx: 0.8448, ess: 0.9474, niv: "Elevado" },
+    { pos: 180, mun: "Sanclerlândia", idx: 0.8437, ess: 1, niv: "Prata" },
+    { pos: 181, mun: "Alto Horizonte", idx: 0.8432, ess: 0.9737, niv: "Elevado" },
+    { pos: 182, mun: "Cocalzinho de Goiás", idx: 0.843, ess: 0.9737, niv: "Elevado" },
+    { pos: 183, mun: "Itaguari", idx: 0.8426, ess: 0.9737, niv: "Elevado" },
+    { pos: 184, mun: "Aparecida de Goiânia", idx: 0.8401, ess: 1, niv: "Prata" },
+    { pos: 185, mun: "Pires do Rio", idx: 0.8399, ess: 1, niv: "Prata" },
+    { pos: 186, mun: "Moiporá", idx: 0.8399, ess: 0.9737, niv: "Elevado" },
+    { pos: 187, mun: "Palmeiras de Goiás", idx: 0.8383, ess: 0.8684, niv: "Elevado" },
+    { pos: 188, mun: "Aporé", idx: 0.8368, ess: 0.9737, niv: "Elevado" },
+    { pos: 189, mun: "Goiandira", idx: 0.833, ess: 0.9737, niv: "Elevado" },
+    { pos: 190, mun: "Faina", idx: 0.8322, ess: 0.9474, niv: "Elevado" },
+    { pos: 191, mun: "Caldas Novas", idx: 0.8298, ess: 1, niv: "Prata" },
+    { pos: 192, mun: "Terezópolis de Goiás", idx: 0.829, ess: 1, niv: "Prata" },
+    { pos: 193, mun: "Itapirapuã", idx: 0.8284, ess: 0.8684, niv: "Elevado" },
+    { pos: 194, mun: "Lagoa Santa", idx: 0.8275, ess: 0.9211, niv: "Elevado" },
+    { pos: 195, mun: "Acreúna", idx: 0.8267, ess: 0.9474, niv: "Elevado" },
+    { pos: 196, mun: "Córrego do Ouro", idx: 0.8261, ess: 0.9211, niv: "Elevado" },
+    { pos: 197, mun: "Santa Terezinha de Goiás", idx: 0.8214, ess: 0.8684, niv: "Elevado" },
+    { pos: 198, mun: "Santa Cruz de Goiás", idx: 0.8206, ess: 0.9737, niv: "Elevado" },
+    { pos: 199, mun: "Orizona", idx: 0.8198, ess: 0.8684, niv: "Elevado" },
+    { pos: 200, mun: "Brazabrantes", idx: 0.8195, ess: 1, niv: "Prata" },
+    { pos: 201, mun: "Damianópolis", idx: 0.814, ess: 0.8158, niv: "Elevado" },
+    { pos: 202, mun: "Novo Planalto", idx: 0.8119, ess: 0.9474, niv: "Elevado" },
+    { pos: 203, mun: "Maurilândia", idx: 0.8112, ess: 1, niv: "Prata" },
+    { pos: 204, mun: "Goiás", idx: 0.8108, ess: 1, niv: "Prata" },
+    { pos: 205, mun: "Colinas do Sul", idx: 0.8078, ess: 1, niv: "Prata" },
+    { pos: 206, mun: "Jussara", idx: 0.807, ess: 0.9474, niv: "Elevado" },
+    { pos: 207, mun: "Cumari", idx: 0.806, ess: 0.7895, niv: "Elevado" },
+    { pos: 208, mun: "Bonópolis", idx: 0.8039, ess: 0.9211, niv: "Elevado" },
+    { pos: 209, mun: "Trindade", idx: 0.8034, ess: 0.8684, niv: "Elevado" },
+    { pos: 210, mun: "São Domingos", idx: 0.8008, ess: 0.7632, niv: "Elevado" },
+    { pos: 211, mun: "Hidrolândia", idx: 0.7998, ess: 1, niv: "Prata" },
+    { pos: 212, mun: "Mundo Novo", idx: 0.7994, ess: 0.9737, niv: "Elevado" },
+    { pos: 213, mun: "Água Limpa", idx: 0.7978, ess: 1, niv: "Prata" },
+    { pos: 214, mun: "Água Fria de Goiás", idx: 0.7962, ess: 0.9737, niv: "Elevado" },
+    { pos: 215, mun: "Aloândia", idx: 0.7954, ess: 1, niv: "Prata" },
+    { pos: 216, mun: "Trombas", idx: 0.7833, ess: 0.7895, niv: "Elevado" },
+    { pos: 217, mun: "São Luís de Montes Belos", idx: 0.7814, ess: 0.9474, niv: "Elevado" },
+    { pos: 218, mun: "Catalão", idx: 0.7766, ess: 0.9474, niv: "Elevado" },
+    { pos: 219, mun: "Vianópolis", idx: 0.7659, ess: 0.8684, niv: "Elevado" },
+    { pos: 220, mun: "Heitoraí", idx: 0.7653, ess: 0.5789, niv: "Elevado" },
+    { pos: 221, mun: "Paranaiguara", idx: 0.7618, ess: 0.8158, niv: "Elevado" },
+    { pos: 222, mun: "Monte Alegre de Goiás", idx: 0.7592, ess: 0.7105, niv: "Elevado" },
+    { pos: 223, mun: "Cachoeira Dourada", idx: 0.7583, ess: 0.8947, niv: "Elevado" },
+    { pos: 224, mun: "Simolândia", idx: 0.7574, ess: 0.7895, niv: "Elevado" },
+    { pos: 225, mun: "São Miguel do Araguaia", idx: 0.7553, ess: 0.9474, niv: "Elevado" },
+    { pos: 226, mun: "Piracanjuba", idx: 0.7462, ess: 0.9474, niv: "Intermediário" },
+    { pos: 227, mun: "Jataí", idx: 0.7374, ess: 1, niv: "Intermediário" },
+    { pos: 228, mun: "Cachoeira de Goiás", idx: 0.7367, ess: 0.9211, niv: "Intermediário" },
+    { pos: 229, mun: "Anhanguera", idx: 0.7336, ess: 1, niv: "Intermediário" },
+    { pos: 230, mun: "Corumbaíba", idx: 0.73, ess: 1, niv: "Intermediário" },
+    { pos: 231, mun: "Amaralina", idx: 0.7271, ess: 0.8684, niv: "Intermediário" },
+    { pos: 232, mun: "Mineiros", idx: 0.7247, ess: 1, niv: "Intermediário" },
+    { pos: 233, mun: "Ouvidor", idx: 0.7079, ess: 0.9474, niv: "Intermediário" },
+    { pos: 234, mun: "Fazenda Nova", idx: 0.6994, ess: 0.9737, niv: "Intermediário" },
+    { pos: 235, mun: "Planaltina", idx: 0.6991, ess: 0.7368, niv: "Intermediário" },
+    { pos: 236, mun: "Matrinchã", idx: 0.6934, ess: 0.9474, niv: "Intermediário" },
+    { pos: 237, mun: "Goianira", idx: 0.6924, ess: 0.7632, niv: "Intermediário" },
+    { pos: 238, mun: "Nova Aurora", idx: 0.6725, ess: 0.9211, niv: "Intermediário" },
+    { pos: 239, mun: "Campinorte", idx: 0.6477, ess: 0.5789, niv: "Intermediário" },
+    { pos: 240, mun: "Três Ranchos", idx: 0.6443, ess: 0.7895, niv: "Intermediário" },
+    { pos: 241, mun: "Flores de Goiás", idx: 0.6403, ess: 0.9211, niv: "Intermediário" },
+    { pos: 242, mun: "São João da Paraúna", idx: 0.6244, ess: 0.8684, niv: "Intermediário" },
+    { pos: 243, mun: "Luziânia", idx: 0.6224, ess: 0.8684, niv: "Intermediário" },
+    { pos: 244, mun: "Nova Iguaçu de Goiás", idx: 0.5802, ess: 1, niv: "Intermediário" },
+    { pos: 245, mun: "Palminópolis", idx: 0.5309, ess: 0.7105, niv: "Intermediário" },
+    { pos: 246, mun: "Campos Belos", idx: 0.4196, ess: 0.3947, niv: "Básico" },
   ],
-  "fonte": {
-    "nome": "Radar da Transparência Pública — ATRICON / Tribunais de Contas (PNTP 2025)",
-    "url": "https://radardatransparencia.atricon.org.br/"
-  }
-} as const;
+  // Ranking oficial das 246 câmaras (PDF do TCM-GO, 2026-11-10), na ordem publicada.
+  rankingLeg: [
+    { pos: 1, mun: "Petrolina de Goiás", idx: 0.9987, ess: 1, niv: "Diamante" },
+    { pos: 2, mun: "Alexânia", idx: 0.9957, ess: 1, niv: "Diamante" },
+    { pos: 3, mun: "Ipiranga de Goiás", idx: 0.9936, ess: 1, niv: "Diamante" },
+    { pos: 4, mun: "Alvorada do Norte", idx: 0.9928, ess: 1, niv: "Diamante" },
+    { pos: 4, mun: "Cristalina", idx: 0.9928, ess: 1, niv: "Diamante" },
+    { pos: 6, mun: "Água Fria de Goiás", idx: 0.9925, ess: 1, niv: "Diamante" },
+    { pos: 7, mun: "Corumbá de Goiás", idx: 0.9865, ess: 1, niv: "Diamante" },
+    { pos: 8, mun: "Caldas Novas", idx: 0.9859, ess: 1, niv: "Diamante" },
+    { pos: 9, mun: "Bela Vista de Goiás", idx: 0.9836, ess: 1, niv: "Diamante" },
+    { pos: 10, mun: "Aruanã", idx: 0.9831, ess: 0.9615, niv: "Elevado" },
+    { pos: 11, mun: "Firminópolis", idx: 0.9818, ess: 1, niv: "Diamante" },
+    { pos: 12, mun: "Indiara", idx: 0.9807, ess: 1, niv: "Diamante" },
+    { pos: 13, mun: "Pontalina", idx: 0.9795, ess: 1, niv: "Diamante" },
+    { pos: 14, mun: "Caldazinha", idx: 0.9794, ess: 0.9615, niv: "Elevado" },
+    { pos: 15, mun: "Bonfinópolis", idx: 0.9792, ess: 1, niv: "Diamante" },
+    { pos: 16, mun: "Nova América", idx: 0.9787, ess: 1, niv: "Diamante" },
+    { pos: 17, mun: "Amorinópolis", idx: 0.9784, ess: 1, niv: "Diamante" },
+    { pos: 18, mun: "Jussara", idx: 0.9783, ess: 1, niv: "Diamante" },
+    { pos: 19, mun: "Divinópolis de Goiás", idx: 0.9775, ess: 1, niv: "Diamante" },
+    { pos: 20, mun: "Jandaia", idx: 0.9774, ess: 1, niv: "Diamante" },
+    { pos: 21, mun: "Santo Antônio do Descoberto", idx: 0.977, ess: 1, niv: "Diamante" },
+    { pos: 22, mun: "Rianápolis", idx: 0.9756, ess: 1, niv: "Diamante" },
+    { pos: 23, mun: "Portelândia", idx: 0.9751, ess: 1, niv: "Diamante" },
+    { pos: 24, mun: "Rio Verde", idx: 0.9744, ess: 1, niv: "Diamante" },
+    { pos: 25, mun: "Gouvelândia", idx: 0.9728, ess: 1, niv: "Diamante" },
+    { pos: 26, mun: "São Patrício", idx: 0.972, ess: 0.9615, niv: "Elevado" },
+    { pos: 27, mun: "Turvânia", idx: 0.9719, ess: 1, niv: "Diamante" },
+    { pos: 28, mun: "São Miguel do Araguaia", idx: 0.9703, ess: 1, niv: "Diamante" },
+    { pos: 29, mun: "Anápolis", idx: 0.9702, ess: 1, niv: "Diamante" },
+    { pos: 30, mun: "Itapaci", idx: 0.97, ess: 1, niv: "Diamante" },
+    { pos: 31, mun: "Silvânia", idx: 0.9698, ess: 1, niv: "Diamante" },
+    { pos: 32, mun: "Piranhas", idx: 0.9696, ess: 1, niv: "Diamante" },
+    { pos: 33, mun: "Jataí", idx: 0.9695, ess: 1, niv: "Diamante" },
+    { pos: 34, mun: "Trindade", idx: 0.9686, ess: 1, niv: "Diamante" },
+    { pos: 35, mun: "Paraúna", idx: 0.9664, ess: 1, niv: "Diamante" },
+    { pos: 36, mun: "Santa Helena de Goiás", idx: 0.9664, ess: 0.9231, niv: "Elevado" },
+    { pos: 37, mun: "Britânia", idx: 0.9656, ess: 1, niv: "Diamante" },
+    { pos: 37, mun: "Jaupaci", idx: 0.9656, ess: 1, niv: "Diamante" },
+    { pos: 39, mun: "Inhumas", idx: 0.9651, ess: 1, niv: "Diamante" },
+    { pos: 40, mun: "Santa Rita do Araguaia", idx: 0.9648, ess: 1, niv: "Diamante" },
+    { pos: 41, mun: "Pires do Rio", idx: 0.9647, ess: 1, niv: "Diamante" },
+    { pos: 42, mun: "Aloândia", idx: 0.9634, ess: 1, niv: "Diamante" },
+    { pos: 43, mun: "Guaraíta", idx: 0.9633, ess: 1, niv: "Diamante" },
+    { pos: 44, mun: "Campo Alegre de Goiás", idx: 0.9622, ess: 1, niv: "Diamante" },
+    { pos: 45, mun: "Aparecida de Goiânia", idx: 0.9616, ess: 1, niv: "Diamante" },
+    { pos: 46, mun: "Niquelândia", idx: 0.9608, ess: 1, niv: "Diamante" },
+    { pos: 47, mun: "Córrego do Ouro", idx: 0.9606, ess: 1, niv: "Diamante" },
+    { pos: 47, mun: "Guapó", idx: 0.9606, ess: 1, niv: "Diamante" },
+    { pos: 49, mun: "Cidade Ocidental", idx: 0.9603, ess: 0.9615, niv: "Elevado" },
+    { pos: 50, mun: "Mutunópolis", idx: 0.9599, ess: 1, niv: "Diamante" },
+    { pos: 51, mun: "Pirenópolis", idx: 0.9592, ess: 0.9615, niv: "Elevado" },
+    { pos: 52, mun: "Campinaçu", idx: 0.958, ess: 1, niv: "Diamante" },
+    { pos: 53, mun: "Inaciolândia", idx: 0.9575, ess: 1, niv: "Diamante" },
+    { pos: 54, mun: "Varjão", idx: 0.9552, ess: 0.9615, niv: "Elevado" },
+    { pos: 55, mun: "Alto Paraíso de Goiás", idx: 0.954, ess: 1, niv: "Diamante" },
+    { pos: 56, mun: "Ceres", idx: 0.9514, ess: 1, niv: "Diamante" },
+    { pos: 57, mun: "Aragarças", idx: 0.9513, ess: 1, niv: "Diamante" },
+    { pos: 58, mun: "Professor Jamil", idx: 0.9512, ess: 1, niv: "Diamante" },
+    { pos: 59, mun: "Diorama", idx: 0.9498, ess: 1, niv: "Ouro" },
+    { pos: 59, mun: "Palestina de Goiás", idx: 0.9498, ess: 1, niv: "Ouro" },
+    { pos: 61, mun: "Cristianópolis", idx: 0.9479, ess: 0.9615, niv: "Elevado" },
+    { pos: 62, mun: "Colinas do Sul", idx: 0.9476, ess: 1, niv: "Ouro" },
+    { pos: 63, mun: "Bom Jardim de Goiás", idx: 0.9473, ess: 1, niv: "Ouro" },
+    { pos: 64, mun: "Araguapaz", idx: 0.9469, ess: 1, niv: "Ouro" },
+    { pos: 65, mun: "Nova Roma", idx: 0.9451, ess: 1, niv: "Ouro" },
+    { pos: 66, mun: "Perolândia", idx: 0.9442, ess: 1, niv: "Ouro" },
+    { pos: 67, mun: "Uruaçu", idx: 0.9441, ess: 1, niv: "Ouro" },
+    { pos: 68, mun: "Anicuns", idx: 0.9436, ess: 1, niv: "Ouro" },
+    { pos: 68, mun: "Novo Gama", idx: 0.9436, ess: 1, niv: "Ouro" },
+    { pos: 70, mun: "Padre Bernardo", idx: 0.9416, ess: 0.9615, niv: "Elevado" },
+    { pos: 71, mun: "Hidrolândia", idx: 0.9413, ess: 0.8077, niv: "Elevado" },
+    { pos: 72, mun: "Itajá", idx: 0.941, ess: 1, niv: "Ouro" },
+    { pos: 73, mun: "Catalão", idx: 0.9375, ess: 0.9615, niv: "Elevado" },
+    { pos: 74, mun: "Quirinópolis", idx: 0.9374, ess: 1, niv: "Ouro" },
+    { pos: 75, mun: "Iporá", idx: 0.9373, ess: 1, niv: "Ouro" },
+    { pos: 75, mun: "Israelândia", idx: 0.9373, ess: 1, niv: "Ouro" },
+    { pos: 77, mun: "Gameleira de Goiás", idx: 0.9362, ess: 1, niv: "Ouro" },
+    { pos: 78, mun: "Acreúna", idx: 0.9361, ess: 0.9615, niv: "Elevado" },
+    { pos: 79, mun: "Goiânia", idx: 0.9347, ess: 1, niv: "Ouro" },
+    { pos: 80, mun: "Araçu", idx: 0.9335, ess: 0.8846, niv: "Elevado" },
+    { pos: 81, mun: "Nova Crixás", idx: 0.932, ess: 0.9615, niv: "Elevado" },
+    { pos: 82, mun: "Santo Antônio da Barra", idx: 0.931, ess: 1, niv: "Ouro" },
+    { pos: 83, mun: "Aragoiânia", idx: 0.9287, ess: 1, niv: "Ouro" },
+    { pos: 84, mun: "Marzagão", idx: 0.9286, ess: 1, niv: "Ouro" },
+    { pos: 85, mun: "Ouro Verde de Goiás", idx: 0.9275, ess: 1, niv: "Ouro" },
+    { pos: 86, mun: "Abadiânia", idx: 0.927, ess: 1, niv: "Ouro" },
+    { pos: 87, mun: "Novo Planalto", idx: 0.9268, ess: 1, niv: "Ouro" },
+    { pos: 88, mun: "Maurilândia", idx: 0.924, ess: 1, niv: "Ouro" },
+    { pos: 89, mun: "Itarumã", idx: 0.9238, ess: 0.9231, niv: "Elevado" },
+    { pos: 90, mun: "Piracanjuba", idx: 0.9236, ess: 1, niv: "Ouro" },
+    { pos: 91, mun: "Goianira", idx: 0.9232, ess: 1, niv: "Ouro" },
+    { pos: 92, mun: "Flores de Goiás", idx: 0.923, ess: 1, niv: "Ouro" },
+    { pos: 93, mun: "Chapadão do Céu", idx: 0.9219, ess: 1, niv: "Ouro" },
+    { pos: 94, mun: "Edealina", idx: 0.9198, ess: 0.8846, niv: "Elevado" },
+    { pos: 95, mun: "São Luís de Montes Belos", idx: 0.9194, ess: 1, niv: "Ouro" },
+    { pos: 96, mun: "Porteirão", idx: 0.9187, ess: 1, niv: "Ouro" },
+    { pos: 97, mun: "Urutaí", idx: 0.9175, ess: 0.8846, niv: "Elevado" },
+    { pos: 98, mun: "Itaberaí", idx: 0.9173, ess: 0.9615, niv: "Elevado" },
+    { pos: 99, mun: "Cezarina", idx: 0.9172, ess: 0.8462, niv: "Elevado" },
+    { pos: 100, mun: "Cachoeira Alta", idx: 0.9151, ess: 0.8077, niv: "Elevado" },
+    { pos: 101, mun: "Pilar de Goiás", idx: 0.9143, ess: 1, niv: "Ouro" },
+    { pos: 102, mun: "Avelinópolis", idx: 0.9143, ess: 0.9615, niv: "Elevado" },
+    { pos: 103, mun: "Campo Limpo de Goiás", idx: 0.9143, ess: 0.8077, niv: "Elevado" },
+    { pos: 104, mun: "Aparecida do Rio Doce", idx: 0.9134, ess: 1, niv: "Ouro" },
+    { pos: 105, mun: "Ouvidor", idx: 0.9134, ess: 0.9615, niv: "Elevado" },
+    { pos: 106, mun: "Paranaiguara", idx: 0.9132, ess: 1, niv: "Ouro" },
+    { pos: 107, mun: "Palmelo", idx: 0.9132, ess: 0.9615, niv: "Elevado" },
+    { pos: 108, mun: "Mozarlândia", idx: 0.9126, ess: 1, niv: "Ouro" },
+    { pos: 109, mun: "Rubiataba", idx: 0.9123, ess: 1, niv: "Ouro" },
+    { pos: 110, mun: "Arenópolis", idx: 0.9121, ess: 0.8462, niv: "Elevado" },
+    { pos: 111, mun: "Guarinos", idx: 0.912, ess: 1, niv: "Ouro" },
+    { pos: 112, mun: "Itaguaru", idx: 0.9117, ess: 0.8462, niv: "Elevado" },
+    { pos: 113, mun: "Jesúpolis", idx: 0.9085, ess: 0.8846, niv: "Elevado" },
+    { pos: 114, mun: "Leopoldo de Bulhões", idx: 0.9082, ess: 0.9615, niv: "Elevado" },
+    { pos: 115, mun: "Mairipotaba", idx: 0.907, ess: 1, niv: "Ouro" },
+    { pos: 116, mun: "Cavalcante", idx: 0.906, ess: 1, niv: "Ouro" },
+    { pos: 117, mun: "São Luiz do Norte", idx: 0.9044, ess: 0.9231, niv: "Elevado" },
+    { pos: 118, mun: "Campos Verdes", idx: 0.9041, ess: 0.8846, niv: "Elevado" },
+    { pos: 119, mun: "São Francisco de Goiás", idx: 0.9034, ess: 0.7692, niv: "Elevado" },
+    { pos: 120, mun: "Estrela do Norte", idx: 0.9029, ess: 0.8846, niv: "Elevado" },
+    { pos: 121, mun: "Hidrolina", idx: 0.9026, ess: 0.9615, niv: "Elevado" },
+    { pos: 122, mun: "Santa Rita do Novo Destino", idx: 0.902, ess: 0.9231, niv: "Elevado" },
+    { pos: 123, mun: "Orizona", idx: 0.9012, ess: 0.9615, niv: "Elevado" },
+    { pos: 124, mun: "Turvelândia", idx: 0.9008, ess: 1, niv: "Ouro" },
+    { pos: 125, mun: "Teresina de Goiás", idx: 0.9002, ess: 0.9615, niv: "Elevado" },
+    { pos: 126, mun: "Aporé", idx: 0.8987, ess: 1, niv: "Ouro" },
+    { pos: 127, mun: "Montes Claros de Goiás", idx: 0.8983, ess: 0.8462, niv: "Elevado" },
+    { pos: 128, mun: "Água Limpa", idx: 0.8982, ess: 0.9615, niv: "Elevado" },
+    { pos: 129, mun: "Panamá", idx: 0.8979, ess: 0.9231, niv: "Elevado" },
+    { pos: 130, mun: "Barro Alto", idx: 0.897, ess: 0.8077, niv: "Elevado" },
+    { pos: 131, mun: "Porangatu", idx: 0.8961, ess: 0.9231, niv: "Elevado" },
+    { pos: 132, mun: "Goiandira", idx: 0.8937, ess: 0.9615, niv: "Elevado" },
+    { pos: 133, mun: "Doverlândia", idx: 0.8935, ess: 1, niv: "Ouro" },
+    { pos: 134, mun: "Caçu", idx: 0.8934, ess: 0.8077, niv: "Elevado" },
+    { pos: 135, mun: "Buriti Alegre", idx: 0.8902, ess: 1, niv: "Ouro" },
+    { pos: 136, mun: "Minaçu", idx: 0.8902, ess: 0.8077, niv: "Elevado" },
+    { pos: 137, mun: "Cromínia", idx: 0.8882, ess: 0.8462, niv: "Elevado" },
+    { pos: 138, mun: "Terezópolis de Goiás", idx: 0.8881, ess: 1, niv: "Ouro" },
+    { pos: 139, mun: "Davinópolis", idx: 0.8867, ess: 1, niv: "Ouro" },
+    { pos: 140, mun: "Corumbaíba", idx: 0.8863, ess: 0.8846, niv: "Elevado" },
+    { pos: 141, mun: "Nova Glória", idx: 0.8846, ess: 0.9615, niv: "Elevado" },
+    { pos: 142, mun: "Alto Horizonte", idx: 0.8842, ess: 1, niv: "Ouro" },
+    { pos: 143, mun: "Carmo do Rio Verde", idx: 0.8842, ess: 0.8462, niv: "Elevado" },
+    { pos: 144, mun: "Santa Rosa de Goiás", idx: 0.8834, ess: 0.7308, niv: "Elevado" },
+    { pos: 145, mun: "Morrinhos", idx: 0.8828, ess: 1, niv: "Ouro" },
+    { pos: 146, mun: "Luziânia", idx: 0.8819, ess: 0.9231, niv: "Elevado" },
+    { pos: 147, mun: "Iaciara", idx: 0.8818, ess: 1, niv: "Ouro" },
+    { pos: 148, mun: "Sanclerlândia", idx: 0.8803, ess: 0.8462, niv: "Elevado" },
+    { pos: 149, mun: "Santa Tereza de Goiás", idx: 0.88, ess: 0.8077, niv: "Elevado" },
+    { pos: 150, mun: "Mossâmedes", idx: 0.8792, ess: 0.8462, niv: "Elevado" },
+    { pos: 151, mun: "São Simão", idx: 0.879, ess: 0.9231, niv: "Elevado" },
+    { pos: 152, mun: "Caiapônia", idx: 0.8787, ess: 0.8462, niv: "Elevado" },
+    { pos: 153, mun: "Faina", idx: 0.8787, ess: 0.8077, niv: "Elevado" },
+    { pos: 154, mun: "Heitoraí", idx: 0.8786, ess: 0.9615, niv: "Elevado" },
+    { pos: 155, mun: "Posse", idx: 0.8785, ess: 1, niv: "Ouro" },
+    { pos: 156, mun: "Campos Belos", idx: 0.8777, ess: 1, niv: "Ouro" },
+    { pos: 157, mun: "Bom Jesus de Goiás", idx: 0.8771, ess: 0.9231, niv: "Elevado" },
+    { pos: 158, mun: "Joviânia", idx: 0.8764, ess: 1, niv: "Ouro" },
+    { pos: 159, mun: "Caturaí", idx: 0.8761, ess: 0.8077, niv: "Elevado" },
+    { pos: 160, mun: "Planaltina", idx: 0.8751, ess: 1, niv: "Ouro" },
+    { pos: 161, mun: "Cumari", idx: 0.874, ess: 0.8077, niv: "Elevado" },
+    { pos: 162, mun: "Mineiros", idx: 0.8728, ess: 1, niv: "Ouro" },
+    { pos: 163, mun: "Santa Terezinha de Goiás", idx: 0.8708, ess: 1, niv: "Ouro" },
+    { pos: 164, mun: "Mundo Novo", idx: 0.8707, ess: 1, niv: "Ouro" },
+    { pos: 165, mun: "Itapuranga", idx: 0.867, ess: 0.9615, niv: "Elevado" },
+    { pos: 166, mun: "Vianópolis", idx: 0.866, ess: 0.8462, niv: "Elevado" },
+    { pos: 167, mun: "Baliza", idx: 0.8643, ess: 0.9615, niv: "Elevado" },
+    { pos: 168, mun: "Nova Veneza", idx: 0.8622, ess: 1, niv: "Ouro" },
+    { pos: 169, mun: "Santa Isabel", idx: 0.8621, ess: 0.9615, niv: "Elevado" },
+    { pos: 170, mun: "Buritinópolis", idx: 0.8618, ess: 0.8846, niv: "Elevado" },
+    { pos: 171, mun: "Itapirapuã", idx: 0.8591, ess: 0.9615, niv: "Elevado" },
+    { pos: 172, mun: "Goiás", idx: 0.8589, ess: 0.8846, niv: "Elevado" },
+    { pos: 173, mun: "Jaraguá", idx: 0.8587, ess: 0.9231, niv: "Elevado" },
+    { pos: 174, mun: "Mara Rosa", idx: 0.8556, ess: 1, niv: "Ouro" },
+    { pos: 175, mun: "Senador Canedo", idx: 0.8549, ess: 0.8462, niv: "Elevado" },
+    { pos: 176, mun: "Cabeceiras", idx: 0.8516, ess: 0.8077, niv: "Elevado" },
+    { pos: 177, mun: "Nazário", idx: 0.844, ess: 0.8846, niv: "Elevado" },
+    { pos: 178, mun: "Taquaral de Goiás", idx: 0.8431, ess: 0.8462, niv: "Elevado" },
+    { pos: 179, mun: "São Miguel do Passa Quatro", idx: 0.8411, ess: 1, niv: "Prata" },
+    { pos: 180, mun: "Três Ranchos", idx: 0.8409, ess: 0.8462, niv: "Elevado" },
+    { pos: 181, mun: "Vila Propício", idx: 0.8389, ess: 0.8462, niv: "Elevado" },
+    { pos: 182, mun: "Novo Brasil", idx: 0.8377, ess: 0.7692, niv: "Elevado" },
+    { pos: 183, mun: "Fazenda Nova", idx: 0.8353, ess: 0.9615, niv: "Elevado" },
+    { pos: 184, mun: "Lagoa Santa", idx: 0.8326, ess: 1, niv: "Prata" },
+    { pos: 185, mun: "Montividiu", idx: 0.8295, ess: 1, niv: "Prata" },
+    { pos: 186, mun: "Palminópolis", idx: 0.8269, ess: 0.9615, niv: "Elevado" },
+    { pos: 187, mun: "Montividiu do Norte", idx: 0.8235, ess: 0.8462, niv: "Elevado" },
+    { pos: 188, mun: "Morro Agudo de Goiás", idx: 0.8234, ess: 0.9231, niv: "Elevado" },
+    { pos: 189, mun: "Itumbiara", idx: 0.8217, ess: 0.9615, niv: "Elevado" },
+    { pos: 190, mun: "Mambaí", idx: 0.8214, ess: 0.9615, niv: "Elevado" },
+    { pos: 191, mun: "Santa Fé de Goiás", idx: 0.8205, ess: 0.8077, niv: "Elevado" },
+    { pos: 192, mun: "Formoso", idx: 0.8204, ess: 1, niv: "Prata" },
+    { pos: 193, mun: "Uirapuru", idx: 0.8188, ess: 1, niv: "Prata" },
+    { pos: 194, mun: "Itauçu", idx: 0.8162, ess: 0.8462, niv: "Elevado" },
+    { pos: 195, mun: "Palmeiras de Goiás", idx: 0.8137, ess: 0.8462, niv: "Elevado" },
+    { pos: 196, mun: "São João d'Aliança", idx: 0.8123, ess: 0.8846, niv: "Elevado" },
+    { pos: 197, mun: "Campestre de Goiás", idx: 0.8103, ess: 0.8462, niv: "Elevado" },
+    { pos: 198, mun: "Valparaíso de Goiás", idx: 0.809, ess: 0.7692, niv: "Elevado" },
+    { pos: 199, mun: "Itaguari", idx: 0.8066, ess: 0.9231, niv: "Elevado" },
+    { pos: 200, mun: "Santa Cruz de Goiás", idx: 0.8035, ess: 0.6154, niv: "Elevado" },
+    { pos: 201, mun: "Trombas", idx: 0.8034, ess: 0.8462, niv: "Elevado" },
+    { pos: 202, mun: "Rialma", idx: 0.8033, ess: 0.9615, niv: "Elevado" },
+    { pos: 203, mun: "Vila Boa", idx: 0.7984, ess: 0.5769, niv: "Elevado" },
+    { pos: 204, mun: "Goiatuba", idx: 0.7972, ess: 1, niv: "Prata" },
+    { pos: 205, mun: "Crixás", idx: 0.7963, ess: 0.8077, niv: "Elevado" },
+    { pos: 206, mun: "Goianápolis", idx: 0.7958, ess: 0.8846, niv: "Elevado" },
+    { pos: 207, mun: "Nova Iguaçu de Goiás", idx: 0.7928, ess: 0.9231, niv: "Elevado" },
+    { pos: 208, mun: "Cocalzinho de Goiás", idx: 0.7913, ess: 1, niv: "Prata" },
+    { pos: 209, mun: "Buriti de Goiás", idx: 0.7847, ess: 0.8462, niv: "Elevado" },
+    { pos: 210, mun: "Rio Quente", idx: 0.7838, ess: 0.6923, niv: "Elevado" },
+    { pos: 211, mun: "Uruana", idx: 0.7828, ess: 0.8462, niv: "Elevado" },
+    { pos: 212, mun: "Campinorte", idx: 0.7694, ess: 1, niv: "Prata" },
+    { pos: 213, mun: "Sítio d'Abadia", idx: 0.7661, ess: 0.8462, niv: "Elevado" },
+    { pos: 214, mun: "Bonópolis", idx: 0.7646, ess: 1, niv: "Prata" },
+    { pos: 215, mun: "Brazabrantes", idx: 0.7546, ess: 1, niv: "Prata" },
+    { pos: 216, mun: "Formosa", idx: 0.7528, ess: 0.8077, niv: "Elevado" },
+    { pos: 217, mun: "Santa Bárbara de Goiás", idx: 0.7506, ess: 0.8077, niv: "Elevado" },
+    { pos: 218, mun: "Monte Alegre de Goiás", idx: 0.7356, ess: 0.6154, niv: "Intermediário" },
+    { pos: 219, mun: "Goianésia", idx: 0.7355, ess: 0.6923, niv: "Intermediário" },
+    { pos: 220, mun: "Simolândia", idx: 0.7295, ess: 1, niv: "Intermediário" },
+    { pos: 221, mun: "Ipameri", idx: 0.7281, ess: 0.5, niv: "Intermediário" },
+    { pos: 222, mun: "Serranópolis", idx: 0.7228, ess: 0.6923, niv: "Intermediário" },
+    { pos: 223, mun: "Vicentinópolis", idx: 0.7214, ess: 0.5769, niv: "Intermediário" },
+    { pos: 224, mun: "Nerópolis", idx: 0.721, ess: 0.8077, niv: "Intermediário" },
+    { pos: 225, mun: "Edéia", idx: 0.7185, ess: 0.3846, niv: "Intermediário" },
+    { pos: 226, mun: "Americano do Brasil", idx: 0.7106, ess: 0.9231, niv: "Intermediário" },
+    { pos: 227, mun: "Amaralina", idx: 0.7088, ess: 1, niv: "Intermediário" },
+    { pos: 228, mun: "Guarani de Goiás", idx: 0.7057, ess: 0.8462, niv: "Intermediário" },
+    { pos: 229, mun: "São João da Paraúna", idx: 0.6586, ess: 1, niv: "Intermediário" },
+    { pos: 230, mun: "Abadia de Goiás", idx: 0.6406, ess: 1, niv: "Intermediário" },
+    { pos: 231, mun: "Nova Aurora", idx: 0.5317, ess: 0.7692, niv: "Intermediário" },
+    { pos: 232, mun: "Águas Lindas de Goiás", idx: 0.5308, ess: 0.6923, niv: "Intermediário" },
+    { pos: 233, mun: "São Domingos", idx: 0.5, ess: 0.5769, niv: "Intermediário" },
+    { pos: 234, mun: "Moiporá", idx: 0.4982, ess: 0.8077, niv: "Básico" },
+    { pos: 235, mun: "Cachoeira de Goiás", idx: 0.4848, ess: 0.7308, niv: "Básico" },
+    { pos: 236, mun: "Damianópolis", idx: 0.4737, ess: 0.8077, niv: "Básico" },
+    { pos: 237, mun: "Adelândia", idx: 0.4639, ess: 0.9231, niv: "Básico" },
+    { pos: 238, mun: "Mimoso de Goiás", idx: 0.4078, ess: 0.6538, niv: "Básico" },
+    { pos: 239, mun: "Santo Antônio de Goiás", idx: 0.4028, ess: 0.6923, niv: "Básico" },
+    { pos: 240, mun: "Ivolândia", idx: 0.3743, ess: 0.2308, niv: "Básico" },
+    { pos: 241, mun: "Cachoeira Dourada", idx: 0.3614, ess: 0.7692, niv: "Básico" },
+    { pos: 242, mun: "Castelândia", idx: 0.3585, ess: 0.2692, niv: "Básico" },
+    { pos: 243, mun: "Anhanguera", idx: 0.3306, ess: 0.2308, niv: "Básico" },
+    { pos: 244, mun: "Damolândia", idx: 0.2565, ess: 0.4231, niv: "Inicial" },
+    { pos: 245, mun: "Aurilândia", idx: 0.243, ess: 0.0769, niv: "Inicial" },
+    { pos: 246, mun: "Matrinchã", idx: 0.1651, ess: 0.0769, niv: "Inicial" },
+  ],
+  fonte: {
+    nome: "Ranking da Transparência 2026, TCM-GO (Programa Nacional de Transparência Pública, ATRICON)",
+    url: "https://www.tcmgo.tc.br/site/2026/11/tcmgo-divulga-ranking-da-transparencia-2026-das-camaras-municipais-e-prefeituras-de-goias/",
+    rankingExecutivo: "https://www.tcmgo.tc.br/site/wp-content/uploads/2026/11/Ranking_Final_Executivo_2026_.pdf",
+    rankingLegislativo: "https://www.tcmgo.tc.br/site/wp-content/uploads/2026/11/Ranking_Final_Legislativo_2026_.pdf",
+    radar: "https://radardatransparencia.atricon.org.br/",
+  },
+};
