@@ -4,11 +4,19 @@ import type { Empresa } from "@/data/empresas";
 
 export const SITE_URL = "https://piracanjuba.ai";
 
-/** Primeira imagem real da empresa: mídia do topo, foto antiga ou imagem de compartilhamento. */
-function imagemPrincipal(empresa: Empresa): string {
+/**
+ * Imagem da empresa nos dados estruturados: a primeira foto real da vitrine, a
+ * foto do topo ou, sem foto, a imagem de compartilhamento (1200x630). Nunca um
+ * recorte de produto: é estreito e tem fundo transparente, que some ou vira
+ * mancha nos painéis e nas respostas que reaproveitam a imagem.
+ */
+export function imagemPrincipal(empresa: Empresa): string {
+  const fotoVitrine = empresa.galeria?.itens.find((item) => item.tipo === "foto");
+  if (fotoVitrine) return fotoVitrine.src;
   const midia = empresa.midiaTopo;
-  if (midia && midia.tipo !== "ilustracao") return midia.imagem.src;
-  return empresa.foto?.src ?? empresa.seo.imagem;
+  if (midia?.tipo === "foto") return midia.imagem.src;
+  if (!midia && empresa.foto) return empresa.foto.src;
+  return empresa.seo.imagem.src;
 }
 
 export function schemaEmpresa(empresa: Empresa) {
@@ -44,6 +52,10 @@ export function schemaEmpresa(empresa: Empresa) {
           ],
         }),
     ...(sameAs.length ? { sameAs } : {}),
+    // Vínculo declarado no texto da página também nos dados (só com os dois campos).
+    ...(empresa.vinculo && empresa.vinculoOrganizacao
+      ? { parentOrganization: { "@id": empresa.vinculoOrganizacao } }
+      : {}),
   };
 }
 

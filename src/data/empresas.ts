@@ -196,12 +196,20 @@ export type Empresa = {
    * operador decide publicá-la (decisão por empresa, registrada no vault).
    */
   vinculo?: string;
+  /**
+   * @id da organização mãe nos dados estruturados (parentOrganization). Só vale
+   * junto com "vinculo", que declara o mesmo vínculo no texto da página.
+   */
+  vinculoOrganizacao?: string;
   chamadaFinal: { titulo: string; texto: string };
   seo: {
     titulo: string;
     descricao: string;
-    /** Imagem de compartilhamento, 1200x630. */
-    imagem: string;
+    /**
+     * Imagem de compartilhamento, 1200x630, com procedência registrada. Também é
+     * a imagem dos dados estruturados quando a vitrine não tem foto.
+     */
+    imagem: ImagemEmpresa;
     /** Logo para os dados estruturados (o Google pede ao menos 112x112), se diferente do logo da página. */
     logoSchema?: string;
     /**
@@ -227,7 +235,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     titulo: "Decants de perfume em Piracanjuba",
     tituloDestaque: "em Piracanjuba",
     chamada:
-      "Decants de perfumes árabes, de grife e de nicho em 5 ml e 10 ml, preparados a partir de frascos originais. Conheça a fragrância com calma, na sua pele, antes de decidir pelo frasco inteiro.",
+      "Decants de perfumes importados em 5 ml e 10 ml: árabes, de grife e de nicho, preparados a partir de frascos originais. Conheça a fragrância com calma, na sua pele, antes de decidir pelo frasco inteiro.",
     rotuloWhatsapp: "Falar com a Isabella",
     logo: {
       src: "/empresas/vitorinoperfumes/logo.png",
@@ -263,22 +271,12 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     galeria: {
       rotulo: "Fotos reais",
       titulo: "O decant da Vitorino",
+      // As fotos dos dois frascos não estão em escala entre si (a altura relativa
+      // não foi medida), e o texto avisa. A foto da mão saiu em 2026-11-17: o
+      // frasco aparecia vazio e a autoria do arquivo não estava confirmada.
       texto:
-        "Frascos de vidro com borrifador, tampa dourada e a etiqueta da loja, prontos para a bolsa, a nécessaire e a mala de viagem.",
+        "Frascos de vidro com borrifador, tampa dourada e a etiqueta da loja, prontos para a bolsa, a nécessaire e a mala de viagem. As fotos estão fora de escala.",
       itens: [
-        {
-          src: "/empresas/vitorinoperfumes/decant-na-mao.webp",
-          largura: 1080,
-          altura: 1350,
-          alt: "Mão segurando um decant da Vitorino Perfumes, frasco de vidro com tampa dourada, borrifador e etiqueta da loja, diante de uma parede cinza",
-          legenda: "Cabe na palma da mão",
-          texto: "Leve para o trabalho, para a viagem ou para o retoque do fim do dia.",
-          tipo: "foto",
-          pessoaIdentificavel: false,
-          origem:
-            "Foto da pasta da loja (Desktop/Vitorino Perfumes/decant vitorino perfumes.webp), só a mão, sem rosto; recorte 4:5 de 2026-11-17.",
-          geradaPorIA: false,
-        },
         {
           src: "/empresas/vitorinoperfumes/decant-5ml.webp",
           largura: 134,
@@ -330,7 +328,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       {
         titulo: "Perfumes de grife",
         texto:
-          "Clássicos e lançamentos de Chanel, Dior, Yves Saint Laurent, Giorgio Armani, Carolina Herrera e Lancôme.",
+          "Fragrâncias de casas como Chanel, Dior, Yves Saint Laurent, Giorgio Armani, Carolina Herrera e Lancôme.",
       },
       {
         titulo: "Perfumes de nicho",
@@ -344,7 +342,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     ],
     // Qualitativo de propósito: o rendimento do borrifador da loja não foi medido.
     guiaEscolha: {
-      titulo: "5 ml ou 10 ml: qual escolher",
+      titulo: "Decant de 5 ml ou de 10 ml: qual escolher",
       texto: "Os dois tamanhos levam o mesmo perfume do frasco original. Muda a quantidade e o jeito de usar.",
       itens: [
         {
@@ -452,8 +450,16 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     seo: {
       titulo: "Decants de perfume em Piracanjuba: Vitorino Perfumes",
       descricao:
-        "Decants de perfumes árabes, de grife e de nicho em 5 ml e 10 ml. Hora marcada em Piracanjuba (GO), retirada na cidade e envio para todo o Brasil.",
-      imagem: "/empresas/vitorinoperfumes/og.jpg",
+        "Decants de perfumes importados em 5 ml e 10 ml: árabes, de grife e de nicho. Hora marcada e retirada em Piracanjuba (GO) e envio para todo o Brasil.",
+      imagem: {
+        src: "/empresas/vitorinoperfumes/og.jpg",
+        largura: 1200,
+        altura: 630,
+        alt: "Logotipo da Vitorino Perfumes, a frase Decants de perfume em Piracanjuba e um decant de 10 ml da loja num arco de luz marfim",
+        origem:
+          "Composição em Pillow de 2026-11-17, só com material real: logotipo raster original (vitorino-carrosseis/assets/logo-completo-original.png, recortado no desenho nativo de 328x113, sem ampliar), o recorte do decant de 10 ml (foto IMG_0539 da loja, recebida em 2026-08-26) e a frase em Cormorant Garamond (Google Fonts). Substitui o pôster gerado por IA usado até então.",
+        geradaPorIA: false,
+      },
       tipoSchema: "Store",
     },
     // Paleta do site da loja e do guia da marca: marfim, bronze e Noir; âmbar
@@ -499,7 +505,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     titulo: "Criação de sites e presença no Google em Piracanjuba",
     tituloDestaque: "presença no Google",
     chamada:
-      "Site profissional, landing page e Perfil da Empresa no Google para negócios e profissionais de Piracanjuba, da região e de todo o Brasil, com atendimento humano pelo WhatsApp.",
+      "Site profissional, landing page e Perfil da Empresa no Google para negócios e profissionais da cidade de Piracanjuba (GO), da região e de todo o Brasil, com atendimento humano pelo WhatsApp.",
     rotuloWhatsapp: "Pedir diagnóstico gratuito",
     logo: {
       src: "/empresas/apareca/icone.svg",
@@ -519,7 +525,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     sobreDestaque: "Atendimento humano, do diagnóstico à publicação.",
     sobre: [
       "A Apareça Ai cria sites profissionais e organiza a presença de pequenos negócios e profissionais liberais no Google e em assistentes de inteligência artificial, como ChatGPT e Gemini. É uma parceria entre a Ferro Labs Tecnologia, que cuida do desenvolvimento, do SEO e da estrutura técnica, e o Grupo V3, que cuida da estratégia de comunicação, do marketing e da produção.",
-      "O atendimento é online e humano, pelo WhatsApp, para Piracanjuba, a região e qualquer cidade do Brasil. Você conta o que faz e onde atende, recebe uma proposta com escopo e prazo e aprova tudo antes de o site entrar no ar.",
+      "O atendimento é online e humano, pelo WhatsApp, para a cidade de Piracanjuba, em Goiás, a região e qualquer cidade do Brasil. Você conta o que faz e onde atende, recebe uma proposta com escopo e prazo e aprova tudo antes de o site entrar no ar.",
       "Ninguém controla a posição no Google nem a resposta de uma inteligência artificial, e a Apareça Ai não promete isso. O trabalho é deixar o seu negócio fácil de encontrar, de entender e de contatar.",
     ],
     tituloOferta: "Serviços",
@@ -536,7 +542,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
           "Uma página só, direta, para apresentar o negócio e levar o cliente ao WhatsApp. Serve para uma necessidade mais simples, sem blog nem trabalho contínuo de SEO. Você fornece o texto, e a proposta define organização e revisão.",
       },
       {
-        titulo: "Perfil da Empresa no Google",
+        titulo: "Perfil da Empresa no Google e SEO local",
         texto:
           "O antigo Google Meu Negócio, com categoria, serviços, área atendida, horários e fotos verdadeiros e coerentes com o site. Sem endereço inventado e sem avaliação comprada.",
       },
@@ -619,7 +625,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       {
         pergunta: "Como colocar minha empresa no Google?",
         resposta:
-          "O primeiro passo é criar e verificar o Perfil da Empresa no Google, o antigo Google Meu Negócio, que não tem custo. Depois vêm categoria certa, serviços, área atendida, horários, fotos reais e avaliações de clientes de verdade. A Apareça Ai organiza esse perfil e deixa as informações iguais às do site.",
+          "O primeiro passo é cadastrar e verificar o Perfil da Empresa no Google, o antigo Google Meu Negócio, que não tem custo. Depois vêm categoria certa, serviços, área atendida, horários, fotos reais e avaliações de clientes de verdade. A Apareça Ai organiza esse perfil e deixa as informações iguais às do site.",
       },
       {
         pergunta: "Por que meu negócio não aparece no Google?",
@@ -637,9 +643,9 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
           "Depende do escopo. Na landing page, você fornece o texto. Organização, revisão e eventual redação ficam definidas na proposta.",
       },
       {
-        pergunta: "A Apareça Ai atende fora de Piracanjuba?",
+        pergunta: "A Apareça Ai atende fora de Piracanjuba (GO)?",
         resposta:
-          "Sim. O atendimento é online, pelo WhatsApp, para Piracanjuba, a região e qualquer cidade do Brasil.",
+          "Sim. O atendimento é online, pelo WhatsApp, para a cidade de Piracanjuba, em Goiás, a região e qualquer cidade do Brasil.",
       },
     ],
     contato: {
@@ -658,16 +664,26 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     },
     vinculo:
       "A Apareça Ai é uma marca da Ferro Labs Tecnologia em parceria com o Grupo V3. A Ferro Labs desenvolve e mantém o Piracanjuba.ai.",
+    // Ferro Labs Tecnologia, a entidade #publisher do grafo do layout (src/lib/seo.ts).
+    vinculoOrganizacao: "https://piracanjuba.ai/#publisher",
     chamadaFinal: {
       titulo: "Seu negócio aparece quando procuram por ele?",
       texto:
-        "Peça um diagnóstico gratuito pelo WhatsApp e veja o que dá para melhorar no site, no Google e nas respostas de inteligência artificial.",
+        "Peça um diagnóstico gratuito pelo WhatsApp e veja o que dá para melhorar no site, no Perfil da Empresa no Google e nas informações que as ferramentas de inteligência artificial usam para entender o seu negócio.",
     },
     seo: {
       titulo: "Criação de sites em Piracanjuba e região: Apareça Ai",
       descricao:
         "Criação de sites, landing page e Perfil da Empresa no Google para negócios de Piracanjuba (GO) e de todo o Brasil. Diagnóstico grátis pelo WhatsApp.",
-      imagem: "/empresas/apareca/og.png",
+      imagem: {
+        src: "/empresas/apareca/og.png",
+        largura: 1200,
+        altura: 630,
+        alt: "Imagem de compartilhamento da Apareça Ai, com o ícone da marca em laranja sobre fundo claro",
+        origem:
+          "Cópia da imagem de compartilhamento publicada pela marca (apareca.ai/assets/og-image.png), idêntica pixel a pixel na conferência de 2026-11-17; arte tipográfica da marca, mantida por decisão do operador.",
+        geradaPorIA: false,
+      },
       logoSchema: "/empresas/apareca/logo.png",
       tipoSchema: "Organization",
     },

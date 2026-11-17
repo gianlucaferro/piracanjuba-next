@@ -4,7 +4,9 @@ import { Lock, MapPin, Search } from "lucide-react";
 // HTML e CSS: um site de negócio genérico, um cartão de resultado de busca e
 // o pino da marca. Sem imagem gerada, sem captura de cliente e sem logotipo
 // de terceiros. As medidas internas usam cqw (largura do contêiner), para a
-// peça escalar igual no celular e no computador.
+// peça escalar igual no celular e no computador. Sem texto de verdade: nome e
+// cidade são barras, porque aria-hidden tira o texto do leitor de tela, mas não
+// do HTML que buscadores e assistentes de IA leem.
 
 const LINHA = "block rounded-full bg-[var(--marca-borda)]";
 
@@ -55,12 +57,11 @@ export default function IlustracaoPresenca() {
                 <span className={`${LINHA} ml-auto h-[1.6cqw] w-[12%]`} />
                 <span className={`${LINHA} h-[1.6cqw] w-[12%]`} />
               </div>
-              <p
-                className="pt-[1.5cqw] text-[6.4cqw] leading-[1.05] font-bold tracking-[-0.03em] text-[var(--marca-texto)]"
-                style={{ fontFamily: "var(--fonte-marca-titulo), system-ui, sans-serif" }}
-              >
-                Seu negócio
-              </p>
+              {/* Título do site: uma barra grossa no lugar do texto, na mesma
+                  altura da linha de título que havia aqui. */}
+              <div className="pt-[2.25cqw] pb-[0.75cqw]">
+                <span className="block h-[5.2cqw] w-[64%] rounded-[1.2cqw] bg-[var(--marca-texto)]" />
+              </div>
               <div className="space-y-[1.6cqw]">
                 <span className={`${LINHA} h-[1.6cqw] w-[78%]`} />
                 <span className={`${LINHA} h-[1.6cqw] w-[56%]`} />
@@ -88,13 +89,11 @@ export default function IlustracaoPresenca() {
                 <span className="size-[2.4cqw] rounded-[0.6cqw] bg-[var(--marca-texto)]" />
               </span>
               <div className="min-w-0 flex-1 space-y-[1.4cqw]">
-                <p className="text-[3.6cqw] leading-tight font-semibold text-[var(--marca-texto)]">
-                  Seu negócio
-                </p>
-                <p className="flex items-center gap-[1cqw] text-[2.8cqw] leading-tight text-[var(--marca-texto-suave)]">
+                <span className="block h-[2.8cqw] w-[58%] rounded-full bg-[var(--marca-texto)]" />
+                <span className="flex items-center gap-[1cqw] text-[var(--marca-texto-suave)]">
                   <MapPin className="size-[2.8cqw] shrink-0" strokeWidth={2.25} />
-                  Piracanjuba, GO
-                </p>
+                  <span className="block h-[1.6cqw] w-[40%] rounded-full bg-[var(--marca-texto-suave)] opacity-60" />
+                </span>
                 <span className={`${LINHA} h-[1.3cqw] w-[92%]`} />
                 <span className={`${LINHA} h-[1.3cqw] w-[70%]`} />
               </div>

@@ -21,9 +21,17 @@ import {
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import type { Empresa, IconeDestaque, ItemGaleria, MidiaTopo as DadosMidiaTopo } from "@/data/empresas";
+import {
+  colunasDestaques,
+  colunasGaleria,
+  colunasPassos,
+  papelItemGaleria,
+  type PapelItemGaleria,
+} from "@/lib/empresas-layout";
 import { formatarTelefoneBr, linkWhatsapp } from "@/lib/whatsapp";
 import BarraWhatsappEmpresa from "./BarraWhatsappEmpresa";
 import IlustracaoPresenca from "./IlustracaoPresenca";
+import VitrineRolavel from "./VitrineRolavel";
 import { CLASSES_FONTES } from "./fontes";
 import s from "./EmpresaLanding.module.css";
 
@@ -281,44 +289,58 @@ function MidiaTopo({ empresa }: { empresa: Empresa }) {
   );
 }
 
-function ImagemGaleria({ item, destaque }: { item: ItemGaleria; destaque: boolean }) {
+// Caixa da imagem conforme o papel do item. No celular, todo item é um cartão
+// 4:5 da rolagem. No computador: o destaque ocupa o cartão inteiro (legenda por
+// cima, sobre o degradê); a lateral fica com 42% da largura, à esquerda da
+// legenda; a grade usa 4:3, com a legenda embaixo. A imagem é sempre absoluta
+// dentro da caixa, para nenhuma foto empurrar a legenda para fora do cartão.
+const CAIXA_IMAGEM: Record<PapelItemGaleria, string> = {
+  destaque: "relative aspect-[4/5] w-full md:absolute md:inset-0 md:aspect-auto",
+  lateral: "relative aspect-[4/5] w-full md:aspect-auto md:w-[42%] md:shrink-0 md:self-stretch",
+  grade: "relative aspect-[4/5] w-full md:aspect-[4/3]",
+};
+
+const SIZES_FOTO: Record<PapelItemGaleria, string> = {
+  destaque: "(min-width: 768px) 640px, 82vw",
+  lateral: "(min-width: 768px) 200px, 82vw",
+  grade: "(min-width: 768px) 540px, 82vw",
+};
+
+function ImagemGaleria({ item, papel }: { item: ItemGaleria; papel: PapelItemGaleria }) {
+  const caixa = `${CAIXA_IMAGEM[papel]} overflow-hidden`;
   if (item.tipo === "recorte") {
     return (
-      <div
-        className={`${s.palcoRecorte} relative aspect-[4/5] overflow-hidden md:aspect-auto md:h-full ${
-          destaque ? "" : "md:w-[42%] md:shrink-0"
-        }`}
-      >
+      <div className={`${s.palcoRecorte} ${caixa}`}>
         <span className={s.sombraContato} style={{ bottom: "7%", width: "50%" }} aria-hidden="true" />
         <Image
           src={item.src}
           alt={item.alt}
           width={item.largura}
           height={item.altura}
-          sizes="90px"
+          sizes="120px"
           className="absolute bottom-[9%] left-1/2 h-[80%] w-auto -translate-x-1/2"
         />
       </div>
     );
   }
   return (
-    <Image
-      src={item.src}
-      alt={item.alt}
-      width={item.largura}
-      height={item.altura}
-      sizes={destaque ? "(min-width: 768px) 640px, 82vw" : "(min-width: 768px) 300px, 82vw"}
-      className="aspect-[4/5] w-full object-cover md:aspect-auto md:h-full md:min-h-0"
-    />
+    <div className={caixa}>
+      <Image
+        src={item.src}
+        alt={item.alt}
+        width={item.largura}
+        height={item.altura}
+        sizes={SIZES_FOTO[papel]}
+        className="absolute inset-0 size-full object-cover"
+      />
+    </div>
   );
 }
 
 function Galeria({ empresa }: { empresa: Empresa }) {
   const galeria = empresa.galeria;
   if (!galeria?.itens.length) return null;
-  // Com três itens: um grande à esquerda e dois empilhados à direita. Os outros
-  // tamanhos de vitrine viram uma grade simples.
-  const composta = galeria.itens.length === 3;
+  const total = galeria.itens.length;
   return (
     <section aria-labelledby="empresa-galeria" className={SECAO}>
       <div className={CONTAINER}>
@@ -333,57 +355,59 @@ function Galeria({ empresa }: { empresa: Empresa }) {
             <p className={`${CORPO} text-[var(--marca-texto-suave)] md:col-span-5`}>{galeria.texto}</p>
           )}
         </div>
-        <ul
-          className={`${s.vitrine} mt-10 md:mt-14 md:grid md:gap-6 ${
-            composta ? "md:grid-cols-12 md:grid-rows-2" : "md:grid-cols-2 lg:grid-cols-3"
-          }`}
-        >
-          {galeria.itens.map((item, indice) => {
-            const destaque = composta && indice === 0;
-            const lateral = composta && indice > 0;
-            const conteudo = (
-              <>
-                <ImagemGaleria item={item} destaque={destaque} />
-                <div
-                  className={`space-y-1 p-5 md:p-6 ${
-                    destaque
-                      ? "md:absolute md:inset-x-0 md:bottom-0 md:bg-[linear-gradient(to_top,rgb(11_11_12/0.72),rgb(11_11_12/0))] md:pt-16 md:text-white"
-                      : lateral
-                        ? "md:flex md:flex-1 md:flex-col md:justify-center"
-                        : ""
-                  }`}
+        <VitrineRolavel idTitulo="empresa-galeria" className={`${s.vitrineRolagem} mt-10 md:mt-14`}>
+          <ul className={`${s.vitrine} md:grid md:gap-6 ${colunasGaleria(total)}`}>
+            {galeria.itens.map((item, indice) => {
+              const papel = papelItemGaleria(indice, total);
+              const conteudo = (
+                <>
+                  <ImagemGaleria item={item} papel={papel} />
+                  <div
+                    className={`space-y-1 p-5 md:p-6 ${
+                      papel === "destaque"
+                        ? "md:absolute md:inset-x-0 md:bottom-0 md:bg-[linear-gradient(to_top,rgb(11_11_12/0.72),rgb(11_11_12/0))] md:pt-16 md:text-white"
+                        : papel === "lateral"
+                          ? "md:flex md:min-w-0 md:flex-1 md:flex-col md:justify-center"
+                          : ""
+                    }`}
+                  >
+                    <p className={`${s.titulo} text-2xl leading-tight`}>{item.legenda}</p>
+                    {item.texto && (
+                      <p
+                        className={`text-[0.9375rem] leading-relaxed ${
+                          papel === "destaque"
+                            ? "text-[var(--marca-texto-suave)] md:text-white/85"
+                            : "text-[var(--marca-texto-suave)]"
+                        }`}
+                      >
+                        {item.texto}
+                      </p>
+                    )}
+                  </div>
+                </>
+              );
+              return (
+                <li
+                  key={`${item.src}-${indice}`}
+                  className={`overflow-hidden rounded-[var(--marca-raio)] border border-[var(--marca-borda)] bg-[var(--marca-superficie)] ${
+                    papel === "destaque" ? "md:relative md:col-span-7 md:row-span-2 md:aspect-square" : ""
+                  } ${papel === "lateral" ? "md:col-span-5 md:flex md:items-stretch" : ""}`}
                 >
-                  <p className={`${s.titulo} text-2xl leading-tight`}>{item.legenda}</p>
-                  {item.texto && (
-                    <p
-                      className={`text-[0.9375rem] leading-relaxed ${
-                        destaque ? "text-[var(--marca-texto-suave)] md:text-white/85" : "text-[var(--marca-texto-suave)]"
-                      }`}
+                  {item.url ? (
+                    <LinkExterno
+                      href={item.url}
+                      className={`block h-full ${papel === "lateral" ? "md:flex md:w-full md:items-stretch" : ""}`}
                     >
-                      {item.texto}
-                    </p>
+                      {conteudo}
+                    </LinkExterno>
+                  ) : (
+                    conteudo
                   )}
-                </div>
-              </>
-            );
-            return (
-              <li
-                key={`${item.src}-${indice}`}
-                className={`overflow-hidden rounded-[var(--marca-raio)] border border-[var(--marca-borda)] bg-[var(--marca-superficie)] ${
-                  destaque ? "md:relative md:col-span-7 md:row-span-2 md:aspect-square" : ""
-                } ${lateral ? "md:col-span-5 md:flex md:items-stretch" : ""}`}
-              >
-                {item.url ? (
-                  <LinkExterno href={item.url} className="block h-full">
-                    {conteudo}
-                  </LinkExterno>
-                ) : (
-                  conteudo
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </VitrineRolavel>
       </div>
     </section>
   );
@@ -475,9 +499,8 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
   // A nota no Google aparece no topo só quando não está na faixa de destaques.
   const avaliacaoNoTopo =
     empresa.avaliacao && !destaques.some((item) => item.url === empresa.avaliacao?.url);
-  const colunasDestaques = destaques.length === 3 ? "md:grid-cols-3" : "md:grid-cols-4";
-  const colunasPassos =
-    empresa.passos.length === 4 ? "md:grid-cols-4" : empresa.passos.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3";
+  // A galeria some quando não tem itens; o Sobre então abre o bloco com o espaço de cima.
+  const temGaleria = Boolean(empresa.galeria?.itens.length);
   const colunasDiferenciais =
     empresa.diferenciais.length % 3 === 0 ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2";
 
@@ -559,7 +582,7 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
           {destaques.length > 0 && (
             <ul
               aria-label="Destaques"
-              className={`mt-12 grid grid-cols-2 border-y border-[var(--marca-borda)] md:mt-16 ${colunasDestaques}`}
+              className={`mt-12 grid grid-cols-2 border-y border-[var(--marca-borda)] md:mt-16 ${colunasDestaques(destaques.length)}`}
             >
               {destaques.map((item) => {
                 const Icone = item.icone ? ICONES_DESTAQUE[item.icone] : null;
@@ -607,7 +630,7 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
       <Galeria empresa={empresa} />
 
       {/* Sobre */}
-      <section aria-labelledby="empresa-sobre" className={empresa.galeria ? SECAO_BASE : SECAO}>
+      <section aria-labelledby="empresa-sobre" className={temGaleria ? SECAO_BASE : SECAO}>
         <div className={`${CONTAINER} grid gap-8 md:grid-cols-12 md:gap-12`}>
           <div className="space-y-6 md:col-span-5">
             <CabecalhoSecao
@@ -741,7 +764,7 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
       <section aria-labelledby="empresa-passos" className={SECAO}>
         <div className={CONTAINER}>
           <CabecalhoSecao id="empresa-passos" rotulo="Passo a passo" titulo="Como funciona" />
-          <ol className={`mt-10 grid gap-y-2 md:mt-14 md:gap-x-8 ${colunasPassos}`}>
+          <ol className={`mt-10 grid gap-y-2 md:mt-14 md:gap-x-8 ${colunasPassos(empresa.passos.length)}`}>
             {empresa.passos.map((passo, indice) => (
               <li key={passo.titulo} className={`${s.passo} grid grid-cols-[3rem_1fr] gap-x-5 pb-8 md:block md:pb-0`}>
                 <span
@@ -875,6 +898,11 @@ export default function EmpresaLanding({ empresa }: { empresa: Empresa }) {
       <BarraWhatsappEmpresa alvoId={ID_BOTAO_TOPO}>
         <BotaoWhatsapp empresa={empresa} rotulo={rotuloWhatsapp} className="w-full" />
       </BarraWhatsappEmpresa>
+      {/* A barra nasce escondida (sem piscar na carga) e quem está sem
+          JavaScript a recebe de volta por esta regra. */}
+      <noscript>
+        <style>{"[data-barra-empresa]{translate:none;transform:none}"}</style>
+      </noscript>
     </div>
   );
 }

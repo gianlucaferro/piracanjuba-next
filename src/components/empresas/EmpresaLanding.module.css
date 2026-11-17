@@ -156,11 +156,11 @@
 }
 
 /* Vitrine: rolagem horizontal com encaixe no celular, mostrando parte do
-   próximo item. */
+   próximo item. O contêiner que rola (vitrineRolagem) é separado da lista,
+   para receber role="region" e o foco do teclado sem tirar a semântica de
+   lista do ul. */
 @media (width < 48rem) {
-  .vitrine {
-    display: flex;
-    gap: 1rem;
+  .vitrineRolagem {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 1.25rem;
@@ -170,14 +170,32 @@
     scrollbar-width: none;
   }
 
-  .vitrine::-webkit-scrollbar {
+  .vitrineRolagem::-webkit-scrollbar {
     display: none;
+  }
+
+  .vitrine {
+    display: flex;
+    gap: 1rem;
   }
 
   .vitrine > * {
     flex: 0 0 82%;
     scroll-snap-align: start;
   }
+
+  /* Folga no fim da rolagem, igual à margem lateral (1rem do gap + 0,25rem):
+     o padding do contêiner não conta depois de um item que transborda a lista. */
+  .vitrine::after {
+    content: "";
+    flex: 0 0 0.25rem;
+  }
+}
+
+/* O contêiner vai de borda a borda no celular: o contorno do foco fica para
+   dentro, para não ser cortado pela tela. */
+.raiz .vitrineRolagem:focus-visible {
+  outline-offset: -3px;
 }
 
 @media (prefers-reduced-motion: reduce) {

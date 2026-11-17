@@ -8,6 +8,8 @@ export function pageMetadata(opts: {
   description: string;
   path?: string;
   image?: string;
+  /** Texto alternativo da imagem de compartilhamento. Padrão: o título da página. */
+  imageAlt?: string;
   type?: "website" | "article";
   noIndex?: boolean;
 }): Metadata {
@@ -26,7 +28,7 @@ export function pageMetadata(opts: {
       siteName: "Piracanjuba.ai",
       title: opts.title,
       description: opts.description,
-      images: [{ url: image, alt: opts.title }],
+      images: [{ url: image, alt: opts.imageAlt ?? opts.title }],
     },
     twitter: {
       card: "summary_large_image",

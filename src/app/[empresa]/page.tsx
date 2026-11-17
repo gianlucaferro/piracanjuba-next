@@ -26,7 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: empresa.seo.titulo,
     description: empresa.seo.descricao,
     path: `/${slug}`,
-    image: empresa.seo.imagem,
+    image: empresa.seo.imagem.src,
+    imageAlt: empresa.seo.imagem.alt,
   });
 }
 
