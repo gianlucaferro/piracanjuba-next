@@ -27,6 +27,7 @@ import {
   LINK_STRIPE_PAGINA_EMPRESA,
   PRECO_CHEIO_PAGINA_EMPRESA_TEXTO,
   PRECO_PAGINA_EMPRESA,
+  PRAZO_PAGINA_EMPRESA_TEXTO,
   PRECO_PAGINA_EMPRESA_TEXTO,
   WHATSAPP_COMERCIAL,
 } from "@/data/paginaEmpresa";
@@ -117,13 +118,20 @@ const PASSOS = [
     titulo: "Escrevemos e montamos",
     texto: "A equipe do portal escreve os textos e monta a página. Você revisa e aprova.",
   },
-  { titulo: "Página no ar", texto: "Publicada em piracanjuba.ai/suaempresa, pronta para compartilhar." },
+  {
+    titulo: "Página no ar",
+    texto: `Publicada em piracanjuba.ai/suaempresa ${PRAZO_PAGINA_EMPRESA_TEXTO}, pronta para compartilhar.`,
+  },
 ];
 
 const PERGUNTAS = [
   {
     pergunta: "É mensalidade?",
     resposta: `Não. São ${PRECO} em pagamento único, sem mensalidade.`,
+  },
+  {
+    pergunta: "Em quanto tempo a página fica pronta?",
+    resposta: `A página vai ao ar ${PRAZO_PAGINA_EMPRESA_TEXTO} (logo, fotos e informações da empresa). Antes de publicar, você revisa e aprova.`,
   },
   {
     pergunta: "Por quanto tempo a página fica no ar?",

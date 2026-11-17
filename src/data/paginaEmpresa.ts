@@ -12,6 +12,10 @@ export const DESCONTO_PAGINA_EMPRESA_TEXTO = `R$ ${PRECO_CHEIO_PAGINA_EMPRESA - 
 
 export const WHATSAPP_COMERCIAL = "5564992375458";
 
+// Prazo de entrega, decisão do operador em 2026-11-17: "No ar em até 7 dias após o
+// envio do material." Conta a partir do envio do logo, das fotos e das informações.
+export const PRAZO_PAGINA_EMPRESA_TEXTO = "em até 7 dias após o envio do material";
+
 // Recebedor do PIX: Ferro Labs Tecnologia LTDA (mantém o Piracanjuba.ai), chave CNPJ.
 export const PIX_RECEBEDOR = {
   chave: "66034538000125",
