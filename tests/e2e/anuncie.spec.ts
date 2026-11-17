@@ -62,3 +62,9 @@ test("anuncie lista endereço, horário e mapa entre o que vem na página", asyn
   const lista = page.getByRole("region", { name: "O que vem na página" });
   await expect(lista.getByText("Endereço, horário de atendimento e link do mapa")).toBeVisible();
 });
+
+test("o endereço de exemplo /suaempresa leva à página de venda", async ({ page }) => {
+  const resposta = await page.goto("/suaempresa");
+  expect(resposta?.status()).toBe(200);
+  await expect(page).toHaveURL(/\/anuncie$/);
+});
