@@ -74,7 +74,10 @@ export type Empresa = {
   };
   /** Selo de avaliação com link para a fonte (sem número de avaliações). */
   avaliacao?: LinkExterno;
-  /** Declaração de vínculo com o Piracanjuba.ai, quando houver. */
+  /**
+   * Declaração de vínculo com o Piracanjuba.ai. Opcional: só aparece quando o
+   * operador decide publicá-la (decisão por empresa, registrada no vault).
+   */
   vinculo?: string;
   chamadaFinal: { titulo: string; texto: string };
   seo: {
