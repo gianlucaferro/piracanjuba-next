@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import SiteLayout from "@/components/layout/SiteLayout";
+import MetricoolTracker from "@/components/MetricoolTracker";
 import { siteIdentityGraph } from "@/lib/seo";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -137,6 +138,7 @@ export default function RootLayout({
         </Script>
 
         <SiteLayout>{children}</SiteLayout>
+        <MetricoolTracker />
 
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Q51Q5C93RF"

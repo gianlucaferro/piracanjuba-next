@@ -57,6 +57,11 @@ export default function PrivacidadePage() {
               anonimizados, sem identificar usuário individual
             </li>
             <li>
+              <strong>Estatísticas de navegação</strong> (Metricool): URL das páginas
+              visitadas, página de origem, dimensões da janela do navegador e localização
+              aproximada obtida a partir do endereço IP
+            </li>
+            <li>
               <strong>Endereço IP</strong> (em log do servidor por até 90 dias, para
               segurança)
             </li>
@@ -205,6 +210,9 @@ export default function PrivacidadePage() {
               anonimizado
             </li>
             <li>
+              <strong>Metricool</strong> (estatísticas de navegação, sem uso de cookies)
+            </li>
+            <li>
               <strong>Stripe</strong> (pagamento com cartão da página de empresa): os dados
               do cartão são digitados na página do Stripe e não passam pelo Piracanjuba.ai
             </li>
@@ -219,6 +227,9 @@ export default function PrivacidadePage() {
             Usamos cookies essenciais (preferências de UI) e analíticos (GA4). Não usamos
             cookies de publicidade comportamental ou rastreamento entre sites. Você pode
             desabilitar cookies nas configurações do seu navegador.
+          </p>
+          <p className="mt-3">
+            O monitoramento de navegação do Metricool não utiliza cookies.
           </p>
         </section>
 
