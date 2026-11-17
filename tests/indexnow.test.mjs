@@ -478,6 +478,24 @@ test("readWithRetry mantém a regra de status: 5xx repete, 429 e 4xx não", asyn
   assert.equal(exhausted.calls(), 1 + RETRY_DELAYS_MS.length);
 });
 
+test("readWithRetry: 4xx com corpo que cai mantém o status e não repete; 2xx e 5xx repetem", async () => {
+  for (const status of [429, 404]) {
+    const script = scripted([bodyResponse(status, new TypeError("terminated")), bodyResponse(200, "ok")]);
+    const rec = recorder();
+    const response = await readWithRetry(script.attempt, rec.options);
+    assert.deepEqual({ status: response.status, ok: response.ok, text: response.text }, { status, ok: false, text: "" });
+    assert.equal(script.calls(), 1, String(status));
+    assert.deepEqual(rec.retries, [], String(status));
+  }
+  // 200 e 503 com corpo que cai continuam com novas tentativas.
+  for (const status of [200, 503]) {
+    const script = scripted([bodyResponse(status, new TypeError("terminated")), bodyResponse(200, "ok")]);
+    const response = await readWithRetry(script.attempt, recorder().options);
+    assert.equal(response.text, "ok", String(status));
+    assert.equal(script.calls(), 2, String(status));
+  }
+});
+
 test("readWithRetry: readBody próprio e erro que não é de rede sobe na hora", async () => {
   const onlyOk = async (response) => (response.status === 200 ? response.text() : "");
   const redirected = await readWithRetry(scripted([bodyResponse(302, "ignorado")]).attempt, { ...recorder().options, readBody: onlyOk });

@@ -483,10 +483,21 @@ export async function withRetry(attempt, { delaysMs = RETRY_DELAYS_MS, sleep = s
 // da tentativa, essa falha também ganha as novas tentativas de withRetry, com a
 // mesma regra de status (5xx sim, 429 e demais 4xx não). O corpo de um 5xx também é
 // lido, o que libera a conexão antes da tentativa seguinte. Devolve
-// { status, ok, headers, text }.
+// { status, ok, headers, text }. Se a leitura do corpo falhar numa resposta que já é
+// definitiva (fora de 2xx e de 5xx, como 429 e 404), o status vale e o texto fica
+// vazio: a falha de leitura não pode transformar um 4xx em nova tentativa.
 export function readWithRetry(doFetch, { readBody = (response) => response.text(), ...options } = {}) {
   return withRetry(async () => {
     const response = await doFetch();
-    return { status: response.status, ok: response.ok, headers: response.headers, text: await readBody(response) };
+    let text;
+    try {
+      text = await readBody(response);
+    } catch (error) {
+      if (!response.ok && !isRetryableStatus(response.status)) {
+        return { status: response.status, ok: response.ok, headers: response.headers, text: "" };
+      }
+      throw error;
+    }
+    return { status: response.status, ok: response.ok, headers: response.headers, text };
   }, options);
 }
