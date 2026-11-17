@@ -1,17 +1,32 @@
 name: Production smoke
 on:
   deployment_status:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "URLs para o IndexNow, só https://piracanjuba.ai/..., separadas por espaço, vírgula ou linha. Vazio: refaz o cálculo automático da última implantação de produção."
+        required: false
+        default: ""
+        type: string
+      simular:
+        description: "Só listar no log o que seria enviado ao IndexNow, sem enviar"
+        required: false
+        default: false
+        type: boolean
 permissions:
   contents: read
+  deployments: read
 jobs:
   smoke:
-    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.deployment.sha }}
+          # Histórico completo: o IndexNow compara o commit desta implantação com o da anterior.
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -19,3 +34,16 @@ jobs:
           package-manager-cache: false
       - name: Verify public production routes
         run: node scripts/validation/http-smoke.mjs https://piracanjuba.ai
+      # Só roda se o smoke passou. Falha do IndexNow aparece no log, mas não derruba
+      # o job: o smoke continua sendo o sinal principal. Ver scripts/indexnow/README.md.
+      - name: Notify IndexNow about changed URLs
+        continue-on-error: true
+        timeout-minutes: 3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INDEXNOW_DEPLOYMENT_ID: ${{ github.event.deployment.id }}
+          INDEXNOW_DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+          INDEXNOW_DEPLOYMENT_CREATED_AT: ${{ github.event.deployment.created_at }}
+          INDEXNOW_MANUAL_URLS: ${{ inputs.urls }}
+          INDEXNOW_DRY_RUN: ${{ inputs.simular }}
+        run: node scripts/indexnow/submit.mjs
