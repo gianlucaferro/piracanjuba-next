@@ -13,22 +13,21 @@ test("favoritos mostram todos os atos retornados, inclusive após o quadragésim
   await expect(page.getByRole("heading", { name: /^Ato parlamentar / })).toHaveCount(50);
 });
 
-test("home destaca serviços atuais e mantém ônibus ao lado dos grupos", async ({ page }) => {
-  await page.clock.setFixedTime(new Date("2026-11-03T15:00:00-03:00"));
+test("home mantém ônibus ao lado dos grupos e mostra a imprensa no lugar do bloco Hoje", async ({ page }) => {
   await page.goto("/");
-  const today = page.getByRole("region", { name: "Hoje em Piracanjuba" });
-  await expect(today).toContainText("2026-11-03");
-  await expect(today.getByRole("link", { name: /Farmácia de plantão/ })).toBeVisible();
-  const departure = today.getByRole("link", { name: /Próxima saída conferida/ });
-  await expect(departure).toContainText("2026-11-04");
-  await departure.click();
-  await expect(page.locator("#bus-date")).toHaveValue("2026-11-04");
-  await page.goto("/");
+  // O bloco "Hoje em Piracanjuba" saiu da home em 2026-11-17 (decisão do operador); a faixa da imprensa ficou no lugar.
+  await expect(page.getByRole("region", { name: "Hoje em Piracanjuba" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "O Piracanjuba.ai na imprensa" })).toBeVisible();
   const services = page.getByRole("region", { name: "Mais serviços" });
   const cards = await services.getByRole("link").all();
   const hrefs = await Promise.all(cards.map((card) => card.getAttribute("href")));
   expect(hrefs.indexOf("/horarios-onibus")).toBe(hrefs.indexOf("/grupos-economicos") + 1);
-  await today.getByRole("link", { name: "Favoritos e avisos" }).click();
+});
+
+test("Favoritos e avisos continua acessível pelo menu Mais", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('button[aria-label="Mais seções"]:visible').click();
+  await page.getByRole("link", { name: /Favoritos e avisos/ }).first().click();
   await expect(page.getByRole("heading", { name: "Favoritos e avisos", level: 1 })).toBeVisible();
 });
 

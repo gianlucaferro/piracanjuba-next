@@ -267,3 +267,6 @@ verify_jwt = true
 # Sessao propria do painel validada no handler antes de qualquer escrita.
 [functions.admin-farmacia-update]
 verify_jwt = true
+
+[functions.pedido-pagina-empresa]
+verify_jwt = false
