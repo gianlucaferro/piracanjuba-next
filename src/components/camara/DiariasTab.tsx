@@ -14,7 +14,9 @@ import { downloadCSV } from "@/lib/csvExport";
 export default function DiariasTab() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grouped">("list");
-  const { data: diarias, isLoading } = useQuery({ queryKey: ["camara-diarias"], queryFn: fetchCamaraDiarias });
+  const { data: diarias, isLoading, isError } = useQuery({ queryKey: ["camara-diarias"], queryFn: fetchCamaraDiarias });
+  // Contagem e total só com os dados na mão: no carregamento diziam "0 diárias · R$ 0,00".
+  const carregado = diarias !== undefined;
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
   const filtered = useMemo(() => (diarias || []).filter((d) =>
@@ -65,18 +67,26 @@ export default function DiariasTab() {
         </Button>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{filtered.length} diárias · Total: {formatCurrency(totalValor)}</p>
-        {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Download className="w-3.5 h-3.5" /> CSV
-          </button>
-        )}
-      </div>
+      {carregado && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{filtered.length} diárias · Total: {formatCurrency(totalValor)}</p>
+          {filtered.length > 0 && (
+            <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          )}
+        </div>
+      )}
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !filtered.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar as diárias da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !filtered.length && (
         <div className="stat-card text-center py-8">
           <Plane className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem diárias</h3>

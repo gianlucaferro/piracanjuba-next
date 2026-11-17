@@ -35,10 +35,12 @@ async function fetchAtos(tipoCodigo: number) {
 
 export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProps) {
   const [search, setSearch] = useState("");
-  const { data: atos, isLoading } = useQuery({
+  const { data: atos, isLoading, isError } = useQuery({
     queryKey: ["camara-atos", tipoCodigo],
     queryFn: () => fetchAtos(tipoCodigo),
   });
+  // Contagem só com os dados na mão: no carregamento dizia "0 registro(s)".
+  const carregado = atos !== undefined;
 
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
@@ -60,11 +62,17 @@ export default function AtosTab({ tipoCodigo, tipoNome, descricao }: AtosTabProp
         <Input placeholder={`Buscar ${tipoNome.toLowerCase()}...`} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
-      <p className="text-sm text-muted-foreground">{filtered.length} registro(s)</p>
+      {carregado && <p className="text-sm text-muted-foreground">{filtered.length} registro(s)</p>}
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !filtered.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar estes registros agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !filtered.length && (
         <div className="stat-card text-center py-8">
           <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem registros</h3>

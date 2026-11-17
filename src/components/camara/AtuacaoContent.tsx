@@ -93,7 +93,7 @@ const statusStyles: Record<string, string> = {
   apresentado: "bg-primary/10 text-primary border-primary/20",
 };
 
-function AtuacaoParlamentarPage() {
+function AtuacaoParlamentarPage({ embutido = false }: { embutido?: boolean }) {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -134,7 +134,7 @@ function AtuacaoParlamentarPage() {
     search: debouncedSearch.trim() || undefined,
   }), [tipoFilter, vereadorFilter, anoFilter, debouncedSearch, isTodosFilter, isProjetoFilter]);
 
-  const { data: paginatedData, isLoading: isLoadingAtuacao } = useQuery({
+  const { data: paginatedData, isLoading: isLoadingAtuacao, isError: erroAtuacao } = useQuery({
     queryKey: ["atuacao-paginated", atuacaoFilters, page],
     queryFn: () => fetchAtuacaoPaginated(atuacaoFilters, page),
     placeholderData: keepPreviousData,
@@ -142,7 +142,7 @@ function AtuacaoParlamentarPage() {
   });
 
   // Projetos query (fetch when Todos or Projeto de Lei)
-  const { data: projetos = [], isLoading: isLoadingProjetos } = useQuery({
+  const { data: projetos = [], isLoading: isLoadingProjetos, isSuccess: projetosCarregados, isError: erroProjetos } = useQuery({
     queryKey: ["projetos"],
     queryFn: fetchProjetos,
     enabled: isTodosFilter || isProjetoFilter,
@@ -211,6 +211,17 @@ function AtuacaoParlamentarPage() {
   }, [paginatedData, filteredProjetos, page, isProjetoFilter, isTodosFilter]);
 
   const isLoading = isProjetoFilter ? isLoadingProjetos : isLoadingAtuacao;
+  // A contagem só sai com os dados do filtro carregados. Antes disso o HTML dizia "0 resultados",
+  // inclusive para robôs que não rodam JavaScript.
+  const atuacaoCarregada = paginatedData !== undefined;
+  const dadosProntos = isProjetoFilter
+    ? projetosCarregados
+    : isTodosFilter
+      ? atuacaoCarregada && projetosCarregados
+      : atuacaoCarregada;
+  const falhouCarregamento = !dadosProntos && (
+    isProjetoFilter ? erroProjetos : isTodosFilter ? erroAtuacao || erroProjetos : erroAtuacao
+  );
 
   const handleOpenResumo = async (item: UnifiedItem) => {
     setSelectedItem(item);
@@ -290,7 +301,12 @@ function AtuacaoParlamentarPage() {
       <div className="container py-8">
         <div className="flex items-center gap-3 mb-6">
           <Megaphone className="w-6 h-6 text-accent" />
-          <h1 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h1>
+          {/* Dentro de /camara/atuacao o H1 é o da Câmara; aqui vira subtítulo. */}
+          {embutido ? (
+            <h2 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h2>
+          ) : (
+            <h1 className="text-2xl font-bold text-foreground">Atuação Parlamentar</h1>
+          )}
         </div>
 
         {/* Filters */}
@@ -332,7 +348,9 @@ function AtuacaoParlamentarPage() {
 
         {/* Stats bar */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <Badge variant="outline" className="text-sm">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
+          {dadosProntos && (
+            <Badge variant="outline" className="text-sm">{totalCount} resultado{totalCount !== 1 ? "s" : ""}</Badge>
+          )}
           {items.length > 0 && totalPages > 1 && <Badge variant="secondary" className="text-sm">Página {page + 1} de {totalPages}</Badge>}
           {totalCount > 0 && (
             <button onClick={handleExportCSV} className="ml-auto inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
@@ -342,7 +360,11 @@ function AtuacaoParlamentarPage() {
         </div>
 
         {/* Results */}
-        {isLoading ? (
+        {falhouCarregamento ? (
+          <p role="alert" className="stat-card text-center py-12 text-muted-foreground">
+            Não foi possível carregar a atuação parlamentar agora. Tente novamente em instantes.
+          </p>
+        ) : isLoading || !dadosProntos ? (
           <div className="space-y-3">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="stat-card animate-pulse h-20" />)}</div>
         ) : items.length === 0 ? (
           <div className="stat-card text-center py-12">
@@ -431,8 +453,8 @@ function AtuacaoParlamentarPage() {
   return atuacaoContent;
 }
 
-export function AtuacaoContent() {
-  return <AtuacaoParlamentarPage />;
+export function AtuacaoContent({ embutido = false }: { embutido?: boolean }) {
+  return <AtuacaoParlamentarPage embutido={embutido} />;
 }
 
 function AtuacaoParlamentarPageWrapper() {

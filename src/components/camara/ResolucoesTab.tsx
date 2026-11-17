@@ -39,7 +39,9 @@ function extractNumero(raw: string | null): string {
 
 export default function ResolucoesTab() {
   const [search, setSearch] = useState("");
-  const { data: resolucoes, isLoading } = useQuery({ queryKey: ["resolucoes-camara-atos"], queryFn: fetchResolucoes });
+  const { data: resolucoes, isLoading, isError } = useQuery({ queryKey: ["resolucoes-camara-atos"], queryFn: fetchResolucoes });
+  // Contagem só com os dados na mão: no carregamento dizia "0 resoluções encontradas".
+  const carregado = resolucoes !== undefined;
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
   const filtered = (resolucoes || []).filter((r) =>
@@ -68,18 +70,26 @@ export default function ResolucoesTab() {
         <Input placeholder="Buscar resolução..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" aria-label="Buscar resolução" />
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{filtered.length} resoluções encontradas</p>
-        {filtered.length > 0 && (
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Download className="w-3.5 h-3.5" /> CSV
-          </button>
-        )}
-      </div>
+      {carregado && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{filtered.length} resoluções encontradas</p>
+          {filtered.length > 0 && (
+            <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          )}
+        </div>
+      )}
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !filtered.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar as resoluções da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !filtered.length && (
         <div className="stat-card text-center py-8">
           <ScrollText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem resoluções</h3>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import type { Database } from "@/lib/supabase/types";
@@ -50,6 +50,7 @@ import { ExportChangedError } from "@/lib/stable-export";
 import { getTooltip } from "@/lib/glossario";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDialog";
+import { ABA_PADRAO_PREFEITURA, hrefAbaPrefeitura, tituloAbaPrefeitura } from "@/lib/abas-orgaos";
 
 type Decreto = Database["public"]["Tables"]["decretos"]["Row"];
 type Portaria = Database["public"]["Tables"]["portarias"]["Row"];
@@ -539,7 +540,10 @@ function GastosTab() {
   );
 }
 
-function ContratosTab() {
+// Montada sempre (forceMount) para os dados e o índice de aditivos ficarem prontos antes do
+// clique na aba. Por isso o aviso de carregamento só aparece com a aba ativa: sem isso ele
+// entrava no HTML de todas as abas da Prefeitura.
+function ContratosTab({ ativo }: { ativo: boolean }) {
   const { data, isLoading } = useQuery({ queryKey: ["contratos"], queryFn: fetchContratos, staleTime: 1000 * 60 * 10 });
   const { data: aditivos } = useQuery({
     queryKey: ["contratos_aditivos"],
@@ -704,7 +708,7 @@ function ContratosTab() {
     await fetchResumoContrato(c);
   };
 
-  if (isLoading) return (
+  if (isLoading) return !ativo ? null : (
     <div className="flex flex-col items-center justify-center py-24 gap-6">
       <div className="flex items-center gap-2">
         {[0, 1, 2].map((i) => (
@@ -3137,18 +3141,42 @@ const tabs = [
   { value: "admin", label: "Admin", icon: Settings },
 ];
 
+// A aba "admin" (histórico de sincronizações) fica fora da lista pública: não tem rota
+// /prefeitura/admin, não vira link e não sai no HTML do servidor. Só aparece no navegador de
+// quem entrou em /admin, que guarda o token nesta chave (src/components/admin/AdminClient.tsx).
+const CHAVE_TOKEN_ADMIN = "pba_admin_token";
+
+function assinarTokenAdmin(aoMudar: () => void) {
+  window.addEventListener("storage", aoMudar);
+  return () => window.removeEventListener("storage", aoMudar);
+}
+
+function lerTokenAdmin() {
+  try {
+    return Boolean(window.localStorage.getItem(CHAVE_TOKEN_ADMIN));
+  } catch {
+    return false;
+  }
+}
+
+function semTokenAdminNoServidor() {
+  return false;
+}
+
 export default function Prefeitura({ financiadoresExecutivo, aba }: { financiadoresExecutivo?: React.ReactNode; aba?: string }) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-  const initialTab = aba || searchParams.get("tab") || "visao-geral";
+  const initialTab = aba || searchParams.get("tab") || ABA_PADRAO_PREFEITURA;
   const initialBusca = searchParams.get("busca") || "";
   const [activeTab, setActiveTab] = useState(initialTab);
+  const temTokenAdmin = useSyncExternalStore(assinarTokenAdmin, lerTokenAdmin, semTokenAdminNoServidor);
   // Troca de aba reflete na URL (/prefeitura/<aba>) sem navegação de servidor,
   // pra SEO (rota indexável) e link compartilhável. A aba "visão geral" fica em /prefeitura.
+  // Cada aba pública também é um <a href> (ver TabsTrigger), para robôs seguirem o link.
   const onTabChange = useCallback((v: string) => {
     setActiveTab(v);
-    if (typeof window !== "undefined") {
-      window.history.replaceState(window.history.state, "", v === "visao-geral" ? "/prefeitura" : `/prefeitura/${v}`);
+    if (typeof window !== "undefined" && v !== "admin") {
+      window.history.replaceState(window.history.state, "", hrefAbaPrefeitura(v));
     }
   }, []);
 
@@ -3184,7 +3212,7 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
       />
       <PullToRefresh onRefresh={handleRefresh}>
       <div className="container py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-1">Prefeitura de Piracanjuba</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-1">{tituloAbaPrefeitura(activeTab)}</h1>
         <p className="text-sm text-muted-foreground mb-6">
           Dados oficiais do Poder Executivo — mandato 2025–2028. Todos os dados vêm de fontes oficiais.
         </p>
@@ -3192,13 +3220,24 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6 scrollbar-hide">
             <TabsList className="inline-flex w-max md:w-full md:flex-wrap h-auto gap-1 bg-transparent p-0">
-              {tabs.map((t) => (
-                <TabsTrigger key={t.value} value={t.value}
-                  className="text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0">
-                  <t.icon className="w-3.5 h-3.5 mr-1.5" />
-                  {t.label}
-                </TabsTrigger>
-              ))}
+              {tabs.map((t) => {
+                const classe = "text-sm sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2.5 border border-border data-[state=active]:border-primary whitespace-nowrap flex-shrink-0";
+                if (t.value === "admin") {
+                  if (!temTokenAdmin) return null;
+                  return (
+                    <TabsTrigger key={t.value} value={t.value} className={classe}>
+                      <t.icon className="w-3.5 h-3.5 mr-1.5" />
+                      {t.label}
+                    </TabsTrigger>
+                  );
+                }
+                return (
+                  <TabsTrigger key={t.value} value={t.value} href={hrefAbaPrefeitura(t.value)} className={classe}>
+                    <t.icon className="w-3.5 h-3.5 mr-1.5" />
+                    {t.label}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
           </div>
 
@@ -3215,7 +3254,7 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
           <TabsContent value="leis"><LeisMunicipaisTab initialSearch={activeTab === "leis" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="lei-organica"><LeiOrganicaTab /></TabsContent>
           <TabsContent value="diarias"><DiariasTab /></TabsContent>
-          <TabsContent value="contratos" forceMount className={activeTab !== "contratos" ? "hidden" : ""}><ContratosTab /></TabsContent>
+          <TabsContent value="contratos" forceMount className={activeTab !== "contratos" ? "hidden" : ""}><ContratosTab ativo={activeTab === "contratos"} /></TabsContent>
           <TabsContent value="licitacoes"><LicitacoesTab /></TabsContent>
           <TabsContent value="obras"><ObrasTab /></TabsContent>
           <TabsContent value="veiculos"><VeiculosTab /></TabsContent>

@@ -11,10 +11,11 @@ import { downloadCSV } from "@/lib/csvExport";
 const EMPTY_ORCAMENTOS: CamaraOrcamento[] = [];
 
 export default function ReceitasTab() {
-  const { data: orcamentos, isLoading } = useQuery({
+  const { data: orcamentos, isLoading, isError } = useQuery({
     queryKey: ["camara-orcamento"],
     queryFn: fetchCamaraOrcamento,
   });
+  const carregado = orcamentos !== undefined;
   const { selectedItem, resumo, loading, requestSummary, close } = useAISummary();
 
   const linhas = orcamentos ?? EMPTY_ORCAMENTOS;
@@ -96,7 +97,13 @@ export default function ReceitasTab() {
 
       {isLoading && <div className="stat-card animate-pulse h-40" />}
 
-      {!isLoading && !linhas.length && (
+      {isError && !carregado && (
+        <p role="alert" className="stat-card text-center py-8 text-sm text-muted-foreground">
+          Não foi possível carregar o orçamento da Câmara agora. Tente novamente em instantes.
+        </p>
+      )}
+
+      {carregado && !linhas.length && (
         <div className="stat-card text-center py-8">
           <TrendingUp className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <h3 className="font-semibold text-foreground">Sem dados de orçamento</h3>
