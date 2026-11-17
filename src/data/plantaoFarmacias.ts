@@ -1,3 +1,5 @@
+import { brazilDate, weekForDate } from "../lib/civic-day.ts";
+
 export interface Farmacia {
   nome: string;
   telefone: string;
@@ -281,7 +283,7 @@ export function formatDia(d: Date): string {
   return `${d.getDate()} de ${MESES[d.getMonth()]}`;
 }
 
-export function getPeriodo(semana: SemanaPlantao, nextSemana?: SemanaPlantao): { de: string; ate: string } {
+function getDatasPeriodo(semana: SemanaPlantao, nextSemana?: SemanaPlantao): { inicio: Date; fim: Date } {
   const inicio = parseDate(semana.inicio);
   let fim: Date;
   if (nextSemana) {
@@ -291,17 +293,80 @@ export function getPeriodo(semana: SemanaPlantao, nextSemana?: SemanaPlantao): {
     fim = new Date(inicio);
     fim.setDate(fim.getDate() + 6);
   }
+  return { inicio, fim };
+}
+
+export function getPeriodo(semana: SemanaPlantao, nextSemana?: SemanaPlantao): { de: string; ate: string } {
+  const { inicio, fim } = getDatasPeriodo(semana, nextSemana);
   return { de: formatDia(inicio), ate: formatDia(fim) };
 }
 
-export function getSemanaAtual(): number {
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
+// Período com ano, para leitura fora de contexto: "14 a 20 de novembro de 2026",
+// "28 de novembro a 4 de dezembro de 2026", "26 de dezembro de 2026 a 1 de janeiro de 2027".
+export function formatPeriodoCompleto(semana: SemanaPlantao, nextSemana?: SemanaPlantao): string {
+  const { inicio, fim } = getDatasPeriodo(semana, nextSemana);
+  return formatIntervalo(inicio, fim);
+}
+
+// Do início da semana `primeira` ao fim da semana `ultima` (índices de PLANTAO_FARMACIAS).
+export function formatPeriodoEscala(primeira: number, ultima: number): string {
+  const { inicio } = getDatasPeriodo(PLANTAO_FARMACIAS[primeira]);
+  const { fim } = getDatasPeriodo(PLANTAO_FARMACIAS[ultima], PLANTAO_FARMACIAS[ultima + 1]);
+  return formatIntervalo(inicio, fim);
+}
+
+function formatIntervalo(inicio: Date, fim: Date): string {
+  const anoFim = fim.getFullYear();
+  if (inicio.getFullYear() !== anoFim) {
+    return `${formatDia(inicio)} de ${inicio.getFullYear()} a ${formatDia(fim)} de ${anoFim}`;
+  }
+  if (inicio.getMonth() !== fim.getMonth()) {
+    return `${formatDia(inicio)} a ${formatDia(fim)} de ${anoFim}`;
+  }
+  return `${inicio.getDate()} a ${formatDia(fim)} de ${anoFim}`;
+}
+
+// Data civil de Brasília (YYYY-MM-DD). A escala vira à meia-noite de Brasília; o fuso
+// do servidor (UTC na Vercel) antecipava a virada para as 21h do dia anterior.
+export function getHojeBrasil(agora: Date = new Date()): string {
+  return brazilDate(agora);
+}
+
+// Índice da última semana já iniciada em Brasília (0 antes do início da escala).
+export function getSemanaAtual(agora: Date = new Date()): number {
+  const hoje = getHojeBrasil(agora);
   for (let i = PLANTAO_FARMACIAS.length - 1; i >= 0; i--) {
-    const inicio = parseDate(PLANTAO_FARMACIAS[i].inicio);
-    if (hoje >= inicio) return i;
+    if (PLANTAO_FARMACIAS[i].inicio <= hoje) return i;
   }
   return 0;
+}
+
+// Como getSemanaAtual, mas null quando a data de Brasília está fora da escala publicada.
+export function getSemanaVigente(agora: Date = new Date()): number | null {
+  const semana = weekForDate(PLANTAO_FARMACIAS, getHojeBrasil(agora));
+  return semana ? PLANTAO_FARMACIAS.indexOf(semana) : null;
+}
+
+export interface EscalaOrganizada {
+  hoje: string;
+  atual: number | null;
+  proxima: number | null;
+  /** Semanas depois da próxima, em ordem cronológica. */
+  futuras: number[];
+  /** Semanas já encerradas, da mais recente para a mais antiga. */
+  anteriores: number[];
+}
+
+// Ordem de leitura da página: semana vigente, próxima, seguintes e, no fim, as anteriores.
+export function organizarEscala(agora: Date = new Date()): EscalaOrganizada {
+  const hoje = getHojeBrasil(agora);
+  const atual = getSemanaVigente(agora);
+  const indices = PLANTAO_FARMACIAS.map((_, i) => i);
+  const [proxima = null, ...futuras] = indices.filter((i) => PLANTAO_FARMACIAS[i].inicio > hoje);
+  const anteriores = indices
+    .filter((i) => i !== atual && PLANTAO_FARMACIAS[i].inicio <= hoje)
+    .reverse();
+  return { hoje, atual, proxima, futuras, anteriores };
 }
 
 export function getMesAno(semana: SemanaPlantao): string {
@@ -348,6 +413,61 @@ const COORDS: Record<string, [number, number]> = {
   // R. Cônego Olinto, 407 (endereço passado pelo operador).
   "Drogaria São Marcos":     [-17.304972, -49.0252867],
 };
+
+export interface ContatoCadastrado {
+  nome: string;
+  telefone: string | null;
+  tipo_telefone: "whatsapp" | "fixo" | null;
+}
+
+function normalizarNome(nome: string): string {
+  return nome
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// Busca um cadastro (tabela farmacia_fotos) pelo nome exato ou normalizado.
+export function criarBuscaPorNome<T extends { nome: string }>(itens: readonly T[]): (nome: string) => T | undefined {
+  const porNome = new Map<string, T>();
+  for (const item of itens) {
+    porNome.set(item.nome, item);
+    porNome.set(normalizarNome(item.nome), item);
+  }
+  return (nome) => porNome.get(nome) ?? porNome.get(normalizarNome(nome));
+}
+
+// Mesma regra do FarmaciaPlantaoCard: telefone cadastrado tem precedência sobre o da escala.
+export function aplicarContatoCadastrado(farmacia: Farmacia, cadastro?: ContatoCadastrado): Farmacia {
+  if (!cadastro?.telefone?.trim()) return farmacia;
+  return {
+    ...farmacia,
+    telefone: cadastro.telefone,
+    tipo: cadastro.tipo_telefone ?? (cadastro.telefone.includes("3405") ? "fixo" : "whatsapp"),
+  };
+}
+
+function descreverContato(farmacia: Farmacia): string {
+  if (!farmacia.telefone.replace(/\D/g, "")) return `${farmacia.nome}, telefone não informado na escala`;
+  return `${farmacia.nome}, ${farmacia.tipo === "whatsapp" ? "WhatsApp" : "telefone"} ${farmacia.telefone}`;
+}
+
+// Frase-resposta da semana, com datas absolutas, para leitura direta e citação.
+export function descreverPlantao(
+  semana: SemanaPlantao,
+  nextSemana?: SemanaPlantao,
+  resolver: (farmacia: Farmacia) => Farmacia = (farmacia) => farmacia,
+): string {
+  const periodo = formatPeriodoCompleto(semana, nextSemana);
+  const demais = semana.demais.map((farmacia) => descreverContato(resolver(farmacia))).join("; ");
+  if (!semana.farmacia24h) {
+    return `De ${periodo}, a escala não indica farmácia 24 horas em Piracanjuba. Estão de plantão: ${demais}.`;
+  }
+  const abertura = `De ${periodo}, a farmácia de plantão 24 horas em Piracanjuba é a ${descreverContato(resolver(semana.farmacia24h))}.`;
+  return demais ? `${abertura} Também estão de plantão: ${demais}.` : abertura;
+}
 
 export function getWazeLink(farmacia: Farmacia): string | null {
   const c = COORDS[farmacia.nome];
