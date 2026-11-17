@@ -15,22 +15,18 @@ import {
   montarLlmsTxt,
   paginaCurada,
 } from "../src/data/llms.ts";
+import { ABAS_CAMARA, ABAS_PREFEITURA, ROTAS_ESTATICAS } from "../src/lib/sitemap-rotas.ts";
 
 const RAIZ = new URL("..", import.meta.url).pathname;
 const APP = join(RAIZ, "src/app");
 
-// Caminhos fixos do sitemap, lidos do código-fonte (o sitemap importa o
-// cliente do Supabase, que não roda no node --test): as entradas
-// `${SITE_URL}/caminho` completas e as listas de abas da Prefeitura e da Câmara.
+// Caminhos fixos do sitemap, da mesma lista que o src/app/sitemap.ts usa
+// (src/lib/sitemap-rotas.ts não importa o Supabase, então roda no node --test):
+// rotas estáticas e as abas da Prefeitura e da Câmara.
 function caminhosEstaticosDoSitemap(): string[] {
-  const fonte = readFileSync(join(APP, "sitemap.ts"), "utf8");
-  const caminhos = new Set<string>();
-  for (const m of fonte.matchAll(/`\$\{SITE_URL\}(\/[^`$]*)`/g)) {
-    caminhos.add(m[1] === "/" ? "/" : m[1].replace(/\/+$/, ""));
-  }
-  for (const m of fonte.matchAll(/const (\w+)Abas = \[([^\]]*)\]/g)) {
-    for (const aba of m[2].matchAll(/"([^"]+)"/g)) caminhos.add(`/${m[1]}/${aba[1]}`);
-  }
+  const caminhos = new Set<string>(ROTAS_ESTATICAS.map((rota) => rota.path));
+  for (const aba of ABAS_PREFEITURA) caminhos.add(`/prefeitura/${aba}`);
+  for (const aba of ABAS_CAMARA) caminhos.add(`/camara/${aba}`);
   return [...caminhos];
 }
 
