@@ -3,10 +3,12 @@ import { ArrowRight, Pill, Share2 } from "lucide-react";
 import { FarmaciaPlantaoCard, type FarmaciaMeta } from "@/components/FarmaciaPlantaoCard";
 import {
   PLANTAO_FARMACIAS,
+  aplicarContatoCadastrado,
   formatPeriodoEscala,
   getPeriodo,
   getSemanaVigente,
   getShareWhatsAppLink,
+  type Farmacia,
 } from "@/data/plantaoFarmacias";
 import { fetchFarmaciasMeta } from "@/lib/data/listings";
 
@@ -92,6 +94,8 @@ export default async function PlantaoFarmaciasHome() {
   });
 
   const getMeta = (nome: string) => fotoByName.get(nome) ?? fotoByName.get(normalize(nome));
+  // O link de compartilhar usa o mesmo telefone que os cartões mostram (cadastro tem precedência).
+  const resolver = (farmacia: Farmacia) => aplicarContatoCadastrado(farmacia, getMeta(farmacia.nome));
 
   return (
     <section aria-labelledby="heading-plantao" className="space-y-3">
@@ -103,7 +107,7 @@ export default async function PlantaoFarmaciasHome() {
           <span className="font-medium text-foreground">{periodo.ate}</span>
         </p>
         <a
-          href={getShareWhatsAppLink(semana, nextSemana)}
+          href={getShareWhatsAppLink(semana, nextSemana, resolver)}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 text-sm text-[#25D366] hover:underline font-medium"

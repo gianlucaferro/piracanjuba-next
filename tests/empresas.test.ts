@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, parse } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { EMPRESAS, type Empresa } from "../src/data/empresas.ts";
 import {
@@ -19,7 +20,7 @@ import {
 import { SITE_URL, imagemPrincipal, schemaEmpresa, schemaFaq } from "../src/lib/empresas-schema.ts";
 import { formatarTelefoneBr, linkWhatsapp, numeroWhatsappValido } from "../src/lib/whatsapp.ts";
 
-const RAIZ = new URL("..", import.meta.url).pathname;
+const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 
 // Nomes que o Next ou a hospedagem já usam na raiz, mesmo sem pasta em src/app.
 const RESERVADOS = [

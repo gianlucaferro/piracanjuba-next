@@ -5,8 +5,11 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   DATA_FILE_ROUTES,
+  DEPLOYMENTS_PER_PAGE,
   INDEXNOW_KEY,
   KEY_LOCATION,
+  LASTMOD_OVERLAP_MS,
+  MAX_DEPLOYMENT_PAGES,
   MAX_URLS,
   REQUIRED_DYNAMIC_PREFIXES,
   RETRY_DELAYS_MS,
@@ -15,15 +18,18 @@ import {
   candidatePreviousDeployments,
   changedRouteDirs,
   describeIndexNowStatus,
+  findSuccessfulDeployment,
   hasSuccessStatus,
   isIndexNowSuccess,
   isNetworkError,
   isRetryableStatus,
   keyFileProblem,
+  lastmodWindow,
   missingDynamicRoutes,
   parseManualUrls,
   parseRouteDir,
   parseSitemap,
+  readWithRetry,
   resolveRoute,
   routeDirForChangedFile,
   selectUrls,
@@ -220,6 +226,33 @@ test("lastmod: janela entre implantações e hora do build repetida descartada",
   assert.deepEqual(result.buildStamps, [{ lastmod: "2026-11-17T13:34:26.934Z", count: 57 }]);
 });
 
+test("janela do lastmod tem folga de 2 h antes da implantação anterior, pelo cache do sitemap", () => {
+  assert.equal(LASTMOD_OVERLAP_MS, 2 * 60 * 60 * 1000);
+  const previous = { created_at: "2026-11-17T10:30:00Z" };
+  const current = { created_at: "2026-11-17T14:00:00Z" };
+  const range = lastmodWindow(previous, current);
+  assert.equal(range.after.toISOString(), "2026-11-17T08:30:00.000Z");
+  assert.equal(range.until.toISOString(), "2026-11-17T14:00:00.000Z");
+  // O envio da implantação das 10:30 leu um sitemap gerado às 10:10, ainda sem o
+  // anúncio alterado às 10:20. O sitemap de agora já traz esse lastmod.
+  const entries = [
+    entry("/anuncio", "2026-11-17T10:20:00.000Z"),
+    entry("/normal", "2026-11-17T12:00:00.000Z"),
+    entry("/antigo", "2026-11-17T08:00:00.000Z"),
+    entry("/na-borda", "2026-11-17T08:30:00.000Z"),
+    entry("/futuro", "2026-11-17T14:30:00.000Z"),
+  ];
+  assert.deepEqual(urlsChangedByLastmod(entries, range).urls, [`${SITE}/anuncio`, `${SITE}/normal`]);
+  // Sem a folga, o anúncio das 10:20 não sairia em envio nenhum.
+  assert.deepEqual(urlsChangedByLastmod(entries, lastmodWindow(previous, current, 0)).urls, [`${SITE}/normal`]);
+});
+
+test("a folga do lastmod cobre o cache do sitemap (revalidate de src/app/sitemap.ts)", () => {
+  const match = readFileSync(join(ROOT, "src/app/sitemap.ts"), "utf8").match(/export const revalidate = (\d+)/);
+  assert.ok(match, "src/app/sitemap.ts sem export const revalidate");
+  assert.ok(LASTMOD_OVERLAP_MS >= Number(match[1]) * 1000, "LASTMOD_OVERLAP_MS menor que o cache do sitemap");
+});
+
 test("seleção automática só envia URL do sitemap, sem repetir e até o limite", () => {
   const result = selectUrls([[`${SITE}/agro`, `${SITE}/agro`, `${SITE}/fora-do-sitemap`], [`${SITE}/camara`]], SITEMAP);
   assert.deepEqual(result.urls, [`${SITE}/agro`, `${SITE}/camara`]);
@@ -318,6 +351,8 @@ test("novas tentativas: só 5xx e erro de rede, nunca 429", () => {
   for (const status of [500, 502, 503, 504, 599]) assert.equal(isRetryableStatus(status), true, String(status));
   for (const status of [200, 202, 301, 400, 403, 404, 422, 429]) assert.equal(isRetryableStatus(status), false, String(status));
   assert.equal(isNetworkError(new TypeError("fetch failed")), true);
+  // Conexão que cai no meio do corpo, depois dos cabeçalhos.
+  assert.equal(isNetworkError(new TypeError("terminated")), true);
   assert.equal(isNetworkError(new DOMException("The operation was aborted due to timeout", "TimeoutError")), true);
   assert.equal(isNetworkError(new TypeError("x is not a function")), false);
   assert.equal(isNetworkError(new Error("API do GitHub respondeu HTTP 404")), false);
@@ -389,6 +424,77 @@ test("withRetry aceita outra lista de esperas", async () => {
   assert.equal((await withRetry(none.attempt, { ...recorder().options, delaysMs: [] })).status, 500);
 });
 
+// Resposta cujos cabeçalhos chegaram; body é o texto do corpo ou o erro que a
+// leitura do corpo lança depois.
+function bodyResponse(status, body) {
+  return {
+    status,
+    ok: status >= 200 && status < 300,
+    headers: new Headers({ "x-teste": String(status) }),
+    text: async () => {
+      if (body instanceof Error) throw body;
+      return body;
+    },
+  };
+}
+
+test("readWithRetry repete quando o corpo cai ou estoura o prazo depois dos cabeçalhos", async () => {
+  const timeout = new DOMException("The operation was aborted due to timeout", "TimeoutError");
+  const script = scripted([bodyResponse(200, new TypeError("terminated")), bodyResponse(200, timeout), bodyResponse(200, "<urlset/>")]);
+  const rec = recorder();
+  const result = await readWithRetry(script.attempt, rec.options);
+  assert.deepEqual({ status: result.status, ok: result.ok, text: result.text }, { status: 200, ok: true, text: "<urlset/>" });
+  assert.equal(result.headers.get("x-teste"), "200");
+  assert.equal(script.calls(), 3);
+  assert.deepEqual(rec.retries.map((retry) => retry.reason), ["terminated", "The operation was aborted due to timeout"]);
+  assert.deepEqual(rec.sleeps, [5_000, 15_000]);
+
+  // Corpo que cai em todas as tentativas: sobe o último erro.
+  const down = scripted([bodyResponse(200, new TypeError("terminated"))]);
+  await assert.rejects(readWithRetry(down.attempt, recorder().options), /terminated/);
+  assert.equal(down.calls(), 1 + RETRY_DELAYS_MS.length);
+});
+
+test("readWithRetry mantém a regra de status: 5xx repete, 429 e 4xx não", async () => {
+  const rec = recorder();
+  const recovered = scripted([bodyResponse(503, "fora do ar"), bodyResponse(200, "ok")]);
+  const result = await readWithRetry(recovered.attempt, rec.options);
+  assert.equal(result.text, "ok");
+  assert.equal(recovered.calls(), 2);
+  assert.deepEqual(rec.retries, [{ attempt: 1, reason: "HTTP 503", delayMs: 5_000 }]);
+
+  for (const status of [429, 404]) {
+    const script = scripted([bodyResponse(status, `corpo ${status}`), bodyResponse(200, "ok")]);
+    const statusRec = recorder();
+    const response = await readWithRetry(script.attempt, statusRec.options);
+    assert.deepEqual({ status: response.status, ok: response.ok, text: response.text }, { status, ok: false, text: `corpo ${status}` });
+    assert.equal(script.calls(), 1, String(status));
+    assert.deepEqual(statusRec.sleeps, []);
+  }
+
+  const exhausted = scripted([bodyResponse(500, "a"), bodyResponse(502, "b"), bodyResponse(503, "c")]);
+  const last = await readWithRetry(exhausted.attempt, recorder().options);
+  assert.deepEqual({ status: last.status, text: last.text }, { status: 503, text: "c" });
+  assert.equal(exhausted.calls(), 1 + RETRY_DELAYS_MS.length);
+});
+
+test("readWithRetry: readBody próprio e erro que não é de rede sobe na hora", async () => {
+  const onlyOk = async (response) => (response.status === 200 ? response.text() : "");
+  const redirected = await readWithRetry(scripted([bodyResponse(302, "ignorado")]).attempt, { ...recorder().options, readBody: onlyOk });
+  assert.equal(redirected.status, 302);
+  assert.equal(redirected.text, "");
+  assert.equal(redirected.headers.get("x-teste"), "302");
+
+  const script = scripted([bodyResponse(200, "x"), bodyResponse(200, "y")]);
+  const rec = recorder();
+  const broken = async () => {
+    throw new SyntaxError("JSON inválido");
+  };
+  await assert.rejects(readWithRetry(script.attempt, { ...rec.options, readBody: broken }), /JSON inválido/);
+  assert.equal(script.calls(), 1);
+  assert.deepEqual(rec.sleeps, []);
+});
+
 test("implantação anterior: outra, criada antes, da mais recente para a mais antiga", () => {
   const deployments = [
     { id: 1, sha: "a", created_at: "2026-11-17T05:49:08Z" },
@@ -400,6 +506,109 @@ test("implantação anterior: outra, criada antes, da mais recente para a mais a
   assert.deepEqual(candidatePreviousDeployments(deployments, current).map((deployment) => deployment.id), [2, 1]);
   assert.equal(hasSuccessStatus([{ state: "inactive" }, { state: "success" }]), true);
   assert.equal(hasSuccessStatus([{ state: "failure" }, { state: "pending" }]), false);
+});
+
+// Implantações como a API devolve: da mais nova para a mais antiga, uma por minuto.
+function deploymentList(total) {
+  const newest = Date.parse("2026-11-17T12:00:00Z");
+  return Array.from({ length: total }, (_, index) => ({
+    id: total - index,
+    sha: `s${total - index}`,
+    created_at: new Date(newest - index * 60_000).toISOString(),
+  }));
+}
+
+function pager(list, perPage) {
+  const requested = [];
+  return {
+    requested,
+    fetchPage: async (page) => {
+      requested.push(page);
+      return list.slice((page - 1) * perPage, page * perPage);
+    },
+  };
+}
+
+test("busca da implantação: página a página, sem teto fixo de 3 páginas", async () => {
+  assert.equal(DEPLOYMENTS_PER_PAGE, 100);
+  assert.ok(MAX_DEPLOYMENT_PAGES * DEPLOYMENTS_PER_PAGE > 90);
+  // Re-run de uma implantação antiga: há 200 mais novas (7ª página de 30).
+  const list = deploymentList(250);
+  const current = list[200];
+  const { requested, fetchPage } = pager(list, 30);
+  const result = await findSuccessfulDeployment({
+    fetchPage,
+    perPage: 30,
+    select: (page) => candidatePreviousDeployments(page, current),
+    succeeded: async (deployment) => deployment.id !== list[201].id,
+  });
+  assert.equal(result.limitReached, false);
+  assert.equal(result.deployment, list[202]);
+  assert.deepEqual(requested, [1, 2, 3, 4, 5, 6, 7]);
+});
+
+test("busca da implantação: para na primeira bem-sucedida e ordena dentro da página", async () => {
+  const list = deploymentList(250);
+  const checked = [];
+  const { requested, fetchPage } = pager(list, DEPLOYMENTS_PER_PAGE);
+  const result = await findSuccessfulDeployment({
+    fetchPage,
+    succeeded: async (deployment) => {
+      checked.push(deployment.id);
+      return deployment.id <= 248;
+    },
+  });
+  assert.equal(result.deployment.id, 248);
+  assert.deepEqual(checked, [250, 249, 248]);
+  assert.deepEqual(requested, [1]);
+
+  const unordered = [
+    { id: 1, created_at: "2026-11-17T10:00:00Z" },
+    { id: 2, created_at: "2026-11-17T11:00:00Z" },
+  ];
+  const newest = await findSuccessfulDeployment({ fetchPage: async () => unordered, succeeded: async () => true });
+  assert.equal(newest.deployment.id, 2);
+});
+
+test("busca da implantação: lista que acaba sem achar devolve null, sem limite", async () => {
+  const short = deploymentList(45);
+  const shortPager = pager(short, 30);
+  const result = await findSuccessfulDeployment({
+    fetchPage: shortPager.fetchPage,
+    perPage: 30,
+    select: (page) => candidatePreviousDeployments(page, short[44]),
+    succeeded: async () => true,
+  });
+  assert.deepEqual(result, { deployment: null, limitReached: false });
+  assert.deepEqual(shortPager.requested, [1, 2]);
+
+  // Lista com múltiplo exato do tamanho da página: a página vazia encerra.
+  const exact = deploymentList(60);
+  const exactPager = pager(exact, 30);
+  const exactResult = await findSuccessfulDeployment({
+    fetchPage: exactPager.fetchPage,
+    perPage: 30,
+    select: (page) => candidatePreviousDeployments(page, exact[59]),
+    succeeded: async () => true,
+  });
+  assert.deepEqual(exactResult, { deployment: null, limitReached: false });
+  assert.deepEqual(exactPager.requested, [1, 2, 3]);
+});
+
+test("busca da implantação: limite de segurança vira limitReached, não 'sem anterior'", async () => {
+  const list = deploymentList(100);
+  const current = list[50];
+  const { requested, fetchPage } = pager(list, 10);
+  const result = await findSuccessfulDeployment({
+    fetchPage,
+    perPage: 10,
+    maxPages: 3,
+    select: (page) => candidatePreviousDeployments(page, current),
+    succeeded: async () => true,
+  });
+  // A anterior existe (list[51]), mas está além das 3 páginas permitidas.
+  assert.deepEqual(result, { deployment: null, limitReached: true });
+  assert.deepEqual(requested, [1, 2, 3]);
 });
 
 test("arquivos de dados e rotas da tabela existem no repositório", () => {

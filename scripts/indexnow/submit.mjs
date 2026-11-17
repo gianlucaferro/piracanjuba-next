@@ -12,23 +12,30 @@
 // Código de saída 1 deixa o job indexnow vermelho (o job smoke não depende dele).
 // Para repetir o envio da mesma implantação, "Re-run failed jobs" na execução
 // original recalcula a mesma janela. 5xx e erro de rede têm até duas novas
-// tentativas curtas (withRetry); 429 e demais 4xx não se repetem.
+// tentativas curtas (withRetry); nas leituras, a tentativa inclui a leitura do
+// corpo (readWithRetry). 429 e demais 4xx não se repetem.
 import { execFileSync } from "node:child_process";
 import {
+  DEPLOYMENTS_PER_PAGE,
   INDEXNOW_ENDPOINT,
   KEY_LOCATION,
+  LASTMOD_OVERLAP_MS,
+  MAX_DEPLOYMENT_PAGES,
   SITEMAP_URL,
   buildPayload,
   buildRouteTable,
   candidatePreviousDeployments,
   changedRouteDirs,
   describeIndexNowStatus,
+  findSuccessfulDeployment,
   hasSuccessStatus,
   isIndexNowSuccess,
   keyFileProblem,
+  lastmodWindow,
   missingDynamicRoutes,
   parseManualUrls,
   parseSitemap,
+  readWithRetry,
   selectUrls,
   urlsChangedByLastmod,
   urlsForRouteDirs,
@@ -39,7 +46,6 @@ const env = process.env;
 const dryRun = env.INDEXNOW_DRY_RUN === "true";
 const USER_AGENT = "piracanjuba-indexnow (GitHub Actions)";
 const SHA = /^[0-9a-f]{40}$/;
-const MAX_DEPLOYMENT_PAGES = 3;
 
 function notice(message) {
   console.log(`::notice title=IndexNow::${message}`);
@@ -49,62 +55,80 @@ function warning(message) {
   console.log(`::warning title=IndexNow::${message}`);
 }
 
+function logRetry(label) {
+  return ({ attempt, reason, delayMs }) =>
+    console.log(`${label}: tentativa ${attempt} falhou (${reason}); nova tentativa em ${delayMs / 1000} s.`);
+}
+
 // fetch com novas tentativas para 5xx e erro de rede (ver withRetry). O prazo
 // (AbortSignal.timeout) é novo a cada tentativa: um sinal já esgotado abortaria
-// a tentativa seguinte na hora.
+// a tentativa seguinte na hora. Só o POST do IndexNow usa este: repetir o POST
+// porque a leitura do corpo caiu depois de um 200 reenviaria URLs já aceitas.
 function fetchWithRetry(label, url, init, timeoutMs) {
-  return withRetry(() => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) }), {
-    onRetry: ({ attempt, reason, delayMs }) =>
-      console.log(`${label}: tentativa ${attempt} falhou (${reason}); nova tentativa em ${delayMs / 1000} s.`),
+  return withRetry(() => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) }), { onRetry: logRetry(label) });
+}
+
+// Leituras (API do GitHub, sitemap, arquivo da chave): cada tentativa faz o fetch e
+// lê o corpo inteiro (ver readWithRetry), e o prazo novo de cada tentativa cobre as
+// duas etapas. Devolve { status, ok, headers, text }.
+function fetchAndReadWithRetry(label, url, init, timeoutMs, readBody) {
+  return readWithRetry(() => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) }), {
+    readBody,
+    onRetry: logRetry(label),
   });
 }
 
 async function github(path) {
   const repository = env.GITHUB_REPOSITORY;
   if (!repository || !env.GITHUB_TOKEN) throw new Error("GITHUB_REPOSITORY e GITHUB_TOKEN são obrigatórios no modo automático.");
-  const response = await fetchWithRetry(
+  const response = await fetchAndReadWithRetry(
     `API do GitHub ${path}`,
     `https://api.github.com/repos/${repository}${path}`,
     { headers: { accept: "application/vnd.github+json", authorization: `Bearer ${env.GITHUB_TOKEN}`, "user-agent": USER_AGENT } },
     20_000,
   );
   if (!response.ok) throw new Error(`API do GitHub respondeu HTTP ${response.status} em ${path}`);
-  return response.json();
+  return JSON.parse(response.text);
 }
 
-async function listProductionDeployments() {
-  const all = [];
-  for (let page = 1; page <= MAX_DEPLOYMENT_PAGES; page++) {
-    const batch = await github(`/deployments?environment=Production&per_page=30&page=${page}`);
-    all.push(...batch);
-    if (batch.length < 30) break;
+// Páginas da lista de implantações de produção, lidas uma vez e reaproveitadas
+// pelas duas buscas (implantação atual e anterior).
+const deploymentPages = new Map();
+function productionDeploymentsPage(page) {
+  if (!deploymentPages.has(page)) {
+    deploymentPages.set(page, github(`/deployments?environment=Production&per_page=${DEPLOYMENTS_PER_PAGE}&page=${page}`));
   }
-  return all;
+  return deploymentPages.get(page);
 }
 
 async function succeeded(deployment) {
   return hasSuccessStatus(await github(`/deployments/${deployment.id}/statuses?per_page=100`));
 }
 
-async function firstSuccessful(candidates) {
-  for (const candidate of candidates) {
-    if (await succeeded(candidate)) return candidate;
+// Implantação de produção bem-sucedida mais recente entre as que select deixa
+// passar, ou null se a lista acabou sem nenhuma. Bater no limite de segurança da
+// busca é falha (job vermelho), nunca "nada a enviar".
+async function findProductionDeployment(select, limitMessage) {
+  const { deployment, limitReached } = await findSuccessfulDeployment({ fetchPage: productionDeploymentsPage, succeeded, select });
+  if (limitReached) {
+    throw new Error(
+      `${limitMessage} nas ${MAX_DEPLOYMENT_PAGES * DEPLOYMENTS_PER_PAGE} implantações de produção mais recentes (limite de segurança da busca); nada enviado.`,
+    );
   }
-  return null;
+  return deployment;
 }
 
 // Implantação atual: a do evento (também num re-run, que reaproveita o payload
 // original) ou, no workflow_dispatch sem URLs, a última de produção bem-sucedida.
 // Por isso o dispatch vazio só refaz o envio da implantação mais recente; para
 // uma mais antiga, o caminho é "Re-run failed jobs" na execução original.
-async function currentDeployment(deployments) {
+async function currentDeployment() {
   if (env.INDEXNOW_DEPLOYMENT_ID) {
     const fromEvent = { id: env.INDEXNOW_DEPLOYMENT_ID, sha: env.INDEXNOW_DEPLOYMENT_SHA, created_at: env.INDEXNOW_DEPLOYMENT_CREATED_AT };
     if (fromEvent.sha && fromEvent.created_at) return fromEvent;
     return github(`/deployments/${env.INDEXNOW_DEPLOYMENT_ID}`);
   }
-  const sorted = [...deployments].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-  return firstSuccessful(sorted);
+  return findProductionDeployment(undefined, "Nenhuma implantação bem-sucedida");
 }
 
 function git(args) {
@@ -129,43 +153,45 @@ function hasCommit(sha) {
 
 // Leitura comum (o sitemap): segue redirecionamento, que aqui não traz risco.
 async function fetchText(url) {
-  const response = await fetchWithRetry(url, url, { headers: { "user-agent": USER_AGENT } }, 30_000);
+  const response = await fetchAndReadWithRetry(url, url, { headers: { "user-agent": USER_AGENT } }, 30_000);
   if (!response.ok) throw new Error(`${url} respondeu HTTP ${response.status}`);
-  return response.text();
+  return response.text;
 }
 
 // Arquivo da chave: sem seguir redirecionamento, porque o IndexNow valida o
-// keyLocation do payload, que precisa responder 200 na URL exata.
+// keyLocation do payload, que precisa responder 200 na URL exata. Só o corpo do
+// 200 interessa; o dos demais é descartado.
 async function checkPublishedKey() {
-  const response = await fetchWithRetry(
+  const response = await fetchAndReadWithRetry(
     KEY_LOCATION,
     KEY_LOCATION,
     { headers: { "user-agent": USER_AGENT }, redirect: "manual" },
     30_000,
+    async (raw) => {
+      if (raw.status === 200) return raw.text();
+      try {
+        await raw.body?.cancel();
+      } catch {
+        // Sem corpo para liberar.
+      }
+      return "";
+    },
   );
-  let body = "";
-  if (response.status === 200) {
-    body = await response.text();
-  } else {
-    try {
-      await response.body?.cancel();
-    } catch {
-      // Sem corpo para liberar.
-    }
-  }
-  const problem = keyFileProblem(response.status, body, response.headers.get("location"));
+  const problem = keyFileProblem(response.status, response.text, response.headers.get("location"));
   if (problem) throw new Error(`${problem}; envio cancelado.`);
 }
 
 async function automaticUrls(entries) {
-  const deployments = await listProductionDeployments();
-  const current = await currentDeployment(deployments);
+  const current = await currentDeployment();
   if (!current) {
     notice("Nenhuma implantação de produção bem-sucedida encontrada; nada enviado.");
     return null;
   }
   console.log(`Implantação atual: ${current.id} (${String(current.sha).slice(0, 7)}, ${current.created_at}).`);
-  const previous = await firstSuccessful(candidatePreviousDeployments(deployments, current));
+  const previous = await findProductionDeployment(
+    (page) => candidatePreviousDeployments(page, current),
+    `Implantação anterior à ${current.id} não encontrada`,
+  );
   if (!previous) {
     notice("Sem implantação de produção anterior identificável; nada enviado (o site inteiro não é reenviado).");
     return null;
@@ -183,7 +209,13 @@ async function automaticUrls(entries) {
     warning("Commit de uma das implantações indisponível no checkout; seguem só as URLs com lastmod novo.");
   }
 
-  const byLastmod = urlsChangedByLastmod(entries, { after: new Date(previous.created_at), until: new Date(current.created_at) });
+  // Folga antes da implantação anterior: o sitemap lido no envio dela podia estar
+  // até 1 hora atrás do banco (cache), e o que faltava nele entra agora.
+  const range = lastmodWindow(previous, current);
+  console.log(
+    `Janela do lastmod: ${range.after.toISOString()} a ${range.until.toISOString()} (${LASTMOD_OVERLAP_MS / 3_600_000} h de folga antes da implantação anterior, pelo cache do sitemap).`,
+  );
+  const byLastmod = urlsChangedByLastmod(entries, range);
   for (const stamp of byLastmod.buildStamps) {
     console.log(`lastmod ${stamp.lastmod} repetido em ${stamp.count} URLs tratado como hora do build e ignorado.`);
   }
@@ -249,7 +281,14 @@ async function main() {
     },
     30_000,
   );
-  const body = (await response.text()).slice(0, 500);
+  // O status decide o resultado. Se a leitura do corpo cair depois de um 200 ou 202, as URLs
+  // já foram aceitas: falhar aqui levaria a um "Re-run failed jobs" que reenviaria as mesmas URLs.
+  let body = "";
+  try {
+    body = (await response.text()).slice(0, 500);
+  } catch {
+    body = "";
+  }
   const reason = describeIndexNowStatus(response.status);
   if (!isIndexNowSuccess(response.status)) {
     throw new Error(`IndexNow respondeu HTTP ${response.status}: ${reason}.${body ? ` Corpo: ${body}` : ""}`);

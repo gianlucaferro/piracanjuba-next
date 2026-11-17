@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { SECOES_RODAPE } from "../src/data/secoesRodape.ts";
 
-const APP = join(new URL("..", import.meta.url).pathname, "src", "app");
+const APP = join(fileURLToPath(new URL("..", import.meta.url)), "src", "app");
 const LINKS = SECOES_RODAPE.flatMap((grupo) => grupo.links);
 
 // Rota estática (src/app/<caminho>/page.tsx) ou aba de /camara e /prefeitura,

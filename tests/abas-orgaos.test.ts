@@ -5,6 +5,7 @@ import {
   abaDaUrlPrefeitura,
   abaDoCaminho,
   abaExibida,
+  abaPermitidaPrefeitura,
   deveTrocarAbaNoCliente,
   hrefAbaCamara,
   hrefAbaPrefeitura,
@@ -142,6 +143,32 @@ test("a aba admin, que não muda a URL, fica até a URL mudar", () => {
   const escolha = { aba: "admin", url: "/prefeitura/contratos?" };
   assert.equal(abaExibida(escolha, "/prefeitura/contratos?", "contratos"), "admin");
   assert.equal(abaExibida(escolha, "/prefeitura/leis?", "leis"), "leis");
+});
+
+test("sem o token de /admin, ?tab=admin cai na visão geral; com o token, a aba admin fica", () => {
+  // /prefeitura?tab=admin: no servidor e na hidratação nunca há token.
+  const daUrl = abaDaUrlPrefeitura("/prefeitura", "admin") ?? "visao-geral";
+  assert.equal(abaPermitidaPrefeitura(daUrl, false), "visao-geral");
+  assert.equal(tituloAbaPrefeitura(abaPermitidaPrefeitura(daUrl, false)), "Prefeitura de Piracanjuba");
+  assert.equal(abaPermitidaPrefeitura(daUrl, true), "admin");
+  // A escolha do clique na aba admin também depende do token.
+  const escolha = { aba: "admin", url: "/prefeitura?" };
+  assert.equal(abaPermitidaPrefeitura(abaExibida(escolha, "/prefeitura?", "visao-geral"), false), "visao-geral");
+  assert.equal(abaPermitidaPrefeitura(abaExibida(escolha, "/prefeitura?", "visao-geral"), true), "admin");
+  // As abas públicas não dependem do token.
+  for (const aba of ["visao-geral", "contratos", "tcm-go", "leis"]) {
+    assert.equal(abaPermitidaPrefeitura(aba, false), aba);
+    assert.equal(abaPermitidaPrefeitura(aba, true), aba);
+  }
+});
+
+test("a Prefeitura decide a aba ativa (H1 e conteúdo) passando pelo token de /admin", () => {
+  const fonte = readFileSync(new URL("../src/components/prefeitura/PrefeituraClient.tsx", import.meta.url), "utf8");
+  assert.match(fonte, /const activeTab = abaPermitidaPrefeitura\(abaExibida\([^)]*\), temTokenAdmin\);/);
+  // O token é lido antes de activeTab, que alimenta o H1 e o <Tabs value>.
+  assert.ok(fonte.indexOf("const temTokenAdmin") < fonte.indexOf("const activeTab"));
+  assert.match(fonte, /tituloAbaPrefeitura\(activeTab\)/);
+  assert.match(fonte, /<Tabs value=\{activeTab\}/);
 });
 
 test("clique simples troca a aba sem navegar", () => {

@@ -158,7 +158,7 @@ export default async function PlantaoFarmaciasPage() {
                   Plantão desta semana: {formatPeriodoCompleto(semana, semanaSeguinte)}
                 </h2>
                 <a
-                  href={getShareWhatsAppLink(semana, semanaSeguinte)}
+                  href={getShareWhatsAppLink(semana, semanaSeguinte, resolver)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-sm font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20"

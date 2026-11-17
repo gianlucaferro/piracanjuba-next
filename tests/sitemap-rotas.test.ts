@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
   ABAS_CAMARA,
@@ -10,7 +11,7 @@ import {
   ROTAS_FORA_DO_SITEMAP,
 } from "../src/lib/sitemap-rotas.ts";
 
-const RAIZ = new URL("..", import.meta.url).pathname;
+const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 const APP = join(RAIZ, "src", "app");
 const ARQUIVO_DE_PAGINA = /^page\.(tsx|ts|jsx|js|mdx)$/;
 const NOINDEX = /noIndex:\s*true|index:\s*false/;

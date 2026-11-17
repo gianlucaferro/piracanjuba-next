@@ -38,7 +38,7 @@ export default function SemanaPlantaoResumo({
           {titulo ?? formatPeriodoCompleto(semana, nextSemana)}
         </Titulo>
         <a
-          href={getShareWhatsAppLink(semana, nextSemana)}
+          href={getShareWhatsAppLink(semana, nextSemana, resolver)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm font-medium text-[#25D366] hover:underline"

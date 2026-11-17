@@ -54,6 +54,7 @@ import {
   ABA_PADRAO_PREFEITURA,
   abaDaUrlPrefeitura,
   abaExibida,
+  abaPermitidaPrefeitura,
   hrefAbaPrefeitura,
   tituloAbaPrefeitura,
   type EscolhaAba,
@@ -3185,8 +3186,11 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
   // A URL mudou depois do clique: a escolha cumpriu o papel e sai, para não voltar a valer
   // se o endereço retornar ao do clique. A aba "admin" não muda a URL e fica até ela mudar.
   if (escolha !== null && escolha.url !== urlAtual) setEscolha(null);
-  const activeTab = abaExibida(escolha, urlAtual, abaDaUrl);
   const temTokenAdmin = useSyncExternalStore(assinarTokenAdmin, lerTokenAdmin, semTokenAdminNoServidor);
+  // Sem o token, ?tab=admin cai na visão geral: o H1 e o TabsContent seguem activeTab, então o
+  // AdminPanel (e as consultas a sync_log) não monta para visitante. Na hidratação vale o
+  // snapshot do servidor (sem token), igual ao HTML; com token, a aba admin entra logo depois.
+  const activeTab = abaPermitidaPrefeitura(abaExibida(escolha, urlAtual, abaDaUrl), temTokenAdmin);
   // Troca de aba reflete na URL (/prefeitura/<aba>) sem navegação de servidor,
   // pra SEO (rota indexável) e link compartilhável. A aba "visão geral" fica em /prefeitura.
   // Cada aba pública também é um <a href> (ver TabsTrigger), para robôs seguirem o link.
