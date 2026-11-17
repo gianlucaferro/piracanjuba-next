@@ -26,6 +26,9 @@ test("cadastro registra o pedido e mostra o PIX da Ferro Labs com o código", as
   await page.goto("/anuncie");
   await page.getByRole("link", { name: "Cadastre-se agora" }).first().click();
   await expect(page).toHaveURL(/\/anuncie\/cadastro$/);
+  // Na navegação pelo site, a tag robots da página anterior pode durar um instante antes de
+  // ser trocada; o que vale é o estado final, com uma única tag e noindex.
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { level: 1, name: "Cadastro da página de empresa" })).toBeVisible();
   await expect(page.getByText("Escrevemos a página, você revisa e ela vai ao ar em até 7 dias após o envio do material.")).toBeVisible();
@@ -105,6 +108,9 @@ test("cadastro mostra o erro devolvido pela função", async ({ page }) => {
 test("volta do Stripe confirma o pedido sem afirmar pagamento", async ({ page }) => {
   await page.goto("/anuncie/cadastro/obrigado");
   await expect(page.getByRole("heading", { level: 1, name: "Obrigado pelo pedido" })).toBeVisible();
+  // Na navegação pelo site, a tag robots da página anterior pode durar um instante antes de
+  // ser trocada; o que vale é o estado final, com uma única tag e noindex.
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("listitem").filter({ hasText: "Confirmação" })).toHaveAttribute("aria-current", "step");
 });
