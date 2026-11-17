@@ -65,6 +65,7 @@ const INCLUI = [
   { icone: BadgeCheck, texto: "Logo, foto, cores e fontes da sua marca" },
   { icone: PenLine, texto: "Apresentação, produtos ou serviços, diferenciais e como funciona o atendimento" },
   { icone: MessageSquare, texto: "Botão de WhatsApp com mensagem pronta, mais Instagram e site" },
+  { icone: MapPin, texto: "Endereço, horário de atendimento e link do mapa" },
   { icone: Smartphone, texto: "Versão para celular com o botão de WhatsApp sempre à mão" },
   { icone: Rocket, texto: "Preparada para o Google: título, descrição, dados estruturados e sitemap" },
 ];

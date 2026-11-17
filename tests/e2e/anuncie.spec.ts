@@ -56,3 +56,9 @@ test("perguntas frequentes abrem e mostram a resposta", async ({ page }) => {
   await page.getByText("Por quanto tempo a página fica no ar?").click();
   await expect(page.getByText("Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir.")).toBeVisible();
 });
+
+test("anuncie lista endereço, horário e mapa entre o que vem na página", async ({ page }) => {
+  await page.goto("/anuncie");
+  const lista = page.getByRole("region", { name: "O que vem na página" });
+  await expect(lista.getByText("Endereço, horário de atendimento e link do mapa")).toBeVisible();
+});

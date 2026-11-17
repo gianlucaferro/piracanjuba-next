@@ -71,6 +71,10 @@ export type Empresa = {
     atendimento: "presencial" | "online";
     /** O que a empresa publica sobre o atendimento no local. */
     detalhe: string;
+    /** Horário de atendimento, como a empresa informou ("Segunda a sábado, das 8h às 18h"). */
+    horario?: string;
+    /** Link do Google Maps da empresa (https). */
+    mapaUrl?: string;
   };
   /** Selo de avaliação com link para a fonte (sem número de avaliações). */
   avaliacao?: LinkExterno;
