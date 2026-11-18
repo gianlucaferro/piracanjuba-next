@@ -1,0 +1,72 @@
+.pagina {
+  background: #f8f6ef;
+  color: #252722;
+  min-height: 85vh;
+  padding: 0 clamp(16px, 5vw, 76px) 30px;
+}
+.miolo { max-width: 1180px; margin: auto; }
+.topo, .rodape { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.topo { min-height: 64px; font-size: .83rem; color: #55594f; }
+.topo a, .topo span, .rodape a, .categoria, .botao, .local, .secundario, .linha {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.capa {
+  display: grid; grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
+  background: var(--tinta); color: #fff; overflow: hidden;
+  border-radius: 5px; min-height: 390px;
+}
+.texto { align-self: center; padding: clamp(30px, 5vw, 68px); }
+.categoria { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .11em; }
+.texto h1 {
+  font-family: var(--fonte-previa), Georgia, "Times New Roman", serif; font-weight: 400;
+  font-size: clamp(2.35rem, 5vw, 4.5rem); line-height: 1.04; letter-spacing: -.045em;
+  overflow-wrap: anywhere; text-wrap: balance; margin: 22px 0 15px;
+}
+.apresentacao { font-size: clamp(1rem, 1.3vw, 1.13rem); line-height: 1.6; max-width: 46ch; color: #fffffff0; }
+.botao { background: #fffaf1; color: #242921; font-weight: 750; padding: 14px 19px; border-radius: 6px; margin-top: 28px; }
+.botao svg:last-child { margin-left: 5px; }
+.botao:hover { background: white; }
+.zap { width: 20px; height: 20px; }
+.cartaz { position: relative; min-height: 280px; display: grid; align-items: center; justify-items: center; isolation: isolate; }
+.foto { object-fit: cover; object-position: 52% 40%; z-index: -2; }
+.cartaz::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(0deg, #111b19c9, transparent 50%); }
+.cartaz:has(.marca) .foto { filter: saturate(.55) brightness(.55); }
+.marca { padding: 12px; background: white; border-radius: 12px; box-shadow: 0 12px 34px #0003; width: clamp(130px, 19vw, 212px); aspect-ratio: 1; display: grid; place-items: center; }
+.marca img { object-fit: contain; width: 100%; height: 100%; }
+.local { position: absolute; bottom: 15px; right: 18px; font-size: .7rem; color: #fff; }
+.contatos { padding: 36px 0 30px; }
+.contatos h2 { font-size: clamp(1.5rem, 2.7vw, 2rem); font-weight: 650; letter-spacing: -.045em; margin-bottom: 18px; }
+.grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 238px), 1fr)); border-top: 1px solid #c9cabe; }
+.item { display: flex; align-items: flex-start; gap: 13px; padding: 22px 20px 12px 0; }
+.item > svg { width: 21px; height: 21px; flex-shrink: 0; margin-top: 2px; color: var(--tinta); }
+.item h3 { font-weight: 750; font-size: .87rem; margin-bottom: 6px; }
+.item p, .linha, .secundario { font-size: .94rem; line-height: 1.6; }
+.linha { display: flex; width: fit-content; }
+.secundario { margin-top: 6px; font-weight: 650; }
+.linha svg, .secundario svg { color: var(--tinta); }
+.rodape { padding: 16px 0 0; border-top: 1px solid #d8d9cf; font-size: .78rem; color: #54574e; flex-wrap: wrap; }
+.rodape a { font-weight: 650; }
+.pagina a:focus-visible { outline: 3px solid #dd8f0f; outline-offset: 4px; }
+.linha:hover, .secundario:hover, .topo a:hover, .rodape a:hover { text-decoration: underline; }
+@media (max-width: 650px) {
+  .topo { min-height: 50px; }
+  .capa { grid-template-columns: 1fr; }
+  .texto { padding: 29px 23px 30px; }
+  .texto h1 { margin-top: 13px; }
+  .cartaz { min-height: 155px; }
+  .foto { object-position: 50% 44%; }
+  .marca { width: 104px; height: 104px; padding: 7px; }
+  .local { bottom: 7px; right: 9px; font-size: .61rem; }
+  .contatos { padding: 24px 0 15px; }
+  .item { padding: 14px 5px 10px 0; }
+  .grade { grid-template-columns: 1fr; }
+}
+
+.retrato:has(.marca) .foto { filter: none; object-position: 50% 25%; }
+.retrato .marca { position: absolute; left: 16px; bottom: 16px; width: 78px; height: 78px; padding: 6px; }
+@media (max-width: 650px) { .retrato { min-height: 230px; } }
+
+.oferta { margin: 27px 0 0; }
+.oferta h2 { font-size: 1.02rem; font-weight: 700; margin-bottom: 11px; }
+.oferta ul { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; padding: 0; }
+.oferta li { padding: 5px 12px; border: 1px solid #d0cfc2; border-radius: 4px; font-size: .87rem; }

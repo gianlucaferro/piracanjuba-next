@@ -10,6 +10,6 @@ import { ehPaginaDeEmpresa } from "@/data/empresas-slugs";
  */
 export default function SomenteNoPortal({ children }: { children: React.ReactNode }) {
   const caminho = usePathname();
-  if (ehPaginaDeEmpresa(caminho)) return null;
+  if (ehPaginaDeEmpresa(caminho) || /^\/zap-pba\/[^/]+\/?$/.test(caminho ?? "")) return null;
   return <>{children}</>;
 }

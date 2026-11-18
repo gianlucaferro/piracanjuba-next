@@ -1,0 +1,5261 @@
+[
+  {
+    "slug": "2a-sistema-de-seguranca",
+    "nome": "2A Sistema de Segurança",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Fale com a 2A sobre sistemas de segurança e explique o que deseja instalar ou revisar em seu imóvel.",
+    "telefones": [
+      "5564993281913"
+    ]
+  },
+  {
+    "slug": "aabb-piracanjuba",
+    "nome": "AABB Piracanjuba",
+    "categoria": "Esportes",
+    "setor": "Esportes",
+    "apresentacao": "A AABB de Piracanjuba reúne piscinas, escolinha de futebol, natação e hidroginástica. Consulte as turmas e as condições de participação.",
+    "telefones": [
+      "5564992007809"
+    ],
+    "oferta": [
+      "Piscinas",
+      "Escolinha de futebol",
+      "Natação",
+      "Hidroginástica"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, 629 - S Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11641497871744604472",
+    "foto": "/marcas-zap/setores/piscina.webp"
+  },
+  {
+    "slug": "acai-do-chefe",
+    "nome": "Açaí do Chefe",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O Açaí do Chefe prepara açaí em copos e potes, com adicionais. Consulte as opções para retirada ou entrega.",
+    "telefones": [
+      "5564992453621"
+    ],
+    "oferta": [
+      "Açaí em copos e potes",
+      "Adicionais",
+      "Retirada"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, Piracanjuba - GO, 75643-096",
+    "mapa": "https://www.google.com/maps?cid=8472914658737045340",
+    "foto": "/marcas-zap/setores/sorvete.webp"
+  },
+  {
+    "slug": "adelita-cabeleireira",
+    "nome": "Adelita Cabeleireira",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Converse com a cabeleireira Adelita sobre o que deseja fazer no cabelo e combine um horário.",
+    "telefones": [
+      "5564992800721"
+    ],
+    "foto": "/marcas-zap/setores/barbearia.webp"
+  },
+  {
+    "slug": "adeliwalley",
+    "nome": "Adeliwalley",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Adeliwalley trabalha com vestuário. Pergunte pelas peças e tamanhos para o dia a dia ou uma ocasião específica.",
+    "telefones": [
+      "5564992789934"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, 223 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=18059570531078834383",
+    "logo": "/marcas-zap/logos/bc4355551a119437.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "adjc-armazens-gerais",
+    "nome": "ADJC Armazéns Gerais",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "A ADJC atende produtores rurais na área de armazenagem de grãos. Informe o produto e a quantidade para conversar com o armazém.",
+    "telefones": [
+      "5564999881164"
+    ],
+    "endereco": "Rodovia GO-217/ km 30,7 - Saída para - Zona Rural, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14192291238251015579",
+    "instagram": "https://www.instagram.com/armazens2irmaos.adjc/",
+    "facebook": "https://www.facebook.com/armazensADJC/",
+    "logo": "/marcas-zap/logos/armazens2irmaos.adjc.webp",
+    "cor": "#194f42"
+  },
+  {
+    "slug": "adriana-manicure-e-pedicure",
+    "nome": "Adriana Manicure e Pedicure",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Adriana Lima atende manicure e pedicure no Setor Orquídeas.",
+    "telefones": [
+      "5564992244654"
+    ],
+    "oferta": [
+      "Manicure",
+      "Pedicure"
+    ],
+    "site": "https://manicureempiracanjuba.com.br/",
+    "logo": "/marcas-zap/logos/33c1ca45ea4d4b61.webp",
+    "cor": "#4f1934",
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "adryellen-costa",
+    "nome": "Adryellen Costa",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Adryellen Costa trabalha com sobrancelhas. Consulte as opções de atendimento e a disponibilidade de agenda.",
+    "telefones": [
+      "5564992888444"
+    ]
+  },
+  {
+    "slug": "afeto-atendimento-multidisciplinar",
+    "nome": "Afeto Atendimento Multidisciplinar",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "A Afeto oferece atendimento multidisciplinar com psicologia, terapia ocupacional, pedagogia e psicomotricidade para crianças e adultos.",
+    "telefones": [
+      "5564992735504"
+    ],
+    "oferta": [
+      "Terapia ocupacional",
+      "Psicologia",
+      "Pedagogia"
+    ],
+    "endereco": "R. dos Pinhais - St. Magalhães, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=16083711293933334135",
+    "logo": "/marcas-zap/logos/875b65d121ffad76.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "agnaldos-bar",
+    "nome": "Agnaldos Bar",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Para conhecer o Agnaldos Bar, pergunte pelas opções de comida e bebida e pelo atendimento no local.",
+    "telefones": [
+      "5564992335202"
+    ],
+    "endereco": "2116, Av. Padre Marinho, 2060 - Conj. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6480516672698692893",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "agro-diesel",
+    "nome": "Agro Diesel",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "Fale com Dagner e Luciene, da Agro Diesel, sobre a demanda da propriedade e o equipamento que deseja consultar.",
+    "telefones": [
+      "5564992150004"
+    ],
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "agro-petiscao",
+    "nome": "Agro Petiscão",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "A Agro Petiscão trabalha com rações para animais. Informe a espécie e a embalagem que procura para consultar a loja.",
+    "telefones": [
+      "5564992066551"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15485733783777892409",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "agro-petiscao-ii",
+    "nome": "Agro Petiscão II",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "Consulte a Agro Petiscão II sobre os produtos para o seu animal e confirme a localização da unidade.",
+    "telefones": [
+      "5564992043592"
+    ],
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "agropecas-pecas-e-implementos-agricolas",
+    "nome": "Agropeças Peças e Implementos Agrícolas",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Agropeças atende consultas sobre peças e implementos agrícolas. Informe a marca e o modelo da máquina ao fazer o pedido.",
+    "telefones": [
+      "556434055101"
+    ],
+    "oferta": [
+      "Peças agrícolas",
+      "Implementos agrícolas"
+    ],
+    "endereco": "R. Cel. João de Araújo, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12542767319126436533",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "aleksander-entregas",
+    "nome": "Aleksander Entregas",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para falar com Aleksander sobre uma entrega, informe o código da encomenda e o bairro de destino.",
+    "telefones": [
+      "5564992327992"
+    ]
+  },
+  {
+    "slug": "alessandro-taxista",
+    "nome": "Alessandro Taxista",
+    "categoria": "Transportes e entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte Alessandro sobre corrida de táxi ou transporte de encomenda para Goiânia e combine os detalhes da viagem.",
+    "telefones": [
+      "5564992130368"
+    ]
+  },
+  {
+    "slug": "aline-g-nail-designer",
+    "nome": "Aline G Nail Designer",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Aline G sobre design de unhas, referências de formato e disponibilidade para atendimento.",
+    "telefones": [
+      "5564993347247"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "aline-manicure",
+    "nome": "Aline Manicure",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Aline sobre manicure no Setor Lima e combine o horário para fazer as unhas.",
+    "telefones": [
+      "5564992737697"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "alo-entulhos",
+    "nome": "Alô Entulhos",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Precisa retirar entulho? Informe à Alô Entulhos o bairro, o volume aproximado e a data para consultar o serviço.",
+    "telefones": [
+      "5564992426832"
+    ]
+  },
+  {
+    "slug": "alves-kappes-advocacia",
+    "nome": "Alves & Kappes Advocacia",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "O escritório Alves & Kappes atende pessoas físicas e empresas. Consulte a equipe sobre o atendimento jurídico adequado ao seu caso.",
+    "telefones": [
+      "5564992282048"
+    ],
+    "oferta": [
+      "Atendimento a pessoas físicas",
+      "Atendimento a empresas"
+    ],
+    "endereco": "rua bueno de sa, q 11 - l 10 - St. Oeste, Piracanjuba - GO, 75640-204",
+    "mapa": "https://www.google.com/maps?cid=13569929520870615495",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "amanda-araujo-unhas-em-gel",
+    "nome": "Amanda Araújo Unhas em Gel",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Amanda Araújo trabalha com unhas em gel. Fale sobre o formato e o acabamento que deseja e consulte sua agenda.",
+    "telefones": [
+      "5564992925984"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "amanda-guimaraes",
+    "nome": "Amanda Guimarães",
+    "categoria": "Fonoaudiologia",
+    "setor": "Saúde",
+    "apresentacao": "Atendimento em fonoaudiologia com Amanda Guimarães.",
+    "telefones": [
+      "5564992426842"
+    ],
+    "oferta": [
+      "Audiometria",
+      "Aparelhos auditivos",
+      "Teste da orelhinha"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 436, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8383014730739738648",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "amora-joias",
+    "nome": "Amora Joias",
+    "categoria": "Acessórios e semijoias",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Quer conhecer as peças da Amora Joias? Peça fotos dos modelos disponíveis e consulte as medidas.",
+    "telefones": [
+      "5564992431817"
+    ],
+    "foto": "/marcas-zap/setores/joias.webp"
+  },
+  {
+    "slug": "ana-carla-teles",
+    "nome": "Ana Carla Teles",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Para falar com Ana Carla Teles sobre atendimento na área da saúde, pergunte como agendar e onde será a consulta.",
+    "telefones": [
+      "5564992615425"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "ana-paula-nail-designer",
+    "nome": "Ana Paula Nail Designer",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Ana Paula sobre design de unhas e converse a respeito do formato e do acabamento para seu atendimento.",
+    "telefones": [
+      "5564992198877"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "anaban-tendas",
+    "nome": "Anaban Tendas",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte a Anaban Tendas informando o local, a data e o tamanho da área que precisa cobrir.",
+    "telefones": [
+      "5564992836632"
+    ]
+  },
+  {
+    "slug": "andreza-guimaraes",
+    "nome": "Andreza Guimarães",
+    "categoria": "Nutrição",
+    "setor": "Saúde",
+    "apresentacao": "Para marcar uma consulta com a nutricionista Andreza Guimarães, pergunte sobre as modalidades de atendimento e os horários.",
+    "telefones": [
+      "5564993278623"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "anielle-decoracoes-festas",
+    "nome": "Anielle Decorações Festas",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Anielle trabalha com decoração de festas. Conte o tema, a data e o tamanho do evento para conversar sobre as opções.",
+    "telefones": [
+      "5564992819701"
+    ],
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "aprender-e-brincar",
+    "nome": "Aprender e Brincar",
+    "categoria": "Brinquedos educativos",
+    "setor": "Educação",
+    "apresentacao": "Jogos, quebra-cabeças e livros interativos estão entre os brinquedos educativos da Aprender e Brincar. Consulte as opções para a idade da criança.",
+    "telefones": [
+      "5564993280711"
+    ],
+    "oferta": [
+      "Jogos educativos",
+      "Quebra-cabeças",
+      "Livros interativos"
+    ],
+    "endereco": "Av. Padre Marinho, Quadra 06, Lote 10 B - St. Jardim Primavera, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3821430487459186859",
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "araguaia-produtos-agropecuarios",
+    "nome": "Araguaia Produtos Agropecuários",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Araguaia atende o produtor com sementes, adubos, itens de nutrição animal e equipamentos agrícolas. Consulte o produto para sua atividade.",
+    "telefones": [
+      "5564999385084"
+    ],
+    "oferta": [
+      "Sementes",
+      "Nutrição animal",
+      "Máquinas e equipamentos agrícolas"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, S/N - Qd. B Lt. 03 - Setor Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9296592012788259383",
+    "instagram": "https://www.instagram.com/araguaia.oficial/",
+    "instagramRede": true,
+    "site": "https://www.araguaia.com.br/pt",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/12fde61eaa209753.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "arena-dg",
+    "nome": "Arena DG",
+    "categoria": "Esportes",
+    "setor": "Esportes",
+    "apresentacao": "A Arena DG oferece locação de quadras e atividades como beach tennis, vôlei de areia, futevôlei e funcional.",
+    "telefones": [
+      "5564992825872"
+    ],
+    "oferta": [
+      "Beach tennis",
+      "Vôlei de areia",
+      "Futevôlei",
+      "Aluguel de quadras"
+    ],
+    "endereco": "R. Revelenidia Correia de Melo - Residencial, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9585969958211812172",
+    "instagram": "https://www.instagram.com/arenadg.pba/",
+    "logo": "/marcas-zap/logos/2451cffb202500ef.webp",
+    "cor": "#194f4f"
+  },
+  {
+    "slug": "arena-emporio",
+    "nome": "Arena Empório",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para conhecer as peças de moda da Arena Empório, fale com a loja sobre modelos, tamanhos e novidades disponíveis.",
+    "telefones": [
+      "5564992891924"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "armazem-da-regina",
+    "nome": "Armazém da Regina",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte o Armazém da Regina sobre os produtos para sua lista de compras e a disponibilidade na loja.",
+    "telefones": [
+      "556434051880"
+    ],
+    "endereco": "604, Av. Padre Marinho, 584, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3609972202931347283",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "arquiteta-lurian-isa",
+    "nome": "Arquiteta Lúrian Isa",
+    "categoria": "Arquitetura",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Lúrian Isa desenvolve projetos de arquitetura residencial, comercial e de interiores. Consulte também o acompanhamento técnico de obra.",
+    "telefones": [
+      "5564992416580"
+    ],
+    "oferta": [
+      "Projetos residenciais",
+      "Projetos comerciais",
+      "Interiores",
+      "Acompanhamento de obra"
+    ],
+    "endereco": "Rua José Alves Ferreira, Av. Antônio Batista Arantes, 91 - Quadra 25, lote 02, Primeiro andar - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4982890790592221444",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "as-almeida-silva-contabilidade",
+    "nome": "AS Almeida & Silva Contabilidade",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A AS Almeida & Silva trabalha com contabilidade rural, auditoria, imposto de renda e planejamento tributário para pessoas e empresas.",
+    "telefones": [
+      "5564993382998"
+    ],
+    "oferta": [
+      "Contabilidade rural",
+      "Auditoria",
+      "Declaração de imposto de renda",
+      "Planejamento tributário"
+    ],
+    "endereco": "R. Cônego Olinto, 317 Q 17 - l 0 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=17920045612769742947",
+    "logo": "/marcas-zap/logos/1e9c0d3a8589eab9.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "as-meninas-multimarcas",
+    "nome": "As Meninas Multimarcas",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A loja As Meninas Multimarcas reúne calçados e acessórios femininos. Pergunte pelos modelos e pelas numerações disponíveis.",
+    "telefones": [
+      "5564992176440"
+    ],
+    "oferta": [
+      "Calçados femininos",
+      "Acessórios"
+    ],
+    "endereco": "Rua Dr - R. Dr. Ruy Brasil Cavalcante, 135 - Centro, Piracanjuba - GO, 75640-122",
+    "mapa": "https://www.google.com/maps/place/As+Meninas+-+Loja+de+Cal%C3%A7ados+e+Acess%C3%B3rios+Femininos/data=!4m7!3m6!1s0x935f436d6f602e87:0x5f704eeea0ab2a25!8m2!3d-17.3051383!4d-49.0239433!16s%2Fg%2F11z92g_wh4!19sChIJhy5gb21DX5MRJSqroO5OcF8?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
+    "instagram": "https://www.instagram.com/asmeninasmultimarcas/",
+    "logo": "/marcas-zap/logos/asmeninasmultimarcas.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "atelie-zig-zag",
+    "nome": "Ateliê Zig Zag",
+    "categoria": "Artesanato",
+    "setor": "Artesanato",
+    "apresentacao": "O Ateliê Zig Zag trabalha com bordado. Envie o desenho ou nome que deseja bordar e consulte a possibilidade de personalização.",
+    "telefones": [
+      "5564992619776"
+    ],
+    "foto": "/marcas-zap/setores/artesanato.webp"
+  },
+  {
+    "slug": "atma-corretora-de-seguros",
+    "nome": "Atma Corretora de Seguros",
+    "categoria": "Comércio local",
+    "setor": "Outros",
+    "apresentacao": "Fale com a Atma Corretora de Seguros sobre o bem ou a cobertura que deseja cotar.",
+    "telefones": [
+      "5564992074510"
+    ],
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "auto-eletrica-kamenak",
+    "nome": "Auto Elétrica Kamenak",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Para consultar a Auto Elétrica Kamenak, informe o modelo do veículo e o problema elétrico que percebeu.",
+    "telefones": [
+      "5564993169468"
+    ],
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "auto-mecanica-ribeiro",
+    "nome": "Auto Mecânica Ribeiro",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Fale com a Auto Mecânica Ribeiro sobre o veículo e o reparo que precisa avaliar antes de levá-lo à oficina.",
+    "telefones": [
+      "5564992921234"
+    ],
+    "endereco": "Av. Nilson Eloy Pimenta, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12771003719343787787",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "avicultura-canario-saulo",
+    "nome": "Avicultura Canário (Saulo)",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "Fale com Saulo, da Avicultura Canário, sobre os itens disponíveis para o seu animal.",
+    "telefones": [
+      "556434051066"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11188367253379196764",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "baiano-capinador",
+    "nome": "Baiano Capinador",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Precisa capinar um lote ou quintal? Fale com Baiano sobre a área a ser limpa e a data desejada.",
+    "telefones": [
+      "5564993387764"
+    ]
+  },
+  {
+    "slug": "barbearia-sportman",
+    "nome": "Barbearia SportMan",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Quer marcar um horário na Barbearia SportMan? Pergunte sobre os cortes e os serviços disponíveis.",
+    "telefones": [
+      "5564992180059"
+    ],
+    "foto": "/marcas-zap/setores/barbearia.webp"
+  },
+  {
+    "slug": "bazar-maju",
+    "nome": "Bazar Majú",
+    "categoria": "Bazar",
+    "setor": "Bazar",
+    "apresentacao": "Fale com Maria Helena, do Bazar Majú, para conhecer os itens disponíveis antes de ir à loja.",
+    "telefones": [
+      "5564993206168"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 79, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15401625900142798336"
+  },
+  {
+    "slug": "bcm-advocacia",
+    "nome": "BCM Advocacia",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "A BCM Advocacia presta atendimento jurídico a pessoas físicas e empresas. Consulte como marcar uma conversa com o escritório.",
+    "telefones": [
+      "5564992495840"
+    ],
+    "oferta": [
+      "Atendimento a pessoas físicas",
+      "Atendimento a empresas"
+    ],
+    "endereco": "R. Cônego Olinto - Centro, Piracanjuba - GO, 75640-136",
+    "mapa": "https://www.google.com/maps?cid=6289006320534123227",
+    "instagram": "https://www.instagram.com/bcm.advocaciaa/",
+    "logo": "/marcas-zap/logos/bcm.advocaciaa.webp",
+    "cor": "#19194f",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "beatriz-carvalho",
+    "nome": "Beatriz Carvalho",
+    "categoria": "Nutrição",
+    "setor": "Saúde",
+    "apresentacao": "Fale com a nutricionista Beatriz Carvalho para consultar horários e informações sobre o atendimento nutricional.",
+    "telefones": [
+      "5562993495305"
+    ],
+    "instagram": "https://www.instagram.com/beatrizcarvalho.nutri/",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "beekids",
+    "nome": "BeeKids",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a BeeKids sobre roupas infantis. Informe a idade ou o tamanho da criança para conhecer as opções.",
+    "telefones": [
+      "5564993203555"
+    ],
+    "endereco": "R. dos Pinhais, 7846 - St. Magalhães, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7775882943740479339",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "bella-moveis-e-ambientes",
+    "nome": "Bella Móveis e Ambientes",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "A Bella Móveis e Ambientes fabrica móveis planejados. Envie as medidas e referências do espaço para conversar sobre seu projeto.",
+    "telefones": [
+      "5564992111215"
+    ],
+    "oferta": [
+      "Marcenaria",
+      "Móveis planejados"
+    ],
+    "endereco": "R. JE-13, Qd 18 - lt 17 - jardim Europa, Piracanjuba - GO, 75641-310",
+    "mapa": "https://www.google.com/maps?cid=1444910601245776424",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "bella-pegada",
+    "nome": "Bella Pegada",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a Bella Pegada sobre modelos de calçados, numerações e opções disponíveis na loja.",
+    "telefones": [
+      "5564992734129"
+    ],
+    "endereco": "Rua dr - R. Dr. Ruy Brasil Cavalcante, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3839621315434645902",
+    "instagram": "https://www.instagram.com/bella.pegada/",
+    "logo": "/marcas-zap/logos/bella.pegada.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "bem-baby",
+    "nome": "Bem Baby",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Converse com Jessika, da Bem Baby, sobre as peças de vestuário e os tamanhos disponíveis.",
+    "telefones": [
+      "5564992563708"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "benclair-semijoias",
+    "nome": "Benclair Semijoias",
+    "categoria": "Acessórios e semijoias",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Benclair reúne anéis, brincos, colares, pulseiras e berloques em uma vitrine de semijoias.",
+    "telefones": [
+      "5564992785643"
+    ],
+    "oferta": [
+      "Anéis",
+      "Brincos",
+      "Colares",
+      "Pulseiras",
+      "Berloques"
+    ],
+    "endereco": "Avenida Padre Marinho, 460, Setor Bueno, Piracanjuba, GO",
+    "mapa": "https://www.google.com/maps/place/BenClair+Semi+j%C3%B3ias/data=!4m7!3m6!1s0x935f4381bbae8579:0x7016f36c6bf52686!8m2!3d-17.2988581!4d-49.0292553!16s%2Fg%2F11zbr722wq!19sChIJeYWuu4FDX5MRhib1a2zzFnA?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
+    "instagram": "https://www.instagram.com/benclair_acessoriosfinos/",
+    "site": "https://benclair.com.br/",
+    "logo": "/marcas-zap/logos/benclair_acessoriosfinos.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/joias.webp"
+  },
+  {
+    "slug": "betania-entregas",
+    "nome": "Betânia Entregas",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para tratar de uma entrega com Betânia, informe a referência do pedido e o local de recebimento.",
+    "telefones": [
+      "5564992689802"
+    ]
+  },
+  {
+    "slug": "bigode-auto-brilho",
+    "nome": "Bigode Auto Brilho",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte a Bigode Auto Brilho sobre o serviço de estética automotiva para seu carro e a disponibilidade de agenda.",
+    "telefones": [
+      "5564999637432"
+    ]
+  },
+  {
+    "slug": "bitao-suspensoes",
+    "nome": "Bitão Suspensões",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte a Bitão Suspensões sobre a suspensão do seu veículo. Informe marca, modelo e o que gostaria de avaliar.",
+    "telefones": [
+      "5564992681286"
+    ],
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "blitzcar",
+    "nome": "BlitzCar",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "A BlitzCar trabalha com lavagem e estética automotiva. Informe qual é seu veículo e o tipo de cuidado que procura.",
+    "telefones": [
+      "5564992176850"
+    ],
+    "endereco": "R. C-4, 249 - St. Estiva, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2656207895220194788"
+  },
+  {
+    "slug": "bloom-presentes",
+    "nome": "Bloom Presentes",
+    "categoria": "Papelaria e Presentes",
+    "setor": "Papelaria e Presentes",
+    "apresentacao": "A Bloom Presentes trabalha com cestas e buquês. Informe a ocasião e a data para consultar opções de presente.",
+    "telefones": [
+      "5562983140994"
+    ],
+    "oferta": [
+      "Cestas",
+      "Buquês"
+    ],
+    "foto": "/marcas-zap/setores/papelaria.webp"
+  },
+  {
+    "slug": "bloomer-personalizados",
+    "nome": "Bloomer Personalizados",
+    "categoria": "Papelaria e Presentes",
+    "setor": "Papelaria e Presentes",
+    "apresentacao": "Tem uma ideia para presentear alguém? Pergunte à Bloomer Personalizados sobre formatos, personalização e prazo para a sua data.",
+    "telefones": [
+      "5564993407404"
+    ],
+    "foto": "/marcas-zap/setores/papelaria.webp"
+  },
+  {
+    "slug": "borracharia-dos-amigos",
+    "nome": "Borracharia dos Amigos",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Para consultar a Borracharia dos Amigos, informe a medida do pneu e o serviço de que precisa.",
+    "telefones": [
+      "5564992889181"
+    ],
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "boteco-do-marquim",
+    "nome": "Boteco do Marquim",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O Boteco do Marquim atua como bar e peixaria. Pergunte pelas opções de peixe e pelo que está sendo servido.",
+    "telefones": [
+      "5564992475677"
+    ],
+    "endereco": "Av. Manoel Quintiliano dos Reis, 350-388 - St. Sebastião Francisco de Oliveira, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15445823551748599748",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "box-87-auto-center",
+    "nome": "Box 87 Auto Center",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A Box 87 atende demandas automotivas em Piracanjuba. Descreva o problema e informe o modelo do veículo para consultar a oficina.",
+    "telefones": [
+      "5564992387080"
+    ],
+    "endereco": "R. João Modesto - Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1025576862067934971",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "bruna-talarico-massagem",
+    "nome": "Bruna Talarico Massagem",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Bruna Talarico atende com massagem, depilação e limpeza de pele.",
+    "telefones": [
+      "5564996180138"
+    ],
+    "oferta": [
+      "Massagem",
+      "Depilação",
+      "Limpeza de pele"
+    ]
+  },
+  {
+    "slug": "cacau-show",
+    "nome": "Cacau Show",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Cacau Show reúne chocolates como trufas, bombons e tabletes. Consulte a seleção disponível em Piracanjuba.",
+    "telefones": [
+      "556434055039"
+    ],
+    "oferta": [
+      "Trufas",
+      "Bombons",
+      "Tabletes de chocolate"
+    ],
+    "endereco": "R. Dom Pedro II, 513 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=18034238335819967720",
+    "instagram": "https://www.instagram.com/cacaushow/",
+    "instagramRede": true,
+    "site": "https://www.cacaushow.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/039c5a48db86fbe8.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "caminho-da-sorte-loterias",
+    "nome": "Caminho da Sorte Loterias",
+    "categoria": "Lotérica",
+    "setor": "Lotérica",
+    "apresentacao": "Para informações sobre atendimento lotérico em Piracanjuba, fale com a Caminho da Sorte Loterias.",
+    "telefones": [
+      "556434051971"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, 480 - S Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12611070829065100500"
+  },
+  {
+    "slug": "carol-reis",
+    "nome": "Carol Reis",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Carol Reis trabalha com design de unhas. Converse com a profissional sobre o acabamento desejado e a agenda.",
+    "telefones": [
+      "5564992366218"
+    ]
+  },
+  {
+    "slug": "carpal-new-holland",
+    "nome": "Carpal New Holland",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "Consulte a Carpal New Holland sobre peças para tratores e máquinas agrícolas. O modelo do equipamento ajuda a identificar o componente.",
+    "telefones": [
+      "5562995112391"
+    ],
+    "endereco": "Carpal New Holland Piracanjuba - Av. Antônio Batista Arantes, 254, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps/place/Carpal+New+Holland+Piracanjuba/data=!4m7!3m6!1s0x935f430054094d69:0xefa5262c574c04d1!8m2!3d-17.3020847!4d-49.0217972!16s%2Fg%2F11zkmg4g3m!19sChIJaU0JVABDX5MR0QRMVywmpe8?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
+    "site": "https://loja.carpaltratores.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/c6ffb55e1c849056.webp",
+    "cor": "#19274f",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "casa-da-sorte-de-cleomar",
+    "nome": "Casa da Sorte de Cleomar",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Casa da Sorte de Cleomar atua no comércio de vestuário em Piracanjuba. Consulte as peças e os tamanhos que procura.",
+    "telefones": [
+      "556434055027"
+    ],
+    "endereco": "R. Dom Pedro II, 645 - S Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3277491879737630812",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "casa-das-pedras-piracanjuba",
+    "nome": "Casa das Pedras Piracanjuba",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Para consultar a Casa das Pedras Piracanjuba, explique o tipo de pedra e o tamanho da peça de que precisa.",
+    "telefones": [
+      "5564992397403"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "casa-do-forro-pvc-e-vidracaria",
+    "nome": "Casa do Forro PVC e Vidraçaria",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Casa do Forro PVC e Vidraçaria trabalha com forros e vidros. Envie as medidas do ambiente para consultar o projeto.",
+    "telefones": [
+      "5564992309798"
+    ],
+    "oferta": [
+      "Forros de PVC",
+      "Vidraçaria"
+    ],
+    "endereco": "Av. Padre Marinho, Sn - São Vicente de Paula, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6387235819112779133",
+    "instagram": "https://www.instagram.com/casadoforropvcevidracariapba/",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "casa-do-piso",
+    "nome": "Casa do Piso",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Casa do Piso trabalha com materiais de construção e acabamento. Informe o ambiente e a metragem para consultar as opções.",
+    "telefones": [
+      "5564992881661"
+    ],
+    "oferta": [
+      "Materiais de construção",
+      "Acabamentos"
+    ],
+    "endereco": "R. Y-1, QUADRA 1 LOTE 7 - NORTE, Piracanjuba - GO, 75643-098",
+    "mapa": "https://www.google.com/maps?cid=1420601309702468796",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "casa-estrela-papelaria",
+    "nome": "Casa Estrela Papelaria",
+    "categoria": "Papelaria e Presentes",
+    "setor": "Papelaria e Presentes",
+    "apresentacao": "A Casa Estrela reúne papelaria, brinquedos e presentes. Informe o material ou a ocasião para consultar as opções.",
+    "telefones": [
+      "556434052083"
+    ],
+    "oferta": [
+      "Papelaria",
+      "Brinquedos",
+      "Presentes"
+    ],
+    "mapa": "https://www.google.com/maps?cid=2613419839799677707",
+    "foto": "/marcas-zap/setores/papelaria.webp"
+  },
+  {
+    "slug": "cascos-wr",
+    "nome": "Cascos WR",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Cascos WR atua no casqueamento de bovinos. Consulte o atendimento para a propriedade informando a localização e o número de animais.",
+    "telefones": [
+      "5564992642081"
+    ],
+    "endereco": "Cascos WR - R. Elesbão Dias Pinheiro, 100 - Centro, Piracanjuba - GO, 75640-132",
+    "mapa": "https://www.google.com/maps/place/Cascos+WR/data=!4m7!3m6!1s0x4b59abd50af4f125:0xd756074bbb673a70!8m2!3d-17.3039769!4d-49.0162388!16s%2Fg%2F11rtsb4ssf!19sChIJJfH0CtWrWUsRcDpnu0sHVtc?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "cesar-taxista",
+    "nome": "César Taxista",
+    "categoria": "Transportes e entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte César sobre corridas de táxi entre Piracanjuba e Goiânia. Informe a data e os pontos de embarque e desembarque.",
+    "telefones": [
+      "5564992612920"
+    ]
+  },
+  {
+    "slug": "cida-personal-trainer",
+    "nome": "Cida Personal Trainer",
+    "categoria": "Personal Trainer",
+    "setor": "Personal Trainer",
+    "apresentacao": "Fale com Cida sobre acompanhamento individual de treino e combine o local e a frequência das sessões.",
+    "telefones": [
+      "5564992632725"
+    ],
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "claro",
+    "nome": "Claro",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "A loja Claro de Piracanjuba atende consultas sobre celular, internet por fibra, TV e telefonia residencial.",
+    "telefones": [
+      "5564992834030"
+    ],
+    "oferta": [
+      "Internet",
+      "Telefonia",
+      "TV"
+    ],
+    "endereco": "R. Dom Pedro II, 620 - S. Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15981786211909156690",
+    "instagram": "https://www.instagram.com/clarobrasil/",
+    "instagramRede": true,
+    "site": "https://www.claro.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/17cb409e30851b3c.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/tecnologia.webp"
+  },
+  {
+    "slug": "cleones-bar",
+    "nome": "Cleone’s Bar",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Quer conhecer o Cleone’s Bar? Fale com a equipe sobre as opções de comida e bebida da casa.",
+    "telefones": [
+      "5564992739303"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=17116990855605881523",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "cleuza-cabeleireira",
+    "nome": "Cleuza Cabeleireira",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Para marcar atendimento de cabelo com Cleuza, informe o serviço e o horário que procura.",
+    "telefones": [
+      "5564993063156"
+    ],
+    "foto": "/marcas-zap/setores/barbearia.webp"
+  },
+  {
+    "slug": "clinica-daher",
+    "nome": "Clínica Daher",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "A Clínica Daher reúne especialidades médicas, exames e sala de vacinas. Consulte a disponibilidade para o atendimento que procura.",
+    "telefones": [
+      "556434051515"
+    ],
+    "oferta": [
+      "Especialidades médicas",
+      "Exames",
+      "Vacinas"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 438 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15347766822785323194",
+    "instagram": "https://www.instagram.com/clinica_daher/",
+    "logo": "/marcas-zap/logos/5c634bea363b1948.webp",
+    "cor": "#19274f",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "clinica-medvida",
+    "nome": "Clínica MedVida",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "A Clínica MedVida oferece consultas médicas e exames como ultrassom, eletrocardiograma e Holter. Confirme com a equipe o preparo e o agendamento.",
+    "telefones": [
+      "5564992222497"
+    ],
+    "oferta": [
+      "Consultas médicas",
+      "Exames laboratoriais",
+      "Ultrassonografia"
+    ],
+    "endereco": "R. José Alves Ferreira - CENTRO, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2681633566103359066",
+    "site": "https://thiagopba10.wixsite.com/medvida",
+    "logo": "/marcas-zap/logos/c6ad7f437746f647.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "clinica-rocaliz",
+    "nome": "Clínica Rocaliz",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Consulte a Clínica Rocaliz sobre os atendimentos de saúde disponíveis e o agendamento de uma consulta.",
+    "telefones": [
+      "5564993055120"
+    ],
+    "endereco": "R. José Alves Ferreira, 637, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14554204817006640988",
+    "instagram": "https://www.instagram.com/clinicarocaliz/",
+    "logo": "/marcas-zap/logos/clinicarocaliz.webp",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "clinica-veterinaria-clavep",
+    "nome": "Clínica Veterinária Clavep",
+    "categoria": "Veterinários",
+    "setor": "Veterinários",
+    "apresentacao": "A Clavep reúne consultório e laboratório veterinário. Informe qual animal precisa de atendimento ou o exame que deseja consultar.",
+    "telefones": [
+      "556434056124"
+    ],
+    "oferta": [
+      "Consultas veterinárias",
+      "Laboratório veterinário"
+    ],
+    "endereco": "Rua José Alves de Souza, Qd. 23 Lt. 10 - St. Lima, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=508338633183965783",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "clinica-veterinaria-collie",
+    "nome": "Clínica Veterinária Collie",
+    "categoria": "Veterinários",
+    "setor": "Veterinários",
+    "apresentacao": "A Collie atende animais em consultas veterinárias, exames e cirurgias.",
+    "telefones": [
+      "5564999833197"
+    ],
+    "oferta": [
+      "Consultas veterinárias",
+      "Exames",
+      "Cirurgias",
+      "Banho e tosa"
+    ],
+    "endereco": "R. Lindolfo França, 493 - Centro, Piracanjuba - GO, 75640-126",
+    "mapa": "https://www.google.com/maps?cid=1766416895619836320",
+    "instagram": "https://www.instagram.com/clinicaveterinaria_collie/",
+    "site": "https://clinicavetcollie.com.br/",
+    "logo": "/marcas-zap/logos/19317a644021e4e7.webp",
+    "cor": "#194f34",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "cocari-comercial",
+    "nome": "COCARI Comercial",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "Fale com a unidade da Cocari em Piracanjuba sobre o atendimento comercial ao produtor rural.",
+    "telefones": [
+      "5564999076414"
+    ],
+    "endereco": "GO-217, n° 1700, R. Piauí, quadra L - Km 25 - St. Primavera Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=10686493422167967794",
+    "instagram": "https://www.instagram.com/cocaricoop/",
+    "instagramRede": true,
+    "site": "https://www.cocari.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/66282e99942b6095.webp",
+    "cor": "#194f34",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "colegio-osvaldo-cruz",
+    "nome": "Colégio Osvaldo Cruz",
+    "categoria": "Educação",
+    "setor": "Educação",
+    "apresentacao": "Fale com o Colégio Osvaldo Cruz sobre o ensino médio, matrículas e atendimento às famílias em Piracanjuba.",
+    "telefones": [
+      "5564993416806"
+    ],
+    "endereco": "Rua Santo Inácio, Setor Bueno, Piracanjuba, GO",
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "comercial-2-irmaos",
+    "nome": "Comercial 2 Irmãos",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "O Comercial 2 Irmãos trabalha com materiais de construção. Envie sua lista para consultar disponibilidade e orçamento.",
+    "telefones": [
+      "556434055088"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva, 1635 - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6632235745798649617",
+    "logo": "/marcas-zap/logos/9aac020f0e7a28dc.webp",
+    "cor": "#4f4f19",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "comercial-2s",
+    "nome": "Comercial 2S",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Consulte a Comercial 2S sobre o produto e a quantidade que procura para sua compra.",
+    "telefones": [
+      "5564992230550"
+    ],
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "comercial-celeiro",
+    "nome": "Comercial Celeiro",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "A Comercial Celeiro trabalha com rações para cães, gatos, aves e animais de criação, além de produtos agropecuários e artigos para pets.",
+    "telefones": [
+      "5564992364874"
+    ],
+    "oferta": [
+      "Rações",
+      "Sementes",
+      "Produtos para pets"
+    ],
+    "endereco": "Av. Santos Dumont - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=381597555790275977",
+    "instagram": "https://www.instagram.com/comercialceleiro/",
+    "logo": "/marcas-zap/logos/comercialceleiro.webp",
+    "cor": "#19274f",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "comercial-e-ferragista-bombas-goias",
+    "nome": "Comercial e Ferragista Bombas Goiás",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Bombas Goiás atende quem busca materiais de ferragista e componentes hidráulicos. Descreva a peça para verificar a disponibilidade.",
+    "telefones": [
+      "5564992143666"
+    ],
+    "endereco": "R. Benjamin Constant, 747 - Setor planalto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12069513545209864397",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "comercial-sl",
+    "nome": "Comercial SL",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "A Comercial SL trabalha por encomenda com eletrodomésticos e itens de alimentação. Consulte a disponibilidade e combine a retirada.",
+    "telefones": [
+      "5564992698186"
+    ],
+    "endereco": "Rua Danyelle de Paula Oliveira Qd 05 lt11 Rua Danyelle de Paula Oliveira Qd 05 lt11 - Residencial, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9957871773279621496",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "confort-clima",
+    "nome": "Confort Clima",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Confort Clima instala e faz manutenção de ar-condicionado. Também trabalha com pré-instalações frigorígenas em obras.",
+    "telefones": [
+      "5564992291770"
+    ],
+    "oferta": [
+      "Instalação de ar-condicionado",
+      "Manutenção preventiva",
+      "Manutenção corretiva"
+    ],
+    "endereco": "Rua Piracanjuba Quadra 13, Lote 17 Setor Primavera do Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6500350062346920255",
+    "logo": "/marcas-zap/logos/bcae00932a37fe06.webp",
+    "cor": "#19424f"
+  },
+  {
+    "slug": "construcassio",
+    "nome": "ConstruCássio",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Fale com a ConstruCássio sobre materiais de construção. Envie as quantidades e medidas para pedir uma cotação.",
+    "telefones": [
+      "5564992097770"
+    ],
+    "endereco": "St. Aeroporto, Piracanjuba - Goiás, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=16173083705226389929",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "construforte",
+    "nome": "Construforte",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Construforte trabalha com materiais de construção, do básico ao acabamento. Envie a lista da sua obra para consultar os itens.",
+    "telefones": [
+      "5564992206545"
+    ],
+    "oferta": [
+      "Materiais de construção",
+      "Acabamentos"
+    ],
+    "endereco": "Av. Padre Marinho, 888 Q.A - Lt.2, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9816061667324749854",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "cooperativa-agroindustrial-dos-produtores-de-leite",
+    "nome": "Cooperativa Agroindustrial dos Produtores de Leite",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "Produtores de leite podem falar com a cooperativa sobre o atendimento ao cooperado e os serviços disponíveis em Piracanjuba.",
+    "telefones": [
+      "556434055074"
+    ],
+    "endereco": "R. Antônio Costa Peixoto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14305829079746862051",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "cristal-personalizados",
+    "nome": "Cristal Personalizados",
+    "categoria": "Impressão e papelaria",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Cristal Personalizados faz topos de bolo, adesivos e artigos de papelaria personalizados. Informe o tema e a data do seu evento.",
+    "telefones": [
+      "5564992439344"
+    ],
+    "oferta": [
+      "Topos de bolo",
+      "Adesivos",
+      "Papelaria personalizada"
+    ],
+    "endereco": "Av. Dr. Hermínio de Amorim, Q.22 - L.10 N. 699 - St. Pouso Alto, Piracanjuba - GO, 75641-026",
+    "mapa": "https://www.google.com/maps?cid=4167628044447224792",
+    "foto": "/marcas-zap/setores/papelaria.webp"
+  },
+  {
+    "slug": "cristally-dental",
+    "nome": "Cristally Dental",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "Fale com a Cristally Dental sobre o atendimento odontológico que procura e como agendar uma avaliação.",
+    "telefones": [
+      "5564993466838"
+    ],
+    "endereco": "Av. Pouso Alto, n° 329 - St. Aeroporto, Piracanjuba - GO, 75641-106",
+    "mapa": "https://www.google.com/maps?cid=13434981207524999479",
+    "site": "https://sites.google.com/view/wwwcristallydentalcom/p%C3%A1gina-inicial",
+    "logo": "/marcas-zap/logos/425451edd849d84c.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "cuidar-banho-e-tosa",
+    "nome": "Cuidar Banho e Tosa",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "Giovanna atende na Cuidar Banho e Tosa. Informe a espécie e o porte do seu animal ao consultar um horário.",
+    "telefones": [
+      "5562998002290"
+    ],
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "david-imoveis",
+    "nome": "David Imóveis",
+    "categoria": "Imobiliário",
+    "setor": "Imobiliário",
+    "apresentacao": "A David Imóveis apresenta imóveis e loteamentos em Piracanjuba e região.",
+    "telefones": [
+      "5564992207219"
+    ],
+    "oferta": [
+      "Compra de imóveis",
+      "Venda de imóveis",
+      "Locação"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 160 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9788447027475331913",
+    "site": "https://davidimoveis.com/",
+    "logo": "/marcas-zap/logos/c5801645cacacda2.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "dba-de-biasi-academy",
+    "nome": "DBA De Biasi Academy",
+    "categoria": "Educação",
+    "setor": "Educação",
+    "apresentacao": "A De Biasi Academy oferece aulas de inglês.",
+    "telefones": [
+      "5564992822887"
+    ],
+    "oferta": [
+      "Inglês",
+      "Redação",
+      "Reforço escolar"
+    ],
+    "endereco": "X Nunes - Av. Joaquim Santana Xavier Nunes, 540 - St. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15400693957509628658",
+    "instagram": "https://www.instagram.com/debiasiacademy/",
+    "site": "https://debiasiacademy.com/",
+    "logo": "/marcas-zap/logos/755343dec1b844ed.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "dcasa-marmitex",
+    "nome": "D’Casa Marmitex",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Maria Antônia atende pedidos de marmitex. Consulte o cardápio e combine a quantidade de refeições.",
+    "telefones": [
+      "5564992375579"
+    ],
+    "endereco": "Av. Santos Dumont - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6184350779074927659",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "dcasa-moveis-e-eletrodomesticos",
+    "nome": "D’Casa Móveis e Eletrodomésticos",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "A D’Casa reúne móveis e eletrodomésticos. Consulte as medidas, os modelos e a disponibilidade para o seu ambiente.",
+    "telefones": [
+      "5562991719026"
+    ],
+    "oferta": [
+      "Móveis",
+      "Eletrodomésticos"
+    ],
+    "endereco": "R. Dom Pedro II, Qd. 28 Lt. 06 N° 540, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15654198476571727564",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "denisar-capinador",
+    "nome": "Denisar Capinador",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte Denisar sobre capina. Informe o tamanho aproximado da área e o bairro para conversar sobre o serviço.",
+    "telefones": [
+      "5564992815393"
+    ]
+  },
+  {
+    "slug": "detalhes-lavajato",
+    "nome": "Detalhes Lavajato",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte a Detalhes Lavajato sobre a lavagem do seu veículo e a disponibilidade para a data desejada.",
+    "telefones": [
+      "5564992281476"
+    ]
+  },
+  {
+    "slug": "disk-super-entulhos",
+    "nome": "Disk Super Entulhos",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte a Disk Super Entulhos sobre retirada de entulho. Informe o endereço e o volume estimado do material.",
+    "telefones": [
+      "5564992420330"
+    ]
+  },
+  {
+    "slug": "divina-elaine",
+    "nome": "Divina Elaine",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Para conversar com a psicoterapeuta Divina Elaine, consulte as opções de atendimento e o agendamento de uma sessão.",
+    "telefones": [
+      "5564992800658"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dk-embalagens",
+    "nome": "DK Embalagens",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Consulte a DK Embalagens sobre tamanhos, materiais e quantidades para embalar o seu produto.",
+    "telefones": [
+      "5564992919469"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 395-443, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=343013166140161125"
+  },
+  {
+    "slug": "dm-auto-center",
+    "nome": "DM Auto Center",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte a DM Auto Center sobre o atendimento para o seu veículo. Informe marca, modelo e serviço desejado.",
+    "telefones": [
+      "5564992823847"
+    ],
+    "instagram": "https://www.instagram.com/dmautocenter_pba/",
+    "logo": "/marcas-zap/logos/dmautocenter_pba.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "doce-confeito",
+    "nome": "Doce Confeito",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fale com a Doce Confeito sobre sabores, quantidades e prazo para encomendar doces.",
+    "telefones": [
+      "5564993293226"
+    ],
+    "instagram": "https://www.instagram.com/doceconfeito.confeitaria/",
+    "logo": "/marcas-zap/logos/doceconfeito.confeitaria.webp",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "doce-gourmet",
+    "nome": "Doce Gourmet",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Converse com Vanessa Rodrigues sobre as opções de doces gourmet e o prazo para encomendar.",
+    "telefones": [
+      "5564992197780"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "doces-sitio-wr",
+    "nome": "Doces Sítio WR",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Pergunte ao Doces Sítio WR quais doces estão disponíveis e como fazer uma encomenda.",
+    "telefones": [
+      "5564992433663"
+    ],
+    "instagram": "https://www.instagram.com/docessitiowr/",
+    "logo": "/marcas-zap/logos/docessitiowr.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "donatella-doceria",
+    "nome": "Donatella Doceria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fale com a Donatella Doceria sobre os doces disponíveis e os pedidos para a data que você tem em mente.",
+    "telefones": [
+      "5564993136273"
+    ],
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "dr-arthur-dias-odontologia",
+    "nome": "Dr. Arthur Dias Odontologia",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "O consultório do Dr. Arthur Dias realiza limpeza, restaurações, próteses e implantes dentários. Agende uma avaliação para conversar sobre o tratamento.",
+    "telefones": [
+      "5564992932266"
+    ],
+    "oferta": [
+      "Restaurações",
+      "Próteses",
+      "Implantes dentários"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, N° 177 - Centro, Piracanjuba - GO, 75640-092",
+    "mapa": "https://www.google.com/maps?cid=13023492053613439689",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dr-brunno-borges-de-paula-prado",
+    "nome": "Dr. Brunno Borges de Paula Prado",
+    "categoria": "Veterinários",
+    "setor": "Veterinários",
+    "apresentacao": "Para falar com o veterinário Brunno Borges de Paula Prado, informe qual animal precisa de atendimento e consulte a agenda.",
+    "telefones": [
+      "5564999113197"
+    ],
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "dr-jaime-junior",
+    "nome": "Dr. Jaime Júnior",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Para agendar uma consulta jurídica com Jaime Júnior, fale com o escritório e informe o assunto do atendimento.",
+    "telefones": [
+      "5564992932120"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8437577187154869791",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "dr-nelson-junior",
+    "nome": "Dr. Nelson Junior",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Consulte o Dr. Nelson Junior sobre o atendimento que procura e como agendar uma conversa.",
+    "telefones": [
+      "5562991520998"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dr-pedro-a-souza-carneiro",
+    "nome": "Dr. Pedro A. Souza Carneiro",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Para falar com o Dr. Pedro A. Souza Carneiro, consulte o local e a disponibilidade de atendimento.",
+    "telefones": [
+      "5564993028721"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dra-bruna-ribeiro",
+    "nome": "Dra. Bruna Ribeiro",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "A Dra. Bruna Ribeiro atende em odontopediatria. Fale com o consultório para marcar o atendimento odontológico da criança.",
+    "telefones": [
+      "5564992711148"
+    ],
+    "endereco": "R. Piracanjuba, Qd 16 - Lt 16 - Jardim Goiás, Piracanjuba - GO, 75642-224",
+    "mapa": "https://www.google.com/maps?cid=13238616083425045618",
+    "instagram": "https://www.instagram.com/drabrunaribeiror/",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dra-canal-odontologia",
+    "nome": "Dra. Canal Odontologia",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "A Dra. Canal atua em odontologia com restaurações, limpeza, tratamento de canal e próteses. Consulte o agendamento de uma avaliação.",
+    "telefones": [
+      "5564992851249"
+    ],
+    "oferta": [
+      "Limpeza e restauração",
+      "Tratamento de canal",
+      "Próteses"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, 32 - CENTRO, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4928352770685310291",
+    "logo": "/marcas-zap/logos/1cf1fd461922090d.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dra-dhaynara-rodrigues",
+    "nome": "Dra. Dhaynara Rodrigues",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Para consultar a Dra. Dhaynara Rodrigues, informe o motivo do contato e pergunte sobre o agendamento.",
+    "telefones": [
+      "5564992845814"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dra-marize-oliveira",
+    "nome": "Dra. Marize Oliveira",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Marize Oliveira atende na área de advocacia em Piracanjuba. Consulte o escritório para agendar uma conversa.",
+    "telefones": [
+      "5564992935249"
+    ],
+    "endereco": "Av. Joaquim Santana Xavier Nunes, 146 - St. Oeste, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14380622208395111631",
+    "site": "https://dramarize.com.br/",
+    "logo": "/marcas-zap/logos/9d1829c876237cc4.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "dra-renata",
+    "nome": "Dra. Renata",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Para tratar de harmonização facial com a Dra. Renata, consulte como agendar uma avaliação individual.",
+    "telefones": [
+      "5562992961127"
+    ]
+  },
+  {
+    "slug": "dra-sheyla-dib",
+    "nome": "Dra. Sheyla Dib",
+    "categoria": "Fisioterapia",
+    "setor": "Saúde",
+    "apresentacao": "Para marcar uma avaliação de fisioterapia com a Dra. Sheyla Dib, consulte a profissional sobre o atendimento e o local.",
+    "telefones": [
+      "5562992647004"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "dra-tatiana-lima",
+    "nome": "Dra. Tatiana Lima",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "A Dra. Tatiana Lima atende na área de harmonização facial. Consulte a agenda para conversar sobre as possibilidades e indicações de tratamento.",
+    "telefones": [
+      "5564992173424"
+    ],
+    "endereco": "R. C-1, quadra C - lote 01-A - St. Estiva, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13806839961044361493",
+    "instagram": "https://www.instagram.com/dra.tatianalima/",
+    "site": "https://dratatianalimahof.com.br/",
+    "logo": "/marcas-zap/logos/592407bb2f8effba.webp"
+  },
+  {
+    "slug": "drogaria-central",
+    "nome": "Drogaria Central",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "A Drogaria Central trabalha com medicamentos, perfumaria e serviços farmacêuticos. Consulte a equipe sobre um item ou atendimento.",
+    "telefones": [
+      "5564993279097"
+    ],
+    "oferta": [
+      "Medicamentos",
+      "Perfumaria",
+      "Serviços farmacêuticos"
+    ],
+    "endereco": "R. Dom Pedro II, 640, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=10677987538021790996",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-farmavidda",
+    "nome": "Drogaria Farmavidda",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Consulte a Drogaria Farmavidda sobre os produtos da farmácia e as formas de atendimento disponíveis.",
+    "telefones": [
+      "5564992373232"
+    ],
+    "endereco": "R. Dom Pedro II, n° 483 - Centro, Piracanjuba - GO, 75640-116",
+    "mapa": "https://www.google.com/maps?cid=17475564503967681504",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-hiper-popular-piracanjuba",
+    "nome": "Drogaria Hiper Popular Piracanjuba",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "A Drogaria Hiper Popular atende em Piracanjuba. Consulte a disponibilidade de medicamentos e demais itens de farmácia.",
+    "telefones": [
+      "5564993135623"
+    ],
+    "endereco": "R. Dom Pedro II, 571 - Sala 1 - Centro, Piracanjuba - GO, 75640-116",
+    "mapa": "https://www.google.com/maps?cid=2124135952985762036",
+    "instagram": "https://www.instagram.com/hiperpopularpiracanjuba/",
+    "logo": "/marcas-zap/logos/d534f57d2e58fa29.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-jm-popular",
+    "nome": "Drogaria JM Popular",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Para consultar um medicamento ou outro item de farmácia em Piracanjuba, fale com a equipe da Drogaria JM Popular.",
+    "telefones": [
+      "5564992030312"
+    ],
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-marina",
+    "nome": "Drogaria Marina",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Fale com a Drogaria Marina para conferir um produto de farmácia. Informe o nome e a apresentação que procura.",
+    "telefones": [
+      "5564993343139"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1653858597020443208",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-nacional",
+    "nome": "Drogaria Nacional",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Fale com a Drogaria Nacional para consultar um medicamento ou produto de farmácia antes de ir à loja.",
+    "telefones": [
+      "556434051815"
+    ],
+    "endereco": "R. Cônego Olinto, 281 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11192936459720086087",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-sao-marcos",
+    "nome": "Drogaria São Marcos",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Consulte a Drogaria São Marcos sobre a disponibilidade de um item e as formas de atendimento.",
+    "telefones": [
+      "5564993196385"
+    ],
+    "endereco": "R. Cônego Olinto, 407, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12171514880346381773",
+    "instagram": "https://www.instagram.com/drogariassaomarcos/",
+    "site": "https://linktr.ee/drogariassaomarcos",
+    "siteRotulo": "Links da drogaria",
+    "logo": "/marcas-zap/logos/0e936e6067a0250c.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-sao-pedro",
+    "nome": "Drogaria São Pedro",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "A Drogaria São Pedro reúne medicamentos, produtos de higiene e perfumaria. Consulte a equipe sobre disponibilidade e atendimento.",
+    "telefones": [
+      "5564992464938"
+    ],
+    "oferta": [
+      "Medicamentos",
+      "Higiene pessoal",
+      "Perfumaria"
+    ],
+    "endereco": "R. José Peixoto Gonçalves, Qd.B - Lt.12 - St. Estiva, Piracanjuba - GO, 75640-044",
+    "mapa": "https://www.google.com/maps?cid=17847594039673813968",
+    "instagram": "https://www.instagram.com/drogaria.saopedro/",
+    "logo": "/marcas-zap/logos/drogaria.saopedro.webp",
+    "cor": "#19194f",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-sao-sebastiao",
+    "nome": "Drogaria São Sebastião",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Fale com a Drogaria São Sebastião para consultar a disponibilidade de medicamentos e outros itens da farmácia.",
+    "telefones": [
+      "556434051734"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 387 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11427393881296800829",
+    "instagram": "https://www.instagram.com/drogariasaosebastiaopba/",
+    "logo": "/marcas-zap/logos/drogariasaosebastiaopba.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "drogaria-vitae",
+    "nome": "Drogaria Vitae",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Precisa consultar um produto na Drogaria Vitae? Informe o nome e a apresentação para conferir a disponibilidade.",
+    "telefones": [
+      "5564992033777"
+    ],
+    "endereco": "R. Prof. Percival Rabêlo, Piracanjuba - GO, 74640-092",
+    "mapa": "https://www.google.com/maps?cid=7234164940769809290",
+    "logo": "/marcas-zap/logos/2a665d4d5ec3c508.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "edu-games",
+    "nome": "Edu Games",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Fale com a Edu Games sobre o jogo, aparelho ou acessório que procura. Informe a plataforma para facilitar a consulta.",
+    "telefones": [
+      "5564992269964"
+    ],
+    "foto": "/marcas-zap/setores/tecnologia.webp"
+  },
+  {
+    "slug": "electrotech",
+    "nome": "Electrotech",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "A Electrotech faz reparos em smartphones e trabalha com microssoldagem. Descreva o defeito e informe o modelo do aparelho.",
+    "telefones": [
+      "5564974005477"
+    ],
+    "oferta": [
+      "Reparo de smartphones",
+      "Microssoldagem"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, N° 354, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9894309045603642374",
+    "site": "https://heylink.me/Electrotech/",
+    "siteRotulo": "Links do estabelecimento",
+    "foto": "/marcas-zap/setores/celulares.webp"
+  },
+  {
+    "slug": "elenilton-entregas",
+    "nome": "Elenilton Entregas",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para tratar de uma entrega com Elenilton, tenha o número da encomenda em mãos e informe o bairro.",
+    "telefones": [
+      "5564992022451"
+    ]
+  },
+  {
+    "slug": "eletronica-modelo",
+    "nome": "Eletrônica Modelo",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "A Eletrônica Modelo atua com assistência técnica. Informe o tipo de aparelho, a marca e o problema para consultar o reparo.",
+    "telefones": [
+      "5564992103205"
+    ],
+    "endereco": "R. Nicanor Quirino de Oliveira, 28 - Estiva, Piracanjuba - GO, 75640-054",
+    "mapa": "https://www.google.com/maps?cid=3355301524497093444",
+    "instagram": "https://www.instagram.com/eletronicamodelo.pba/",
+    "site": "https://www.eletronicamodelo.com/",
+    "logo": "/marcas-zap/logos/f357134cb20ab4c1.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/tecnologia.webp"
+  },
+  {
+    "slug": "eletronica-servitec",
+    "nome": "Eletrônica Servitec",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Consulte a Eletrônica Servitec sobre o equipamento ou a demanda de TV que precisa atender.",
+    "telefones": [
+      "5564992106726"
+    ]
+  },
+  {
+    "slug": "ellen-vieira-advocacia",
+    "nome": "Ellen Vieira Advocacia",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Fale com a advogada Ellen Vieira para agendar atendimento e apresentar a questão jurídica que deseja tratar.",
+    "telefones": [
+      "5564992817816"
+    ],
+    "endereco": "R. Moacir Teles, 713 - Setor Planalto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11737208517747835487",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "emporium-country",
+    "nome": "Emporium Country",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a Emporium Country sobre peças de moda country no seu tamanho e as opções da coleção.",
+    "telefones": [
+      "556434055674"
+    ],
+    "endereco": "R. Alaor Marçal, Quadra 29 - Lote 16 - Centro, Piracanjuba - GO, 75640-120",
+    "mapa": "https://www.google.com/maps?cid=4870423165719881392",
+    "instagram": "https://www.instagram.com/emporiumcountrygoias/",
+    "site": "https://mechameaqui.com.br/v2/emporium-country-moda-country-piracanjuba-go",
+    "siteRotulo": "Perfil da loja",
+    "logo": "/marcas-zap/logos/556c1842d83e7379.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "equilibrio-racoes",
+    "nome": "Equilíbrio Rações",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "A Equilíbrio Rações atende consultas sobre alimentação para animais. Informe a espécie e a embalagem que procura.",
+    "telefones": [
+      "5564993095487"
+    ],
+    "endereco": "R. 22 de Novembro, 64 - Planalto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=16851828368359914163",
+    "instagram": "https://www.instagram.com/lojaequilibrioracoes/",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "escola-rosa-e-azul",
+    "nome": "Escola Rosa e Azul",
+    "categoria": "Educação",
+    "setor": "Educação",
+    "apresentacao": "A Escola Rosa e Azul oferece ensino fundamental em Piracanjuba. Fale com a equipe escolar sobre matrículas e atendimento às famílias.",
+    "telefones": [
+      "5564992338966"
+    ],
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "escola-sol-nascente",
+    "nome": "Escola Sol Nascente",
+    "categoria": "Educação",
+    "setor": "Educação",
+    "apresentacao": "Consulte a Escola Sol Nascente sobre as etapas de ensino, as matrículas e a possibilidade de conhecer a escola.",
+    "telefones": [
+      "5564999501380"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 772 - St. Primavera Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4150750024416063233",
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "eskimo-piracanjuba",
+    "nome": "Eskimó Piracanjuba",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Eskimó de Piracanjuba para conhecer os sorvetes e os sabores disponíveis na loja.",
+    "telefones": [
+      "5564992233038"
+    ],
+    "endereco": "R. Alaor Marçal, 308 - Centro, Piracanjuba - GO, 75640-120",
+    "mapa": "https://www.google.com/maps?cid=16381854183606889840",
+    "logo": "/marcas-zap/logos/7579a0261b9d018a.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "espeto-do-chefe",
+    "nome": "Espeto do Chefe",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte Leandrinho, do Espeto do Chefe, sobre as opções de espetos e os acompanhamentos disponíveis.",
+    "telefones": [
+      "5564992011196"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva, 508 - St. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7416407889216102263",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "esquina-pizza-bar",
+    "nome": "Esquina Pizza Bar",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Confira com a Esquina Pizza Bar os sabores de pizza e as opções para fazer um pedido.",
+    "telefones": [
+      "5564992813518"
+    ],
+    "instagram": "https://www.instagram.com/esquina_pizzabar/",
+    "logo": "/marcas-zap/logos/esquina_pizzabar.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "estudio-ariel-sousa",
+    "nome": "Estúdio Ariel Sousa",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Pergunte ao Estúdio Ariel Sousa pelos atendimentos de beleza oferecidos e combine o melhor horário para sua visita.",
+    "telefones": [
+      "5564993414433"
+    ],
+    "endereco": "residencial filismina Elias quinta - R. 1, Qd B - lote 11, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4454923077922364432"
+  },
+  {
+    "slug": "evolut",
+    "nome": "Evolut",
+    "categoria": "Comércio local",
+    "setor": "Outros",
+    "apresentacao": "Converse com a Evolut sobre sua necessidade para saber quais opções de atendimento estão disponíveis.",
+    "telefones": [
+      "5564993160619"
+    ]
+  },
+  {
+    "slug": "excell-celulares",
+    "nome": "Excell Celulares",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Comércio de celulares e artigos de informática em Piracanjuba.",
+    "telefones": [
+      "5564996049774"
+    ],
+    "endereco": "R. Cônego Olinto, Q24 - L11 N 438, Piracanjuba - GO, 75640-000, Brazil",
+    "mapa": "https://www.google.com/maps?cid=3714348518548008468",
+    "foto": "/marcas-zap/setores/celulares.webp"
+  },
+  {
+    "slug": "farmacia-bem-estar",
+    "nome": "Farmácia Bem Estar",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Consulte a Farmácia Bem Estar sobre a disponibilidade de medicamentos e o atendimento da loja.",
+    "telefones": [
+      "5564992809691"
+    ],
+    "endereco": "R. Benjamin Constant, 747 - Setor planalto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8173999201781336207",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "farmacia-droganova",
+    "nome": "Farmácia DrogaNova",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Consulte Roberto, da Farmácia DrogaNova, sobre a disponibilidade de medicamentos e itens de farmácia.",
+    "telefones": [
+      "5564996074282"
+    ],
+    "instagram": "https://www.instagram.com/droganovadepiracanjuba/",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "farmacia-preco-popular",
+    "nome": "Farmácia Preço Popular",
+    "categoria": "Farmácia e Drogaria",
+    "setor": "Farmácia e Drogaria",
+    "apresentacao": "Fale com a Farmácia Preço Popular sobre a apresentação e a quantidade do produto que deseja encontrar.",
+    "telefones": [
+      "5564993175480"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12438401762906272804",
+    "foto": "/marcas-zap/setores/farmacia.webp"
+  },
+  {
+    "slug": "favorita-calcados",
+    "nome": "Favorita Calçados",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Favorita reúne calçados e bolsas. Informe seu estilo e numeração para conhecer as opções disponíveis.",
+    "telefones": [
+      "5564992354255"
+    ],
+    "oferta": [
+      "Calçados",
+      "Bolsas"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, Quadra 28 - Lote 07 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3553285349809639518",
+    "logo": "/marcas-zap/logos/78e6f8b90749c040.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "feliz-no-simples",
+    "nome": "Feliz no Simples",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Feliz no Simples sobre o que está sendo preparado e como fazer seu pedido.",
+    "telefones": [
+      "5564993174444"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "fernanda-beauty",
+    "nome": "Fernanda Beauty",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "A Fernanda Beauty atende com extensão de cílios, design de sobrancelhas e brow lamination. Pergunte pelas técnicas e pelos horários.",
+    "telefones": [
+      "5564992561940"
+    ],
+    "oferta": [
+      "Design de sobrancelhas",
+      "Cílios",
+      "Brow lamination"
+    ],
+    "endereco": "Viela Maria Teles - Centro, Piracanjuba - GO, 75640-100",
+    "mapa": "https://www.google.com/maps?cid=14352006919653839919",
+    "instagram": "https://www.instagram.com/studio_nandabeauty/",
+    "logo": "/marcas-zap/logos/studio_nandabeauty.webp",
+    "cor": "#4f3419"
+  },
+  {
+    "slug": "fios-de-casa",
+    "nome": "Fios de Casa",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Consulte a Fios de Casa sobre artigos para o lar e as opções disponíveis para seu ambiente.",
+    "telefones": [
+      "5564992957619"
+    ],
+    "oferta": [
+      "Cama",
+      "Mesa",
+      "Banho",
+      "Utilidades para casa"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 75640-000 Qd.24 Lt.20 N 376, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6470325325730997642",
+    "instagram": "https://www.instagram.com/fiosde_casa/",
+    "logo": "/marcas-zap/logos/fiosde_casa.webp",
+    "cor": "#194f34",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "fogao-de-ouro",
+    "nome": "Fogão de Ouro",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Pergunte a Reginaldo Júnior sobre o cardápio do Fogão de Ouro e as opções para fazer um pedido.",
+    "telefones": [
+      "5564992380166"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "forno-da-cida",
+    "nome": "Forno da Cida",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Cida atende encomendas de bolos no Forno da Cida. Pergunte por sabores, tamanhos e disponibilidade para sua data.",
+    "telefones": [
+      "5564992986801"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "funeraria-paz-eterna",
+    "nome": "Funerária Paz Eterna",
+    "categoria": "Serviços funerários",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Para tratar de serviços funerários em Piracanjuba, fale diretamente com a equipe da Paz Eterna.",
+    "telefones": [
+      "5564992965579"
+    ],
+    "oferta": [
+      "Serviços funerários",
+      "Floricultura"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva - St. Aeroporto, Piracanjuba - GO, 75641-100",
+    "mapa": "https://www.google.com/maps?cid=4758066091636845279",
+    "instagram": "https://www.instagram.com/pazeternapba/",
+    "logo": "/marcas-zap/logos/pazeternapba.webp",
+    "cor": "#19344f"
+  },
+  {
+    "slug": "g-car",
+    "nome": "G-Car",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Descreva o serviço que procura e consulte a G-Car sobre as opções de atendimento.",
+    "telefones": [
+      "5564992741793"
+    ]
+  },
+  {
+    "slug": "gas-rede-1000",
+    "nome": "Gás Rede 1000",
+    "categoria": "Distribuição de gás",
+    "setor": "Distribuição de gás",
+    "apresentacao": "Consulte a Gás Rede 1000 sobre o fornecimento de gás e a disponibilidade de atendimento para o seu bairro.",
+    "telefones": [
+      "5564992481917"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva, 757 - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7811965134094041897"
+  },
+  {
+    "slug": "geladinhos-da-janete",
+    "nome": "Geladinhos da Janete",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Janete sobre os sabores de geladinho e a quantidade que deseja encomendar.",
+    "telefones": [
+      "5564992747481"
+    ],
+    "foto": "/marcas-zap/setores/sorvete.webp"
+  },
+  {
+    "slug": "gesso-original",
+    "nome": "Gesso Original",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Gesso Original trabalha com serviços de gesso. Conte qual ambiente pretende reformar e consulte o orçamento.",
+    "telefones": [
+      "5564992879979"
+    ],
+    "endereco": "Gesso original - R. dos Buritis, Piracanjuba - GO, 75640-048",
+    "mapa": "https://www.google.com/maps/place/Gesso+original/data=!4m7!3m6!1s0x935f4382e2bc30a5:0x7150a18da00220cc!8m2!3d-17.3084531!4d-49.0251926!16s%2Fg%2F11n54z70p2!19sChIJpTC84oJDX5MRzCACoI2hUHE?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "gioielli-acessorios",
+    "nome": "Gioielli Acessórios",
+    "categoria": "Acessórios e semijoias",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Gioielli tem loja física de acessórios em Piracanjuba. Peça informações sobre as peças que deseja conhecer.",
+    "telefones": [
+      "5564992844158"
+    ],
+    "endereco": "R. Dom Pedro II, 629, Piracanjuba - GO, 75640-116",
+    "mapa": "https://www.google.com/maps?cid=2379588031409855780",
+    "foto": "/marcas-zap/setores/joias.webp"
+  },
+  {
+    "slug": "giora-fit-wear",
+    "nome": "Giora Fit Wear",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Giora produz coleções de moda fitness em Piracanjuba.",
+    "telefones": [
+      "5562997017550"
+    ],
+    "instagram": "https://www.instagram.com/giorafitwear/",
+    "site": "https://giorafitwear.com/",
+    "logo": "/marcas-zap/logos/d038e4a39856c9ac.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "gisele-carezol",
+    "nome": "Gisele Carezol",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Gisele Carezol sobre brow lamination e pergunte como se preparar para o atendimento de sobrancelhas.",
+    "telefones": [
+      "5564992122100"
+    ]
+  },
+  {
+    "slug": "goiania-veiculos",
+    "nome": "Goiânia Veículos",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A Goiânia Veículos trabalha com compra, venda e troca de carros usados e seminovos. Consulte os veículos disponíveis em Piracanjuba.",
+    "telefones": [
+      "5562993481088"
+    ],
+    "oferta": [
+      "Compra de veículos",
+      "Venda de seminovos",
+      "Troca de veículos"
+    ],
+    "endereco": "R. Prof. Percival Rabêlo, S/N - Q.01, L.05 - Setor Norte, Piracanjuba - GO, 75643-092",
+    "mapa": "https://www.google.com/maps?cid=11926051487223891779",
+    "instagram": "https://www.instagram.com/goianiaveiculos/",
+    "site": "https://www.goianiaveiculos.com.br/",
+    "instagramRede": true,
+    "logo": "/marcas-zap/logos/bbc4e777aedb9b2b.webp",
+    "cor": "#19194f"
+  },
+  {
+    "slug": "gomes-lava-jato-e-estetica-automotiva",
+    "nome": "Gomes Lava Jato e Estética Automotiva",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "A Gomes Lava Jato trabalha com lavagem e estética automotiva. Informe o tipo de veículo e o serviço desejado.",
+    "telefones": [
+      "5564992637621"
+    ],
+    "oferta": [
+      "Lavagem de veículos",
+      "Estética automotiva"
+    ]
+  },
+  {
+    "slug": "gr-barbearia",
+    "nome": "GR Barbearia",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte a GR Barbearia para conhecer os cortes disponíveis e combinar um horário.",
+    "telefones": [
+      "5564992167416"
+    ],
+    "foto": "/marcas-zap/setores/barbearia.webp"
+  },
+  {
+    "slug": "grafica-piracanjuba",
+    "nome": "Gráfica Piracanjuba",
+    "categoria": "Impressão e papelaria",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Gráfica Piracanjuba trabalha com impressos. Informe formato, quantidade e tipo de material para pedir uma cotação.",
+    "telefones": [
+      "5564992139726"
+    ],
+    "endereco": "R. Dom Pedro II, 868, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15139725386978345458"
+  },
+  {
+    "slug": "granar-projetos-e-consultoria-agro",
+    "nome": "Granar Projetos e Consultoria Agro",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Granar atua com projetos e consultoria no agro. Apresente a necessidade da propriedade para conversar sobre o serviço.",
+    "telefones": [
+      "5562982804008"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 132, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7915351129138663920",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "graxa-taxista",
+    "nome": "Graxa Taxista",
+    "categoria": "Transportes e entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Graxa atende pedidos de táxi e encomendas para Goiânia. Informe o trajeto e a data para consultar a viagem.",
+    "telefones": [
+      "5564992099508"
+    ]
+  },
+  {
+    "slug": "guim-lanches",
+    "nome": "Guim Lanches",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fale com a Guim Lanches para conhecer o cardápio e combinar seu pedido.",
+    "telefones": [
+      "5564993475097"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "guimaraes-casa-e-construcao",
+    "nome": "Guimarães Casa e Construção",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Loja de materiais para construção em Piracanjuba.",
+    "telefones": [
+      "5564999258676"
+    ],
+    "oferta": [
+      "Pisos e revestimentos",
+      "Tintas",
+      "Iluminação",
+      "Materiais elétricos e hidráulicos"
+    ],
+    "endereco": "DOM PEDRO 2, Nº, 490A - QD 27 LT 12, Piracanjuba - GO, 75640-116",
+    "mapa": "https://www.google.com/maps?cid=7675918776270954663",
+    "instagram": "https://www.instagram.com/guimaraescec/",
+    "site": "https://guimaraescec.com.br/",
+    "instagramRede": true,
+    "logo": "/marcas-zap/logos/7f6edd72773a9974.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "h-us-fitnes",
+    "nome": "H.Us Fitnes",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a H.Us Fitnes sobre as roupas para treino e os modelos disponíveis no seu tamanho.",
+    "telefones": [
+      "5564992521466"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "hamburgao-lanches",
+    "nome": "Hamburgão Lanches",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Pergunte ao Hamburgão Lanches pelas opções de sanduíches e como fazer um pedido.",
+    "telefones": [
+      "5564992137940"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "happy-donuts",
+    "nome": "Happy Donuts",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Pergunte à Happy Donuts pelos sabores de donuts disponíveis e como fazer seu pedido.",
+    "telefones": [
+      "5564993338708"
+    ],
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "harmonia-sorriso-face",
+    "nome": "Harmonia - Sorriso & Face",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "A clínica oferece atendimento odontológico, incluindo implantes.",
+    "telefones": [
+      "5564992234872"
+    ],
+    "endereco": "Rua Abdon Alves de Amorim, Av. Pouso Alto, 3, Piracanjuba - GO, 75641-039",
+    "mapa": "https://www.google.com/maps?cid=12087558321201169130",
+    "instagram": "https://www.instagram.com/harmonia_sorriso_e_face/",
+    "site": "https://harmonia.meudoutor.com/",
+    "logo": "/marcas-zap/logos/harmonia_sorriso_e_face.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "henrique-personal-trainer",
+    "nome": "Henrique Personal Trainer",
+    "categoria": "Personal Trainer",
+    "setor": "Personal Trainer",
+    "apresentacao": "Converse com Henrique sobre acompanhamento de treino e os horários disponíveis para personal trainer.",
+    "telefones": [
+      "5562992814081"
+    ],
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "hidrauflex-componentes-hidraulicos",
+    "nome": "Hidrauflex Componentes Hidráulicos",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Hidrauflex trabalha com peças e serviços hidráulicos. Envie a identificação do componente ou os dados do equipamento para consultar a equipe.",
+    "telefones": [
+      "5564992877726"
+    ],
+    "oferta": [
+      "Peças hidráulicas",
+      "Serviços hidráulicos"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, QD 02 - LT 07, número 953 - Norte, Piracanjuba - GO, 75643-096",
+    "mapa": "https://www.google.com/maps?cid=6415382665472982138",
+    "logo": "/marcas-zap/logos/5098b637c5069b1b.webp",
+    "cor": "#194f34",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "hospital-sao-vicente-de-paulo-de-piracanjuba",
+    "nome": "Hospital São Vicente de Paulo de Piracanjuba",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "O Hospital São Vicente de Paulo presta atendimento de saúde em Piracanjuba. Consulte a unidade sobre os serviços e os canais de atendimento.",
+    "telefones": [
+      "5564993175831"
+    ],
+    "endereco": "Praça Dimas Costa, Centro, Piracanjuba, GO",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "hotel-dborges",
+    "nome": "Hotel D’Borges",
+    "categoria": "Hospedagem e Turismo",
+    "setor": "Hospedagem e Turismo",
+    "apresentacao": "Vai se hospedar em Piracanjuba? Informe as datas e a quantidade de hóspedes ao Hotel D’Borges para consultar acomodação.",
+    "telefones": [
+      "5564993128856"
+    ],
+    "endereco": "R. Industrial, Quadra 05 - Lote 08 - St. Primavera Norte, Piracanjuba - GO, 75643-148",
+    "mapa": "https://www.google.com/maps?cid=13239067923594310701",
+    "logo": "/marcas-zap/logos/aced1d77d9b1ac6b.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/viagem.webp"
+  },
+  {
+    "slug": "ideal-seguranca-eletronica",
+    "nome": "Ideal Segurança Eletrônica",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Consulte a Ideal Segurança Eletrônica sobre o sistema que pretende instalar ou revisar no imóvel.",
+    "telefones": [
+      "5564993450190"
+    ],
+    "foto": "/marcas-zap/setores/tecnologia.webp"
+  },
+  {
+    "slug": "impacto-forro",
+    "nome": "Impacto Forro",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Converse com a Impacto Forro sobre o material e as medidas do ambiente para avaliar o serviço.",
+    "telefones": [
+      "5564992739225"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "instalar-materiais-eletricos",
+    "nome": "Instalar Materiais Elétricos",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Instalar trabalha com materiais elétricos e hidráulicos. Consulte Genilson sobre a peça ou o material da sua lista.",
+    "telefones": [
+      "5564992803804"
+    ],
+    "oferta": [
+      "Materiais elétricos",
+      "Materiais hidráulicos"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, QD 17 - LT 21 A - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15783558281244714943",
+    "instagram": "https://www.instagram.com/_instalarmateriais/",
+    "site": "https://mechamenozap.com.br/instalarmateriaiseletricosehidraulicos/",
+    "siteRotulo": "Perfil da loja",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "izadora-fisioterapia",
+    "nome": "Izadora Fisioterapia",
+    "categoria": "Fisioterapia",
+    "setor": "Saúde",
+    "apresentacao": "Fale com Izadora para consultar a agenda de fisioterapia e combinar uma avaliação.",
+    "telefones": [
+      "5564999678787"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "j-r-radiadores",
+    "nome": "J.R Radiadores",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A J.R Radiadores vende radiadores e colmeias e faz reparos em radiadores, intercoolers e condensadores de ar-condicionado.",
+    "telefones": [
+      "5564992583624"
+    ],
+    "oferta": [
+      "Radiadores",
+      "Intercoolers",
+      "Condensadores"
+    ],
+    "endereco": "Rua G7 Qd 35 Lt 16 Jardim Goiás 2, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3891429254792993044",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "jairo-cesar-fotografia",
+    "nome": "Jairo César Fotografia",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Consulte o fotógrafo Jairo César sobre o trabalho que tem em mente. Informe a data, o local e o tipo de registro.",
+    "telefones": [
+      "5564993018315"
+    ]
+  },
+  {
+    "slug": "janaine-ferreira-estetica-corporal",
+    "nome": "Janaine Ferreira Estética Corporal",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Fale com Janaine Ferreira sobre estética corporal e pergunte como funciona a avaliação antes de marcar um horário.",
+    "telefones": [
+      "5564992954574"
+    ]
+  },
+  {
+    "slug": "janine-rodrigues",
+    "nome": "Janine Rodrigues",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Quer agendar uma massagem com Janine Rodrigues? Pergunte sobre as técnicas e a duração do atendimento.",
+    "telefones": [
+      "5564992377986"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "janine-silva-moda-e-acessorios",
+    "nome": "Janine Silva Moda e Acessórios",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para conhecer a seleção de Janine Silva, pergunte pelas roupas e acessórios disponíveis para compor seu visual.",
+    "telefones": [
+      "5564992531480"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "jao-lanches",
+    "nome": "Jaó Lanches",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte o Jaó Lanches para conhecer os sanduíches do pit dog e fazer seu pedido.",
+    "telefones": [
+      "5564992950011"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12342164412008079244",
+    "site": "https://linktr.ee/jaolanchespba",
+    "logo": "/marcas-zap/logos/cbcd656fb2527d14.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "joao-bortoloti-engenharia-civil",
+    "nome": "João Bortoloti Engenharia Civil",
+    "categoria": "Engenharia",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Converse com o engenheiro civil João Bortoloti sobre o projeto, o imóvel e a etapa da obra que precisa avaliar.",
+    "telefones": [
+      "5564992475535"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "joelinho-taxista",
+    "nome": "Joelinho Taxista",
+    "categoria": "Transportes e entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para tratar de uma corrida ou encomenda para Goiânia, fale com Joelinho e informe os pontos de saída e chegada.",
+    "telefones": [
+      "5562994504422"
+    ]
+  },
+  {
+    "slug": "jook-sushi",
+    "nome": "Jook Sushi",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Jook Sushi prepara comida japonesa para entrega. Consulte o cardápio para escolher os itens e montar seu pedido.",
+    "telefones": [
+      "5564993385738"
+    ],
+    "endereco": "Rua 20, Av. Pouso Alto, Q34 - L07, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9393447079546810952",
+    "site": "https://app.cardapioweb.com/jook_sushi_comida_oriental",
+    "siteRotulo": "Ver cardápio",
+    "logo": "/marcas-zap/logos/a70ee71c8e925f22.webp",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "jorge-acabamentos-residenciais",
+    "nome": "Jorge Acabamentos Residenciais",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Jorge atende demandas de acabamento residencial. Informe o ambiente e a etapa da obra para conversar sobre o serviço.",
+    "telefones": [
+      "5564993247224"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "jornal-o-piracan",
+    "nome": "Jornal O Piracan",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Jornal que acompanha notícias de Piracanjuba.",
+    "telefones": [
+      "5564992378573"
+    ],
+    "instagram": "https://www.instagram.com/jornalopiracan/",
+    "site": "https://www.opiracan.com/",
+    "logo": "/marcas-zap/logos/208d72f856e8324f.webp"
+  },
+  {
+    "slug": "jose-candido",
+    "nome": "José Cândido",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "José Cândido atua como pisteiro em leilões rurais. Informe a data e o local do evento para consultar sua disponibilidade.",
+    "telefones": [
+      "5564992925506"
+    ],
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "jose-roberto",
+    "nome": "José Roberto",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "José Roberto trabalha com conserto de máquinas de lavar. Informe a marca, o modelo e o que aconteceu com a máquina.",
+    "telefones": [
+      "5564992145353"
+    ]
+  },
+  {
+    "slug": "juhe-marmitaria-hamburgueria-e-pizzaria",
+    "nome": "Juhe Marmitaria, Hamburgueria e Pizzaria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Juhe reúne marmitas, hambúrgueres e pizzas. Consulte o cardápio para escolher uma refeição ou fazer seu pedido.",
+    "telefones": [
+      "5564992357699"
+    ],
+    "oferta": [
+      "Marmitas",
+      "Hambúrgueres",
+      "Pizzas"
+    ],
+    "endereco": "R. Claudionor Alves - Norte, Piracanjuba - GO, 75643-132",
+    "mapa": "https://www.google.com/maps?cid=16803621694021035881",
+    "logo": "/marcas-zap/logos/81133eae8197d6ce.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "jujuba-moda-mini",
+    "nome": "Jujuba Moda Mini",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Jujuba Moda Mini trabalha com roupas para crianças e adolescentes, de 0 a 16 anos. Consulte as peças no tamanho que procura.",
+    "telefones": [
+      "5564992091989"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, 154 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1930402770889574351",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "junior-cortinas-persianas-e-toldos",
+    "nome": "Junior Cortinas, Persianas e Toldos",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Júnior atende pedidos de cortinas, persianas e toldos. Informe as medidas aproximadas e o tipo de ambiente para solicitar orçamento.",
+    "telefones": [
+      "5564992261262"
+    ],
+    "oferta": [
+      "Cortinas",
+      "Persianas",
+      "Toldos"
+    ],
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "kamila-duarte",
+    "nome": "Kamila Duarte",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Kamilla Duarte atende na Florescer Estética, com procedimentos faciais e corporais.",
+    "telefones": [
+      "5564992268889"
+    ],
+    "endereco": "R. Y-1, Qd 01 - Lt 07, Piracanjuba - GO, 75643-098",
+    "mapa": "https://www.google.com/maps?cid=12031789234602958264",
+    "instagram": "https://www.instagram.com/clinica_florescer01/",
+    "site": "https://kamilladuarte.com.br/",
+    "logo": "/marcas-zap/logos/8eacac7243372477.webp"
+  },
+  {
+    "slug": "kamilla-morranna",
+    "nome": "Kamilla Morranna",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Procura atendimento jurídico com Kamilla Morranna? Pergunte como marcar uma consulta.",
+    "telefones": [
+      "5564992291703"
+    ],
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "kamylla-jullya",
+    "nome": "Kamylla Jullya",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Kamylla Jullya sobre os cosméticos disponíveis e pergunte pelo produto ou pela tonalidade que procura.",
+    "telefones": [
+      "5564992487325"
+    ]
+  },
+  {
+    "slug": "kapital-engenharia",
+    "nome": "Kapital Engenharia",
+    "categoria": "Engenharia",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Apresente sua demanda à Kapital Engenharia e consulte como combinar uma avaliação do projeto.",
+    "telefones": [
+      "5564992919161"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "kenia-cris",
+    "nome": "Kênia Cris",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Kênia Cris trabalha com moda evangélica feminina. Pergunte sobre os modelos da coleção no tamanho que procura.",
+    "telefones": [
+      "5564992647693"
+    ],
+    "endereco": "R. David Daher, quadra 07 - lote 18 - Setor ely rocha, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=15027694856402788980",
+    "instagram": "https://www.instagram.com/kenia_cris_moda_evangelica/",
+    "logo": "/marcas-zap/logos/7a327fe2fbac77ca.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "kibarlana",
+    "nome": "Kibarlana",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O quibe é a especialidade da Kibarlana. Consulte o cardápio da unidade de Piracanjuba para conhecer os sabores.",
+    "telefones": [
+      "5564992067108"
+    ],
+    "endereco": "R. Alaor Marçal, 51, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4863718165825389967",
+    "instagram": "https://www.instagram.com/kibarlanaoficial/",
+    "logo": "/marcas-zap/logos/34ccd73e46800d70.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "kim-cortina",
+    "nome": "Kim Cortina",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Consulte a Kim Cortina sobre cortinas para o seu ambiente. Medidas aproximadas e uma foto ajudam na conversa.",
+    "telefones": [
+      "556434051473"
+    ],
+    "mapa": "https://www.google.com/maps?cid=4939655730163048009",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "laboratorio-padrao",
+    "nome": "Laboratório Padrão",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "O Laboratório Padrão realiza exames laboratoriais, toxicológicos e de imagem. Consulte a unidade sobre o exame solicitado, preparo e agendamento.",
+    "telefones": [
+      "5562992224535"
+    ],
+    "oferta": [
+      "Exames laboratoriais",
+      "Exames de imagem",
+      "Toxicológicos"
+    ],
+    "endereco": "R. Cônego Olinto, 318 - St. Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4645713915035956091",
+    "site": "https://padrao.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/f81b5f328d07381b.webp",
+    "cor": "#4f1927",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "laboratorio-piracanjuba",
+    "nome": "Laboratório Piracanjuba",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "O Laboratório Piracanjuba realiza análises clínicas, testes de DNA e exames toxicológicos. Informe o nome do exame ao consultar o preparo.",
+    "telefones": [
+      "556434053375"
+    ],
+    "oferta": [
+      "Análises clínicas",
+      "Exames toxicológicos",
+      "Exames de DNA"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 587 - S Central, Piracanjuba - GO, 75640-098",
+    "mapa": "https://www.google.com/maps?cid=8945261833215132168",
+    "instagram": "https://www.instagram.com/laboratorio_piracanjuba/",
+    "site": "https://www.laboratoriopiracanjuba.com.br/cms/inicio",
+    "logo": "/marcas-zap/logos/8888557973e1967a.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "ladoca-cafeteria-e-doceria",
+    "nome": "Ladoca Cafeteria e Doceria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Ladoca sobre as opções de cafeteria e doceria. Pergunte pelos doces disponíveis e pelas formas de pedido.",
+    "telefones": [
+      "5564992965722"
+    ],
+    "oferta": [
+      "Cafeteria",
+      "Doceria"
+    ],
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "lais-reis",
+    "nome": "Laís Reis",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Laís Reis atende com maquiagem e cuidados para sobrancelhas. Informe a ocasião para conversar sobre o que deseja.",
+    "telefones": [
+      "5564992490628"
+    ],
+    "oferta": [
+      "Sobrancelhas",
+      "Maquiagem"
+    ]
+  },
+  {
+    "slug": "lamarie-shoes-multimarcas",
+    "nome": "Lamariê Shoes Multimarcas",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Lamariê Shoes Multimarcas trabalha com calçados femininos de marca própria e de outras marcas. Informe seu número e o estilo que procura.",
+    "telefones": [
+      "5562982690395"
+    ],
+    "endereco": "Rua Dr Pedro Ludovico Teixeira N• 367, Sala Comercial 5, Piracanjuba - GO, 75644-970",
+    "mapa": "https://www.google.com/maps?cid=3147721064493832322",
+    "instagram": "https://www.instagram.com/lamarieshoes/",
+    "site": "https://lamarieshoes.com.br/",
+    "logo": "/marcas-zap/logos/14c0214811dbe818.webp",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "lamartine-gas",
+    "nome": "Lamartine Gás",
+    "categoria": "Distribuição de gás",
+    "setor": "Distribuição de gás",
+    "apresentacao": "A Lamartine Gás atende pedidos de gás em Piracanjuba. Informe a região e consulte as formas de atendimento.",
+    "telefones": [
+      "5564992393405"
+    ],
+    "endereco": "WhatsApp&(62, 99864 - 2845, Av. Expedicionário Jovino Alves da Silva, 375-405 - St. Oeste, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3787606579989896649"
+  },
+  {
+    "slug": "lava-jato-beira-lago",
+    "nome": "Lava Jato Beira Lago",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "O Lava Jato Beira Lago faz lavagem de carros, caminhões e máquinas agrícolas. Consulte o atendimento para o porte do seu veículo.",
+    "telefones": [
+      "5564992730059"
+    ],
+    "oferta": [
+      "Lavagem de carros",
+      "Caminhões",
+      "Máquinas agrícolas"
+    ],
+    "endereco": "Rua perimetral Q3, Lt 11, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3986373533754706883"
+  },
+  {
+    "slug": "lava-jato-romano",
+    "nome": "Lava Jato Romano",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte o Lava Jato Romano sobre os tipos de lavagem disponíveis e o horário para levar o veículo.",
+    "telefones": [
+      "5564992199198"
+    ]
+  },
+  {
+    "slug": "lavynne-costa-acessorios",
+    "nome": "Lavynne Costa Acessórios",
+    "categoria": "Acessórios e semijoias",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para conhecer os acessórios de Lavynne Costa, peça informações sobre modelos, materiais e disponibilidade.",
+    "telefones": [
+      "5564992120968"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "lavynne-costa-boutique",
+    "nome": "Lavynne Costa Boutique",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a Lavynne Costa Boutique sobre as peças de vestuário e os tamanhos disponíveis na loja.",
+    "telefones": [
+      "5564992976876"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "lb-solucoes-ambientais",
+    "nome": "LB Soluções Ambientais",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A LB Soluções Ambientais atende demandas da área ambiental. Descreva a situação do imóvel ou empreendimento para consultar o serviço.",
+    "telefones": [
+      "5564992335338"
+    ]
+  },
+  {
+    "slug": "lcf-mais",
+    "nome": "LCF Mais",
+    "categoria": "Comércio local",
+    "setor": "Comércio local",
+    "apresentacao": "Converse com a LCF Mais em Piracanjuba para consultar os serviços disponíveis.",
+    "telefones": [
+      "5564992721030"
+    ],
+    "endereco": "R. Lindolfo França, 272 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=5446559679342526690"
+  },
+  {
+    "slug": "leonardo-pintor",
+    "nome": "Leonardo Pintor",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Converse com Leonardo sobre a pintura que pretende fazer e informe a área aproximada do imóvel.",
+    "telefones": [
+      "5564992593843"
+    ]
+  },
+  {
+    "slug": "lima-amil-imoveis",
+    "nome": "Lima Amil Imóveis",
+    "categoria": "Imobiliário",
+    "setor": "Imobiliário",
+    "apresentacao": "Para conversar sobre um imóvel com a Lima Amil Imóveis, informe o tipo de propriedade e a região que procura.",
+    "telefones": [
+      "5564984091000"
+    ],
+    "endereco": "Batista - Av. Antônio Batista Arantes, 400 - Centro, Piracanjuba - GO, 75640-096",
+    "mapa": "https://www.google.com/maps?cid=10143041442193035490",
+    "logo": "/marcas-zap/logos/9ea172bc385aa714.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "livian-pinheiro",
+    "nome": "Livian Pinheiro",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para conhecer a seleção de moda de Livian Pinheiro, informe que tipo de peça e tamanho você procura.",
+    "telefones": [
+      "5564992621878"
+    ],
+    "instagram": "https://www.instagram.com/livian.pinheiro_/",
+    "logo": "/marcas-zap/logos/livian.pinheiro_.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-elegancia",
+    "nome": "Loja Elegância",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Loja Elegância trabalha com moda praia e lingerie. Consulte as opções de peças para montar seu biquíni.",
+    "telefones": [
+      "5564992210175"
+    ],
+    "oferta": [
+      "Moda praia",
+      "Lingerie"
+    ],
+    "endereco": "Av dom Pedro ll, n° 659 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13327913662682739732",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-gente-inocente",
+    "nome": "Loja Gente Inocente",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Gente Inocente reúne roupas, calçados e acessórios para bebês, crianças e adolescentes. Informe o tamanho ao consultar a loja.",
+    "telefones": [
+      "5564992732315"
+    ],
+    "oferta": [
+      "Roupas infantis",
+      "Calçados",
+      "Acessórios"
+    ],
+    "endereco": "R. Dom Pedro II, 488 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7387181064451204823",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-irmaos-morais-multimarcas",
+    "nome": "Loja Irmãos Morais Multimarcas",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Irmãos Morais trabalha com roupas para adultos e crianças, além de artigos de cama, mesa e banho.",
+    "telefones": [
+      "5564993104848"
+    ],
+    "oferta": [
+      "Moda infantil",
+      "Moda adulta",
+      "Cama, mesa e banho"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 91 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4380351758943074239",
+    "logo": "/marcas-zap/logos/48a1b9b7899446d5.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-renata-machado",
+    "nome": "Loja Renata Machado",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a Loja Renata Machado sobre as peças de vestuário disponíveis e os tamanhos que deseja experimentar.",
+    "telefones": [
+      "5564992600492"
+    ],
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-tereza-rita",
+    "nome": "Loja Tereza Rita",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Loja Tereza Rita trabalha com moda feminina. Peça informações sobre os modelos e tamanhos disponíveis.",
+    "telefones": [
+      "556434052396"
+    ],
+    "endereco": "R. José Alves Ferreira, 570, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4966937180688737370",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "loja-zema",
+    "nome": "Loja Zema",
+    "categoria": "Loja de departamentos",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para informações sobre produtos e atendimento da rede Zema, use o canal da marca e indique a unidade de Piracanjuba.",
+    "telefones": [
+      "553436691010"
+    ],
+    "contatoRede": true,
+    "endereco": "Pça. Guarda Mor Francisco José Pinheiro, 212 - Setor Comercial, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11075863184881530595",
+    "instagram": "https://www.instagram.com/zemapravc/",
+    "instagramRede": true,
+    "site": "https://portal.zema.com/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/327cd94b767f95b8.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "lojas-nacional",
+    "nome": "Lojas Nacional",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Fale com as Lojas Nacional para consultar roupas e opções de tamanho na unidade de Piracanjuba.",
+    "telefones": [
+      "556434056537"
+    ],
+    "endereco": "R. Dom Pedro II, 517, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1222730401517233924",
+    "instagram": "https://www.instagram.com/lojasnacional_piracanjuba/",
+    "logo": "/marcas-zap/logos/cdbc23e1cf84e4df.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "luana-costa",
+    "nome": "Luana Costa",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Luana Costa oferece design de sobrancelhas, micropigmentação e hidratação labial. Consulte o estúdio sobre a avaliação e os horários.",
+    "telefones": [
+      "5562994051058"
+    ],
+    "oferta": [
+      "Design de sobrancelhas",
+      "Micropigmentação",
+      "Hidratação labial"
+    ],
+    "endereco": "Rua Piracanjuba Q.13 L.8 St. Jardim primavera do norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12135398247787872058",
+    "instagram": "https://www.instagram.com/luanasobrancelha_lc/"
+  },
+  {
+    "slug": "luana-semijoias",
+    "nome": "Luana Semijoias",
+    "categoria": "Acessórios e semijoias",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Para conhecer as peças da Luana Semijoias, peça fotos dos modelos e consulte as medidas disponíveis.",
+    "telefones": [
+      "5564992641330"
+    ],
+    "site": "https://linktr.ee/luanasemijoiasbio",
+    "logo": "/marcas-zap/logos/4385e2dc45e0e1a9.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/joias.webp"
+  },
+  {
+    "slug": "luiz-trindade-contabilidade",
+    "nome": "Luiz Trindade Contabilidade",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "O escritório de Luiz Trindade oferece atendimento contábil em Piracanjuba. Faça contato para conversar sobre sua demanda.",
+    "telefones": [
+      "5564992201173"
+    ],
+    "endereco": "R. Alaor Marçal, 317 - sala 01, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3997704983404676138",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "lulu-modas",
+    "nome": "Lulu Modas",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Converse com a Lulu Modas sobre a peça que procura e os tamanhos disponíveis.",
+    "telefones": [
+      "5564992436599"
+    ],
+    "endereco": "Av. Carmindo Cordeiro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8380653517559527538",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "magazine-carmelo",
+    "nome": "Magazine Carmelo",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Magazine Carmelo trabalha com vestuário e mantém uma seleção de peças premium. Pergunte pelos modelos e tamanhos disponíveis.",
+    "telefones": [
+      "5564992278723"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, Q26 Lt18A - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=9410699407316777433",
+    "logo": "/marcas-zap/logos/743c93adc32070f4.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "mais-obras-aluguel-de-equipamentos",
+    "nome": "Mais Obras Aluguel de Equipamentos",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "A Mais Obras trabalha com locação de equipamentos para construção. Informe qual equipamento precisa e por quanto tempo.",
+    "telefones": [
+      "5564993223702"
+    ],
+    "endereco": "R. Poeta Leo Lynce, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3484718231499486658",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "marcenaria-alves-silva",
+    "nome": "Marcenaria Alves Silva",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Tem um projeto em madeira? Envie à Marcenaria Alves Silva as medidas ou uma referência do móvel que tem em mente.",
+    "telefones": [
+      "5564992654948"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "marcenaria-do-celinho",
+    "nome": "Marcenaria do Celinho",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Converse com a Marcenaria do Celinho sobre o móvel ou a peça de madeira que precisa fazer. Envie medidas ou uma referência.",
+    "telefones": [
+      "556434053857"
+    ],
+    "endereco": "Av. Prof. Percival Rabêlo, QD B - LOTE 8 - JARDIM COUNTRY CLUB, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2064865883126960207",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "marcia-alves",
+    "nome": "Márcia Alves",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Márcia Alves atende demandas de cabelo e unhas. Fale com a profissional sobre o que deseja fazer.",
+    "telefones": [
+      "5564993357090"
+    ],
+    "oferta": [
+      "Cabelos",
+      "Unhas"
+    ]
+  },
+  {
+    "slug": "marka-da-paz",
+    "nome": "Marka da Paz",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Consulte a Marka da Paz sobre as peças de vestuário disponíveis em Piracanjuba.",
+    "telefones": [
+      "5562992720708"
+    ],
+    "mapa": "https://www.google.com/maps?cid=15132410015937497514",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "marques-estetica-automotiva",
+    "nome": "Marques Estética Automotiva",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Lavagem técnica, proteção de pintura, revitalização de plásticos e limpeza de estofados.",
+    "telefones": [
+      "5564992326656"
+    ],
+    "oferta": [
+      "Lavagem técnica",
+      "Proteção de pintura",
+      "Limpeza de estofados"
+    ],
+    "instagram": "https://www.instagram.com/marques.esteticaautomotiva/",
+    "logo": "/marcas-zap/logos/marques.esteticaautomotiva.webp",
+    "cor": "#4f1919"
+  },
+  {
+    "slug": "marquim-fit-academia",
+    "nome": "Marquim Fit Academia",
+    "categoria": "Esportes",
+    "setor": "Esportes",
+    "apresentacao": "Conheça a Marquim Fit. Fale com a academia sobre os planos e horários que se encaixam na sua rotina.",
+    "telefones": [
+      "5564992164090"
+    ],
+    "endereco": "Rua 08 Com, R. Maria Nader Daher, QD 02 LT 03 - St. Oeste, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1713716492384123084",
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "master-frio-ar-condicionado-automotivo",
+    "nome": "Máster Frio Ar Condicionado Automotivo",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A Máster Frio trabalha com ar-condicionado automotivo e de máquinas agrícolas. Informe o modelo do veículo ou equipamento para consultar a oficina.",
+    "telefones": [
+      "5564992279920"
+    ],
+    "endereco": "R. Sebastião Dias Pinheiro - Res. Pref. Ely Rocha, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3899841040119923605"
+  },
+  {
+    "slug": "master-tech-auto-center",
+    "nome": "Master Tech Auto Center",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A Master Tech Auto Center faz diagnóstico mecânico de veículos. Informe o modelo e os sinais que observou para consultar a oficina.",
+    "telefones": [
+      "5564993450101"
+    ],
+    "oferta": [
+      "Diagnóstico automotivo",
+      "Mecânica de veículos"
+    ],
+    "endereco": "R. Lindolfo França, 490 - Centro, Piracanjuba - GO, 75640-126",
+    "mapa": "https://www.google.com/maps?cid=3287953821947155830",
+    "instagram": "https://www.instagram.com/mastertech.autocenter/",
+    "site": "https://mastertechautocent.wixsite.com/website",
+    "logo": "/marcas-zap/logos/e6cd95b55ffe1544.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "maxwel-cabeleireiro",
+    "nome": "Maxwel Cabeleireiro",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Maxwel sobre o serviço de cabeleireiro que procura e os horários disponíveis.",
+    "telefones": [
+      "5564992019185"
+    ],
+    "foto": "/marcas-zap/setores/barbearia.webp"
+  },
+  {
+    "slug": "maysa-rosa-rodrigues",
+    "nome": "Maysa Rosa Rodrigues",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Fale com Maysa Rosa Rodrigues para conhecer os atendimentos de beleza que oferece e consultar sua agenda.",
+    "telefones": [
+      "5564996538655"
+    ]
+  },
+  {
+    "slug": "mercadao-da-economia",
+    "nome": "Mercadão da Economia",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Confira com o Mercadão da Economia os itens disponíveis para sua lista de supermercado em Piracanjuba.",
+    "telefones": [
+      "5564992284944"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 311 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14806873978146877969",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "mf-baterias",
+    "nome": "MF Baterias",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Para consultar uma bateria na MF Baterias, informe a marca, o modelo e o ano do veículo.",
+    "telefones": [
+      "5564992727707"
+    ],
+    "endereco": "Enfrente ao depósito do macarrão - Av. Antônio Batista Arantes - Estiva, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=135277098199932117",
+    "instagram": "https://www.instagram.com/mfbateriaspba/"
+  },
+  {
+    "slug": "milky-moo",
+    "nome": "Milky Moo",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Milky Moo de Piracanjuba sobre os sabores de milkshake disponíveis antes de escolher o seu.",
+    "telefones": [
+      "5562939983232"
+    ],
+    "endereco": "R. Alaor Marçal, Qd. 8 - Lt. 270 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6407244428840096152",
+    "instagram": "https://www.instagram.com/milkymoo/",
+    "instagramRede": true,
+    "site": "https://www.milkymoo.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/f4eb99cea18a526b.webp",
+    "foto": "/marcas-zap/setores/sorvete.webp"
+  },
+  {
+    "slug": "mor-atelie",
+    "nome": "Mor Ateliê",
+    "categoria": "Artesanato",
+    "setor": "Artesanato",
+    "apresentacao": "Consulte o Mor Ateliê sobre os trabalhos disponíveis e a possibilidade de fazer uma encomenda.",
+    "telefones": [
+      "5564992290474"
+    ],
+    "foto": "/marcas-zap/setores/artesanato.webp"
+  },
+  {
+    "slug": "moranguinho-acai-sorvetes",
+    "nome": "Moranguinho Açaí & Sorvetes",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Moranguinho reúne açaí e sorvetes. Peça o cardápio para consultar sabores e montar o seu pedido.",
+    "telefones": [
+      "5564992583931"
+    ],
+    "oferta": [
+      "Sorvetes",
+      "Açaí"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, n44 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4881713369944844301",
+    "foto": "/marcas-zap/setores/sorvete.webp"
+  },
+  {
+    "slug": "moveis-estrela",
+    "nome": "Móveis Estrela",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Fale com a Móveis Estrela sobre o móvel que procura e as medidas disponíveis para o seu espaço.",
+    "telefones": [
+      "556434055359"
+    ],
+    "endereco": "R. Dom Pedro II, 518 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6810889651596182032",
+    "facebook": "https://www.facebook.com/lojasmoveisestrela/",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "movimento-sistemas-de-gestao",
+    "nome": "Movimento Sistemas de Gestão",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Conte à Movimento quais tarefas você precisa organizar na sua empresa e pergunte sobre os sistemas de gestão disponíveis.",
+    "telefones": [
+      "5534988004947"
+    ],
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "nanda-makes",
+    "nome": "Nanda Makes",
+    "categoria": "Maquiagem e beleza",
+    "setor": "Outros",
+    "apresentacao": "Para conhecer o trabalho da Nanda Makes, peça referências e informações sobre os atendimentos disponíveis.",
+    "telefones": [
+      "5564993320700"
+    ],
+    "endereco": "R. Dom Pedro II, 655 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2842239097066934426",
+    "foto": "/marcas-zap/setores/maquiagem.webp"
+  },
+  {
+    "slug": "natalia-machado-cosmeticos",
+    "nome": "Natália Machado Cosméticos",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte Natália Machado sobre cosméticos e pergunte se o produto ou a tonalidade que procura está disponível.",
+    "telefones": [
+      "5564993146499"
+    ],
+    "foto": "/marcas-zap/setores/maquiagem.webp"
+  },
+  {
+    "slug": "nazare-depilacao",
+    "nome": "Nazaré Depilação",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Nazaré atende na área de depilação. Informe o serviço desejado e consulte os cuidados antes da sessão.",
+    "telefones": [
+      "5564992861955"
+    ]
+  },
+  {
+    "slug": "nivaldo-eletricista",
+    "nome": "Nivaldo Eletricista",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Precisa de um eletricista? Explique a Nivaldo o que precisa instalar ou revisar e combine uma avaliação.",
+    "telefones": [
+      "5564992362265"
+    ]
+  },
+  {
+    "slug": "nivas-lavacar",
+    "nome": "Nivas LavaCar",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Precisa lavar o carro? Fale com a Nivas LavaCar sobre os serviços e a disponibilidade para atendê-lo.",
+    "telefones": [
+      "5564993226259"
+    ]
+  },
+  {
+    "slug": "niwmar-alves-de-souza",
+    "nome": "Niwmar Alves de Souza",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "Para marcar atendimento odontológico em Piracanjuba, consulte a agenda do cirurgião-dentista Niwmar Alves de Souza.",
+    "telefones": [
+      "5564981108715"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "norte-materiais-para-construcao",
+    "nome": "Norte Materiais para Construção",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Norte Materiais de Construção trabalha com cimento, tijolos, blocos, areia, brita e ferragens. Envie as quantidades da sua obra.",
+    "telefones": [
+      "5564992444698"
+    ],
+    "oferta": [
+      "Cimento e tijolos",
+      "Areia e brita",
+      "Ferragens"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 1237 - Setor Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2096286732971947232",
+    "instagram": "https://www.instagram.com/norte.cimentos/",
+    "site": "https://linktr.ee/nortecimentos",
+    "logo": "/marcas-zap/logos/3a8e71794dbc0d4d.webp",
+    "cor": "#19274f",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "novo-mundo",
+    "nome": "Novo Mundo",
+    "categoria": "Móveis e Decoração",
+    "setor": "Móveis e Decoração",
+    "apresentacao": "Consulte a Novo Mundo sobre os móveis e eletrodomésticos disponíveis para a unidade de Piracanjuba.",
+    "telefones": [
+      "5564992698653"
+    ],
+    "endereco": "R. Dom Pedro II, 628 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=10777814582816628258",
+    "site": "https://www.novomundo.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/0ddcb152f0317e0a.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/decoracao.webp"
+  },
+  {
+    "slug": "nutribem-pet-e-cia",
+    "nome": "NutriBem Pet e Cia",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "Na NutriBem Pet e Cia, Rubens atende consultas sobre produtos para animais. Informe o que precisa para seu pet.",
+    "telefones": [
+      "5564996715405"
+    ],
+    "oferta": [
+      "Rações",
+      "Acessórios para pets",
+      "Banho e tosa"
+    ],
+    "endereco": "R. Cônego Olinto, 325 - CENTRO, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1485195037504208206",
+    "logo": "/marcas-zap/logos/3bf39950be43488c.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "o-boticario",
+    "nome": "O Boticário",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "A unidade O Boticário em Piracanjuba trabalha com perfumaria e maquiagem. Consulte sua fragrância ou tonalidade preferida.",
+    "telefones": [
+      "5564981420105"
+    ],
+    "oferta": [
+      "Perfumaria",
+      "Maquiagem",
+      "Cuidados com a pele"
+    ],
+    "endereco": "R. Dom Pedro II, 606 - St. Central - Parte Baixa, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13908919068858021152",
+    "site": "https://www.boticario.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "logo": "/marcas-zap/logos/96be9509db35ec4a.webp"
+  },
+  {
+    "slug": "oficina-checauto",
+    "nome": "Oficina Checauto",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "A Oficina Checauto atende demandas automotivas em Piracanjuba. Informe o veículo e o serviço que precisa consultar.",
+    "telefones": [
+      "5564992380852"
+    ]
+  },
+  {
+    "slug": "oficina-do-maninho",
+    "nome": "Oficina do Maninho",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte a Oficina do Maninho sobre manutenção do veículo. Diga qual é o modelo e o que deseja verificar.",
+    "telefones": [
+      "5564992144747"
+    ],
+    "endereco": "R. dos Pinhais, 633-693 - St. Magalhães, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4601247891883416766"
+  },
+  {
+    "slug": "oliveiras-burguer-gourmet",
+    "nome": "Oliveiras Burguer Gourmet",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Oliveiras Burguer Gourmet sobre os hambúrgueres do cardápio e as opções para fazer seu pedido.",
+    "telefones": [
+      "5564992266610"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "oliveiras-japa-food",
+    "nome": "Oliveiras Japa Food",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fale com a Oliveiras Japa Food sobre o cardápio de comida japonesa e os itens disponíveis para seu pedido.",
+    "telefones": [
+      "5564993356161"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "oticas-diego",
+    "nome": "Óticas Diego",
+    "categoria": "Ótica",
+    "setor": "Saúde",
+    "apresentacao": "A Óticas Diego trabalha com armações, lentes de grau, óculos de sol e relógios. Consulte os modelos disponíveis.",
+    "telefones": [
+      "5564992470659"
+    ],
+    "oferta": [
+      "Armações",
+      "Óculos solares",
+      "Relógios",
+      "Acessórios"
+    ],
+    "endereco": "R. Dom Pedro II, 491, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7810940027426027358",
+    "instagram": "https://www.instagram.com/oticasdiego/",
+    "logo": "/marcas-zap/logos/a43247c841f19764.webp",
+    "cor": "#194f42",
+    "foto": "/marcas-zap/setores/otica.webp"
+  },
+  {
+    "slug": "pao-gostoso",
+    "nome": "Pão Gostoso",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Pão Gostoso produz pão sírio artesanal, torradas, patês e antepastos. Consulte as opções para montar seu pedido.",
+    "telefones": [
+      "5564992770030"
+    ],
+    "oferta": [
+      "Pão sírio",
+      "Torradas",
+      "Antepastos e patês"
+    ],
+    "endereco": "R. Ver. Hugo Vargas Batista Machado, Q 37 - L 27 sala 01 - Centro, Piracanjuba - GO, 75640-134",
+    "mapa": "https://www.google.com/maps?cid=6560226152893582753",
+    "instagram": "https://www.instagram.com/paogostoso_go/",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "papelaria-doce-papel",
+    "nome": "Papelaria Doce Papel",
+    "categoria": "Papelaria e Presentes",
+    "setor": "Papelaria e Presentes",
+    "apresentacao": "Tem uma lista de material? Envie à Papelaria Doce Papel para verificar os itens disponíveis.",
+    "telefones": [
+      "5564992805683"
+    ],
+    "foto": "/marcas-zap/setores/papelaria.webp"
+  },
+  {
+    "slug": "pastel-do-edinho",
+    "nome": "Pastel do Edinho",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte o Pastel do Edinho para conhecer os sabores e saber como pedir.",
+    "telefones": [
+      "5564992273334"
+    ],
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "paulo-vitor-personal",
+    "nome": "Paulo Vitor (Personal)",
+    "categoria": "Personal Trainer",
+    "setor": "Personal Trainer",
+    "apresentacao": "Converse com Paulo Vitor sobre acompanhamento como personal trainer, local dos treinos e horários.",
+    "telefones": [
+      "5564993407703"
+    ],
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "peba-escavacoes",
+    "nome": "Peba Escavações",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "A Peba Escavações atua com terraplanagem. Informe a localização do terreno e o tipo de trabalho para pedir orçamento.",
+    "telefones": [
+      "5564999001033"
+    ],
+    "oferta": [
+      "Escavações",
+      "Terraplanagem"
+    ]
+  },
+  {
+    "slug": "peg-pag-bom-jesus",
+    "nome": "Peg Pag Bom Jesus",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Confira com o Peg Pag Bom Jesus os produtos que precisa comprar e a disponibilidade na loja.",
+    "telefones": [
+      "5564993299929"
+    ],
+    "endereco": "R. 3 - São Francisco de Assis, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8563855219620242780",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "peg-pag-mendonca",
+    "nome": "Peg Pag Mendonça",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Confira com o Peg Pag Mendonça os produtos para sua lista de compras e a disponibilidade no mercado.",
+    "telefones": [
+      "5564992337492"
+    ],
+    "endereco": "Av. Beija-Flor - Jardim Goiás, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4664456832741546260",
+    "logo": "/marcas-zap/logos/3739f15c0b28d167.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "personal-diogo-dias",
+    "nome": "Personal Diogo Dias",
+    "categoria": "Personal Trainer",
+    "setor": "Personal Trainer",
+    "apresentacao": "Consulte Diogo Dias sobre personal training e converse a respeito da rotina de treinos que pretende seguir.",
+    "telefones": [
+      "5564992158922"
+    ],
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "personalite-estetica",
+    "nome": "Personalité Estética",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Consulte a Personalité Estética sobre os atendimentos oferecidos e como marcar uma avaliação.",
+    "telefones": [
+      "5564992376119"
+    ],
+    "endereco": "R. José Alves Ferreira, número 408 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1480235949584741949"
+  },
+  {
+    "slug": "pethouse",
+    "nome": "Pethouse",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "A Pethouse oferece banho, tosa, passeios e cuidados em casa para animais de estimação. Consulte a opção adequada para seu pet.",
+    "telefones": [
+      "5564992101326"
+    ],
+    "oferta": [
+      "Banho e tosa",
+      "Passeios",
+      "Cuidados em casa"
+    ],
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "pirasexy",
+    "nome": "Pirasexy",
+    "categoria": "Loja de produtos adultos",
+    "setor": "Outros",
+    "apresentacao": "Consulte a Pirasexy para conhecer o catálogo da loja de produtos adultos e as formas de atendimento.",
+    "telefones": [
+      "5564992822569"
+    ]
+  },
+  {
+    "slug": "pit-dog-aneilton",
+    "nome": "Pit Dog Aneilton",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O Pit Dog do Aneilton prepara sanduíches em Piracanjuba. Consulte o cardápio e os acompanhamentos do seu pedido.",
+    "telefones": [
+      "5564992069119"
+    ],
+    "endereco": "534, Av. Expedicionário Jovino Alves da Silva, 448 - St. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6716773230747209288",
+    "logo": "/marcas-zap/logos/8acfe89924ec4486.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "pit-dog-do-carlao",
+    "nome": "Pit Dog do Carlão",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O Pit Dog do Carlão, na região da Praça da Matriz, atende quem procura lanches. Consulte o cardápio antes de pedir.",
+    "telefones": [
+      "5564992384737"
+    ],
+    "endereco": "734,, Pça. Guarda Mor Francisco José Pinheiro, 640, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6141507032876354927",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "pit-dog-do-fernando",
+    "nome": "Pit Dog do Fernando",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fernando atende no pit dog da Praça do Relógio. Pergunte pelas opções de lanche e como fazer seu pedido.",
+    "telefones": [
+      "5564992612830"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "pit-dog-do-francys",
+    "nome": "Pit Dog do Francys",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "No Pit Dog do Francys, consulte as opções de lanches e pizzas antes de escolher o seu pedido.",
+    "telefones": [
+      "5564992942928"
+    ],
+    "oferta": [
+      "Sanduíches",
+      "Pizzas"
+    ],
+    "endereco": "609, Av. Expedicionário Jovino Alves da Silva, 535 - Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=7610032160010294632",
+    "logo": "/marcas-zap/logos/2cffba065e6e079b.webp",
+    "cor": "#4f2719",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "pit-dog-do-paulinho",
+    "nome": "Pit Dog do Paulinho",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte o Pit Dog do Paulinho sobre sanduíches e pizzas. Pergunte pelas combinações disponíveis no cardápio.",
+    "telefones": [
+      "5564992277776"
+    ],
+    "oferta": [
+      "Sanduíches",
+      "Pizzas"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva, 281-337 - St. Aeroporto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13377259768312785428",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "pit-stop-estetica-automotiva",
+    "nome": "Pit Stop Estética Automotiva",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "A Pit Stop atende demandas de estética automotiva. Informe qual parte do veículo quer cuidar e consulte os serviços.",
+    "telefones": [
+      "5564992272728"
+    ]
+  },
+  {
+    "slug": "pj-solucoes-eletricas",
+    "nome": "PJ Soluções Elétricas",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Explique à PJ Soluções Elétricas o que precisa instalar ou reparar e peça informações para uma avaliação.",
+    "telefones": [
+      "5564992597709"
+    ]
+  },
+  {
+    "slug": "platinus-eventos",
+    "nome": "Platinus Eventos",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Platinus Eventos aluga mesas, cadeiras, utensílios para buffet e brinquedos infantis, como pula-pula e piscina de bolinhas.",
+    "telefones": [
+      "5564992339117"
+    ],
+    "oferta": [
+      "Locação de mesas e cadeiras",
+      "Utensílios para buffet",
+      "Brinquedos para festas"
+    ],
+    "endereco": "R. Clodoaldo Cláudio Carneiro - St. Magalhães, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12188394251012268592"
+  },
+  {
+    "slug": "ponadielly",
+    "nome": "Ponadielly",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Ponadielly atende como cabeleireira e designer de sobrancelhas. Informe o serviço que deseja e consulte a agenda.",
+    "telefones": [
+      "5564992667818"
+    ],
+    "oferta": [
+      "Cabelos",
+      "Design de sobrancelhas"
+    ]
+  },
+  {
+    "slug": "por-do-sol-moda-praia",
+    "nome": "Por do Sol Moda Praia",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Por do Sol Moda Praia trabalha com trajes de banho e acessórios. Peça opções no seu tamanho para escolher as peças.",
+    "telefones": [
+      "5564993324821"
+    ],
+    "oferta": [
+      "Moda praia",
+      "Acessórios"
+    ],
+    "endereco": "Rua Alaor Marçal Qua 13, N° 11b, Piracanjuba - GO, 75640-120",
+    "mapa": "https://www.google.com/maps?cid=11060870829080364754",
+    "logo": "/marcas-zap/logos/faecc1dc5b105d0d.webp",
+    "cor": "#19424f",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "prime-fit-academia",
+    "nome": "Prime Fit Academia",
+    "categoria": "Esportes",
+    "setor": "Esportes",
+    "apresentacao": "Fale com a Prime Fit para conhecer a academia, perguntar pelos planos e organizar seus treinos.",
+    "telefones": [
+      "5564993360754"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11328830704926627401",
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "professor-fernando",
+    "nome": "Professor Fernando",
+    "categoria": "Educação",
+    "setor": "Educação",
+    "apresentacao": "Diga ao professor Fernando qual conteúdo de matemática você está estudando para conversar sobre as aulas.",
+    "telefones": [
+      "5564992380405"
+    ],
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "quitambela",
+    "nome": "Quitambela",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A Quitambela prepara quitandas caseiras em Piracanjuba. Fale com a lanchonete para conhecer a seleção do dia.",
+    "telefones": [
+      "5564992397900"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 360 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14013849861853683451",
+    "instagram": "https://www.instagram.com/quitambela_/",
+    "logo": "/marcas-zap/logos/4fb47bab52db052a.webp",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "quitandas-da-rita-marta",
+    "nome": "Quitandas da Rita Marta",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Procura quitandas para o café ou para uma ocasião especial? Fale com Rita Marta sobre os tipos e quantidades.",
+    "telefones": [
+      "5564992683810"
+    ],
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "racoes-grao-dourado-com-caruline",
+    "nome": "Rações Grão Dourado com Caruline",
+    "categoria": "Pet Shop",
+    "setor": "Pet Shop",
+    "apresentacao": "Consulte Caruline sobre as rações Grão Dourado que procura. Informe para qual animal e em qual quantidade.",
+    "telefones": [
+      "5564992633113"
+    ],
+    "site": "https://www.graodourado.com.br/grupo",
+    "siteRotulo": "Site da marca",
+    "logo": "/marcas-zap/logos/76f1c9a58d79876f.webp",
+    "cor": "#19274f",
+    "foto": "/marcas-zap/setores/pet.webp"
+  },
+  {
+    "slug": "rafael-ar-condicionado",
+    "nome": "Rafael Ar Condicionado",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte Rafael sobre o ar-condicionado do seu veículo. Informe o modelo e descreva o que deseja verificar.",
+    "telefones": [
+      "5564993176129"
+    ]
+  },
+  {
+    "slug": "rayane-rodrigues",
+    "nome": "Rayane Rodrigues",
+    "categoria": "Fonoaudiologia",
+    "setor": "Saúde",
+    "apresentacao": "Consulte Rayane Rodrigues para combinar um atendimento de fonoaudiologia e esclarecer como funciona a primeira consulta.",
+    "telefones": [
+      "5564992335176"
+    ],
+    "instagram": "https://www.instagram.com/fonoaudiologarayane/",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "rede-da-construcao",
+    "nome": "Rede da Construção",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Vai construir ou reformar? Envie sua lista de materiais à Rede da Construção para consultar os itens disponíveis.",
+    "telefones": [
+      "5562995077365"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 799 - quadra 01 lote 10 - Setor Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1950260957558381318",
+    "instagram": "https://www.instagram.com/rededaconstrucaopiracanjuba/",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "rei-das-capinhas",
+    "nome": "Rei das Capinhas",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Consulte o Rei das Capinhas sobre capas e acessórios. Informe o modelo exato do seu celular para verificar compatibilidade.",
+    "telefones": [
+      "5564992622710"
+    ],
+    "endereco": "R. Dom Pedro II, 610 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=467583111014764641",
+    "logo": "/marcas-zap/logos/f3c35bf798175f46.webp",
+    "cor": "#4f4f19",
+    "foto": "/marcas-zap/setores/celulares.webp"
+  },
+  {
+    "slug": "rei-das-fibras",
+    "nome": "Rei das Fibras",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte o Rei das Fibras sobre o serviço ou produto que procura e envie uma referência para explicar o pedido.",
+    "telefones": [
+      "5564992039223"
+    ]
+  },
+  {
+    "slug": "rej-drone-agro",
+    "nome": "REJ Drone Agro",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "Fale com a REJ Drone Agro sobre o trabalho que pretende realizar no campo e consulte a disponibilidade para sua região.",
+    "telefones": [
+      "5564992943665"
+    ],
+    "foto": "/marcas-zap/setores/tecnologia.webp"
+  },
+  {
+    "slug": "renata-manicure-e-pedicure",
+    "nome": "Renata Manicure e Pedicure",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Renata atende como manicure e pedicure. Combine o serviço desejado e o horário para fazer as unhas.",
+    "telefones": [
+      "5564992018247"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "renata-quinta-confeitaria",
+    "nome": "Renata Quinta Confeitaria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Renata Quinta faz bolos decorados, doces para festas e doces de pote. Informe a data, o tema e a quantidade da encomenda.",
+    "telefones": [
+      "5564992051136"
+    ],
+    "oferta": [
+      "Bolos decorados",
+      "Doces de festa",
+      "Doces de pote"
+    ],
+    "endereco": "R. Amós Silva Campos, quadra 12 - lote 14 - St. Aeroporto, Piracanjuba - GO, 75641-128",
+    "mapa": "https://www.google.com/maps?cid=8625782297224189369",
+    "logo": "/marcas-zap/logos/a84770bf2d466222.webp",
+    "cor": "#4f1927",
+    "foto": "/marcas-zap/setores/cozinha.webp"
+  },
+  {
+    "slug": "renovar-modas-costura",
+    "nome": "Renovar Modas Costura",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Fale com a Renovar Modas sobre o trabalho de costura que a sua peça precisa. Uma foto ajuda a explicar o pedido.",
+    "telefones": [
+      "5564992633426"
+    ],
+    "mapa": "https://www.google.com/maps?cid=10081432544760791612",
+    "foto": "/marcas-zap/setores/artesanato.webp"
+  },
+  {
+    "slug": "restaurante-casa-de-vo",
+    "nome": "Restaurante Casa de Vó",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Quer almoçar no Casa de Vó? Consulte o restaurante sobre o cardápio e as opções de atendimento.",
+    "telefones": [
+      "5564992487000"
+    ],
+    "endereco": "R. Prof. Percival Rabêlo, 900, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14375804302688753171",
+    "instagram": "https://www.instagram.com/casadevo.restaurante/",
+    "logo": "/marcas-zap/logos/casadevo.restaurante.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "restaurante-sabores-da-camila",
+    "nome": "Restaurante Sabores da Camila",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O restaurante Sabores da Camila atende em Piracanjuba. Fale com a equipe para conhecer os pratos disponíveis.",
+    "telefones": [
+      "5564992908028"
+    ],
+    "mapa": "https://www.google.com/maps?cid=2552733002171753960",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "restaurante-tempero-de-famila",
+    "nome": "Restaurante Tempero de Famíla",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte o restaurante sobre os pratos do dia para escolher sua refeição.",
+    "telefones": [
+      "5564992002623"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "risus-odontologia",
+    "nome": "Risus Odontologia",
+    "categoria": "Odontologia",
+    "setor": "Saúde",
+    "apresentacao": "Consulte a Risus Odontologia sobre atendimento odontológico e combine o agendamento de uma avaliação.",
+    "telefones": [
+      "5564993123190"
+    ],
+    "endereco": "R. Dom Pedro II, 826 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13647163164395982604",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "rival-maquinas",
+    "nome": "Rival Máquinas",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Rival Máquinas trabalha com peças, máquinas e implementos agrícolas. Informe o modelo do equipamento para conferir a peça de que precisa.",
+    "telefones": [
+      "556434051920"
+    ],
+    "oferta": [
+      "Peças agrícolas",
+      "Máquinas",
+      "Implementos"
+    ],
+    "endereco": "Av. Antonio batista arantes Qd 8 Lt 8 - St. Primavera Norte, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=28778290710328688",
+    "instagram": "https://www.instagram.com/rivalmaquinas/",
+    "site": "https://www.rivalmaquinas.com.br/",
+    "logo": "/marcas-zap/logos/3936e47a53544a51.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "rmc-pinturas",
+    "nome": "RMC Pinturas",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "A RMC atende pedidos de pintura residencial e comercial. Descreva a área e o acabamento que deseja para solicitar orçamento.",
+    "telefones": [
+      "5564992357558"
+    ],
+    "oferta": [
+      "Pintura residencial",
+      "Pintura comercial"
+    ]
+  },
+  {
+    "slug": "roberto-encomendas-urgentes",
+    "nome": "Roberto Encomendas Urgentes",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para consultar uma encomenda urgente com Roberto, informe os locais de retirada e entrega e o prazo necessário.",
+    "telefones": [
+      "5564992591135"
+    ]
+  },
+  {
+    "slug": "robson-montagem-de-moveis",
+    "nome": "Robson Montagem de Móveis",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Robson faz montagem e desmontagem de móveis. Informe o tipo de móvel e o local para combinar o serviço.",
+    "telefones": [
+      "5562993324611"
+    ]
+  },
+  {
+    "slug": "rodolfo-ar-condicionado-automotivo",
+    "nome": "Rodolfo Ar Condicionado Automotivo",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Rodolfo atua com ar-condicionado automotivo. Informe o modelo do veículo e descreva o problema para consultar a avaliação.",
+    "telefones": [
+      "5564992603812"
+    ],
+    "endereco": "Rodolfo Ar Condicionado Automotivo - R. 3, Piracanjuba - GO, 75640-203",
+    "mapa": "https://www.google.com/maps/place/Rodolfo+Ar+Condicionado+Automotivo/data=!4m7!3m6!1s0x935f43e21f5e2a41:0xa217bc0baca9e591!8m2!3d-17.3081112!4d-49.027382!16s%2Fg%2F11xkwsfm_h!19sChIJQSpeH-JDX5MRkeWprAu8F6I?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1"
+  },
+  {
+    "slug": "rodrigo-escavacoes",
+    "nome": "Rodrigo Escavações",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte Rodrigo sobre escavações. Informe o local, a dimensão aproximada e o tipo de trabalho no terreno.",
+    "telefones": [
+      "5564992873660"
+    ]
+  },
+  {
+    "slug": "rogers-pit-dog",
+    "nome": "Roger’s Pit Dog",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Fale com o Roger’s Pit Dog para conhecer os lanches e combinar seu pedido.",
+    "telefones": [
+      "5564992483690"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "roma-sabores",
+    "nome": "Roma Sabores",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Pergunte à Roma Sabores quais opções estão sendo preparadas e como fazer um pedido.",
+    "telefones": [
+      "5564993477116"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "roseane-personal-trainer",
+    "nome": "Roseane Personal Trainer",
+    "categoria": "Personal Trainer",
+    "setor": "Personal Trainer",
+    "apresentacao": "Roseane atua como personal trainer. Converse com ela sobre objetivo de treino, local e disponibilidade de horários.",
+    "telefones": [
+      "5564992010484"
+    ],
+    "foto": "/marcas-zap/setores/academia.webp"
+  },
+  {
+    "slug": "rota-64",
+    "nome": "Rota 64",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Peça à Rota 64 informações sobre o cardápio e as opções para fazer um pedido.",
+    "telefones": [
+      "5562993049696"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "sabor-prosa",
+    "nome": "Sabor & Prosa",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Comida caseira para reunir a família ou fazer um pedido. Consulte o cardápio do Sabor & Prosa para escolher a refeição.",
+    "telefones": [
+      "5564993189192"
+    ],
+    "oferta": [
+      "Comida caseira",
+      "Cardápio digital"
+    ],
+    "endereco": "R. Dom Pedro II, 441 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13338832891775175154",
+    "site": "https://saboreprosarestaurante.menudino.com/",
+    "siteRotulo": "Ver cardápio",
+    "logo": "/marcas-zap/logos/75c5031639206e9c.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "sabores-da-terra-cachaparia-e-tapiocaria",
+    "nome": "Sabores da Terra Cachaparia e Tapiocaria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "O quiosque Sabores da Terra prepara tapiocas e cachapas, feitas com massa de milho verde. Pergunte pelos recheios disponíveis.",
+    "telefones": [
+      "5564992881009"
+    ],
+    "oferta": [
+      "Cachapas de milho",
+      "Tapiocas recheadas"
+    ],
+    "endereco": "Rua Alaor Marçal, Q F L 4 S/N, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6492084728508003134",
+    "logo": "/marcas-zap/logos/4e993493be68ee39.webp",
+    "cor": "#4f3419",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "sacolao-e-frutaria-morais",
+    "nome": "Sacolão e Frutaria Morais",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Frutas e verduras fazem parte da seleção do Sacolão e Frutaria Morais. Consulte os itens disponíveis para sua compra.",
+    "telefones": [
+      "5564992235187"
+    ],
+    "oferta": [
+      "Frutas",
+      "Verduras"
+    ],
+    "endereco": "Av. Dr. Hermínio de Amorim, 630 - St. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=1427253930774785984",
+    "logo": "/marcas-zap/logos/68fbdab3134173c0.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "salgados-da-ledina",
+    "nome": "Salgados da Ledina",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte Ledina sobre os salgados disponíveis para sua encomenda. Informe a data e o número de pessoas.",
+    "telefones": [
+      "5564992283252"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "sara-isabel-da-s-almeida",
+    "nome": "Sara Isabel da S. Almeida",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Sara Isabel da S. Almeida atende consultas jurídicas voltadas a empresas e ao agronegócio. Fale com a profissional para marcar atendimento.",
+    "telefones": [
+      "5564992053440"
+    ],
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "sbm-contabilidade",
+    "nome": "SBM Contabilidade",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A SBM Contabilidade oferece auditoria e gestão de tributos. Fale com o escritório sobre as necessidades contábeis da sua empresa.",
+    "telefones": [
+      "5562982685477"
+    ],
+    "oferta": [
+      "Contabilidade",
+      "Certificação digital",
+      "Gestão de tributos"
+    ],
+    "endereco": "Av. Barcelona, s/n° - Qd. 26 Lt. 02 - Loteamento Jardim Europa, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12506744339373185268",
+    "instagram": "https://www.instagram.com/sbmcontabilidadecd/",
+    "site": "https://sbmcontabilidade.com.br/",
+    "logo": "/marcas-zap/logos/e4d2beca55d841f1.webp",
+    "foto": "/marcas-zap/setores/escritorio.webp"
+  },
+  {
+    "slug": "sebastian-joalheiros",
+    "nome": "Sebastian Joalheiros",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Sebastian Joalheiros trabalha com alianças, anéis de formatura, peças em ouro e prata, além de reparos de joias e relógios.",
+    "telefones": [
+      "5564992351066"
+    ],
+    "oferta": [
+      "Alianças",
+      "Anéis de formatura",
+      "Relógios",
+      "Consertos"
+    ],
+    "endereco": "R. Dom Pedro II, 604, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13630083207005408357",
+    "instagram": "https://www.instagram.com/sebastianjoalheiros/",
+    "logo": "/marcas-zap/logos/cf1c41ee737bcf85.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/joias.webp"
+  },
+  {
+    "slug": "sementes-germine",
+    "nome": "Sementes Germine",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Sementes Germine produz e comercializa sementes forrageiras tropicais. Fale com a empresa sobre as variedades para sua pastagem.",
+    "telefones": [
+      "5562992626616"
+    ],
+    "endereco": "R. Maranhão, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=12941111536674730646",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "sempre-bella",
+    "nome": "Sempre Bella",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "A Sempre Bella atua na área de cosméticos. Fale com a loja sobre o item de beleza que procura.",
+    "telefones": [
+      "556434053110"
+    ],
+    "endereco": "R. Dom Pedro II, 226, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=3312145956860314495"
+  },
+  {
+    "slug": "sergi-morais-moda-masculina",
+    "nome": "Sergi Morais Moda Masculina",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Sergi Morais trabalha com moda masculina. Fale com a loja sobre a peça, o estilo e o tamanho que procura.",
+    "telefones": [
+      "5564992871164"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, 387 - Central, Piracanjuba - GO, 75640-098",
+    "mapa": "https://www.google.com/maps?cid=13993702807283974875",
+    "logo": "/marcas-zap/logos/9ff3787239bc4fad.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "sidney-decoracao-de-eventos",
+    "nome": "Sidney Decoração de Eventos",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Conte ao Sidney como será seu evento e consulte as opções de decoração para o espaço e a data.",
+    "telefones": [
+      "5564993077742"
+    ]
+  },
+  {
+    "slug": "simone-fisioterapia",
+    "nome": "Simone Fisioterapia",
+    "categoria": "Fisioterapia",
+    "setor": "Saúde",
+    "apresentacao": "Para marcar um atendimento de fisioterapia com Simone, pergunte sobre o local e a disponibilidade de horários.",
+    "telefones": [
+      "5564992489140"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "smart-especializada",
+    "nome": "Smart Especializada",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "A Smart Especializada vende celulares e acessórios e faz reparos, como troca de tela, bateria e conector de carga.",
+    "telefones": [
+      "5564993421774"
+    ],
+    "oferta": [
+      "Smartphones",
+      "Acessórios",
+      "Troca de tela e bateria"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, Quadra 24 Lote 11-A Nº 240 - Setor Central, Piracanjuba - GO, 75640-122",
+    "mapa": "https://www.google.com/maps?cid=11080508567231164470",
+    "logo": "/marcas-zap/logos/2afb548b0e0c34b7.webp",
+    "cor": "#4f4219",
+    "foto": "/marcas-zap/setores/celulares.webp"
+  },
+  {
+    "slug": "sorveteria-new-raffas",
+    "nome": "Sorveteria New Raffa’s",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "A New Raffa’s serve sorvetes, açaí e milkshakes. Consulte os sabores antes de escolher o seu.",
+    "telefones": [
+      "556434056198"
+    ],
+    "oferta": [
+      "Sorvetes",
+      "Açaí",
+      "Milkshakes"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, 95 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=6181291310375942097",
+    "foto": "/marcas-zap/setores/sorvete.webp"
+  },
+  {
+    "slug": "ss-brown-design",
+    "nome": "SS Brown Design",
+    "categoria": "Estúdio de beleza",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Fale com o Ss brown design para conhecer os atendimentos de beleza disponíveis e combinar um horário.",
+    "telefones": [
+      "5564993286383"
+    ]
+  },
+  {
+    "slug": "stive-facas-cutelaria-artesanal",
+    "nome": "Stive Facas Cutelaria Artesanal",
+    "categoria": "Artesanato",
+    "setor": "Artesanato",
+    "apresentacao": "A Stive Facas trabalha com cutelaria artesanal. Consulte os modelos e descreva a peça que procura.",
+    "telefones": [
+      "5564992784093"
+    ],
+    "foto": "/marcas-zap/setores/artesanato.webp"
+  },
+  {
+    "slug": "studio-de-ingles-e-impressao-3d",
+    "nome": "Studio de Inglês e Impressão 3D",
+    "categoria": "Aulas de inglês e impressão 3D",
+    "setor": "Educação",
+    "apresentacao": "Para conversar sobre aulas de inglês ou impressão 3D, indique qual serviço procura e descreva sua necessidade.",
+    "telefones": [
+      "5564993428251"
+    ],
+    "oferta": [
+      "Inglês",
+      "Impressão 3D"
+    ],
+    "foto": "/marcas-zap/setores/escola.webp"
+  },
+  {
+    "slug": "studio-lara-rodrigues",
+    "nome": "Studio Lara Rodrigues",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "O Studio Lara Rodrigues atende quem procura alongamento de unhas e esmaltação em gel. Converse sobre formato e horário.",
+    "telefones": [
+      "5564992146133"
+    ],
+    "oferta": [
+      "Alongamento de unhas",
+      "Esmaltação em gel"
+    ],
+    "instagram": "https://www.instagram.com/lararodrigues__nails/"
+  },
+  {
+    "slug": "studio-ludy-trindade",
+    "nome": "Studio Ludy Trindade",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "O Studio Ludy Trindade atende na área de cílios. Pergunte pelas técnicas disponíveis e como agendar.",
+    "telefones": [
+      "5564992265435"
+    ]
+  },
+  {
+    "slug": "studio-mv-detaling",
+    "nome": "Studio MV Detaling",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "Consulte o Studio MV Detaling sobre o cuidado estético que deseja para o veículo e como funciona o atendimento.",
+    "telefones": [
+      "5564992639731"
+    ]
+  },
+  {
+    "slug": "studio-paulla-gomes",
+    "nome": "Studio Paulla Gomes",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "O Studio Paulla Gomes oferece maquiagem, design de sobrancelhas, brow lamination, extensão de cílios e lash lifting.",
+    "telefones": [
+      "5564992975621"
+    ],
+    "oferta": [
+      "Design de sobrancelhas",
+      "Extensão de cílios",
+      "Maquiagem"
+    ],
+    "endereco": "Av. Castelo Branco, Qd. 03 - Lt. 08, n° 01 (sala 3, Piracanjuba - GO, 75642-070",
+    "mapa": "https://www.google.com/maps?cid=2373108219708811715",
+    "instagram": "https://www.instagram.com/studiopaullagomes_/"
+  },
+  {
+    "slug": "studio-stacy-lara-sobrancelhas",
+    "nome": "Studio Stacy Lara Sobrancelhas",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Stacy Lara trabalha com cuidados para sobrancelhas. Pergunte sobre o atendimento adequado e a agenda do estúdio.",
+    "telefones": [
+      "5564992395870"
+    ],
+    "endereco": "R. C-3, Qd A - Lt02 180 - Estiva, Piracanjuba - GO, 75640-058",
+    "mapa": "https://www.google.com/maps?cid=18034550589999042954"
+  },
+  {
+    "slug": "summer-beach-arena",
+    "nome": "Summer Beach Arena",
+    "categoria": "Esportes",
+    "setor": "Esportes",
+    "apresentacao": "A Summer Beach Arena oferece aulas de beach tennis e treinamento funcional, além de aluguel de quadras de areia cobertas.",
+    "telefones": [
+      "5564992294949"
+    ],
+    "oferta": [
+      "Aulas de beach tennis",
+      "Aluguel de quadras",
+      "Treinamento funcional"
+    ],
+    "endereco": "Rua JE, 07 - Qd 22 Lt 1 e 2 - Jardim Europa, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11300639242875029229"
+  },
+  {
+    "slug": "superfrio-ar-condicionado",
+    "nome": "Superfrio Ar Condicionado",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "A Superfrio instala e higieniza aparelhos de ar-condicionado e faz manutenção preventiva e corretiva.",
+    "telefones": [
+      "5564992666414"
+    ],
+    "oferta": [
+      "Instalação de ar-condicionado",
+      "Manutenção preventiva",
+      "Higienização"
+    ],
+    "instagram": "https://www.instagram.com/superfrio_ar2/",
+    "site": "https://superfrioar.com.br/",
+    "logo": "/marcas-zap/logos/f558784e32044f99.webp",
+    "cor": "#19344f"
+  },
+  {
+    "slug": "supermercado-brotas-smart",
+    "nome": "Supermercado Brotas Smart",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Fale com o Supermercado Brotas Smart para localizar a unidade desejada e consultar um produto antes das compras.",
+    "telefones": [
+      "5564992255339"
+    ],
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "supermercado-do-bolao",
+    "nome": "Supermercado do Bolão",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "Consulte o Supermercado do Bolão sobre os produtos da sua lista e as formas de atendimento.",
+    "telefones": [
+      "5564992269036"
+    ],
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "supermercado-prados",
+    "nome": "Supermercado Prados",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "No Supermercado Prados, você pode consultar um produto antes de fazer as compras. Informe a marca e a quantidade que procura.",
+    "telefones": [
+      "556434056526"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, 353 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=340508660571764809",
+    "facebook": "https://www.facebook.com/supermercadoprados/",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "supermercado-reginaldo",
+    "nome": "Supermercado Reginaldo",
+    "categoria": "Supermercados",
+    "setor": "Supermercados",
+    "apresentacao": "O Supermercado Reginaldo atende em Piracanjuba. Pergunte pela disponibilidade das marcas e embalagens que procura.",
+    "telefones": [
+      "5564992526631"
+    ],
+    "endereco": "Rua 01 nº 126 BNH - Conj. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=4725983070305915036",
+    "foto": "/marcas-zap/setores/mercado.webp"
+  },
+  {
+    "slug": "suqueria",
+    "nome": "Suqueria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Quer conhecer as opções da Suqueria? Peça o cardápio de comida saudável disponível em Piracanjuba.",
+    "telefones": [
+      "5564992782200"
+    ],
+    "endereco": "Pça. Guarda Mor Francisco José Pinheiro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=660713993335930025",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "tania-nascimento",
+    "nome": "Tânia Nascimento",
+    "categoria": "Psicanálise",
+    "setor": "Saúde",
+    "apresentacao": "Tânia Nascimento atua como psicanalista clínica. Converse com a profissional sobre a primeira sessão e o agendamento.",
+    "telefones": [
+      "5564992901346"
+    ],
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "tatieine-pereira",
+    "nome": "Tatieine Pereira",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Converse com Tatieine Pereira sobre design de unhas, manicure e pedicure. Informe o atendimento que deseja.",
+    "telefones": [
+      "5564993222378"
+    ],
+    "oferta": [
+      "Design de unhas",
+      "Manicure",
+      "Pedicure"
+    ]
+  },
+  {
+    "slug": "taynara-camila",
+    "nome": "Taynara Camila",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Confira com Taynara Camila as opções de manicure e a disponibilidade para a data que você prefere.",
+    "telefones": [
+      "5564992361357"
+    ]
+  },
+  {
+    "slug": "tempo-essencia",
+    "nome": "Tempo & Essência",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Quer conhecer as opções da Tempo & Essência? Fale com a loja sobre o produto de beleza que procura.",
+    "telefones": [
+      "5564993462449"
+    ],
+    "endereco": "R. Dom Pedro II, 765 - quadra 27, lote 142a, Piracanjuba - GO, 75640-116, Brazil",
+    "mapa": "https://www.google.com/maps?cid=13483056261982058310",
+    "instagram": "https://www.instagram.com/tempo_essencia/",
+    "logo": "/marcas-zap/logos/tempo_essencia.webp",
+    "cor": "#4f3419"
+  },
+  {
+    "slug": "thais-ferreira-manicure",
+    "nome": "Thaís Ferreira Manicure",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "Thaís Ferreira atende com manicure e unhas em gel. Escolha uma referência e consulte a disponibilidade para o serviço.",
+    "telefones": [
+      "5564992820635"
+    ],
+    "foto": "/marcas-zap/setores/manicure.webp"
+  },
+  {
+    "slug": "timba-burguer",
+    "nome": "Timba Burguer",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Timba Burguer sobre os hambúrgueres do cardápio e as opções de acompanhamento.",
+    "telefones": [
+      "5564992103895"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "tl-celulares",
+    "nome": "TL Celulares",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "apresentacao": "A TL Celulares trabalha com aparelhos e acessórios. Informe o modelo do seu celular para consultar um item compatível.",
+    "telefones": [
+      "5564992727101"
+    ],
+    "oferta": [
+      "Celulares",
+      "Acessórios"
+    ],
+    "endereco": "R. Dr. Ruy Brasil Cavalcante, 33 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=14937217225441007092",
+    "logo": "/marcas-zap/logos/d388603c49e7ce3c.webp",
+    "foto": "/marcas-zap/setores/celulares.webp"
+  },
+  {
+    "slug": "toca-da-raposa",
+    "nome": "Toca da Raposa",
+    "categoria": "Artigos esportivos",
+    "setor": "Artigos esportivos",
+    "apresentacao": "A Toca da Raposa trabalha com artigos esportivos, roupas e calçados. Pergunte pelas opções na sua numeração.",
+    "telefones": [
+      "5564984132715"
+    ],
+    "oferta": [
+      "Artigos esportivos",
+      "Calçados",
+      "Confecções"
+    ],
+    "endereco": "R. Dom Pedro II, 701 - Setor Central, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=5285756539157322125",
+    "logo": "/marcas-zap/logos/f1c720e553f59f51.webp",
+    "cor": "#4f2719"
+  },
+  {
+    "slug": "torneadora-alves",
+    "nome": "Torneadora Alves",
+    "categoria": "Serviços Especializados",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Fale com a Torneadora Alves sobre o trabalho de tornearia de que precisa. Envie uma foto ou as medidas da peça.",
+    "telefones": [
+      "556434052284"
+    ],
+    "endereco": "Av. Antônio Batista Arantes - Batista Arantes, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=2274536984879349636",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "torque-smash-hamburgueria",
+    "nome": "Torque Smash Hamburgueria",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Torque Smash sobre os hambúrgueres disponíveis e escolha os acompanhamentos antes de fazer seu pedido.",
+    "telefones": [
+      "5564992380780"
+    ],
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "tp-rodrigues-toldos-e-persianas",
+    "nome": "TP Rodrigues Toldos e Persianas",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Consulte Júlio, da TP Rodrigues, sobre toldos e persianas. Envie uma referência e as medidas aproximadas da área.",
+    "telefones": [
+      "5564992261196"
+    ],
+    "oferta": [
+      "Toldos",
+      "Persianas"
+    ]
+  },
+  {
+    "slug": "tribo-da-saude",
+    "nome": "Tribo da Saúde",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "A Tribo da Saúde trabalha com produtos e alimentos naturais. Pergunte à loja sobre o item que deseja encontrar.",
+    "telefones": [
+      "5564993451861"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, 257, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11213588720306221143",
+    "logo": "/marcas-zap/logos/31a1dcdb3f071588.webp",
+    "cor": "#424f19",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "tribo-dos-assados",
+    "nome": "Tribo dos Assados",
+    "categoria": "Alimentação",
+    "setor": "Alimentação",
+    "apresentacao": "Consulte a Tribo dos Assados sobre frango assado e encomendas. Combine a quantidade e o horário para retirada.",
+    "telefones": [
+      "5564993357262"
+    ],
+    "endereco": "R. Alfo Bueno de Sá - St. Oeste, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=13105701611980734516",
+    "foto": "/marcas-zap/setores/mesa.webp"
+  },
+  {
+    "slug": "trio-eletrico-dl",
+    "nome": "Trio Elétrico DL",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "O Trio Elétrico DL trabalha com propaganda volante. Informe a mensagem, a região e a data da divulgação para consultar o serviço.",
+    "telefones": [
+      "5564992146179"
+    ]
+  },
+  {
+    "slug": "tulio-entregas",
+    "nome": "Tulio Entregas",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Túlio atende questões sobre entregas. Tenha o código do pacote à mão ao entrar em contato.",
+    "telefones": [
+      "5564992332030"
+    ]
+  },
+  {
+    "slug": "uma-mariah-aromas-cosmeticos",
+    "nome": "Uma Mariah Aromas & Cosméticos",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "apresentacao": "A Uma Mariah reúne cosméticos, perfumes e acessórios. Informe o produto ou a fragrância que deseja conhecer.",
+    "telefones": [
+      "5562983396482"
+    ],
+    "oferta": [
+      "Cosméticos",
+      "Perfumaria",
+      "Acessórios"
+    ],
+    "endereco": "R. Dr. Pedro L Teixeira, Qd24 - Lt 20 N° 376 - Central, Piracanjuba - GO, 75640-098",
+    "mapa": "https://www.google.com/maps?cid=5704365428044500635",
+    "site": "https://umamariahcosmeticos.lojavirtualnuvem.com.br/",
+    "foto": "/marcas-zap/setores/maquiagem.webp"
+  },
+  {
+    "slug": "unicampo-loja",
+    "nome": "Unicampo Loja",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "A Unicampo atua nos segmentos de nutrição animal e sementes.",
+    "telefones": [
+      "556434055000"
+    ],
+    "site": "https://unicampo.com.br/",
+    "logo": "/marcas-zap/logos/7bb60b764181a334.webp",
+    "cor": "#194f42",
+    "foto": "/marcas-zap/setores/sementes.webp"
+  },
+  {
+    "slug": "univesty-confeccoes-e-estamparia",
+    "nome": "Univesty Confecções e Estamparia",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "A Univesty trabalha com confecções, estamparia e bordados computadorizados. Consulte a personalização de peças e uniformes.",
+    "telefones": [
+      "556434056311"
+    ],
+    "oferta": [
+      "Confecção",
+      "Estamparia",
+      "Bordados computadorizados"
+    ],
+    "endereco": "R. DR. Rui B, R. Dr. Ruy Brasil Cavalcante, n° 173 - Centro, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8535001616218183767",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "viaggi-vistos",
+    "nome": "Viaggi Vistos",
+    "categoria": "Assessoria de vistos",
+    "setor": "Serviços Especializados",
+    "apresentacao": "Assessoria para quem vai solicitar um visto. Fale com a equipe da Viaggi em Piracanjuba para consultar os serviços para o seu destino.",
+    "telefones": [
+      "5564992610775"
+    ],
+    "instagram": "https://www.instagram.com/viaggivistos/",
+    "site": "https://www.viaggivistos.com.br/",
+    "logo": "/marcas-zap/logos/c4fff670abcad5c4.webp",
+    "cor": "#19344f",
+    "foto": "/marcas-zap/fotos/gianluca-ferro-viaggi.webp",
+    "fotoAlt": "Gianluca Ferro, fundador da Viaggi Vistos"
+  },
+  {
+    "slug": "vidracaria-modelo",
+    "nome": "Vidraçaria Modelo",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "Fale com a Vidraçaria Modelo sobre a peça de vidro de que precisa. Envie medidas e uma foto do local para conversar sobre o orçamento.",
+    "telefones": [
+      "5564992958052"
+    ],
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "vidracaria-rei-dos-vidros",
+    "nome": "Vidraçaria Rei dos Vidros",
+    "categoria": "Materiais de Construção",
+    "setor": "Materiais de Construção",
+    "apresentacao": "A Vidraçaria Rei dos Vidros atende projetos em vidro. Informe o tipo de peça e as medidas aproximadas ao pedir orçamento.",
+    "telefones": [
+      "5564992049774"
+    ],
+    "endereco": "Av. Joaquim Santana Xavier Nunes, 160 - St. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=16944244899778716505",
+    "foto": "/marcas-zap/setores/construcao.webp"
+  },
+  {
+    "slug": "villa-bela-boutique",
+    "nome": "Villa Bela Boutique",
+    "categoria": "Moda e Vestuário",
+    "setor": "Moda e Vestuário",
+    "apresentacao": "Fale com a Villa Bela Boutique sobre os modelos de vestuário e as combinações que procura.",
+    "telefones": [
+      "5564992433834"
+    ],
+    "instagram": "https://www.instagram.com/usevillabela/",
+    "foto": "/marcas-zap/setores/moda.webp"
+  },
+  {
+    "slug": "vip-car-estetica-automotiva",
+    "nome": "VIP Car Estética Automotiva",
+    "categoria": "Lavagem e estética automotiva",
+    "setor": "Automotivo",
+    "apresentacao": "A VIP Car oferece polimento, vitrificação de pintura, lavagem a seco e lavagem geral. Consulte qual serviço atende ao que você procura.",
+    "telefones": [
+      "5564992992726"
+    ],
+    "oferta": [
+      "Polimento",
+      "Vitrificação de pintura",
+      "Lavagem a seco"
+    ],
+    "endereco": "R. dos Buritis - St. Estiva, Piracanjuba - GO, 75640-048",
+    "mapa": "https://www.google.com/maps?cid=11295289294964110181",
+    "instagram": "https://www.instagram.com/rodrigocesar_vipcar/",
+    "logo": "/marcas-zap/logos/9d4f46bc645e16de.webp",
+    "cor": "#4f1919"
+  },
+  {
+    "slug": "viveiro-orquidario-damante",
+    "nome": "Viveiro & Orquidário Damante",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "apresentacao": "O Viveiro & Orquidário Damante produz mudas de hortaliças e orquídeas. Consulte as variedades e as condições de retirada.",
+    "telefones": [
+      "5564992598944"
+    ],
+    "oferta": [
+      "Mudas de hortaliças",
+      "Orquídeas"
+    ],
+    "endereco": "R. Benjamin Constant, Piracanjuba - GO, 75640-076",
+    "mapa": "https://www.google.com/maps?cid=12643179021134016404",
+    "instagram": "https://www.instagram.com/viveiro.damante/",
+    "site": "http://www.viveirodamante.com.br/",
+    "siteRotulo": "Site do viveiro",
+    "logo": "/marcas-zap/logos/7e47b379d6d5456d.webp",
+    "cor": "#424f19",
+    "foto": "/marcas-zap/setores/plantas.webp"
+  },
+  {
+    "slug": "viver-produtos-naturais",
+    "nome": "Viver Produtos Naturais",
+    "categoria": "Saúde",
+    "setor": "Saúde",
+    "apresentacao": "Ervas, raízes, chás e óleos fazem parte da seleção da Viver Produtos Naturais. Consulte a disponibilidade antes de ir à loja.",
+    "telefones": [
+      "5564992188883"
+    ],
+    "oferta": [
+      "Ervas",
+      "Raízes",
+      "Chás",
+      "Óleos"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, n° 61 - Centro, Piracanjuba - GO, 75640-096",
+    "mapa": "https://www.google.com/maps?cid=3120439691851381082",
+    "instagram": "https://www.instagram.com/viver.produtosnaturais/",
+    "logo": "/marcas-zap/logos/e9b61ae5b0a41a1e.webp",
+    "cor": "#424f19",
+    "foto": "/marcas-zap/setores/saude.webp"
+  },
+  {
+    "slug": "viviane-entregas",
+    "nome": "Viviane Entregas",
+    "categoria": "Entregas",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Fale com Viviane sobre o recebimento da sua encomenda e tenha o número de referência do pacote à mão.",
+    "telefones": [
+      "5564992345895"
+    ]
+  },
+  {
+    "slug": "wennder-trindade-advogado",
+    "nome": "Wennder Trindade Advogado",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "apresentacao": "Wennder Trindade atua como advogado em Piracanjuba. Fale com o escritório para agendar uma consulta jurídica.",
+    "telefones": [
+      "5564992173425"
+    ],
+    "endereco": "Av. Padre Marinho - sao vicente, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=764553706394390185",
+    "foto": "/marcas-zap/setores/direito.webp"
+  },
+  {
+    "slug": "werlem",
+    "nome": "Werlem",
+    "categoria": "Transporte",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Para consultar uma corrida com Werlem, informe o ponto de embarque, o destino e o horário desejado.",
+    "telefones": [
+      "5564992537905"
+    ]
+  },
+  {
+    "slug": "wm-motos",
+    "nome": "WM Motos",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Weber e Márcio atendem na WM Motos. Informe o modelo da motocicleta e a peça ou serviço que precisa consultar.",
+    "telefones": [
+      "5564992178342"
+    ],
+    "endereco": "Av. Expedicionário Jovino Alves da Silva Qd; 05 Lt; 05, R. Pouso Alto, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=11206230403012691525"
+  },
+  {
+    "slug": "yara-auto-pecas",
+    "nome": "Yara Auto Peças",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "apresentacao": "Na Yara Auto Peças, informe a marca, o modelo e o ano do veículo para consultar a peça correta.",
+    "telefones": [
+      "5564992353347"
+    ],
+    "endereco": "Av. Antônio Batista Arantes, Piracanjuba - GO, 75640-000",
+    "mapa": "https://www.google.com/maps?cid=8738708514438040333",
+    "instagram": "https://www.instagram.com/yara_autopecas/",
+    "logo": "/marcas-zap/logos/yara_autopecas.webp",
+    "cor": "#4f1919",
+    "foto": "/marcas-zap/setores/oficina.webp"
+  },
+  {
+    "slug": "zebrinha-pintor",
+    "nome": "Zebrinha Pintor",
+    "categoria": "Serviços Gerais",
+    "setor": "Serviços Gerais",
+    "apresentacao": "Converse com Zebrinha sobre pintura. Informe o tipo de superfície e a área aproximada para consultar o orçamento.",
+    "telefones": [
+      "5564992178251"
+    ],
+    "site": "https://www.zebrinhapintor.com/",
+    "logo": "/marcas-zap/logos/c546dc6009ea6d12.webp",
+    "cor": "#4f3419"
+  }
+]
