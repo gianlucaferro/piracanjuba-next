@@ -69,15 +69,15 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         </section>
         </SomenteNoPortal>
 
-        <footer className="border-t bg-card hidden md:block">
-          <div className="container py-8">
+        <footer className="border-t bg-card">
+          <div className="container pt-4 pb-24 md:py-8">
             {/* Seções: links fixos no HTML, com âncora descritiva, para páginas que
                 não recebiam link interno (LINK-02, auditoria de SEO de 2026-11-17).
                 Fica fora das páginas de empresa, que usam a moldura enxuta.
                 prefetch={false}: o rodapé inteiro entra na tela de uma vez, e
                 pré-carregar todas essas rotas a cada página não compensa. */}
             <SomenteNoPortal>
-              <nav aria-labelledby="rodape-secoes" className="mb-8 pb-8 border-b">
+              <nav aria-labelledby="rodape-secoes" className="hidden md:block mb-8 pb-8 border-b">
                 <h2
                   id="rodape-secoes"
                   className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4"
@@ -106,7 +106,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 </div>
               </nav>
             </SomenteNoPortal>
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <div className="hidden md:flex items-center justify-between gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Image
                   src="/icon-192.png"
@@ -149,21 +149,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 </a>
               </div>
             </div>
-            <div className="text-center mt-4 space-y-2">
-              <p className="text-xs text-muted-foreground">
+            <div className="text-center md:mt-4 space-y-2">
+              <p className="hidden md:block text-xs text-muted-foreground">
                 Informações públicas com fontes identificadas. Este app não tem vínculo com
                 nenhum órgão público.
               </p>
               <p className="text-sm text-foreground/70 font-medium">
                 <a
-                  href="https://apareca.ai"
+                  href="https://apareca.ai/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary underline-offset-2 hover:underline transition-colors"
                 >
-                  Ferro Labs Tecnologia LTDA
-                </a>{" "}
-                · CNPJ 66.034.538/0001-25 - Todos os direitos reservados.
+                  Site desenvolvido por Ferro Labs Tecnologia LTDA
+                </a>
+                <span className="hidden md:inline"> · CNPJ 66.034.538/0001-25 - Todos os direitos reservados.</span>
               </p>
             </div>
           </div>
