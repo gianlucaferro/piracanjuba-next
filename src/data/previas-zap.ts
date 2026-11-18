@@ -7,7 +7,9 @@ export type PreviaZap = {
   setor: string;
   oferta?: string[];
   siteRotulo?: string;
-  apresentacao: string;
+  atividade: string;
+  resumo: string;
+  detalhe?: string;
   telefones: string[];
   endereco?: string;
   mapa?: string;
@@ -21,6 +23,7 @@ export type PreviaZap = {
   instagramRede?: boolean;
   siteRede?: boolean;
   contatoRede?: boolean;
+  atendimentoRemoto?: boolean;
 };
 
 export const previas: readonly PreviaZap[] = catalogo;
