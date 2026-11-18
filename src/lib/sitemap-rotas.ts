@@ -94,7 +94,7 @@ export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>
 
 // Rotas dinâmicas e de onde src/app/sitemap.ts tira as URLs de cada uma.
 export const ROTAS_DINAMICAS_NO_SITEMAP: Readonly<Record<string, string>> = {
-  "/zap-pba/[slug]": "prévias de prospecção com noindex, excluídas do sitemap",
+  "/zap-pba/[slug]": "fichas ativas do catálogo editorial do Zap PBA (src/data/previas-zap.json)",
   "/[empresa]": "SLUGS_EMPRESAS (src/data/empresas-slugs.ts), com a data de conferência da ficha",
   "/compra-e-venda/[id]": "anúncios ativos da tabela classificados (Supabase)",
   "/vereadores/[slug]": "tabela vereadores (Supabase), linhas com slug",

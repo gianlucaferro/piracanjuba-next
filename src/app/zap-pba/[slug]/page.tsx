@@ -3,13 +3,13 @@ import localFont from "next/font/local";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
-import { ArrowRight, ArrowUpRight, ChevronLeft, Globe, MapPin, Phone } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Globe, MapPin, Navigation, Phone } from "lucide-react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { WHATSAPP_COMERCIAL } from "@/data/paginaEmpresa";
 import { previas, previaPorSlug } from "@/data/previas-zap";
+import { jsonLdFichaZap, metadadosFichaZap } from "@/lib/seo-zap";
 import { formatarTelefoneBr, linkWhatsapp } from "@/lib/whatsapp";
-import { pageMetadata } from "@/lib/seo";
 import { estiloDaCategoria } from "./categorias";
 import css from "./previa.module.css";
 
@@ -26,82 +26,125 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const ficha = previaPorSlug.get(slug);
-  if (!ficha) return {};
-  return pageMetadata({
-    title: ficha.nome + " em Piracanjuba",
-    description: ficha.apresentacao,
-    path: "/zap-pba/" + slug,
-    image: "/marcas-zap/compartilhar/" + slug + ".jpg",
-    imageAlt: ficha.nome + " em Piracanjuba, GO",
-    noIndex: true,
-  });
+  return ficha ? metadadosFichaZap(ficha) : {};
+}
+
+function palavras(texto: string) {
+  return " " + texto.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() + " ";
 }
 
 export default async function PreviaEmpresa({ params }: Props) {
   const { slug } = await params;
   const ficha = previaPorSlug.get(slug);
   if (!ficha) notFound();
-  const { nome, categoria, apresentacao, telefones } = ficha;
-  const { cor, Icone, acao, pergunta } = estiloDaCategoria(ficha.setor);
-  const contato = linkWhatsapp(telefones[0], pergunta);
+
+  const { nome, atividade, resumo, detalhe, telefones, foto, fotoAlt, logo } = ficha;
+  const { cor, Icone, composicao, pergunta } = estiloDaCategoria(ficha.setor);
+  const contato = linkWhatsapp(telefones[0], pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.");
   const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela página em https://piracanjuba.ai/zap-pba/" + slug);
   const estilo = { "--tinta": ficha.cor ?? cor } as CSSProperties;
+  const redes = ficha.instagram || ficha.site || ficha.facebook;
+  const local = ficha.endereco || ficha.mapa;
+  const textoDaFicha = palavras([atividade, resumo, detalhe].filter(Boolean).join(". "));
+  const ofertas = ficha.oferta?.filter((item) => !textoDaFicha.includes(palavras(item)));
+  const temOfertas = Boolean(ofertas?.length);
+
   return (
-    <article className={[css.pagina, titulo.variable].join(" ")} style={estilo}>
+    <article className={[css.pagina, titulo.variable].join(" ")} data-composicao={composicao} style={estilo}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdFichaZap(ficha) }} />
       <div className={css.miolo}>
         <div className={css.topo}>
-          <Link href="/zap-pba"><ChevronLeft size={15} /> Zap PBA</Link>
-          <span><MapPin size={14} /> Piracanjuba, GO</span>
+          <Link href="/zap-pba" prefetch={false}><ArrowLeft size={16} aria-hidden="true" />Guia Zap PBA</Link>
+          <span><MapPin size={15} aria-hidden="true" />{ficha.atendimentoRemoto ? "Atendimento online" : "Piracanjuba, GO"}</span>
         </div>
+
         <header className={css.capa}>
           <div className={css.texto}>
-            <p className={css.categoria}><Icone size={17} />{categoria}</p>
-            <h1>{nome}</h1>
-            <p className={css.apresentacao}>{apresentacao}</p>
-            <a className={css.botao} href={contato}>
-              <WhatsAppIcon className={css.zap} fill="currentColor" />{acao}<ArrowUpRight size={17} />
-            </a>
-          </div>
-          <div className={[css.cartaz, ficha.fotoAlt ? css.retrato : ""].join(" ")}>
-            <Image src={ficha.foto ?? "/historia/praca-do-relogio.jpg"} alt={ficha.fotoAlt ?? ""} fill priority sizes="(max-width: 650px) 100vw, 35vw" className={css.foto} />
-            {ficha.logo && (
-              <div className={css.marca}>
-                <Image src={ficha.logo} alt={"Logo de " + nome} width={240} height={240} priority unoptimized />
+            {logo && foto && (
+              <div className={css.assinatura}>
+                <Image src={logo} alt={"Logo de " + nome} width={96} height={96} unoptimized />
               </div>
             )}
-            {!ficha.foto && <span className={css.local}><MapPin size={13} /> Praça do Relógio, Piracanjuba</span>}
+            <p className={css.atividade}><Icone size={17} aria-hidden="true" />{atividade}</p>
+            <h1 className={nome.length > 34 ? css.nomeLongo : undefined}>{nome}</h1>
+            <p className={css.resumo}>{resumo}</p>
+            <div className={css.acoes}>
+              <a className={css.botao} href={contato}>
+                <WhatsAppIcon fill="currentColor" />{ficha.contatoRede ? "WhatsApp da rede" : "Falar no WhatsApp"}
+              </a>
+              {ficha.mapa ? (
+                <a className={css.atalho} href={ficha.mapa}><Navigation size={16} aria-hidden="true" />Como chegar</a>
+              ) : (redes || telefones.length > 1 || ficha.endereco) && (
+                <a className={css.atalho} href="#contatos">Ver contatos<ArrowDown size={15} aria-hidden="true" /></a>
+              )}
+            </div>
           </div>
+
+          {!foto && logo ? (
+            <div className={css.painelMarca}>
+              <div className={css.marcaAmpliada}>
+                <Image src={logo} alt={"Logo de " + nome} width={240} height={240} loading="eager" unoptimized />
+              </div>
+            </div>
+          ) : (
+            <figure className={css.moldura} data-retrato={fotoAlt ? true : undefined} data-cidade={!foto || undefined}>
+              <div className={css.quadro}>
+                <Image
+                  src={foto ?? "/historia/praca-do-relogio.jpg"}
+                  alt={fotoAlt ?? (foto ? "" : "Torre do relógio iluminada à noite")}
+                  fill
+                  sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 1200px) 41vw, 465px"
+                  loading="eager"
+                  className={css.foto}
+                />
+              </div>
+              {!foto && <figcaption className={css.legenda}><MapPin size={14} aria-hidden="true" />Praça do Relógio, Piracanjuba</figcaption>}
+            </figure>
+          )}
         </header>
-        {ficha.oferta && <section className={css.oferta} aria-labelledby="oferta">
-          <h2 id="oferta">Produtos e serviços</h2>
-          <ul>{ficha.oferta.map((produto) => <li key={produto}>{produto}</li>)}</ul>
-        </section>}
+
+        {(detalhe || temOfertas) && (
+          <section className={css.sobre} aria-labelledby="sobre">
+            <h2 id="sobre">{temOfertas ? "Produtos e serviços" : "Sobre " + nome}</h2>
+            <div>
+              {detalhe && <p className={css.detalhe}>{detalhe}</p>}
+              {temOfertas && <ul className={css.ofertas}>
+                {ofertas?.map((item) => <li key={item}>{item}</li>)}
+              </ul>}
+            </div>
+          </section>
+        )}
+
         <section className={css.contatos} aria-labelledby="contatos">
-          <h2 id="contatos">Contato e localização</h2>
-          <div className={css.grade}>
+          <h2 id="contatos">{local ? "Contato e localização" : "Contato"}</h2>
+          <dl className={css.grade}>
             <div className={css.item}>
-              <Phone aria-hidden="true" /><div><h3>{ficha.contatoRede ? "WhatsApp da rede" : "WhatsApp"}</h3>
-                {telefones.map((numero) => <a className={css.linha} key={numero} href={linkWhatsapp(numero)}>{formatarTelefoneBr(numero)}<ArrowUpRight size={14} /></a>)}
-              </div>
+              <dt><Phone size={18} aria-hidden="true" />{ficha.contatoRede ? "WhatsApp da rede" : "WhatsApp"}</dt>
+              <dd>{telefones.map((numero) => (
+                <a key={numero} href={linkWhatsapp(numero)}>{formatarTelefoneBr(numero)}<ArrowUpRight size={15} aria-hidden="true" /></a>
+              ))}</dd>
             </div>
-            <div className={css.item}>
-              <MapPin aria-hidden="true" /><div><h3>{ficha.endereco ? "Endereço" : "Localidade"}</h3>
-                <p>{ficha.endereco || "Piracanjuba, Goiás"}</p>
-                {ficha.mapa && <a className={css.secundario} href={ficha.mapa}>Como chegar<ArrowUpRight size={14} /></a>}
-              </div>
-            </div>
-            {(ficha.instagram || ficha.site || ficha.facebook) && <div className={css.item}>
-              {ficha.instagram ? <InstagramIcon /> : <Globe aria-hidden="true" />}<div><h3>Na internet</h3>
-                {ficha.instagram && <a className={css.linha} href={ficha.instagram}>{ficha.instagramRede ? "Instagram da rede" : "Instagram"}<ArrowUpRight size={14} /></a>}
-                {ficha.site && <a className={css.linha} href={ficha.site}>{ficha.siteRotulo ?? (ficha.siteRede ? "Site da rede" : "Site da empresa")}<ArrowUpRight size={14} /></a>}
-                {ficha.facebook && <a className={css.linha} href={ficha.facebook}>Facebook<ArrowUpRight size={14} /></a>}
-              </div>
+            {local && <div className={css.item}>
+              <dt><MapPin size={18} aria-hidden="true" />{ficha.endereco ? "Endereço" : "Localização"}</dt>
+              <dd>
+                {ficha.endereco && <p>{ficha.endereco}</p>}
+                {ficha.mapa && <a href={ficha.mapa}>Abrir no mapa<ArrowUpRight size={15} aria-hidden="true" /></a>}
+              </dd>
             </div>}
-          </div>
+            {redes && <div className={css.item}>
+              <dt>{ficha.instagram ? <InstagramIcon /> : <Globe size={18} aria-hidden="true" />}Canais digitais</dt>
+              <dd>
+                {ficha.instagram && <a href={ficha.instagram}>{ficha.instagramRede ? "Instagram da rede" : "Instagram"}<ArrowUpRight size={15} aria-hidden="true" /></a>}
+                {ficha.site && <a href={ficha.site}>{ficha.siteRotulo ?? (ficha.siteRede ? "Site da rede" : "Site da empresa")}<ArrowUpRight size={15} aria-hidden="true" /></a>}
+                {ficha.facebook && <a href={ficha.facebook}>Facebook<ArrowUpRight size={15} aria-hidden="true" /></a>}
+              </dd>
+            </div>}
+          </dl>
         </section>
+
         <footer className={css.rodape}>
           <span>Prévia de página criada pelo Piracanjuba.ai.</span>
-          <a href={suporte}>Solicitar ajuste ou remoção<ArrowRight size={15} /></a>
+          <a href={suporte}>Solicitar ajuste ou remoção<ArrowRight size={15} aria-hidden="true" /></a>
         </footer>
       </div>
     </article>

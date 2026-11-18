@@ -10,6 +10,7 @@ import {
   type FormEvent,
   type MouseEvent,
 } from "react";
+import Link from "next/link";
 import {
   ArrowUpDown,
   Briefcase,
@@ -70,6 +71,7 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type ZapEstabelecimento = {
   id: string;
+  pagina?: string;
   name: string;
   whatsapp: string;
   category: string | null;
@@ -379,6 +381,16 @@ function EstablishmentCard({
               <Flame className="h-3 w-3 text-orange-500" />
               {clickCount} {clickCount === 1 ? "contato" : "contatos"}
             </span>
+          )}
+          {item.pagina && (
+            <Link
+              href={item.pagina}
+              prefetch={false}
+              aria-label={`Ver detalhes de ${item.name}`}
+              className="relative z-20 inline-flex min-h-6 items-center gap-0.5 text-xs font-semibold text-foreground underline decoration-muted-foreground/50 underline-offset-2 hover:decoration-current"
+            >
+              Ver detalhes <ChevronRight aria-hidden="true" className="h-3 w-3" />
+            </Link>
           )}
         </div>
       </div>

@@ -289,7 +289,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/zap-pba",
         titulo: "Zap PBA",
-        descricao: "Diretório gratuito de WhatsApp dos estabelecimentos comerciais da cidade, por categoria.",
+        descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
         caminho: "/compra-e-venda",
@@ -411,6 +411,15 @@ export const SECOES_LLMS: SecaoLlms[] = [
 ];
 
 export const GRUPOS_DINAMICOS: GrupoDinamicoLlms[] = [
+  {
+    secao: SECAO_SERVICOS,
+    prefixo: "/zap-pba/",
+    titulo: "Negócios do Zap PBA",
+    caminhoIndice: "/zap-pba",
+    resumo: (n) =>
+      `${n} ${n === 1 ? "página de negócio local" : "páginas de negócios locais"} em /zap-pba/<nome>, com atividade e contato. O diretório organiza as fichas por categoria.`,
+    listarNoCompleto: false,
+  },
   {
     secao: SECAO_TRANSPARENCIA,
     prefixo: "/vereadores/",
