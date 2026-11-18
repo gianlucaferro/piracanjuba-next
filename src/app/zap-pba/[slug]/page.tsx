@@ -43,7 +43,7 @@ export default async function PreviaEmpresa({ params }: Props) {
   const contato = linkWhatsapp(telefones[0], ficha.mensagem ?? pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.");
   const urlPublica = "https://piracanjuba.ai/zap-pba/" + slug;
   const personalizar = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de saber como personalizar esta página: ${urlPublica}`);
-  const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela página em " + urlPublica);
+  const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de solicitar um ajuste ou a remoção desta prévia: ${urlPublica}`);
   const estilo = { "--tinta": ficha.cor ?? cor } as CSSProperties;
   const redes = ficha.instagram || ficha.site || ficha.facebook;
   const local = ficha.endereco || ficha.mapa;

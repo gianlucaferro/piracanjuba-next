@@ -30,5 +30,6 @@ test("a prévia encaminha o visitante à empresa e o proprietário ao portal", a
     expect(destino.searchParams.get("text")).toContain("https://piracanjuba.ai" + caminho);
   }
   expect(oferta.searchParams.get("text")).toContain(ficha.nome);
+  expect(suporte.searchParams.get("text")).toContain("um ajuste ou a remoção");
   expect(oferta.href).not.toBe(suporte.href);
 });
