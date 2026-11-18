@@ -1777,9 +1777,11 @@
     "telefones": [
       "5564992281476"
     ],
-    "resumo": "A Detalhes Lavajato trabalha com a lavagem de veículos.",
+    "resumo": "O Detalhes Lavajato trabalha com lavagem de veículos em Piracanjuba. Informe qual veículo você quer levar e consulte os tipos de lavagem disponíveis.",
     "atividade": "Lavagem de veículos",
-    "foto": "/marcas-zap/setores/lavagem-automotiva.webp"
+    "foto": "/marcas-zap/setores/lavagem-automotiva.webp",
+    "acao": "Consultar uma lavagem",
+    "mensagem": "Olá, Detalhes Lavajato! Gostaria de consultar uma lavagem para meu veículo. Quais são as opções e os horários disponíveis?"
   },
   {
     "slug": "disk-super-entulhos",
@@ -1789,9 +1791,11 @@
     "telefones": [
       "5564992420330"
     ],
-    "resumo": "A Disk Super Entulhos presta serviços de remoção de entulho.",
+    "resumo": "A Disk Super Entulhos presta serviço de retirada de entulho em Piracanjuba. Uma foto do material e o bairro da coleta ajudam a explicar o que precisa ser recolhido.",
     "atividade": "Retirada de entulho",
-    "foto": "/marcas-zap/setores/entulho.webp"
+    "foto": "/marcas-zap/setores/entulho.webp",
+    "acao": "Cotar retirada de entulho",
+    "mensagem": "Olá, Disk Super Entulhos! Tenho entulho para retirar. Como encaminho uma foto do material e o bairro para consultar o valor do serviço?"
   },
   {
     "slug": "divina-elaine",
@@ -1802,8 +1806,10 @@
       "5564992800658"
     ],
     "foto": "/marcas-zap/setores/escritorio.webp",
-    "resumo": "Divina Elaine realiza atendimentos de psicoterapia.",
-    "atividade": "Psicoterapia"
+    "resumo": "Divina Elaine atende em psicoterapia em Piracanjuba. Fale diretamente com ela para saber como funciona o primeiro atendimento e consultar a agenda.",
+    "atividade": "Psicoterapia",
+    "acao": "Consultar psicoterapia",
+    "mensagem": "Olá, Divina Elaine! Gostaria de saber como funciona o atendimento em psicoterapia e consultar os horários disponíveis."
   },
   {
     "slug": "dk-embalagens",
@@ -1815,9 +1821,11 @@
     ],
     "endereco": "Avenida Antônio Batista Arantes, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=343013166140161125",
-    "resumo": "A DK trabalha com embalagens para produtos.",
+    "resumo": "A DK Embalagens fica na Avenida Antônio Batista Arantes, em Piracanjuba. Ao consultar uma embalagem, conte o que vai embalar, as medidas do produto e a quantidade de que precisa.",
     "atividade": "Embalagens",
-    "foto": "/marcas-zap/setores/embalagem.webp"
+    "foto": "/marcas-zap/setores/embalagem.webp",
+    "acao": "Consultar uma embalagem",
+    "mensagem": "Olá, DK Embalagens! Preciso embalar um produto. Quais opções vocês têm para as medidas e a quantidade que procuro?"
   },
   {
     "slug": "dm-auto-center",
@@ -1831,8 +1839,10 @@
     "logo": "/marcas-zap/logos/dmautocenter_pba.webp",
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/oficina.webp",
-    "resumo": "A DM Auto Center é uma oficina de mecânica geral em Piracanjuba.",
-    "atividade": "Mecânica automotiva"
+    "resumo": "A DM Auto Center é uma oficina de mecânica geral em Piracanjuba. Para consultar um serviço, informe o modelo e o ano do veículo e explique o motivo da visita.",
+    "atividade": "Mecânica automotiva",
+    "acao": "Consultar um serviço na oficina",
+    "mensagem": "Olá, DM Auto Center! Gostaria de saber se a oficina atende o meu veículo. Como posso informar modelo, ano e o serviço que procuro?"
   },
   {
     "slug": "doce-confeito",
@@ -1844,9 +1854,11 @@
     ],
     "instagram": "https://www.instagram.com/doceconfeito.confeitaria/",
     "logo": "/marcas-zap/logos/doceconfeito.confeitaria.webp",
-    "foto": "/marcas-zap/setores/cozinha.webp",
+    "foto": "/marcas-zap/setores/bolos-e-doces.webp",
     "resumo": "A Doce Confeito prepara bolos e doces artesanais, tanto por encomenda quanto para pronta entrega.",
-    "atividade": "Bolos e doces artesanais"
+    "atividade": "Bolos e doces artesanais",
+    "acao": "Consultar bolos e doces",
+    "mensagem": "Olá, Doce Confeito! Gostaria de conhecer os bolos e doces disponíveis. Quais opções vocês têm para pronta entrega e como funcionam as encomendas?"
   },
   {
     "slug": "doce-gourmet",
@@ -1856,8 +1868,11 @@
     "telefones": [
       "5564992197780"
     ],
-    "resumo": "Vanessa Rodrigues trabalha com doces na Doce Gourmet.",
-    "atividade": "Doceria"
+    "resumo": "Vanessa Rodrigues é o contato da Doce Gourmet em Piracanjuba. Pergunte quais doces estão disponíveis e consulte opções para a ocasião que você tem em mente.",
+    "atividade": "Doceria",
+    "foto": "/marcas-zap/setores/bolos-e-doces.webp",
+    "acao": "Consultar doces com Vanessa",
+    "mensagem": "Oi, Vanessa! Gostaria de conhecer os doces da Doce Gourmet. Quais opções e valores estão disponíveis?"
   },
   {
     "slug": "doces-sitio-wr",
@@ -1870,9 +1885,11 @@
     "instagram": "https://www.instagram.com/docessitiowr/",
     "logo": "/marcas-zap/logos/docessitiowr.webp",
     "cor": "#4f4219",
-    "foto": "/marcas-zap/setores/cozinha.webp",
+    "foto": "/marcas-zap/setores/doce-caseiro.webp",
     "resumo": "O Sítio WR produz doces caseiros de leite e de frutas em Piracanjuba.",
-    "atividade": "Doces caseiros"
+    "atividade": "Doces caseiros",
+    "acao": "Consultar sabores de doces",
+    "mensagem": "Olá, Sítio WR! Quais doces de leite e de frutas estão disponíveis? Gostaria de consultar os sabores e valores."
   },
   {
     "slug": "donatella-doceria",
@@ -1882,9 +1899,11 @@
     "telefones": [
       "5564993136273"
     ],
-    "foto": "/marcas-zap/setores/cozinha.webp",
-    "resumo": "A Donatella trabalha com a venda de doces em Piracanjuba.",
-    "atividade": "Doceria"
+    "foto": "/marcas-zap/setores/bolos-e-doces.webp",
+    "resumo": "A Donatella Doceria vende doces em Piracanjuba. Se você está escolhendo uma sobremesa ou algo para compartilhar, pergunte à doceria pelas opções disponíveis.",
+    "atividade": "Doceria",
+    "acao": "Consultar doces disponíveis",
+    "mensagem": "Olá, Donatella! Quais doces vocês têm disponíveis e quais são os valores?"
   },
   {
     "slug": "dr-arthur-dias-odontologia",
@@ -1895,15 +1914,18 @@
       "5564992932266"
     ],
     "oferta": [
-      "Restaurações",
-      "Próteses",
-      "Implantes dentários"
+      "Restaurações em resina",
+      "Próteses removíveis",
+      "Implantes dentários",
+      "Próteses sobre implantes"
     ],
     "endereco": "Rua Professor Percival Rebelo, N° 177 - Centro, Piracanjuba - GO, 75640-092",
     "mapa": "https://www.google.com/maps?cid=13023492053613439689",
     "foto": "/marcas-zap/setores/odontologia.webp",
-    "resumo": "O consultório de Arthur Dias realiza restaurações em resina, implantes e próteses dentárias, inclusive sobre implantes. Também oferece limpeza e raspagem de tártaro.",
-    "atividade": "Implantes, próteses e restaurações"
+    "resumo": "O consultório do Dr. Arthur Dias fica na Rua Professor Percival Rebelo, no Centro de Piracanjuba. O atendimento inclui limpeza e raspagem de tártaro, além de tratamentos para restaurar e repor dentes.",
+    "atividade": "Consultório odontológico",
+    "acao": "Consultar horário de odontologia",
+    "mensagem": "Olá, Dr. Arthur Dias! Gostaria de consultar um horário para atendimento odontológico. Como funciona o agendamento?"
   },
   {
     "slug": "dr-brunno-borges-de-paula-prado",
@@ -1915,7 +1937,9 @@
     ],
     "foto": "/marcas-zap/setores/pet.webp",
     "resumo": "Brunno Borges de Paula Prado realiza atendimento médico-veterinário em Piracanjuba.",
-    "atividade": "Medicina veterinária"
+    "atividade": "Medicina veterinária",
+    "acao": "Consultar atendimento veterinário",
+    "mensagem": "Olá, Dr. Brunno! Gostaria de saber como agendar um atendimento veterinário em Piracanjuba. Quais horários e locais estão disponíveis?"
   },
   {
     "slug": "dr-jaime-junior",
@@ -1928,8 +1952,10 @@
     "endereco": "R. Dr. Ruy Brasil Cavalcante - Centro, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=8437577187154869791",
     "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "Jaime Júnior atua como advogado e realiza atendimento jurídico em Piracanjuba.",
-    "atividade": "Advocacia"
+    "resumo": "O advogado Jaime Júnior atende na Rua Dr. Ruy Brasil Cavalcante, no Centro de Piracanjuba. Entre em contato para combinar uma conversa sobre o atendimento jurídico que procura.",
+    "atividade": "Advocacia",
+    "acao": "Consultar horário com o advogado",
+    "mensagem": "Olá, Dr. Jaime Júnior! Gostaria de consultar um horário para conversar sobre atendimento jurídico em Piracanjuba. Como funciona o agendamento?"
   },
   {
     "slug": "dr-nelson-junior",
@@ -1939,8 +1965,10 @@
     "telefones": [
       "5562991520998"
     ],
-    "resumo": "Nelson Junior é um contato de saúde em Piracanjuba. O telefone da página permite falar diretamente com ele.",
-    "atividade": "Atendimento em saúde"
+    "resumo": "O Dr. Nelson Junior está na seção de saúde do guia de Piracanjuba. Pelo WhatsApp, você pode consultar quais atendimentos estão disponíveis e como funcionam os horários.",
+    "atividade": "Saúde no guia local",
+    "acao": "Falar com Nelson Junior",
+    "mensagem": "Olá, Dr. Nelson Junior! Encontrei seu contato no guia de saúde de Piracanjuba. Quais atendimentos o senhor oferece e como posso consultar os horários?"
   },
   {
     "slug": "dr-pedro-a-souza-carneiro",
@@ -1952,7 +1980,9 @@
     ],
     "foto": "/marcas-zap/setores/odontologia.webp",
     "resumo": "Pedro Augusto de Souza Carneiro presta atendimento odontológico em Piracanjuba.",
-    "atividade": "Odontologia"
+    "atividade": "Odontologia",
+    "acao": "Consultar horário com Dr. Pedro",
+    "mensagem": "Olá, Dr. Pedro! Gostaria de consultar um horário para atendimento odontológico. Como funciona o agendamento em Piracanjuba?"
   },
   {
     "slug": "dra-bruna-ribeiro",
@@ -1966,8 +1996,10 @@
     "mapa": "https://www.google.com/maps?cid=13238616083425045618",
     "instagram": "https://www.instagram.com/drabrunaribeiror/",
     "foto": "/marcas-zap/setores/odontologia.webp",
-    "resumo": "Bruna Ribeiro é odontopediatra e atende crianças em consultório odontológico.",
-    "atividade": "Odontopediatria"
+    "resumo": "Bruna Ribeiro é odontopediatra e atende crianças em consultório no Jardim Goiás, em Piracanjuba. Fale com a equipe para consultar horários e combinar a visita.",
+    "atividade": "Odontopediatria",
+    "acao": "Consultar odontopediatria",
+    "mensagem": "Olá, Dra. Bruna! Gostaria de saber como agendar uma consulta odontológica para uma criança. Quais horários estão disponíveis?"
   },
   {
     "slug": "dra-canal-odontologia",
@@ -1978,17 +2010,22 @@
       "5564992851249"
     ],
     "oferta": [
-      "Limpeza e restauração",
       "Tratamento de canal",
-      "Próteses"
+      "Limpeza e restauração",
+      "Clareamento",
+      "Próteses dentárias",
+      "Implantes",
+      "Ortodontia"
     ],
     "endereco": "R. Dr. Ruy Brasil Cavalcante, 32 - CENTRO, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=4928352770685310291",
     "logo": "/marcas-zap/logos/1cf1fd461922090d.webp",
     "cor": "#4f3419",
     "foto": "/marcas-zap/setores/odontologia.webp",
-    "resumo": "A Dra. Canal realiza tratamento de canal, restaurações, limpeza e clareamento. A clínica também trabalha com próteses, implantes e aparelhos ortodônticos.",
-    "atividade": "Odontologia e tratamento de canal"
+    "resumo": "A Dra. Canal Odontologia atende no Centro de Piracanjuba, na Rua Dr. Ruy Brasil Cavalcante, 32. Consulte a equipe sobre o procedimento que você procura e os horários disponíveis.",
+    "atividade": "Clínica odontológica",
+    "acao": "Consultar atendimento odontológico",
+    "mensagem": "Olá, Dra. Canal! Gostaria de consultar um horário para atendimento odontológico em Piracanjuba. Como faço para agendar?"
   },
   {
     "slug": "dra-dhaynara-rodrigues",
@@ -2000,7 +2037,9 @@
     ],
     "foto": "/marcas-zap/setores/odontologia.webp",
     "resumo": "Dhaynara Rodrigues realiza atendimento odontológico em Piracanjuba.",
-    "atividade": "Odontologia"
+    "atividade": "Odontologia",
+    "acao": "Consultar agenda odontológica",
+    "mensagem": "Olá, Dra. Dhaynara! Gostaria de marcar um atendimento odontológico. Quais são os horários disponíveis e onde acontece a consulta?"
   },
   {
     "slug": "dra-marize-oliveira",
@@ -2017,7 +2056,9 @@
     "cor": "#4f4219",
     "foto": "/marcas-zap/setores/direito.webp",
     "resumo": "Marize Oliveira oferece atendimento jurídico nas áreas cível, de família, agrária e criminal.",
-    "atividade": "Advocacia"
+    "atividade": "Advocacia",
+    "acao": "Consultar atendimento jurídico",
+    "mensagem": "Olá, Dra. Marize! Gostaria de agendar uma conversa sobre atendimento jurídico. Quais horários estão disponíveis no escritório de Piracanjuba?"
   },
   {
     "slug": "dra-renata",
@@ -2027,8 +2068,10 @@
     "telefones": [
       "5562992961127"
     ],
-    "resumo": "Renata trabalha com procedimentos de harmonização facial.",
-    "atividade": "Harmonização facial"
+    "resumo": "A Dra. Renata é o contato de harmonização facial no guia de Piracanjuba. Fale com ela para conhecer o atendimento, tirar dúvidas e consultar a agenda.",
+    "atividade": "Harmonização facial",
+    "acao": "Consultar harmonização facial",
+    "mensagem": "Olá, Dra. Renata! Gostaria de informações sobre seu atendimento em harmonização facial. Como funciona a primeira conversa e quais horários estão disponíveis?"
   },
   {
     "slug": "dra-sheyla-dib",
@@ -2039,7 +2082,10 @@
       "5562992647004"
     ],
     "resumo": "Sheyla Dib realiza atendimentos de fisioterapia em Piracanjuba.",
-    "atividade": "Fisioterapia"
+    "atividade": "Fisioterapia",
+    "foto": "/marcas-zap/setores/faixa-e-bola.webp",
+    "acao": "Consultar fisioterapia com Sheyla",
+    "mensagem": "Olá, Dra. Sheyla! Gostaria de saber como agendar um atendimento de fisioterapia em Piracanjuba. Quais são os horários e o local de atendimento?"
   },
   {
     "slug": "dra-tatiana-lima",
@@ -2055,7 +2101,9 @@
     "site": "https://dratatianalimahof.com.br/",
     "logo": "/marcas-zap/logos/592407bb2f8effba.webp",
     "resumo": "Tatiana Lima trabalha com harmonização facial na TALI Clinic. Sua atuação inclui procedimentos não cirúrgicos, como peelings, laser e aplicação de bioestimuladores de colágeno.",
-    "atividade": "Estética e harmonização facial"
+    "atividade": "Estética e harmonização facial",
+    "acao": "Consultar avaliação na TALI Clinic",
+    "mensagem": "Olá, Dra. Tatiana! Gostaria de saber como agendar uma avaliação de harmonização facial na TALI Clinic em Piracanjuba."
   },
   {
     "slug": "drogaria-central",
@@ -2073,8 +2121,10 @@
     "endereco": "R. Dom Pedro II, 640, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=10677987538021790996",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Drogaria Central comercializa medicamentos e artigos de perfumaria e também presta serviços farmacêuticos.",
-    "atividade": "Drogaria e perfumaria"
+    "resumo": "A Drogaria Central fica na Rua Dom Pedro II, 640, em Piracanjuba. Consulte a equipe sobre a disponibilidade do produto ou do serviço que você procura antes de passar na unidade.",
+    "atividade": "Drogaria",
+    "acao": "Consultar produto ou serviço",
+    "mensagem": "Olá, Drogaria Central! Gostaria de verificar a disponibilidade de um produto ou serviço na unidade da Rua Dom Pedro II. Como posso consultar?"
   },
   {
     "slug": "drogaria-farmavidda",
@@ -2087,8 +2137,10 @@
     "endereco": "R. Dom Pedro II, n° 483 - Centro, Piracanjuba - GO, 75640-116",
     "mapa": "https://www.google.com/maps?cid=17475564503967681504",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Farmavidda vende medicamentos na Rua Dom Pedro II, no centro de Piracanjuba.",
-    "atividade": "Drogaria"
+    "resumo": "A Drogaria Farmavidda fica na Rua Dom Pedro II, 483, no Centro de Piracanjuba. Pelo WhatsApp, você pode verificar a disponibilidade do produto que procura antes de ir à drogaria.",
+    "atividade": "Drogaria",
+    "acao": "Consultar um produto na Farmavidda",
+    "mensagem": "Olá, Farmavidda! Gostaria de consultar o preço e a disponibilidade de um produto na unidade do Centro de Piracanjuba."
   },
   {
     "slug": "drogaria-hiper-popular-piracanjuba",
@@ -2104,8 +2156,10 @@
     "logo": "/marcas-zap/logos/d534f57d2e58fa29.webp",
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Drogaria Hiper Popular de Piracanjuba atende na Rua Dom Pedro II, no Centro.",
-    "atividade": "Farmácia"
+    "resumo": "A Drogaria Hiper Popular de Piracanjuba fica na Rua Dom Pedro II, 571, sala 1, no Centro. Consulte a unidade pelo WhatsApp para saber se o produto que procura está disponível.",
+    "atividade": "Farmácia",
+    "acao": "Consultar a farmácia do Centro",
+    "mensagem": "Olá, Hiper Popular Piracanjuba! Gostaria de consultar um produto na unidade da Rua Dom Pedro II. Como verifico o valor e a disponibilidade?"
   },
   {
     "slug": "drogaria-jm-popular",
@@ -2116,8 +2170,11 @@
       "5564992030312"
     ],
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A JM Popular trabalha com a venda de medicamentos em Piracanjuba.",
-    "atividade": "Drogaria"
+    "resumo": "A Drogaria JM Popular fica no Setor Pouso Alto, em Piracanjuba. Antes de passar na farmácia, consulte a disponibilidade do produto que procura.",
+    "atividade": "Drogaria",
+    "endereco": "Avenida Expedicionário Jovino Alves da Silva, 628, Setor Pouso Alto, Piracanjuba - GO",
+    "acao": "Consultar a JM Popular",
+    "mensagem": "Olá, Drogaria JM Popular! Gostaria de consultar o preço e a disponibilidade de um produto na farmácia do Setor Pouso Alto."
   },
   {
     "slug": "drogaria-marina",
@@ -2131,7 +2188,9 @@
     "mapa": "https://www.google.com/maps?cid=1653858597020443208",
     "foto": "/marcas-zap/setores/farmacia.webp",
     "resumo": "A Drogaria Marina comercializa medicamentos na Rua Dr. Ruy Brasil Cavalcante.",
-    "atividade": "Farmácia"
+    "atividade": "Farmácia",
+    "acao": "Consultar um item na drogaria",
+    "mensagem": "Olá, Drogaria Marina! Gostaria de verificar se um produto está disponível na unidade da Rua Dr. Ruy Brasil Cavalcante e saber o preço."
   },
   {
     "slug": "drogaria-nacional",
@@ -2144,8 +2203,10 @@
     "endereco": "R. Cônego Olinto, 281 - Centro, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=11192936459720086087",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Nacional atende como farmácia no centro de Piracanjuba, na Rua Cônego Olinto.",
-    "atividade": "Drogaria"
+    "resumo": "A Drogaria Nacional fica na Rua Cônego Olinto, 281, no Centro de Piracanjuba. Fale com a farmácia para consultar um item antes de buscá-lo.",
+    "atividade": "Drogaria",
+    "acao": "Consultar a Drogaria Nacional",
+    "mensagem": "Olá, Drogaria Nacional! Gostaria de consultar um produto na unidade do Centro. Como posso saber o preço e a disponibilidade?"
   },
   {
     "slug": "drogaria-sao-marcos",
@@ -2163,8 +2224,10 @@
     "logo": "/marcas-zap/logos/0e936e6067a0250c.webp",
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A São Marcos é uma drogaria da Rua Cônego Olinto, no centro de Piracanjuba.",
-    "atividade": "Farmácia"
+    "resumo": "A Drogaria São Marcos atende na Rua Cônego Olinto, 407, no Centro de Piracanjuba. Consulte a unidade sobre o produto que procura e acompanhe a farmácia pelos seus canais oficiais.",
+    "atividade": "Farmácia",
+    "acao": "Consultar produto na São Marcos",
+    "mensagem": "Olá, Drogaria São Marcos! Gostaria de consultar um produto na unidade da Rua Cônego Olinto, 407. Ele está disponível e qual é o preço?"
   },
   {
     "slug": "drogaria-sao-pedro",
@@ -2185,8 +2248,10 @@
     "logo": "/marcas-zap/logos/drogaria.saopedro.webp",
     "cor": "#19194f",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Drogaria São Pedro vende medicamentos, inclusive genéricos, além de produtos de higiene e perfumaria. Entre os serviços estão aplicação de injetáveis e entrega em domicílio.",
-    "atividade": "Drogaria e serviços farmacêuticos"
+    "resumo": "A Drogaria São Pedro fica no Setor Estiva e também faz entrega em domicílio. A unidade comercializa genéricos e oferece aplicação de injetáveis, conforme o atendimento disponível.",
+    "atividade": "Drogaria e serviços farmacêuticos",
+    "acao": "Consultar produto e entrega",
+    "mensagem": "Olá, Drogaria São Pedro! Gostaria de consultar um produto e saber se há entrega para o meu bairro em Piracanjuba. Como verifico o valor e a disponibilidade?"
   },
   {
     "slug": "drogaria-sao-sebastiao",
@@ -2196,14 +2261,16 @@
     "telefones": [
       "556434051734"
     ],
-    "endereco": "Avenida Doutor Pedro Ludovico Teixeira, 387 - Centro, Piracanjuba - GO",
+    "endereco": "Rua Doutor Pedro Ludovico Teixeira, 387, Centro, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=11427393881296800829",
     "instagram": "https://www.instagram.com/drogariasaosebastiaopba/",
     "logo": "/marcas-zap/logos/drogariasaosebastiaopba.webp",
     "cor": "#19344f",
     "foto": "/marcas-zap/setores/farmacia.webp",
     "resumo": "A Drogaria São Sebastião comercializa medicamentos e artigos de perfumaria no centro de Piracanjuba.",
-    "atividade": "Medicamentos e perfumaria"
+    "atividade": "Medicamentos e perfumaria",
+    "acao": "Consultar medicamentos e perfumaria",
+    "mensagem": "Olá, Drogaria São Sebastião! Gostaria de consultar um item de farmácia ou perfumaria na unidade do Centro. Como verifico o preço e a disponibilidade?"
   },
   {
     "slug": "drogaria-vitae",
@@ -2213,13 +2280,15 @@
     "telefones": [
       "5564992033777"
     ],
-    "endereco": "Rua Professor Percival Rebelo, Centro, Piracanjuba - GO",
+    "endereco": "Avenida Professor Percival Rebelo, 602, Centro, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=7234164940769809290",
     "logo": "/marcas-zap/logos/2a665d4d5ec3c508.webp",
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Vitae atua no comércio de medicamentos na Rua Professor Percival Rebelo, em Piracanjuba.",
-    "atividade": "Drogaria"
+    "resumo": "A Drogaria Vitae comercializa medicamentos na Avenida Professor Percival Rebelo, 602, no Centro de Piracanjuba. Consulte a drogaria antes de ir para saber se o produto que procura está disponível.",
+    "atividade": "Drogaria",
+    "acao": "Consultar um produto na Vitae",
+    "mensagem": "Olá, Drogaria Vitae! Gostaria de consultar um produto na unidade da Avenida Professor Percival Rebelo. Como verifico o preço e a disponibilidade?"
   },
   {
     "slug": "edu-games",
@@ -2229,8 +2298,11 @@
     "telefones": [
       "5564992269964"
     ],
-    "resumo": "A Edu Games trabalha no segmento de jogos eletrônicos.",
-    "atividade": "Videogames"
+    "resumo": "A Edu Games está no guia de tecnologia de Piracanjuba. Conte qual videogame ou jogo você tem em mente para consultar o atendimento pelo WhatsApp.",
+    "atividade": "Videogames",
+    "foto": "/marcas-zap/setores/controle-de-videogame.webp",
+    "acao": "Falar sobre videogames",
+    "mensagem": "Olá, Edu Games! Gostaria de uma informação sobre videogames. Quais produtos ou serviços vocês oferecem?"
   },
   {
     "slug": "electrotech",
@@ -2244,13 +2316,15 @@
       "Reparo de smartphones",
       "Microssoldagem"
     ],
-    "endereco": "Avenida Doutor Pedro Ludovico Teixeira, N° 354, Piracanjuba - GO",
+    "endereco": "Rua Doutor Pedro Ludovico Teixeira, 354, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=9894309045603642374",
     "site": "https://heylink.me/Electrotech/",
     "siteRotulo": "Links do estabelecimento",
     "foto": "/marcas-zap/setores/celulares.webp",
-    "resumo": "A Electrotech conserta smartphones e faz reparos de componentes por microssoldagem.",
-    "atividade": "Reparo de celulares"
+    "resumo": "A Electrotech é uma assistência técnica de smartphones em Piracanjuba. Informe a marca e o modelo do aparelho e descreva o defeito para consultar o atendimento.",
+    "atividade": "Assistência técnica de celulares",
+    "acao": "Consultar reparo de celular",
+    "mensagem": "Olá, Electrotech! Quero consultar o reparo de um celular. Como envio o modelo e explico o problema para saber os próximos passos?"
   },
   {
     "slug": "elenilton-entregas",
@@ -2260,9 +2334,11 @@
     "telefones": [
       "5564992022451"
     ],
-    "resumo": "Elenilton trabalha com o transporte e a entrega de encomendas.",
+    "resumo": "Elenilton é um contato de entregas e encomendas em Piracanjuba. Fale pelo WhatsApp para explicar qual entrega você precisa consultar.",
     "atividade": "Entrega de encomendas",
-    "foto": "/marcas-zap/setores/encomendas.webp"
+    "foto": "/marcas-zap/setores/encomendas.webp",
+    "acao": "Consultar uma encomenda",
+    "mensagem": "Olá, Elenilton! Gostaria de uma informação sobre a entrega de uma encomenda em Piracanjuba. Que dados são necessários para consultar o atendimento?"
   },
   {
     "slug": "eletronica-modelo",
@@ -2280,7 +2356,9 @@
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/tecnologia.webp",
     "resumo": "A Eletrônica Modelo presta assistência técnica e faz consertos de aparelhos eletrônicos no bairro Estiva.",
-    "atividade": "Assistência técnica em eletrônica"
+    "atividade": "Assistência técnica em eletrônica",
+    "acao": "Consultar conserto de aparelho",
+    "mensagem": "Olá, Eletrônica Modelo! Gostaria de consultar o conserto de um aparelho eletrônico. Como envio a marca, o modelo e uma descrição do defeito?"
   },
   {
     "slug": "eletronica-servitec",
@@ -2290,9 +2368,11 @@
     "telefones": [
       "5564992106726"
     ],
-    "resumo": "A Eletrônica Servitec atua no segmento de eletrônica e serviços de TV.",
+    "resumo": "A Eletrônica Servitec aparece no guia de Piracanjuba como loja da SKY. Consulte a empresa pelo WhatsApp sobre o atendimento de eletrônica e TV que você procura.",
     "atividade": "Eletrônica e TV",
-    "foto": "/marcas-zap/setores/eletronica.webp"
+    "foto": "/marcas-zap/setores/eletronica.webp",
+    "acao": "Consultar eletrônica e TV",
+    "mensagem": "Olá, Servitec! Gostaria de informações sobre o atendimento de eletrônica ou TV em Piracanjuba. Com quem posso falar?"
   },
   {
     "slug": "ellen-vieira-advocacia",
@@ -2305,8 +2385,10 @@
     "endereco": "R. Moacir Teles, 713 - Setor Planalto, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=11737208517747835487",
     "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "Ellen Vieira de Freitas presta atendimento jurídico em seu escritório de advocacia.",
-    "atividade": "Advocacia"
+    "resumo": "A advogada Ellen Vieira de Freitas atende na Rua Moacir Teles, 713, no Setor Planalto, em Piracanjuba. Fale com o escritório para combinar um horário.",
+    "atividade": "Advocacia",
+    "acao": "Consultar horário com Ellen Vieira",
+    "mensagem": "Olá, Dra. Ellen! Gostaria de agendar uma conversa sobre atendimento jurídico. Quais horários estão disponíveis no escritório?"
   },
   {
     "slug": "emporium-country",
@@ -2323,9 +2405,11 @@
     "siteRotulo": "Perfil da loja",
     "logo": "/marcas-zap/logos/556c1842d83e7379.webp",
     "cor": "#4f1919",
-    "foto": "/marcas-zap/setores/moda.webp",
-    "resumo": "A Emporium Country é uma loja de vestuário de estilo country em Piracanjuba.",
-    "atividade": "Moda country"
+    "foto": "/marcas-zap/setores/moda-country.webp",
+    "resumo": "A Emporium Country é uma loja de moda country na Rua Alaor Marçal, no Centro de Piracanjuba. Consulte as peças disponíveis para montar seu visual no estilo country.",
+    "atividade": "Moda country",
+    "acao": "Consultar peças de moda country",
+    "mensagem": "Olá, Emporium Country! Gostaria de conhecer as peças de moda country disponíveis no meu tamanho. Como posso consultar os modelos e valores?"
   },
   {
     "slug": "equilibrio-racoes",
@@ -2339,8 +2423,10 @@
     "mapa": "https://www.google.com/maps?cid=16851828368359914163",
     "instagram": "https://www.instagram.com/lojaequilibrioracoes/",
     "foto": "/marcas-zap/setores/pet.webp",
-    "resumo": "A Equilíbrio Rações comercializa alimentos e outros produtos para animais.",
-    "atividade": "Rações e produtos para animais"
+    "resumo": "A Equilíbrio Rações vende alimentos e produtos para animais no Setor Planalto, em Piracanjuba. Consulte a loja na Rua 22 de Novembro, 64, sobre a ração e o tamanho de embalagem que você procura.",
+    "atividade": "Rações e produtos para animais",
+    "acao": "Consultar ração para meu animal",
+    "mensagem": "Olá, Equilíbrio Rações! Quero saber quais rações estão disponíveis para meu animal. Como consulto as opções, os tamanhos de embalagem e os preços?"
   },
   {
     "slug": "escola-rosa-e-azul",
@@ -2351,8 +2437,10 @@
       "5564992338966"
     ],
     "foto": "/marcas-zap/setores/escola.webp",
-    "resumo": "A Escola Rosa e Azul oferece ensino fundamental em Piracanjuba.",
-    "atividade": "Ensino fundamental"
+    "resumo": "A Escola Rosa e Azul oferece ensino fundamental em Piracanjuba. Famílias interessadas podem consultar os anos atendidos, as turmas e o processo de matrícula pelo WhatsApp.",
+    "atividade": "Ensino fundamental",
+    "acao": "Consultar turmas do fundamental",
+    "mensagem": "Olá, Escola Rosa e Azul! Gostaria de informações sobre o ensino fundamental. Quais anos escolares vocês atendem e como funciona a matrícula?"
   },
   {
     "slug": "escola-sol-nascente",
@@ -2365,8 +2453,10 @@
     "endereco": "Av. Antônio Batista Arantes, 772 - St. Primavera Norte, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=4150750024416063233",
     "foto": "/marcas-zap/setores/escola.webp",
-    "resumo": "A Escola Sol Nascente atende no Setor Primavera Norte, na Avenida Antônio Batista Arantes.",
-    "atividade": "Educação escolar"
+    "resumo": "A Escola Sol Nascente fica na Avenida Antônio Batista Arantes, 772, em Piracanjuba. Para planejar a matrícula, consulte a escola sobre as turmas e os anos escolares em atendimento.",
+    "atividade": "Educação infantil e ensino fundamental",
+    "acao": "Consultar turmas e matrícula",
+    "mensagem": "Olá, Escola Sol Nascente! Gostaria de informações sobre turmas e matrícula. Como consulto o ano escolar e o turno de interesse?"
   },
   {
     "slug": "eskimo-piracanjuba",
@@ -2381,8 +2471,10 @@
     "logo": "/marcas-zap/logos/7579a0261b9d018a.webp",
     "cor": "#4f4219",
     "foto": "/marcas-zap/setores/sorvete.webp",
-    "resumo": "A loja Eskimó de Piracanjuba vende sorvetes da marca.",
-    "atividade": "Sorveteria"
+    "resumo": "A loja licenciada Eskimó vende sorvetes na Rua Alaor Marçal, 308, no Centro de Piracanjuba. Fale com a unidade para consultar os sabores disponíveis antes de passar por lá.",
+    "atividade": "Sorveteria",
+    "acao": "Consultar sabores de sorvete",
+    "mensagem": "Olá, Eskimó Piracanjuba! Quais sabores e apresentações de sorvete vocês têm disponíveis na loja do Centro?"
   },
   {
     "slug": "espeto-do-chefe",
@@ -2394,9 +2486,11 @@
     ],
     "endereco": "Av. Expedicionário Jovino Alves da Silva, 508 - St. Pouso Alto, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=7416407889216102263",
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "Leandrinho trabalha com o preparo de espetinhos no Espeto do Chefe.",
-    "atividade": "Espetinhos"
+    "foto": "/marcas-zap/setores/espetinhos-na-brasa.webp",
+    "resumo": "O Espeto do Chefe fica no Setor Pouso Alto, em Piracanjuba. Fale com Leandrinho para saber quais espetinhos estão disponíveis e consultar o horário de atendimento.",
+    "atividade": "Espetinhos",
+    "acao": "Consultar espetinhos do dia",
+    "mensagem": "Oi, Leandrinho! Quais são as opções de espetinho de hoje e a partir de que horas vocês atendem?"
   },
   {
     "slug": "esquina-pizza-bar",
@@ -2409,9 +2503,11 @@
     "instagram": "https://www.instagram.com/esquina_pizzabar/",
     "logo": "/marcas-zap/logos/esquina_pizzabar.webp",
     "cor": "#4f3419",
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "A Esquina Pizza Bar serve pizzas e recebe clientes no salão, que também funciona como bar.",
-    "atividade": "Pizzaria e bar"
+    "foto": "/marcas-zap/setores/pizza-na-mesa.webp",
+    "resumo": "A Esquina Pizza Bar reúne pizzaria e bar com atendimento no salão em Piracanjuba. Consulte os sabores de pizza e o horário antes de combinar a visita.",
+    "atividade": "Pizzaria e bar",
+    "acao": "Consultar sabores de pizza",
+    "mensagem": "Olá, Esquina Pizza Bar! Quais sabores de pizza vocês estão servindo e qual é o horário de atendimento do salão?"
   },
   {
     "slug": "estudio-ariel-sousa",
@@ -2423,8 +2519,10 @@
     ],
     "endereco": "Rua 1, quadra B, lote 11, Residencial Filismina Elias Quinta, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=4454923077922364432",
-    "resumo": "O Estúdio Ariel Sousa atua na área de beleza e estética em Piracanjuba.",
-    "atividade": "Estúdio de beleza"
+    "resumo": "O Estúdio Ariel Sousa fica no Residencial Filismina Elias Quinta, em Piracanjuba. Consulte o estúdio pelo WhatsApp para conhecer os serviços de beleza e estética e verificar a agenda.",
+    "atividade": "Estúdio de beleza",
+    "acao": "Consultar serviços do estúdio",
+    "mensagem": "Olá, Estúdio Ariel Sousa! Gostaria de conhecer os serviços de beleza e estética disponíveis e saber como agendar um horário."
   },
   {
     "slug": "evolut",
@@ -2434,9 +2532,11 @@
     "telefones": [
       "5564993160619"
     ],
-    "resumo": "A Evolut Suplementos tem registro de promoção de vendas em Piracanjuba.",
+    "resumo": "Em Piracanjuba, a Evolut tem atividade registrada de promoção de vendas. Fale com a empresa para conhecer o atendimento e consultar os produtos ou serviços disponíveis.",
     "atividade": "Promoção de vendas",
-    "foto": "/marcas-zap/setores/escritorio.webp"
+    "foto": "/marcas-zap/setores/escritorio.webp",
+    "acao": "Consultar a Evolut",
+    "mensagem": "Olá, Evolut! Encontrei seu contato no guia de Piracanjuba e gostaria de conhecer o atendimento comercial. Quais produtos ou serviços vocês oferecem?"
   },
   {
     "slug": "excell-celulares",
@@ -2448,9 +2548,11 @@
     ],
     "endereco": "Rua Cônego Olinto, 438, quadra 24, lote 11, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=3714348518548008468",
-    "foto": "/marcas-zap/setores/celulares.webp",
-    "resumo": "A Excell Celulares vende aparelhos celulares e artigos de informática em Piracanjuba.",
-    "atividade": "Celulares e informática"
+    "foto": "/marcas-zap/setores/celular-em-exposicao.webp",
+    "resumo": "A Excell Celulares vende aparelhos celulares e artigos de informática na Rua Cônego Olinto, 438, em Piracanjuba. Consulte a loja sobre o modelo ou equipamento que você procura.",
+    "atividade": "Celulares e informática",
+    "acao": "Consultar celular ou item de informática",
+    "mensagem": "Olá, Excell! Gostaria de consultar um celular ou item de informática. Como verifico os modelos e valores disponíveis na loja?"
   },
   {
     "slug": "farmacia-bem-estar",
@@ -2461,8 +2563,10 @@
       "5564992809691"
     ],
     "foto": "/marcas-zap/setores/farmacia.webp",
-    "resumo": "A Farmácia Bem Estar trabalha com a venda de medicamentos em Piracanjuba.",
-    "atividade": "Farmácia"
+    "resumo": "A Farmácia Bem Estar atende em Piracanjuba. Pelo WhatsApp, você pode consultar a disponibilidade do produto que procura e confirmar onde fica a farmácia.",
+    "atividade": "Farmácia",
+    "acao": "Consultar a Farmácia Bem Estar",
+    "mensagem": "Olá, Farmácia Bem Estar! Gostaria de consultar um produto. Qual a disponibilidade e em que endereço posso encontrar a farmácia?"
   },
   {
     "slug": "farmacia-droganova",
@@ -2475,7 +2579,9 @@
     "instagram": "https://www.instagram.com/droganovadepiracanjuba/",
     "foto": "/marcas-zap/setores/farmacia.webp",
     "resumo": "Roberto é o contato da DrogaNova, farmácia de Piracanjuba.",
-    "atividade": "Drogaria"
+    "atividade": "Drogaria",
+    "acao": "Consultar um produto com Roberto",
+    "mensagem": "Olá, Roberto! Gostaria de consultar um produto na DrogaNova de Piracanjuba. Como verifico se ele está disponível e qual é o valor?"
   },
   {
     "slug": "farmacia-preco-popular",
@@ -2489,7 +2595,9 @@
     "mapa": "https://www.google.com/maps?cid=12438401762906272804",
     "foto": "/marcas-zap/setores/farmacia.webp",
     "resumo": "A farmácia Preço Popular atende na Rua Dr. Ruy Brasil Cavalcante, em Piracanjuba.",
-    "atividade": "Farmácia"
+    "atividade": "Farmácia",
+    "acao": "Consultar preço na farmácia",
+    "mensagem": "Olá, Farmácia Preço Popular! Gostaria de consultar o valor e a disponibilidade de um produto na unidade de Piracanjuba."
   },
   {
     "slug": "favorita-calcados",
@@ -2508,8 +2616,10 @@
     "logo": "/marcas-zap/logos/78e6f8b90749c040.webp",
     "cor": "#4f1919",
     "foto": "/marcas-zap/setores/calcados.webp",
-    "resumo": "A Favorita Calçados trabalha com sapatos e bolsas.",
-    "atividade": "Calçados e bolsas"
+    "resumo": "A Favorita Calçados vende sapatos e bolsas no Centro de Piracanjuba, na Avenida Antônio Batista Arantes. Tem um modelo em mente? Fale com a loja para consultar as opções.",
+    "atividade": "Calçados e bolsas",
+    "acao": "Consultar sapatos e bolsas",
+    "mensagem": "Olá, Favorita! Quero conhecer os sapatos e bolsas da loja. Como consulto um modelo, sua disponibilidade e o valor?"
   },
   {
     "slug": "feliz-no-simples",
@@ -2519,9 +2629,10 @@
     "telefones": [
       "5564993174444"
     ],
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "A Feliz no Simples trabalha no ramo de alimentação em Piracanjuba.",
-    "atividade": "Alimentação"
+    "resumo": "Feliz no Simples está na seção de alimentação do guia de Piracanjuba. Pelo WhatsApp, você pode perguntar o que o negócio oferece e como funciona o atendimento.",
+    "atividade": "Alimentação no guia local",
+    "acao": "Falar com Feliz no Simples",
+    "mensagem": "Olá, Feliz no Simples! Encontrei seu contato no guia de alimentação de Piracanjuba. Quais opções vocês oferecem e como funciona o atendimento?"
   },
   {
     "slug": "fernanda-beauty",
@@ -2532,18 +2643,20 @@
       "5564992561940"
     ],
     "oferta": [
+      "Extensão de cílios com efeito fox eyes",
       "Design de sobrancelhas",
-      "Cílios",
-      "Brow lamination"
+      "Laminação de sobrancelhas (brow lamination)"
     ],
-    "endereco": "Viela Maria Teles da Silva, Centro, Piracanjuba - GO, 75640-100",
+    "endereco": "Viela Maria Teles, Centro, Piracanjuba - GO, 75640-100",
     "mapa": "https://www.google.com/maps?cid=14352006919653839919",
     "instagram": "https://www.instagram.com/studio_nandabeauty/",
     "logo": "/marcas-zap/logos/studio_nandabeauty.webp",
     "cor": "#4f3419",
-    "resumo": "A Fernanda Beauty trabalha com extensão de cílios e design de sobrancelhas. Entre as técnicas do estúdio estão o efeito fox eyes nos cílios e a laminação das sobrancelhas.",
-    "atividade": "Cílios e sobrancelhas",
-    "foto": "/marcas-zap/setores/maquiagem.webp"
+    "resumo": "O estúdio Fernanda Beauty atende no Centro de Piracanjuba. Converse sobre o efeito que você procura para o olhar e consulte os horários disponíveis.",
+    "atividade": "Estúdio de cílios e sobrancelhas",
+    "foto": "/marcas-zap/setores/design-de-sobrancelhas.webp",
+    "acao": "Consultar cílios ou sobrancelhas",
+    "mensagem": "Oi, Fernanda! Gostaria de consultar um horário para cílios ou sobrancelhas. Como funcionam os atendimentos e quais são as opções para o visual que procuro?"
   },
   {
     "slug": "fios-de-casa",
@@ -2559,14 +2672,16 @@
       "Banho",
       "Utilidades para casa"
     ],
-    "endereco": "Avenida Doutor Pedro Ludovico Teixeira, 376, quadra 24, lote 20, Piracanjuba - GO",
+    "endereco": "Rua Doutor Pedro Ludovico Teixeira, 376, quadra 24, lote 20, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=6470325325730997642",
     "instagram": "https://www.instagram.com/fiosde_casa/",
     "logo": "/marcas-zap/logos/fiosde_casa.webp",
     "cor": "#194f34",
-    "foto": "/marcas-zap/setores/decoracao.webp",
-    "resumo": "A Fios de Casa reúne artigos de cama, mesa e banho e utilidades para o lar.",
-    "atividade": "Cama, mesa e banho"
+    "foto": "/marcas-zap/setores/textil-para-o-lar.webp",
+    "resumo": "A Fios de Casa vende artigos para o lar em Piracanjuba. Informe o tamanho ou as cores que você procura para consultar a loja sobre as peças disponíveis.",
+    "atividade": "Artigos para o lar",
+    "acao": "Consultar peças para a casa",
+    "mensagem": "Olá, Fios de Casa! Gostaria de consultar artigos de cama, mesa ou banho. Como verifico as opções disponíveis na medida e na cor que procuro?"
   },
   {
     "slug": "fogao-de-ouro",
@@ -2576,9 +2691,10 @@
     "telefones": [
       "5564992380166"
     ],
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "Reginaldo Júnior é o contato do Fogão de Ouro, negócio do ramo de alimentação.",
-    "atividade": "Alimentação"
+    "resumo": "Reginaldo Júnior é o contato do Fogão de Ouro no guia de alimentação de Piracanjuba. Fale com ele para saber o que o negócio oferece e como funciona o atendimento.",
+    "atividade": "Alimentação",
+    "acao": "Falar com o Fogão de Ouro",
+    "mensagem": "Olá, Reginaldo! Encontrei o Fogão de Ouro no guia de Piracanjuba. Quais opções de alimentação vocês oferecem e como posso consultar os valores?"
   },
   {
     "slug": "forno-da-cida",
@@ -2588,9 +2704,11 @@
     "telefones": [
       "5564992986801"
     ],
-    "foto": "/marcas-zap/setores/cozinha.webp",
-    "resumo": "Cida prepara bolos por encomenda no Forno da Cida.",
-    "atividade": "Bolos por encomenda"
+    "foto": "/marcas-zap/setores/bolos-e-doces.webp",
+    "resumo": "O Forno da Cida trabalha com bolos em Piracanjuba. Se você tem uma data em mente, consulte os sabores, os tamanhos e a possibilidade de encomenda.",
+    "atividade": "Bolos",
+    "acao": "Consultar um bolo com Cida",
+    "mensagem": "Oi, Cida! Gostaria de consultar um bolo para uma ocasião. Quais sabores e tamanhos estão disponíveis e como faço para verificar uma data?"
   },
   {
     "slug": "funeraria-paz-eterna",
@@ -2609,8 +2727,10 @@
     "instagram": "https://www.instagram.com/pazeternapba/",
     "logo": "/marcas-zap/logos/pazeternapba.webp",
     "cor": "#19344f",
-    "resumo": "A Paz Eterna presta serviços funerários e oferece planos para famílias. O estabelecimento também mantém uma floricultura.",
-    "atividade": "Funerária e floricultura"
+    "resumo": "A Paz Eterna presta serviços funerários e mantém uma floricultura no Setor Aeroporto, em Piracanjuba. A equipe também fornece informações sobre planos funerários.",
+    "atividade": "Funerária e floricultura",
+    "acao": "Falar com a equipe Paz Eterna",
+    "mensagem": "Olá, equipe Paz Eterna. Preciso de informações sobre o atendimento em Piracanjuba. Poderiam me orientar?"
   },
   {
     "slug": "g-car",
@@ -2622,7 +2742,9 @@
     ],
     "resumo": "A G-Car trabalha com manutenção e reparos mecânicos de veículos.",
     "atividade": "Mecânica automotiva",
-    "foto": "/marcas-zap/setores/motor.webp"
+    "foto": "/marcas-zap/setores/motor.webp",
+    "acao": "Consultar manutenção do veículo",
+    "mensagem": "Olá, G-Car! Quero consultar manutenção ou reparo mecânico para um veículo. Como informo o modelo e o motivo do atendimento para saber a disponibilidade?"
   },
   {
     "slug": "gas-rede-1000",
@@ -2634,9 +2756,11 @@
     ],
     "endereco": "Av. Expedicionário Jovino Alves da Silva, 757 - St. Aeroporto, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=7811965134094041897",
-    "resumo": "A Gás Rede 1000 trabalha com distribuição de gás em Piracanjuba.",
+    "resumo": "A Gás Rede 1000 é uma distribuidora de gás no Setor Aeroporto, em Piracanjuba. Consulte o valor e as condições de atendimento para o seu bairro.",
     "atividade": "Distribuição de gás",
-    "foto": "/marcas-zap/setores/gas.webp"
+    "foto": "/marcas-zap/setores/gas.webp",
+    "acao": "Consultar preço do gás",
+    "mensagem": "Olá, Gás Rede 1000! Gostaria de consultar o valor do gás e saber como funciona o atendimento para o meu bairro."
   },
   {
     "slug": "geladinhos-da-janete",
@@ -2646,8 +2770,10 @@
     "telefones": [
       "5564992747481"
     ],
-    "resumo": "Janete trabalha com geladinhos, os sorvetes servidos em saquinho.",
-    "atividade": "Geladinhos"
+    "resumo": "Os geladinhos da Janete são sorvetes em saquinho. Fale com ela em Piracanjuba para consultar os sabores disponíveis, saber o preço e combinar como receber seu pedido.",
+    "atividade": "Geladinhos",
+    "acao": "Consultar sabores de geladinho",
+    "mensagem": "Oi, Janete! Quais sabores de geladinho estão disponíveis e quanto custa cada um? Gostaria de saber como combinar a retirada."
   },
   {
     "slug": "gesso-original",
@@ -2660,8 +2786,10 @@
     "endereco": "Rua dos Buritis, Piracanjuba - GO, 75640-048",
     "mapa": "https://www.google.com/maps/place/Gesso+original/data=!4m7!3m6!1s0x935f4382e2bc30a5:0x7150a18da00220cc!8m2!3d-17.3084531!4d-49.0251926!16s%2Fg%2F11n54z70p2!19sChIJpTC84oJDX5MRzCACoI2hUHE?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "A Gesso Original executa trabalhos em gesso para a construção civil.",
-    "atividade": "Serviços de gesso"
+    "resumo": "A Gesso Original está na Rua dos Buritis, em Piracanjuba. Converse com a empresa sobre o que você procura para a obra e quais opções em gesso estão disponíveis.",
+    "atividade": "Materiais de construção",
+    "acao": "Consultar sobre gesso",
+    "mensagem": "Olá, Gesso Original! Gostaria de saber o que vocês oferecem em gesso para uma obra em Piracanjuba."
   },
   {
     "slug": "gioielli-acessorios",
@@ -2675,7 +2803,9 @@
     "mapa": "https://www.google.com/maps?cid=2379588031409855780",
     "foto": "/marcas-zap/setores/joias.webp",
     "resumo": "A Gioielli vende acessórios de moda em sua loja na Rua Dom Pedro II, no centro de Piracanjuba.",
-    "atividade": "Loja de acessórios"
+    "atividade": "Loja de acessórios",
+    "acao": "Consultar acessórios na Gioielli",
+    "mensagem": "Olá, Gioielli! Estou procurando um acessório. Como posso consultar os modelos e valores disponíveis na loja da Rua Dom Pedro II?"
   },
   {
     "slug": "giora-fit-wear",
@@ -2689,9 +2819,11 @@
     "site": "https://giorafitwear.com/",
     "logo": "/marcas-zap/logos/d038e4a39856c9ac.webp",
     "cor": "#4f3419",
-    "foto": "/marcas-zap/setores/moda.webp",
+    "foto": "/marcas-zap/setores/roupa-para-treino.webp",
     "resumo": "A Giora Fit Wear produz em Piracanjuba coleções de roupas voltadas à prática de atividade física.",
-    "atividade": "Moda fitness"
+    "atividade": "Moda fitness",
+    "acao": "Consultar peças da coleção",
+    "mensagem": "Olá, Giora! Gostaria de consultar uma peça de moda fitness da coleção. Como verifico tamanhos e cores disponíveis?"
   },
   {
     "slug": "gisele-carezol",
@@ -2703,7 +2835,9 @@
     ],
     "resumo": "Gisele Carezol trabalha com brow lamination, técnica que modela e alinha os fios das sobrancelhas.",
     "atividade": "Laminação de sobrancelhas",
-    "foto": "/marcas-zap/setores/sobrancelhas.webp"
+    "foto": "/marcas-zap/setores/sobrancelhas.webp",
+    "acao": "Consultar brow lamination",
+    "mensagem": "Oi, Gisele! Gostaria de saber como funciona a laminação de sobrancelhas e consultar os horários disponíveis."
   },
   {
     "slug": "goiania-veiculos",
@@ -2725,8 +2859,10 @@
     "instagramRede": true,
     "logo": "/marcas-zap/logos/bbc4e777aedb9b2b.webp",
     "cor": "#19194f",
-    "resumo": "A Goiânia Veículos compra, vende e troca carros usados e seminovos em Piracanjuba. A loja também trabalha com financiamento.",
-    "atividade": "Compra e venda de veículos"
+    "resumo": "A Goiânia Veículos tem uma unidade no Setor Norte de Piracanjuba. Além de negociar carros usados e seminovos, a loja disponibiliza informações sobre financiamento.",
+    "atividade": "Loja de usados e seminovos",
+    "acao": "Consultar um veículo na loja",
+    "mensagem": "Olá, Goiânia Veículos de Piracanjuba! Gostaria de consultar um carro usado ou seminovo. Quais opções vocês têm para o modelo ou a faixa de valor que procuro?"
   },
   {
     "slug": "gomes-lava-jato-e-estetica-automotiva",
@@ -2740,9 +2876,11 @@
       "Lavagem de veículos",
       "Estética automotiva"
     ],
-    "resumo": "A Gomes oferece lavagem de veículos e serviços de estética automotiva.",
+    "resumo": "O Gomes Lava Jato trabalha com lavagem de veículos e estética automotiva em Piracanjuba. Conte qual cuidado procura e consulte o atendimento para o seu veículo.",
     "atividade": "Lavagem e estética automotiva",
-    "foto": "/marcas-zap/setores/lavagem-automotiva.webp"
+    "foto": "/marcas-zap/setores/lavagem-automotiva.webp",
+    "acao": "Consultar lavagem ou estética",
+    "mensagem": "Olá, Gomes! Gostaria de consultar lavagem ou estética para meu veículo. Quais serviços estão disponíveis e como posso verificar valor e horário?"
   },
   {
     "slug": "gr-barbearia",
@@ -2753,8 +2891,10 @@
       "5564992167416"
     ],
     "foto": "/marcas-zap/setores/barbearia.webp",
-    "resumo": "A GR atua como barbearia em Piracanjuba.",
-    "atividade": "Barbearia"
+    "resumo": "A GR Barbearia atende em Piracanjuba. Fale pelo WhatsApp para consultar os horários e conversar sobre o corte que você tem em mente.",
+    "atividade": "Barbearia",
+    "acao": "Consultar horário na GR",
+    "mensagem": "Olá, GR Barbearia! Gostaria de consultar os horários para fazer um corte. Como funciona o atendimento?"
   },
   {
     "slug": "grafica-piracanjuba",
@@ -2766,9 +2906,11 @@
     ],
     "endereco": "R. Dom Pedro II, 868, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=15139725386978345458",
-    "resumo": "A Gráfica Piracanjuba produz materiais impressos.",
+    "resumo": "A Gráfica Piracanjuba produz materiais impressos na Rua Dom Pedro II, 868. Para cotar um trabalho, informe o formato, o número de cópias e a data em que precisa do material.",
     "atividade": "Serviços gráficos",
-    "foto": "/marcas-zap/setores/impressao.webp"
+    "foto": "/marcas-zap/setores/impressao.webp",
+    "acao": "Cotar um material impresso",
+    "mensagem": "Olá, Gráfica Piracanjuba! Quero cotar um material impresso. Como envio o arquivo, o formato e a quantidade para saber valor e prazo?"
   },
   {
     "slug": "granar-projetos-e-consultoria-agro",
@@ -2780,9 +2922,11 @@
     ],
     "endereco": "Av. Antônio Batista Arantes, 132, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=7915351129138663920",
-    "foto": "/marcas-zap/setores/escritorio.webp",
-    "resumo": "A Granar desenvolve projetos e presta consultoria para o setor agropecuário.",
-    "atividade": "Consultoria e projetos agropecuários"
+    "foto": "/marcas-zap/setores/campo-goiano.webp",
+    "resumo": "A Granar desenvolve projetos e presta consultoria para o setor agropecuário em Piracanjuba. Ao entrar em contato, conte em que etapa está o projeto e qual orientação você procura.",
+    "atividade": "Consultoria e projetos agropecuários",
+    "acao": "Conversar sobre um projeto agro",
+    "mensagem": "Olá, Granar! Gostaria de conversar sobre um projeto agropecuário. Como apresento o objetivo e a situação da propriedade para consultar a assessoria?"
   },
   {
     "slug": "graxa-taxista",
@@ -2794,7 +2938,9 @@
     ],
     "resumo": "Graxa trabalha como taxista e transporta encomendas para Goiânia.",
     "atividade": "Táxi e encomendas",
-    "foto": "/marcas-zap/setores/taxi.webp"
+    "foto": "/marcas-zap/setores/taxi.webp",
+    "acao": "Consultar corrida ou encomenda",
+    "mensagem": "Olá, Graxa! Gostaria de informações sobre uma corrida de táxi ou envio de encomenda para Goiânia. Como consulto o trajeto, a data e o valor?"
   },
   {
     "slug": "guim-lanches",
@@ -2804,9 +2950,11 @@
     "telefones": [
       "5564993475097"
     ],
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "A Guim Lanches trabalha com o preparo de lanches em Piracanjuba.",
-    "atividade": "Lanchonete"
+    "foto": "/marcas-zap/setores/lanche-na-mesa.webp",
+    "resumo": "A Guim Lanches trabalha com lanches em Piracanjuba. Fale pelo WhatsApp para conhecer as opções do dia, os preços e como fazer o pedido.",
+    "atividade": "Lanchonete",
+    "acao": "Consultar lanches do dia",
+    "mensagem": "Olá, Guim Lanches! Quais lanches estão disponíveis hoje e como faço um pedido?"
   },
   {
     "slug": "guimaraes-casa-e-construcao",
@@ -2830,8 +2978,10 @@
     "logo": "/marcas-zap/logos/7f6edd72773a9974.webp",
     "cor": "#19424f",
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "A Guimarães Casa e Construção vende pisos, revestimentos, tintas e iluminação. A loja também fornece materiais para instalações elétricas e hidráulicas.",
-    "atividade": "Materiais de construção"
+    "resumo": "Desde 2002, a Guimarães Casa e Construção atende quem constrói ou reforma em Piracanjuba. A loja fica na Rua Dom Pedro II, 490A. Envie sua lista para consultar os materiais de cada etapa da obra.",
+    "atividade": "Materiais de construção",
+    "acao": "Cotar materiais da obra",
+    "mensagem": "Olá, Guimarães! Quero cotar materiais para uma obra. Como envio a lista com as quantidades, medidas ou referências de acabamento para consultar os valores?"
   },
   {
     "slug": "h-us-fitnes",
@@ -2841,9 +2991,11 @@
     "telefones": [
       "5564992521466"
     ],
-    "foto": "/marcas-zap/setores/moda.webp",
-    "resumo": "A H.Us Fitnes trabalha com moda fitness e roupas para treino.",
-    "atividade": "Roupas para treino"
+    "foto": "/marcas-zap/setores/roupa-para-treino.webp",
+    "resumo": "A H.Us Fitnes trabalha com moda fitness em Piracanjuba. Fale pelo WhatsApp para consultar as roupas de treino disponíveis no seu tamanho.",
+    "atividade": "Roupas para treino",
+    "acao": "Consultar roupas de treino",
+    "mensagem": "Olá, H.Us Fitnes! Quero conhecer as opções de roupas para treino. Como consulto modelos, tamanhos e valores?"
   },
   {
     "slug": "hamburgao-lanches",
@@ -2853,9 +3005,11 @@
     "telefones": [
       "5564992137940"
     ],
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "O Hamburgão Lanches trabalha com sanduíches em Piracanjuba.",
-    "atividade": "Lanchonete"
+    "foto": "/marcas-zap/setores/lanche-na-mesa.webp",
+    "resumo": "O Hamburgão Lanches trabalha com sanduíches em Piracanjuba. Para escolher o seu, pergunte quais opções estão disponíveis e como fazer o pedido.",
+    "atividade": "Lanchonete",
+    "acao": "Consultar sanduíches disponíveis",
+    "mensagem": "Oi, Hamburgão! Gostaria de conhecer os sanduíches disponíveis e os preços de hoje. Como faço o pedido?"
   },
   {
     "slug": "happy-donuts",
@@ -2865,9 +3019,11 @@
     "telefones": [
       "5564993338708"
     ],
-    "foto": "/marcas-zap/setores/cozinha.webp",
-    "resumo": "A Happy Donuts trabalha com donuts, as rosquinhas doces.",
-    "atividade": "Donuts"
+    "foto": "/marcas-zap/setores/donuts.webp",
+    "resumo": "A Happy Donuts trabalha com rosquinhas doces em Piracanjuba. Fale pelo WhatsApp para consultar os sabores disponíveis e saber como pedir.",
+    "atividade": "Donuts",
+    "acao": "Consultar sabores de donuts",
+    "mensagem": "Olá, Happy Donuts! Quais sabores de donuts estão disponíveis e como faço meu pedido?"
   },
   {
     "slug": "harmonia-sorriso-face",
@@ -2877,15 +3033,17 @@
     "telefones": [
       "5564992234872"
     ],
-    "endereco": "Rua Abdon Alves de Amorim, quadra 15, lote 10, Setor Pouso Alto, Piracanjuba - GO, 75641-039",
+    "endereco": "Rua Abdon Alves de Amorim, Piracanjuba - GO, 75641-039",
     "mapa": "https://www.google.com/maps?cid=12087558321201169130",
     "instagram": "https://www.instagram.com/harmonia_sorriso_e_face/",
     "site": "https://harmonia.meudoutor.com/",
     "logo": "/marcas-zap/logos/harmonia_sorriso_e_face.webp",
     "cor": "#4f4219",
     "foto": "/marcas-zap/setores/odontologia.webp",
-    "resumo": "A Harmonia Sorriso & Face é uma clínica odontológica que realiza, entre outros procedimentos, implantes dentários.",
-    "atividade": "Odontologia e implantes"
+    "resumo": "A Harmonia Sorriso & Face atende na Rua Abdon Alves de Amorim, em Piracanjuba. Entre os serviços da clínica estão os implantes dentários. Consulte a equipe para agendar uma avaliação.",
+    "atividade": "Odontologia e implantes",
+    "acao": "Consultar avaliação odontológica",
+    "mensagem": "Olá, equipe da Harmonia! Gostaria de agendar uma avaliação odontológica em Piracanjuba. Como consulto os horários disponíveis?"
   },
   {
     "slug": "henrique-personal-trainer",
