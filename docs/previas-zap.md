@@ -18,6 +18,12 @@ A versão de produção anterior à inclusão das prévias é o commit `983de0f7
 
 O estado anterior ao refinamento está no commit `8a876593d82f545ad8698c4708ea9b81b735ccf3`, deploy Vercel `dpl_5JP3a8Dc8QiZQUnzzRvMwjXd2ryd`. Em caso de regressão imediata, promova esse deploy após conferir que continua sendo o antecedente correto. Para manter publicações posteriores, reverta somente o merge do refinamento pelo Git. O deploy anterior volta a servir as prévias com a configuração original de indexação. Confira o sitemap, o diretório, o contato e o status de uma ficha na versão restaurada.
 
+## Atendimento e personalização da prévia
+
+O botão principal usa o primeiro telefone da empresa. Os campos opcionais `acao` e `mensagem` definem o nome do botão e a pergunta inicial. A página oferece ao proprietário um contato separado com a equipe do portal. A mensagem de personalização identifica a empresa e inclui o endereço exato da prévia. O rodapé dá acesso ao pedido de ajuste ou retirada.
+
+A versão anterior à auditoria comercial está no commit `45c8c4238ba204fd2a819377f493495241798078`, deploy Vercel `dpl_8mFnwD89AsdWpUnJEh3MVUa1G1ns`. Para reverter apenas a auditoria, reverta o merge correspondente no Git. Confira o diretório, o sitemap, o cartão de compartilhamento e os destinos dos links de uma ficha após a reversão.
+
 ## Fotografias de contexto
 
 Licença de uso das fotografias em [Pexels](https://www.pexels.com/license/).
