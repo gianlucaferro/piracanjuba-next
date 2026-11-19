@@ -40,8 +40,10 @@ export default async function PreviaEmpresa({ params }: Props) {
 
   const { nome, atividade, resumo, detalhe, telefones, foto, fotoAlt, logo } = ficha;
   const { cor, Icone, composicao, pergunta } = estiloDaCategoria(ficha.setor);
-  const contato = linkWhatsapp(telefones[0], pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.");
-  const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela página em https://piracanjuba.ai/zap-pba/" + slug);
+  const contato = linkWhatsapp(telefones[0], ficha.mensagem ?? pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.");
+  const urlPublica = "https://piracanjuba.ai/zap-pba/" + slug;
+  const personalizar = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de saber como personalizar esta página: ${urlPublica}`);
+  const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de solicitar um ajuste ou a remoção desta prévia: ${urlPublica}`);
   const estilo = { "--tinta": ficha.cor ?? cor } as CSSProperties;
   const redes = ficha.instagram || ficha.site || ficha.facebook;
   const local = ficha.endereco || ficha.mapa;
@@ -61,7 +63,7 @@ export default async function PreviaEmpresa({ params }: Props) {
         <header className={css.capa}>
           <div className={css.texto}>
             {logo && foto && (
-              <div className={css.assinatura}>
+              <div className={css.assinatura} data-horizontal={ficha.logoHorizontal || undefined}>
                 <Image src={logo} alt={"Logo de " + nome} width={96} height={96} unoptimized />
               </div>
             )}
@@ -70,7 +72,7 @@ export default async function PreviaEmpresa({ params }: Props) {
             <p className={css.resumo}>{resumo}</p>
             <div className={css.acoes}>
               <a className={css.botao} href={contato}>
-                <WhatsAppIcon fill="currentColor" />{ficha.contatoRede ? "WhatsApp da rede" : "Falar no WhatsApp"}
+                <WhatsAppIcon fill="currentColor" />{ficha.acao ?? (ficha.contatoRede ? "WhatsApp da rede" : "Falar no WhatsApp")}
               </a>
               {ficha.mapa ? (
                 <a className={css.atalho} href={ficha.mapa}><Navigation size={16} aria-hidden="true" />Como chegar</a>
@@ -142,8 +144,15 @@ export default async function PreviaEmpresa({ params }: Props) {
           </dl>
         </section>
 
+        <aside className={css.proprietario} aria-labelledby="titulo-proprietario">
+          <div>
+            <h2 id="titulo-proprietario">Esta empresa é sua?</h2>
+            <p>O Piracanjuba.ai criou esta prévia. Converse com a equipe do portal para usar suas fotos, destacar o que você oferece e conhecer as condições.</p>
+          </div>
+          <a href={personalizar}>Quero personalizar a página<ArrowUpRight size={17} aria-hidden="true" /></a>
+        </aside>
         <footer className={css.rodape}>
-          <span>Prévia de página criada pelo Piracanjuba.ai.</span>
+          <span>Página de apresentação no Piracanjuba.ai</span>
           <a href={suporte}>Solicitar ajuste ou remoção<ArrowRight size={15} aria-hidden="true" /></a>
         </footer>
       </div>

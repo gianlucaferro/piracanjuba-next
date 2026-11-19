@@ -9,6 +9,8 @@ export type PreviaZap = {
   siteRotulo?: string;
   atividade: string;
   resumo: string;
+  acao?: string;
+  mensagem?: string;
   detalhe?: string;
   telefones: string[];
   endereco?: string;
@@ -17,6 +19,7 @@ export type PreviaZap = {
   site?: string;
   facebook?: string;
   logo?: string;
+  logoHorizontal?: boolean;
   cor?: string;
   foto?: string;
   fotoAlt?: string;

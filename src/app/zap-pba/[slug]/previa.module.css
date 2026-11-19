@@ -68,6 +68,12 @@
   overflow: hidden;
 }
 
+.assinatura[data-horizontal] {
+  width: min(100%, 192px);
+  aspect-ratio: 4 / 1;
+  padding: 5px 8px;
+}
+
 .assinatura img, .marcaAmpliada img { width: 100%; height: 100%; object-fit: contain; }
 
 .atividade {
@@ -230,6 +236,34 @@
 .item a { display: flex; width: fit-content; min-height: 32px; font-weight: 650; }
 .item a svg { color: var(--tinta); }
 .contatos h2 { scroll-margin-top: 78px; }
+
+.proprietario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px 30px;
+  border-left: 3px solid var(--tinta);
+  background: var(--lavagem);
+  padding: clamp(20px, 3vw, 36px);
+  margin-bottom: 20px;
+}
+.proprietario div { flex: 1 1 330px; }
+.proprietario h2 { margin: 0 0 5px; font: 400 clamp(1.5rem, 2.5vw, 2rem)/1.15 var(--fonte-previa), Georgia, serif; }
+.proprietario p { max-width: 60ch; color: var(--texto); font-size: .92rem; line-height: 1.55; }
+.proprietario a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--tinta);
+  border-radius: 7px;
+  color: var(--tinta);
+  font-size: .875rem;
+  font-weight: 700;
+}
+.proprietario a:hover { text-decoration: underline; text-underline-offset: .2em; }
 
 .rodape {
   flex-wrap: wrap;
