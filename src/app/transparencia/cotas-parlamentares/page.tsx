@@ -25,10 +25,10 @@ export default async function CotasParlamentaresPage() {
   return (
     <div className="container py-6 md:py-10 max-w-3xl space-y-6">
       <Link
-        href="/transparencia"
+        href="/camara"
         className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
       >
-        <ArrowLeft className="w-4 h-4" /> Transparência
+        <ArrowLeft className="w-4 h-4" /> Câmara Municipal
       </Link>
 
       <header className="space-y-2">

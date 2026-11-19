@@ -12,6 +12,7 @@ import { AISummaryDialog, useAISummary } from "@/components/camara/AISummaryDial
 import { formatCurrency } from "@/lib/formatters";
 import { downloadCSV } from "@/lib/csvExport";
 import { getTooltip } from "@/lib/glossario";
+import { contarPagamentosRepetidos } from "@/components/camara/resposta-aba";
 
 const PAGE_SIZE = 30;
 const currentYear = new Date().getFullYear();
@@ -38,6 +39,9 @@ export default function DespesasTab() {
   }, [despesas, search]);
 
   const totalValor = filtered.reduce((s, d) => s + (d.valor || 0), 0);
+  // A fonte já trouxe o mesmo pagamento repetido dezenas de vezes (2026-11-19: 25.434 linhas de
+  // 2026, só 518 distintas). O aviso diz isso junto do total, sem esconder nem corrigir o dado.
+  const repetidos = useMemo(() => contarPagamentosRepetidos(filtered), [filtered]);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -91,6 +95,13 @@ export default function DespesasTab() {
             </button>
           )}
         </div>
+      )}
+
+      {carregado && repetidos > 0 && (
+        <p role="note" className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-sm text-foreground">
+          Atenção: {repetidos} {repetidos === 1 ? "pagamento aparece repetido" : "pagamentos aparecem repetidos"} de forma
+          idêntica na fonte (mesmo credor, descrição, valor e data). A contagem e o total acima incluem as repetições.
+        </p>
       )}
 
       {/* Monthly chart */}

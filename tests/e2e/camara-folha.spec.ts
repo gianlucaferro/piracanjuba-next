@@ -70,6 +70,12 @@ async function mockVereador(page: Page) {
   });
 }
 
+// /camara/servidores já chega com o resumo da folha lido no servidor (react-query hidratado), e o
+// navegador não refaz a consulta: os mocks de page.route não teriam efeito ali. Os casos que
+// simulam respostas no navegador usam a aba Vereadores (/camara), que mostra o mesmo resumo
+// carregado pelo cliente.
+const CAMARA_RESUMO_PELO_CLIENTE = "/camara";
+
 test("Câmara mantém a mensal anterior e separa a rescisão da publicação parcial", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -95,7 +101,7 @@ test("Câmara mantém a mensal anterior e separa a rescisão da publicação par
 
 test("Câmara separa mensal e rescisão do mesmo mês sem afirmar fechamento", async ({ page }) => {
   await mockFolha(page, folha("2026-11"));
-  await page.goto("/camara/servidores");
+  await page.goto(CAMARA_RESUMO_PELO_CLIENTE);
   const summary = page.getByRole("region", { name: "Resumo da folha da Câmara" });
   const monthly = summary.getByRole("group", { name: "Última folha mensal", exact: true });
   const termination = summary.getByRole("group", { name: "Rescisões", exact: true });
@@ -117,7 +123,7 @@ test("resumo da Câmara soma todas as páginas da folha", async ({ page }) => {
     servidores: { orgao_tipo: "camara" },
   }));
   await mockFolha(page, rows);
-  await page.goto("/camara/servidores");
+  await page.goto(CAMARA_RESUMO_PELO_CLIENTE);
   const summary = page.getByRole("region", { name: "Resumo da folha da Câmara" });
   const monthly = summary.getByRole("group", { name: "Última folha mensal", exact: true });
   await expect(monthly).toContainText(/R\$\s*3\.003\.000,00/);
@@ -132,7 +138,7 @@ test("falha da consulta não vira folha zerada e permite tentar novamente", asyn
     // Erro permanente de consulta: o SDK não repete cada tentativa antes do React Query.
     return fail ? route.fulfill({ status: 400, headers: cors, json: { code: "TEST_BAD_REQUEST", message: "Consulta rejeitada pela fixture" } }) : route.continue();
   });
-  await page.goto("/camara/servidores");
+  await page.goto(CAMARA_RESUMO_PELO_CLIENTE);
   const summary = page.getByRole("region", { name: "Resumo da folha da Câmara" });
   await expect(summary).toContainText("Não foi possível carregar o resumo da folha da Câmara");
   await expect(summary).not.toContainText(/R\$\s*0,00/);
@@ -143,7 +149,7 @@ test("falha da consulta não vira folha zerada e permite tentar novamente", asyn
 
 test("ausência de remunerações é exibida como indisponível", async ({ page }) => {
   await mockFolha(page, []);
-  await page.goto("/camara/servidores");
+  await page.goto(CAMARA_RESUMO_PELO_CLIENTE);
   const summary = page.getByRole("region", { name: "Resumo da folha da Câmara" });
   await expect(summary).toContainText("Ainda não há registros de remuneração da Câmara disponíveis");
   await expect(summary).not.toContainText(/R\$\s*0,00/);

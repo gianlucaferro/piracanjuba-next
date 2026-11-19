@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { pageMetadata } from "@/lib/seo";
 import CamaraClient from "@/components/camara/CamaraClient";
+import { carregarBlocoServidor } from "./bloco-servidor";
 
 export const dynamic = "force-dynamic";
 
@@ -37,5 +39,13 @@ export async function generateMetadata({ params }: { params: Promise<{ aba: stri
 export default async function CamaraAbaPage({ params }: { params: Promise<{ aba: string }> }) {
   const { aba } = await params;
   if (!ABAS[aba]) notFound();
-  return <CamaraClient aba={aba} />;
+  // Parte da aba lida no servidor (parágrafo-resposta, resumo, primeiro lote) e, em contratos e
+  // servidores, o primeiro lote do cliente já no react-query. Ver ./bloco-servidor.tsx.
+  const queryClient = new QueryClient();
+  const blocoServidor = await carregarBlocoServidor(aba, queryClient);
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <CamaraClient aba={aba} blocoServidor={blocoServidor} />
+    </HydrationBoundary>
+  );
 }

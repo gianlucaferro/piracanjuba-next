@@ -227,6 +227,16 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Lista dos vereadores com partido, cargo na Mesa Diretora, votos na eleição e contato, com link para o perfil de cada um.",
       },
       {
+        caminho: "/transparencia/cotas-parlamentares",
+        titulo: "Cotas parlamentares na Câmara",
+        descricao: "Declaração oficial da Câmara de que não há cota parlamentar nem verba indenizatória para os vereadores, com o que eles recebem: subsídio mensal e diárias.",
+      },
+      {
+        caminho: "/transparencia/processos-publicos",
+        titulo: "Processos judiciais de agentes públicos",
+        descricao: "Processos em que vereadores, prefeito, vice-prefeito e secretários de Piracanjuba são autores ou réus, com resumo por IA. Ficam de fora segredo de justiça, ações de família e casos em que a pessoa é vítima ou testemunha.",
+      },
+      {
         caminho: "/atuacao-parlamentar",
         titulo: "Atuação parlamentar",
         descricao: "Requerimentos, indicações, moções e proposições dos vereadores.",

@@ -15,10 +15,16 @@ import { buildAditivosLookup, getAditivosDoContrato } from "@/lib/contratosAditi
 import { formatCurrency } from "@/lib/formatters";
 import { downloadCSV } from "@/lib/csvExport";
 import GruposContratosAviso from "@/components/transparencia/GruposContratosAviso";
+import { CHAVE_CONTRATOS_CAMARA } from "@/components/camara/chaves-consulta";
+
+// A lista mostra um lote por vez: o HTML que vem do servidor (dados já no react-query) fica enxuto,
+// e a busca e o CSV continuam valendo para todos os contratos.
+const LOTE_CONTRATOS = 50;
 
 export default function ContratosTab() {
   const [search, setSearch] = useState("");
-  const { data: contratos, isLoading, isError } = useQuery({ queryKey: ["camara-contratos"], queryFn: fetchCamaraContratos });
+  const [visiveis, setVisiveis] = useState(LOTE_CONTRATOS);
+  const { data: contratos, isLoading, isError } = useQuery({ queryKey: CHAVE_CONTRATOS_CAMARA, queryFn: fetchCamaraContratos });
   // Contagem e total só com os dados na mão: no carregamento (e no HTML do servidor) diziam "0 contratos".
   const carregado = contratos !== undefined;
 
@@ -162,7 +168,7 @@ export default function ContratosTab() {
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input placeholder="Buscar contrato..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <Input placeholder="Buscar contrato..." value={search} onChange={(e) => { setSearch(e.target.value); setVisiveis(LOTE_CONTRATOS); }} className="pl-9" aria-label="Buscar contrato" />
       </div>
 
       {carregado && (
@@ -203,7 +209,7 @@ export default function ContratosTab() {
 
       <GruposContratosAviso poder="camara" />
       <div className="space-y-2">
-        {filtered.map((c) => (
+        {filtered.slice(0, visiveis).map((c) => (
           <button
             key={c.id}
             onClick={() => handleClick(c)}
@@ -250,6 +256,21 @@ export default function ContratosTab() {
           </button>
         ))}
       </div>
+
+      {filtered.length > visiveis && (
+        <div className="flex flex-col items-center gap-1 pt-1">
+          <p className="text-sm text-muted-foreground">
+            Mostrando {visiveis} de {filtered.length} contratos.
+          </p>
+          <button
+            type="button"
+            onClick={() => setVisiveis((v) => v + LOTE_CONTRATOS)}
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Mostrar mais {Math.min(LOTE_CONTRATOS, filtered.length - visiveis)} contratos
+          </button>
+        </div>
+      )}
 
       {/* Dialog resumo IA */}
       <Dialog open={!!selectedContrato} onOpenChange={(open) => !open && setSelectedContrato(null)}>
