@@ -1,4 +1,5 @@
 import "server-only";
+import { buscaNoServidorDesligada } from "@/lib/ssr-hidratacao";
 import { unstable_cache } from "next/cache";
 import { dehydrate, QueryClient, type DehydratedState } from "@tanstack/react-query";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
@@ -103,6 +104,8 @@ export type CargaPrefeitura = {
 export async function carregarAbaPrefeitura(aba: string): Promise<CargaPrefeitura> {
   const cliente = new QueryClient();
   const carga: Omit<CargaPrefeitura, "estado"> = { chefia: null, resumoFolha: null, contratos: null, despesas: null, secretarias: null };
+  // Testes de navegador com o Supabase simulado no navegador: nada vem do servidor (ver ssr-hidratacao.ts).
+  if (buscaNoServidorDesligada()) return { estado: dehydrate(cliente), ...carga };
 
   const querChefia = aba === "visao-geral" || aba === "chefia";
   const querFolha = aba === "visao-geral" || aba === "servidores";

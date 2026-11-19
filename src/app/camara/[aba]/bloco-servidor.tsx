@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { buscaNoServidorDesligada } from "@/lib/ssr-hidratacao";
 import type { QueryClient } from "@tanstack/react-query";
 import AlertaContratosSancao from "@/components/transparencia/AlertaContratosSancao";
 import {
@@ -255,6 +256,8 @@ async function blocoAtuacao(): Promise<ReactNode> {
 
 /** Parte da aba lida no servidor. Abas sem bloco próprio devolvem null. */
 export async function carregarBlocoServidor(aba: string, queryClient: QueryClient): Promise<ReactNode> {
+  // Testes de navegador com o Supabase simulado no navegador: nada vem do servidor (ver ssr-hidratacao.ts).
+  if (buscaNoServidorDesligada()) return null;
   switch (aba) {
     case "contratos": return blocoContratos(queryClient);
     case "licitacoes": return blocoLicitacoes();
