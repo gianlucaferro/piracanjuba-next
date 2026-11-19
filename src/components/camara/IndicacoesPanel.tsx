@@ -69,10 +69,10 @@ export default function IndicacoesPanel({
 
       {variant === "compact" && totalGeral && indicacoes.length < totalGeral && (
         <Link
-          href="/transparencia/indicacoes"
+          href="/camara/indicacoes"
           className="block text-center text-sm text-violet-700 hover:underline pt-2 border-t border-border"
         >
-          Ver todas as {totalGeral} indicações →
+          Ver as indicações da Câmara →
         </Link>
       )}
 

@@ -125,10 +125,10 @@ export default function AtividadesLegislativasPanel({
 
       {variant === "compact" && totalGeral && atividades.length < totalGeral && (
         <Link
-          href="/transparencia/atividades-legislativas"
+          href="/camara/projetos"
           className="block text-center text-sm text-emerald-700 hover:underline pt-2 border-t border-border"
         >
-          Ver todas as {totalGeral} atividades →
+          Ver as atividades legislativas da Câmara →
         </Link>
       )}
     </section>

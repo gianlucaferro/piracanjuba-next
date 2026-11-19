@@ -3,9 +3,11 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import nextConfig from "../next.config.ts";
 import {
   ABAS_CAMARA,
   ABAS_PREFEITURA,
+  REDIRECIONAMENTOS_PERMANENTES,
   ROTAS_DINAMICAS_NO_SITEMAP,
   ROTAS_ESTATICAS,
   ROTAS_FORA_DO_SITEMAP,
@@ -106,4 +108,44 @@ test("as oito páginas que faltavam no sitemap (IDX-04 e KW-08) estão nele", ()
   for (const rota of ["/clima", "/comparador", "/dados-pba", "/economia", "/indicadores", "/infraestrutura", "/meio-ambiente", "/privacidade"]) {
     assert.ok(NO_SITEMAP.has(rota), `${rota} fora do sitemap`);
   }
+});
+
+// Onda 2 (IDX-03 e CONT-03, 2026-11-19): seis páginas /transparencia/* foram levadas para a aba
+// equivalente da Câmara e respondem 308. As duas sem aba equivalente ficam e entram no sitemap.
+
+/** Rota que responde 200: página estática de src/app ou aba conhecida da Prefeitura ou da Câmara. */
+function rotaExiste(rota: string): boolean {
+  if (PAGINAS.has(rota)) return true;
+  const aba = rota.match(/^\/(camara|prefeitura)\/([a-z0-9-]+)$/);
+  if (!aba) return false;
+  const abas: readonly string[] = aba[1] === "camara" ? ABAS_CAMARA : ABAS_PREFEITURA;
+  return abas.includes(aba[2]);
+}
+
+test("os redirects permanentes de next.config.ts são os de REDIRECIONAMENTOS_PERMANENTES", async () => {
+  const redirects = (await nextConfig.redirects?.()) ?? [];
+  const permanentes = Object.fromEntries(redirects.filter((r) => r.permanent === true).map((r) => [r.source, r.destination]));
+  assert.deepEqual(permanentes, { ...REDIRECIONAMENTOS_PERMANENTES });
+});
+
+test("cada origem do redirect aponta para rota que existe e não tem mais página própria", () => {
+  assert.equal(Object.keys(REDIRECIONAMENTOS_PERMANENTES).length, 6);
+  for (const [origem, destino] of Object.entries(REDIRECIONAMENTOS_PERMANENTES)) {
+    assert.ok(rotaExiste(destino), `${origem} aponta para ${destino}, que não existe`);
+    assert.ok(!PAGINAS.has(origem), `${origem} redireciona, mas a page.tsx dela continua em src/app`);
+    assert.ok(!(destino in REDIRECIONAMENTOS_PERMANENTES), `${destino} também redireciona (cadeia de redirects)`);
+  }
+});
+
+test("nada redirecionado fica no sitemap nem nas exclusões", () => {
+  for (const origem of Object.keys(REDIRECIONAMENTOS_PERMANENTES)) {
+    assert.ok(!NO_SITEMAP.has(origem), `${origem} redireciona e não pode estar no sitemap`);
+    assert.ok(!(origem in ROTAS_FORA_DO_SITEMAP), `${origem} redireciona: tirar de ROTAS_FORA_DO_SITEMAP`);
+  }
+});
+
+test("as páginas /transparencia/* que ficaram estão no sitemap", () => {
+  const restantes = [...PAGINAS.keys()].filter((rota) => rota.startsWith("/transparencia/")).sort();
+  assert.deepEqual(restantes, ["/transparencia/cotas-parlamentares", "/transparencia/processos-publicos"]);
+  for (const rota of restantes) assert.ok(NO_SITEMAP.has(rota), `${rota} fora do sitemap`);
 });
