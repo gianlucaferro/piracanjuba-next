@@ -1,0 +1,43 @@
+export const PACIFICO_SIQUEIRA = {
+  nome: "Pacífico Siqueira Advocacia",
+  razaoSocial: "Pacífico Siqueira Sociedade de Advogados",
+  registro: "8.477",
+  path: "/pacifico-siqueira-advocacia",
+  site: "https://pacificosiqueira.adv.br/",
+  telefone: "5564992658918",
+  telefoneFormatado: "(64) 99265-8918",
+  mapa: "https://maps.google.com/?cid=994363201133492963",
+  instagram: "https://www.instagram.com/pacificosiqueiraadvocacia/",
+  endereco: {
+    rua: "Rua Lindolfo França, 619",
+    bairro: "Centro",
+    cidade: "Piracanjuba",
+    estado: "GO",
+    cep: "75640-126",
+  },
+  horario: "Segunda a sexta, das 8h às 17h",
+  imagem: "/empresas/pacifico-siqueira/compartilhar.jpg",
+  equipe: [
+    {
+      nome: "Fernando Rosa Pacífico",
+      oab: "33.275",
+      foto: "/empresas/pacifico-siqueira/fernando-pacifico.webp",
+      perfil: "https://pacificosiqueira.adv.br/equipe/fernando-pacifico",
+    },
+    {
+      nome: "Murillo Alves Siqueira",
+      oab: "53.260",
+      foto: "/empresas/pacifico-siqueira/murillo-siqueira.webp",
+      perfil: "https://pacificosiqueira.adv.br/equipe/murillo-siqueira",
+    },
+  ],
+  areas: [
+    { titulo: "Responsabilidade civil", resumo: "Indenizações, acidentes e relações de consumo.", slug: "responsabilidade-civil" },
+    { titulo: "Contratos e cobranças", resumo: "Revisão de contratos, negociação de dívidas e recuperação de crédito.", slug: "contratos-e-cobrancas" },
+    { titulo: "Família e sucessões", resumo: "Divórcio, guarda, pensão alimentícia, inventário e partilha.", slug: "direito-de-familia-e-sucessoes" },
+    { titulo: "Assessoria empresarial", resumo: "Orientação jurídica em contratos, sociedades e disputas empresariais.", slug: "assessoria-juridica-empresarial" },
+    { titulo: "Direito previdenciário", resumo: "Aposentadorias, benefícios do INSS e revisões.", slug: "direito-previdenciario" },
+    { titulo: "Direito imobiliário e agrário", resumo: "Regularização de imóveis, usucapião e contratos rurais.", slug: "direito-imobiliario-e-agrario" },
+    { titulo: "Direito criminal", resumo: "Acompanhamento em delegacia e defesa em inquéritos e processos.", slug: "direito-criminal" },
+  ],
+} as const;
