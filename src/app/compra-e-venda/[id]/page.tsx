@@ -14,6 +14,7 @@ export const revalidate = 60;
 
 // Anúncio inexistente, removido, em análise ou expirado responde 404 (nunca uma
 // página vazia indexável). Ativo e vendido são públicos; o vendido sai com SoldOut.
+// Falha da consulta não vira 404: o erro sobe e não entra no cache (fetchAnuncioPublicoPorId).
 async function anuncioDaPagina(id: string) {
   const anuncio = await fetchAnuncioPublicoPorId(id);
   if (!anuncio || !anuncioPublico(anuncio, new Date())) return null;

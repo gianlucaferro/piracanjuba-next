@@ -236,3 +236,18 @@ test("as rotas têm um só dono: nada de llms*.txt em public/", () => {
   assert.ok(existsSync(join(APP, "llms.txt/route.ts")));
   assert.ok(existsSync(join(APP, "llms-full.txt/route.ts")));
 });
+
+test("processos judiciais fora do llms enquanto o operador não decide; cotas parlamentares dentro", () => {
+  // Processos de pessoas nomeadas: alcance pendente de decisão do operador (Onda 2, 2026-11-19).
+  // Sem descrição curada, nem um sitemap futuro publicaria o texto pronto sobre os processos.
+  assert.equal(paginaCurada("/transparencia/processos-publicos"), undefined);
+  const comProcessos = { ...ENTRADA, urls: [...ENTRADA.urls, `${SITE_URL}/transparencia/processos-publicos`] };
+  for (const texto of [LLMS, LLMS_FULL, montarLlmsTxt(comProcessos), montarLlmsFullTxt(comProcessos)]) {
+    assert.doesNotMatch(texto, /Processos judiciais de agentes públicos/);
+  }
+  for (const texto of [LLMS, LLMS_FULL]) {
+    assert.doesNotMatch(texto, /\/transparencia\/processos-publicos/);
+    assert.ok(texto.includes(`${SITE_URL}/transparencia/cotas-parlamentares`));
+  }
+  assert.ok(paginaCurada("/transparencia/cotas-parlamentares"));
+});

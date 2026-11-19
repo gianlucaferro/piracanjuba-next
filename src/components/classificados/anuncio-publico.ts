@@ -241,6 +241,17 @@ export function fraseRespostaAnuncios(resumo: ResumoAnuncios, data: string): str
   return `O Compra e Venda PBA tem ${total} em Piracanjuba: ${categorias}${precos} (${base}).${vendidos} Anunciar é grátis, e o contato é direto com o anunciante pelo WhatsApp.`;
 }
 
+/**
+ * Parágrafo-resposta de uma lista de anúncios lida em `lidaEm`. O servidor usa a lista do
+ * HTML inicial; o cliente, a lista atual da query, depois de cada carga ou atualização.
+ */
+export function respostaDaLista(
+  anuncios: Parameters<typeof resumirAnuncios>[0],
+  lidaEm: Date,
+): string {
+  return fraseRespostaAnuncios(resumirAnuncios(anuncios, lidaEm), dataLocal(lidaEm));
+}
+
 // Metadados do detalhe do anúncio. O layout acrescenta " | Piracanjuba.ai" (17 caracteres)
 // ao título; o resto do site usa título renderizado de até 60 e description de 120 a 160.
 const LIMITE_TITULO_ANUNCIO = 60 - 17;

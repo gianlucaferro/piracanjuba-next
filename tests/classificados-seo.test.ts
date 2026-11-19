@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { QueryClient } from "@tanstack/react-query";
 import { SUFIXO_TITULO } from "../src/lib/abas-orgaos.ts";
 import {
   COLUNAS_ANUNCIO_PUBLICO,
@@ -12,12 +13,20 @@ import {
   listaAnunciosJsonLd,
   precoDaOferta,
   produtoJsonLd,
+  respostaDaLista,
   resumirAnuncios,
   serializarJsonLd,
   tituloAnuncio,
   type AnuncioPublico,
 } from "../src/components/classificados/anuncio-publico.ts";
-import { buscarAnuncios, CHAVE_LISTA_ANUNCIOS } from "../src/components/classificados/buscar-anuncios.ts";
+import {
+  buscarAnuncioPorId,
+  buscarAnuncios,
+  CHAVE_LISTA_ANUNCIOS,
+  listaEmCache,
+  observarListaAnuncios,
+  TAMANHO_PAGINA_ANUNCIOS,
+} from "../src/components/classificados/buscar-anuncios.ts";
 
 const agora = new Date("2026-11-19T15:00:00Z");
 const espacos = (s: string) => s.replace(/\s/g, " ");
@@ -53,32 +62,148 @@ test("colunas públicas não levam o código de gestão nem o user_id ao HTML", 
   assert.deepEqual([...colunas].sort(), Object.keys(anuncio({})).sort());
 });
 
-test("lista do servidor e do cliente usam a mesma consulta e a mesma query key", async () => {
-  assert.deepEqual([...CHAVE_LISTA_ANUNCIOS], ["classificados"]);
+/** Cliente Supabase falso da lista: devolve a janela de linhas pedida por range(). */
+function clienteFalso(paginas: (inicio: number, fim: number) => AnuncioPublico[], erro: Error | null = null) {
   const chamadas: unknown[][] = [];
   const consulta = {
     select: (...a: unknown[]) => (chamadas.push(["select", ...a]), consulta),
     in: (...a: unknown[]) => (chamadas.push(["in", ...a]), consulta),
-    order: (...a: unknown[]) => {
-      chamadas.push(["order", ...a]);
-      return Promise.resolve({ data: [anuncio({})], error: null });
+    order: (...a: unknown[]) => (chamadas.push(["order", ...a]), consulta),
+    range: (inicio: number, fim: number) => {
+      chamadas.push(["range", inicio, fim]);
+      return Promise.resolve(erro ? { data: null, error: erro } : { data: paginas(inicio, fim), error: null });
     },
   };
-  const cliente = { from: (t: string) => (chamadas.push(["from", t]), consulta) };
-  const dados = await buscarAnuncios<AnuncioPublico>(cliente as never);
+  return { chamadas, cliente: { from: (t: string) => (chamadas.push(["from", t]), consulta) } };
+}
+
+test("lista do servidor e do cliente usam a mesma consulta e a mesma query key", async () => {
+  assert.deepEqual([...CHAVE_LISTA_ANUNCIOS], ["classificados"]);
+  const { chamadas, cliente } = clienteFalso(() => [anuncio({})]);
+  const dados = await buscarAnuncios<AnuncioPublico>(cliente as never, agora);
   assert.equal(dados.length, 1);
   assert.deepEqual(chamadas, [
     ["from", "classificados"],
     ["select", COLUNAS_ANUNCIO_PUBLICO],
     ["in", "status", ["ativo", "vendido"]],
     ["order", "created_at", { ascending: false }],
+    ["order", "id", { ascending: false }],
+    ["range", 0, TAMANHO_PAGINA_ANUNCIOS - 1],
   ]);
-  const comErro = {
-    from: () => ({
-      select: () => ({ in: () => ({ order: () => Promise.resolve({ data: null, error: new Error("falhou") }) }) }),
-    }),
-  };
+  const { cliente: comErro } = clienteFalso(() => [], new Error("falhou"));
   await assert.rejects(() => buscarAnuncios(comErro as never), /falhou/);
+});
+
+test("lista lê todas as páginas do PostgREST, sem repetir anúncio entre páginas", async () => {
+  // 1.003 anúncios: a primeira resposta para em 1.000 (db-max-rows). Antes, a lista, o
+  // total e a frase-resposta saíam só dessas 1.000 linhas.
+  const tabela = Array.from({ length: 1003 }, (_, i) =>
+    anuncio({ id: `00000000-0000-4000-8000-${String(i).padStart(12, "0")}` }),
+  );
+  // Anúncio publicado entre a 1ª e a 2ª página empurra a lista: a linha 999 volta como 1000.
+  const comNovo = [anuncio({ id: "ffffffff-0000-4000-8000-000000000000" }), ...tabela];
+  const { chamadas, cliente } = clienteFalso((inicio, fim) =>
+    (inicio === 0 ? tabela : comNovo).slice(inicio, fim + 1),
+  );
+  const dados = await buscarAnuncios<AnuncioPublico>(cliente as never, agora);
+  assert.equal(dados.length, 1003);
+  assert.equal(new Set(dados.map((a) => a.id)).size, 1003);
+  assert.deepEqual(
+    chamadas.filter((c) => c[0] === "range"),
+    [
+      ["range", 0, 999],
+      ["range", 1000, 1999],
+    ],
+  );
+});
+
+test("lista do servidor, hidratação e refetch do cliente deixam fora o anúncio vencido", async () => {
+  const { cliente } = clienteFalso(() => [
+    anuncio({ id: "a", expira_em: "2026-11-19T14:59:59Z" }),
+    anuncio({ id: "b", expira_em: "2026-12-01T00:00:00Z" }),
+    anuncio({ id: "c", status: "vendido" }),
+  ]);
+  const dados = await buscarAnuncios<AnuncioPublico>(cliente as never, agora);
+  assert.deepEqual(dados.map((a) => a.id), ["b", "c"]);
+  // A página semeia a hidratação com a lista filtrada, não com a lida do cache do servidor.
+  const pagina = fonte("../src/app/compra-e-venda/page.tsx");
+  assert.match(pagina, /setQueryData\(CHAVE_LISTA_ANUNCIOS, publicos\)/);
+  assert.doesNotMatch(pagina, /setQueryData\(CHAVE_LISTA_ANUNCIOS, anuncios\)/);
+});
+
+test("detalhe: falha da consulta sobe e não vira anúncio inexistente em cache", async () => {
+  const id = "aba8734c-52ea-4b6b-b62d-9dc0e088a291";
+  const chamadas: unknown[][] = [];
+  const cliente = (resposta: { data: unknown; error: unknown }) => ({
+    from: (t: string) => {
+      chamadas.push(["from", t]);
+      const consulta = {
+        select: (...a: unknown[]) => (chamadas.push(["select", ...a]), consulta),
+        eq: (...a: unknown[]) => (chamadas.push(["eq", ...a]), consulta),
+        maybeSingle: () => Promise.resolve(resposta),
+      };
+      return consulta;
+    },
+  });
+  assert.equal(await buscarAnuncioPorId(cliente({ data: anuncio({}), error: null }) as never, "nao-e-uuid"), null);
+  assert.deepEqual(chamadas, []);
+  assert.deepEqual(await buscarAnuncioPorId(cliente({ data: anuncio({}), error: null }) as never, id), anuncio({}));
+  assert.deepEqual(chamadas, [
+    ["from", "classificados"],
+    ["select", COLUNAS_ANUNCIO_PUBLICO],
+    ["eq", "id", id],
+  ]);
+  assert.equal(await buscarAnuncioPorId(cliente({ data: null, error: null }) as never, id), null);
+  await assert.rejects(
+    () => buscarAnuncioPorId(cliente({ data: null, error: new Error("timeout") }) as never, id),
+    /timeout/,
+  );
+  // O unstable_cache do detalhe não pode trocar o erro por null (null em cache = 404 e noindex).
+  const dados = fonte("../src/lib/data/classificados.ts");
+  const cacheDetalhe = dados.slice(dados.indexOf("export const fetchAnuncioPublicoPorId"));
+  assert.match(cacheDetalhe, /buscarAnuncioPorId<AnuncioPublico>\(/);
+  assert.match(cacheDetalhe, /catch \(error\) \{[^}]*throw error;/);
+  assert.doesNotMatch(cacheDetalhe, /return null/);
+});
+
+test("frase-resposta do topo acompanha a lista do cliente depois de carregar e de cada mudança", () => {
+  const queryClient = new QueryClient();
+  let avisos = 0;
+  const cancelar = observarListaAnuncios(queryClient, () => avisos++);
+  assert.equal(listaEmCache(queryClient), null);
+
+  // Lista carregada: 1 anúncio ativo.
+  queryClient.setQueryData(CHAVE_LISTA_ANUNCIOS, [anuncio({ id: "a" })]);
+  assert.ok(avisos > 0);
+  const carregada = listaEmCache<AnuncioPublico>(queryClient);
+  assert.ok(carregada);
+  assert.match(espacos(respostaDaLista(carregada.anuncios, carregada.lidaEm)), /tem 1 anúncio ativo em Piracanjuba/);
+
+  // O anunciante marca o único anúncio como vendido: a frase não diz mais "1 anúncio ativo".
+  const antes = avisos;
+  queryClient.setQueryData(CHAVE_LISTA_ANUNCIOS, [anuncio({ id: "a", status: "vendido" })]);
+  assert.ok(avisos > antes);
+  const vendida = listaEmCache<AnuncioPublico>(queryClient)!;
+  const frase = espacos(respostaDaLista(vendida.anuncios, vendida.lidaEm));
+  assert.match(frase, /^O Compra e Venda PBA não tem anúncios ativos no momento/);
+
+  // Outras queries da página não mexem na frase; depois de cancelar, nenhum aviso.
+  const semMudanca = avisos;
+  queryClient.setQueryData(["meus-anuncios", "usuario"], []);
+  assert.equal(avisos, semMudanca);
+  cancelar();
+  queryClient.setQueryData(CHAVE_LISTA_ANUNCIOS, [anuncio({ id: "b" })]);
+  assert.equal(avisos, semMudanca);
+  queryClient.clear();
+
+  // Mesma frase do servidor para a mesma lista e a mesma hora de leitura.
+  const lista = [anuncio({}), anuncio({ status: "vendido" })];
+  assert.equal(respostaDaLista(lista, agora), fraseRespostaAnuncios(resumirAnuncios(lista, agora), dataLocal(agora)));
+  // A página entrega a frase do servidor ao componente que a recalcula no navegador.
+  assert.match(fonte("../src/app/compra-e-venda/page.tsx"), /<RespostaAnuncios inicial=\{resposta\} \/>/);
+  const componente = fonte("../src/components/classificados/RespostaAnuncios.tsx");
+  assert.match(componente, /observarListaAnuncios\(queryClient, avisar\)/);
+  assert.match(componente, /listaEmCache<AnuncioPublico>\(queryClient\)/);
 });
 
 test("anúncio removido, em análise, expirado ou vencido não é público", () => {

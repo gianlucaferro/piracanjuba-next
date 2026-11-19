@@ -772,7 +772,63 @@ test("o contexto memoizado acompanha histórico e aditivos que cresceram", () =>
   comparar();
 });
 
-test("medição de tempo da pontuação (só com MEDIR_SUSPEITA=1)", { skip: !process.env.MEDIR_SUSPEITA }, (t) => {
+test("o memo refeito no mesmo array faz a pontuação cruzar o corte (21º contrato e CNPJ novo)", () => {
+  // Quarta-feira sem feriado (regra 6 fora) e objeto curto, vago pela regra 4 (+2).
+  const contrato = (id: string, credor: string, valor: number) =>
+    normalizarCamara({
+      id,
+      numero: null,
+      credor,
+      valor,
+      objeto: "Manutenção de veículos",
+      vigencia_inicio: "2025-06-11",
+      vigencia_fim: null,
+      status: null,
+    });
+
+  // Histórico cresce: 20 contratos do fornecedor dão +2 na regra 3 (soma 4); o 21º leva a
+  // regra 3 a +3 (soma 5). Os valores distam mais de 10% do alvo, então a regra 9 não pontua.
+  const recorrente = "EMPRESA RECORRENTE";
+  const historico = Array.from({ length: 20 }, (_, i) => contrato(`r${i}`, recorrente, 12_000 + i * 3_000));
+  const semAditivos: AditivoInfo[] = [];
+  const pontuarRecorrente = () => [
+    calcularSuspeitaContratoReferencia(historico[0], historico, semAditivos),
+    calcularSuspeitaContrato(historico[0], historico, semAditivos),
+  ];
+  assert.deepEqual(pontuarRecorrente(), [false, false]);
+  historico.push(contrato("r20", recorrente, 72_000));
+  assert.deepEqual(pontuarRecorrente(), [true, true], "contagem velha do histórico");
+
+  // Aditivos crescem: sem CNPJ só a regra 4 pontua (soma 2); o aditivo novo liga o nome a um
+  // CNPJ com situação BAIXADA e a regra 11 soma +3 (soma 5).
+  const irregular = "EMPRESA COM CNPJ BAIXADO";
+  const historicoIrregular = [contrato("i0", irregular, 12_000)];
+  const aditivos: AditivoInfo[] = [];
+  const cadastro = new Map<string, FornecedorCNPJ>([
+    ["66666666000166", { cnpj: "66666666000166", razao_social: null, data_abertura: null, situacao_cadastral: "BAIXADA", capital_social: null, cnae_descricao: null }],
+  ]);
+  const pontuarIrregular = () => [
+    calcularSuspeitaContratoReferencia(historicoIrregular[0], historicoIrregular, aditivos, cadastro),
+    calcularSuspeitaContrato(historicoIrregular[0], historicoIrregular, aditivos, cadastro),
+  ];
+  assert.deepEqual(pontuarIrregular(), [false, false]);
+  aditivos.push({ contrato_numero: "1/2025", valor: 10, cnpj: "66.666.666/0001-66", credor: irregular });
+  assert.deepEqual(pontuarIrregular(), [true, true], "CNPJ velho dos aditivos");
+});
+
+/** A medição só liga com MEDIR_SUSPEITA=1: a string "0" é verdadeira em JS e não pode ligá-la. */
+function medicaoPedida(valor: string | undefined): boolean {
+  return valor === "1";
+}
+
+test("a medição de tempo fica fora do npm test salvo com MEDIR_SUSPEITA=1", () => {
+  assert.equal(medicaoPedida("1"), true);
+  for (const valor of [undefined, "", "0", "false"]) {
+    assert.equal(medicaoPedida(valor), false, `MEDIR_SUSPEITA=${JSON.stringify(valor)}`);
+  }
+});
+
+test("medição de tempo da pontuação (só com MEDIR_SUSPEITA=1)", { skip: !medicaoPedida(process.env.MEDIR_SUSPEITA) }, (t) => {
   for (const total of [2_000, 5_000]) {
     const conjunto = gerarConjunto(42, total, 3);
     const medir = (fn: typeof calcularSuspeitaContrato) => {

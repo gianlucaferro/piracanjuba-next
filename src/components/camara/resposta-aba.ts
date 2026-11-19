@@ -119,6 +119,63 @@ export function valorLicitacoes(r: Pick<ResumoLicitacoesCamara, "totalHomologado
   return null;
 }
 
+export type ValoresLicitacao = { valor_homologado: number | null; valor_estimado: number | null };
+
+/**
+ * Valor de uma licitação, pela mesma regra do total: o homologado positivo, senão o estimado
+ * positivo. Zero é valor não informado (o sync grava "0,00" do portal como 0), então homologado
+ * zero não esconde o estimado, como fazia o `valor_homologado ?? valor_estimado`.
+ */
+export function valorDaLicitacao(l: ValoresLicitacao): { rotulo: "homologado" | "estimado"; valor: number } | null {
+  return valorLicitacoes({ totalHomologado: Number(l.valor_homologado) || 0, totalEstimado: Number(l.valor_estimado) || 0 });
+}
+
+// Quantas linhas a parte do servidor das abas lista. As páginas /transparencia/licitacoes-camara e
+// /transparencia/indicacoes (308 para estas abas desde 2026-11-19) listavam 150 licitações e 200
+// indicações no HTML; as abas não alcançam menos. Os primeiros vão em cartões, o resto numa lista
+// de uma linha por registro, fechada num <details>, para o HTML ficar abaixo de 500 KB. Medida de
+// 2026-11-19 com os dados reais: cada lista de uma linha soma cerca de 84 KB ao HTML, contando o
+// payload do React; no formato de cartão das páginas antigas, as mesmas linhas somariam cerca de
+// 300 KB.
+export const LICITACOES_NO_SERVIDOR = 150;
+export const LICITACOES_EM_CARTAO = 20;
+export const INDICACOES_NO_SERVIDOR = 200;
+export const INDICACOES_NO_PAINEL = 50;
+
+/** "2026-10-09..." -> "09/10/2026", sem passar por Date (sem efeito de fuso). */
+export function formatarDataCurta(iso: string | null | undefined): string | null {
+  const m = iso?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : null;
+}
+
+function cortarTexto(texto: string, max: number): string {
+  return texto.length > max ? `${texto.slice(0, max).trimEnd()}...` : texto;
+}
+
+/** Licitação em uma linha, depois do rótulo: "(Dispensa, Homologada, publicada em ..., valor ...): objeto". */
+export function linhaLicitacao(l: ValoresLicitacao & {
+  modalidade: string | null;
+  situacao: string | null;
+  data_publicacao: string | null;
+  descricao: string | null;
+}): string {
+  const detalhes = [l.modalidade?.trim(), l.situacao?.trim()].filter((d): d is string => Boolean(d));
+  const data = formatarDataCurta(l.data_publicacao);
+  if (data) detalhes.push(`publicada em ${data}`);
+  const valor = valorDaLicitacao(l);
+  detalhes.push(valor ? `valor ${valor.rotulo} de ${formatarReais(valor.valor)}` : "valor não informado");
+  const objeto = l.descricao?.trim() ? `: ${cortarTexto(l.descricao.trim(), 220)}` : "";
+  return ` (${detalhes.join(", ")})${objeto}`;
+}
+
+/** Indicação em uma linha, depois do número: " (09/10/2026, autor: ...): ementa". */
+export function linhaIndicacao(i: { data_publicacao: string | null; autor: string | null; ementa: string | null }): string {
+  const detalhes = [formatarDataCurta(i.data_publicacao), i.autor?.trim() ? `autor: ${i.autor.trim()}` : null]
+    .filter((d): d is string => Boolean(d));
+  const ementa = i.ementa?.trim() ? `: ${i.ementa.trim()}` : "";
+  return `${detalhes.length ? ` (${detalhes.join(", ")})` : ""}${ementa}`;
+}
+
 export function paragrafoLicitacoes(r: ResumoLicitacoesCamara): string | null {
   if (!r.total) return null;
   const periodo = r.anoMin && r.anoMax
@@ -294,6 +351,17 @@ export type CadastroPessoalCamara = {
   pessoas: number;
   cargos: number;
 } | null;
+
+/**
+ * Competência ("10/2026") das próprias linhas do cadastro, no formato de fetchFolhaStats. A tabela
+ * usa esta, não a do resumo: as duas leituras escolhem a última competência cada uma no seu cache,
+ * e por até uma hora depois da carga de um mês novo podem divergir. Linhas de mais de uma
+ * competência (não deveria acontecer) dão null, para a tabela não afirmar um mês só.
+ */
+export function referenciaDoCadastro(linhas: Array<{ ano: number; mes: number }>): string | null {
+  const referencias = new Set(linhas.map((l) => `${String(l.mes).padStart(2, "0")}/${l.ano}`));
+  return referencias.size === 1 ? [...referencias][0] : null;
+}
 
 export function paragrafoServidores(folha: ResumoFolhaParaTexto, cadastro: CadastroPessoalCamara): string | null {
   const partes: string[] = [];

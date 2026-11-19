@@ -335,7 +335,8 @@ export async function fetchContratos(): Promise<Contrato[]> {
     const { data, error } = await supabase
       .from("contratos")
       .select(COLS)
-      .order("vigencia_inicio", { ascending: false })
+      // Contrato sem início de vigência vai para o fim, como no lote do servidor (prefeitura-consultas.ts).
+      .order("vigencia_inicio", { ascending: false, nullsFirst: false })
       .range(from, from + PAGE - 1);
     if (error) throw error;
     if (!data || data.length === 0) break;

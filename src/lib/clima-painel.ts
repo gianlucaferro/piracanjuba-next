@@ -54,6 +54,11 @@ export type ClimaPainel = {
 
 export const FONTE_CLIMA = "Open-Meteo";
 export const MAX_DIAS_PREVISAO = 7;
+/**
+ * Idade máxima da leitura atual para ela valer como "tempo agora": 2 horas. A sincronização
+ * roda a cada 15 minutos; acima disso ela parou, e o painel cai na previsão do dia.
+ */
+export const MAX_IDADE_LEITURA_MS = 2 * 60 * 60 * 1000;
 
 export function hojeEmBrasilia(now = new Date()): string {
   return brazilDate(now);
@@ -146,23 +151,32 @@ export function lerClimaAgora(bruto: unknown): ClimaAgora | null {
   };
 }
 
+/** Instante da leitura: data e hora de Brasília (UTC-3, sem horário de verão desde 2019). */
+export function instanteDaLeitura(leitura: Pick<ClimaAgora, "data" | "hora">): Date {
+  return new Date(`${leitura.data}T${leitura.hora}:00-03:00`);
+}
+
 /**
  * Monta o painel a partir das linhas de ontem em diante.
- * - agora: a leitura atual mais recente, só se for de hoje ou de ontem (nunca uma leitura velha
- *   apresentada como atual). A sincronização grava a leitura na linha do dia UTC, que entre 21h
- *   e 24h de Brasília já é a linha de amanhã; por isso procura em todas as linhas.
+ * - agora: a leitura atual mais recente, só se for de hoje ou de ontem e tiver no máximo
+ *   MAX_IDADE_LEITURA_MS em relação a `referencia` (o instante da consulta). Assim uma leitura
+ *   das 23h45 continua valendo logo depois da meia-noite, mas não vira "tempo agora" no fim do
+ *   dia seguinte se a sincronização parou. A sincronização grava a leitura na linha do dia UTC,
+ *   que entre 21h e 24h de Brasília já é a linha de amanhã; por isso procura em todas as linhas.
  * - diaHoje: a linha cuja data é hoje.
  * - previsao: datas depois de hoje, em ordem crescente, no máximo MAX_DIAS_PREVISAO.
  */
 export function montarPainelClima(
   linhas: ReadonlyArray<ClimaDiaLinha & { atual?: unknown }>,
   hoje: string,
+  referencia: Date,
 ): ClimaPainel {
   const ontem = somarDias(hoje, -1);
   let agora: ClimaAgora | null = null;
   for (const linha of linhas) {
     const leitura = lerClimaAgora(linha.atual);
     if (!leitura || leitura.data < ontem || leitura.data > hoje) continue;
+    if (referencia.getTime() - instanteDaLeitura(leitura).getTime() > MAX_IDADE_LEITURA_MS) continue;
     if (!agora || `${leitura.data}T${leitura.hora}` > `${agora.data}T${agora.hora}`) agora = leitura;
   }
 
@@ -174,6 +188,33 @@ export function montarPainelClima(
     .map(previsaoDia);
 
   return { hoje, agora, diaHoje: linhaHoje ? previsaoDia(linhaHoje) : null, previsao };
+}
+
+/**
+ * Junta as três leituras de /clima com Promise.allSettled: cada uma falha sozinha. Se o painel
+ * (leitura atual e previsão) cair, a série dos dias encerrados e o resumo do mês continuam na
+ * página; o aviso de falta de dados só aparece quando nada veio. Recebe as buscas como funções
+ * para continuar puro (sem Next nem Supabase).
+ */
+export async function carregarDadosClima<Dia>(
+  buscas: {
+    serieDias: () => Promise<Dia[]>;
+    resumoMes: () => Promise<ResumoMes | null>;
+    painel: () => Promise<ClimaPainel>;
+  },
+  hoje: string,
+): Promise<{ dias: Dia[]; resumo: ResumoMes | null; painel: ClimaPainel }> {
+  // Promise.resolve().then(...) transforma em rejeição também um erro síncrono da busca.
+  const [dias, resumo, painel] = await Promise.allSettled([
+    Promise.resolve().then(() => buscas.serieDias()),
+    Promise.resolve().then(() => buscas.resumoMes()),
+    Promise.resolve().then(() => buscas.painel()),
+  ]);
+  return {
+    dias: dias.status === "fulfilled" ? dias.value : [],
+    resumo: resumo.status === "fulfilled" ? resumo.value : null,
+    painel: painel.status === "fulfilled" ? painel.value : { hoje, agora: null, diaHoje: null, previsao: [] },
+  };
 }
 
 const numeroBr = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });

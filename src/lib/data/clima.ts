@@ -182,14 +182,17 @@ export function fetchClimaResumoMes() {
   return climaResumoMesCache(hojeEmBrasilia());
 }
 
+type LinhaPainel = Parameters<typeof montarPainelClima>[0][number];
+
 /**
- * Painel de /clima e do selo da home: leitura atual (com horario), dia de hoje e
- * previsao dos dias seguintes. Le de ontem em diante porque a leitura atual pode
- * estar gravada na linha de ontem ou de amanha (ver montarPainelClima).
- * Revalida a cada 15 min, o mesmo intervalo do cron sync-inmet-clima-15min.
+ * Linhas do painel de /clima e do selo da home: de ontem em diante, porque a leitura atual
+ * pode estar gravada na linha de ontem ou de amanha (ver montarPainelClima).
+ * Revalida a cada 15 min, o mesmo intervalo do cron sync-inmet-clima-15min. O cache guarda
+ * as linhas, nao o painel: a validade da leitura atual depende do instante da consulta.
+ * Chave nova (antes "clima-painel", que guardava o painel montado): o cache persiste entre deploys.
  */
-const climaPainelCache = unstable_cache(
-  async (hoje: string): Promise<ClimaPainel> => {
+const climaPainelLinhasCache = unstable_cache(
+  async (hoje: string): Promise<LinhaPainel[]> => {
     const supabase = createPublicSupabaseClient();
     const { data, error } = await supabase
       .from("inmet_clima_diario")
@@ -198,12 +201,19 @@ const climaPainelCache = unstable_cache(
       .order("data", { ascending: true })
       .limit(MAX_DIAS_PREVISAO + 3);
     if (error) throw new Error("Falha ao ler o painel de clima");
-    return montarPainelClima((data ?? []) as unknown as Parameters<typeof montarPainelClima>[0], hoje);
+    return (data ?? []) as unknown as LinhaPainel[];
   },
-  ["clima-painel"],
+  ["clima-painel-linhas"],
   { revalidate: 900, tags: ["clima"] },
 );
 
-export function fetchClimaPainel() {
-  return climaPainelCache(hojeEmBrasilia());
+/**
+ * Painel de /clima e do selo da home: leitura atual (com horario), dia de hoje e previsao dos
+ * dias seguintes. Montado fora do cache, com o instante da consulta: leitura com mais de
+ * MAX_IDADE_LEITURA_MS (sincronizacao parada) nao vira "tempo agora".
+ */
+export async function fetchClimaPainel(): Promise<ClimaPainel> {
+  const referencia = new Date();
+  const hoje = hojeEmBrasilia(referencia);
+  return montarPainelClima(await climaPainelLinhasCache(hoje), hoje, referencia);
 }

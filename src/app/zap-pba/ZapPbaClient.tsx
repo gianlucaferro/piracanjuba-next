@@ -45,11 +45,15 @@ import {
   LOTE_ZAP,
   agruparIndice,
   embaralharPorDia,
+  maisUmLote,
+  paginacaoDaChave,
+  registrarContato,
   sementeDoDia,
   textoIndice,
   textoResposta,
   type FichaZap,
   type GrupoIndiceZap,
+  type PaginacaoZap,
 } from "./lista";
 
 type ZapEstabelecimento = FichaZap;
@@ -230,7 +234,7 @@ function CategoryScrollArea({
 }
 
 function contarContato(item: ZapEstabelecimento) {
-  if (!item.editorial) void supabase.rpc("increment_click_count", { establishment_id: item.id });
+  registrarContato(item, (id) => supabase.rpc("increment_click_count", { establishment_id: id }));
 }
 
 function shareEstablishment(event: MouseEvent<HTMLButtonElement>, item: ZapEstabelecimento) {
@@ -723,19 +727,20 @@ export default function ZapPbaClient({
 
   // O servidor renderiza só o primeiro lote de cartões; os demais entram conforme a
   // rolagem chega perto do fim da grade, ou pelo botão "Mostrar mais". Mudar a busca,
-  // a categoria ou a ordem volta ao primeiro lote.
+  // a categoria ou a ordem volta ao primeiro lote, e o reinício fica gravado no estado
+  // (https://react.dev/reference/react/useState#storing-information-from-previous-renders):
+  // limpar o filtro depois não traz de volta os cartões abertos antes dele.
   const chaveDosFiltros = JSON.stringify([busca, catFilter, sortMode]);
-  const [paginacao, setPaginacao] = useState({ chave: chaveDosFiltros, limite: LOTE_ZAP });
-  const limite = paginacao.chave === chaveDosFiltros ? paginacao.limite : LOTE_ZAP;
+  const [paginacao, setPaginacao] = useState<PaginacaoZap>({ chave: chaveDosFiltros, limite: LOTE_ZAP });
+  const paginacaoAtual = paginacaoDaChave(paginacao, chaveDosFiltros);
+  if (paginacaoAtual !== paginacao) setPaginacao(paginacaoAtual);
+  const limite = paginacaoAtual.limite;
   const visiveis = filtered.slice(0, limite);
   const restantes = filtered.length - visiveis.length;
   const sentinelaRef = useRef<HTMLDivElement>(null);
 
   const mostrarMais = useCallback(() => {
-    setPaginacao((atual) => ({
-      chave: chaveDosFiltros,
-      limite: (atual.chave === chaveDosFiltros ? atual.limite : LOTE_ZAP) + LOTE_ZAP,
-    }));
+    setPaginacao((atual) => maisUmLote(atual, chaveDosFiltros));
   }, [chaveDosFiltros]);
 
   useEffect(() => {

@@ -1,15 +1,9 @@
 import { Cloud, CloudRain, Droplets, Sun, Wind } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
-import {
-  fetchClimaPainel,
-  fetchClimaResumoMes,
-  fetchClimaSerieDias,
-  type ClimaDia,
-  type ClimaPainel,
-  type ResumoMes,
-} from "@/lib/data/clima";
+import { fetchClimaPainel, fetchClimaResumoMes, fetchClimaSerieDias } from "@/lib/data/clima";
 import {
   FONTE_CLIMA,
+  carregarDadosClima,
   diaDaSemana,
   formatarChuva,
   formatarTemperatura,
@@ -46,19 +40,16 @@ function rotuloDia(data: string, hoje: string) {
 }
 
 export default async function ClimaPage() {
-  let dias: ClimaDia[] = [];
-  let resumo: ResumoMes | null = null;
-  let painel: ClimaPainel = { hoje: hojeEmBrasilia(), agora: null, diaHoje: null, previsao: [] };
-  // Falha do Supabase (ou variáveis ausentes no build) não derruba a página: ela mostra o aviso.
-  try {
-    [dias, resumo, painel] = await Promise.all([
-      fetchClimaSerieDias(30),
-      fetchClimaResumoMes(),
-      fetchClimaPainel(),
-    ]);
-  } catch {
-    // mantém os valores vazios acima
-  }
+  // Falha do Supabase (ou variáveis ausentes no build) não derruba a página. Cada busca falha
+  // sozinha: o que veio continua na página, e o aviso só aparece quando nada veio.
+  const { dias, resumo, painel } = await carregarDadosClima(
+    {
+      serieDias: () => fetchClimaSerieDias(30),
+      resumoMes: () => fetchClimaResumoMes(),
+      painel: () => fetchClimaPainel(),
+    },
+    hojeEmBrasilia(),
+  );
 
   const { hoje, agora } = painel;
   const diasPrevistos = [...(painel.diaHoje ? [painel.diaHoje] : []), ...painel.previsao];

@@ -4,6 +4,10 @@ import test from "node:test";
 import {
   FONTE_PORTAL_CAMARA,
   FONTE_SICONFI,
+  INDICACOES_NO_PAINEL,
+  INDICACOES_NO_SERVIDOR,
+  LICITACOES_EM_CARTAO,
+  LICITACOES_NO_SERVIDOR,
   contarPagamentosRepetidos,
   faqContratos,
   faqDespesas,
@@ -12,7 +16,10 @@ import {
   faqServidores,
   formatarCompetencia,
   formatarData,
+  formatarDataCurta,
   formatarPercentual,
+  linhaIndicacao,
+  linhaLicitacao,
   pagamentosConfiaveis,
   paragrafoAtuacao,
   paragrafoContratos,
@@ -21,7 +28,9 @@ import {
   paragrafoLicitacoes,
   paragrafoProjetos,
   paragrafoServidores,
+  referenciaDoCadastro,
   resumirPagamentosPorAno,
+  valorDaLicitacao,
   valorLicitacoes,
   type OrcamentoCamaraAno,
   type RegistroPagamentoCamara,
@@ -248,4 +257,78 @@ test("cliente e servidor usam as mesmas chaves do react-query", () => {
   assert.match(servidor, /setQueryData\(CHAVE_CONTRATOS_CAMARA,/);
   assert.match(servidor, /setQueryData\(CHAVE_RESUMO_FOLHA_CAMARA,/);
   assert.match(servidor, /setQueryData\(chaveServidoresCamara\("", 0\),/);
+});
+
+// ---------------------------------------------------------------- Revisão do CodeRabbit no PR 56
+
+const fonteDe = (arquivo: string) => readFileSync(new URL(`../${arquivo}`, import.meta.url), "utf8");
+
+test("valor de cada licitação: homologado zero não esconde o estimado", () => {
+  // O sync grava "0,00" do portal como 0 (19 estimados zerados em 2026-11-19).
+  assert.deepEqual(valorDaLicitacao({ valor_homologado: 0, valor_estimado: 100 }), { rotulo: "estimado", valor: 100 });
+  assert.deepEqual(valorDaLicitacao({ valor_homologado: null, valor_estimado: 100 }), { rotulo: "estimado", valor: 100 });
+  assert.deepEqual(valorDaLicitacao({ valor_homologado: 80, valor_estimado: 100 }), { rotulo: "homologado", valor: 80 });
+  assert.equal(valorDaLicitacao({ valor_homologado: 0, valor_estimado: 0 }), null);
+  assert.equal(valorDaLicitacao({ valor_homologado: null, valor_estimado: null }), null);
+  // O cartão usa a mesma regra, não o `??` que parava no zero.
+  const bloco = fonteDe("src/components/camara/BlocosServidorCamara.tsx");
+  assert.doesNotMatch(bloco, /valor_homologado \?\?/);
+  assert.match(bloco, /valorDaLicitacao\(l\)/);
+});
+
+test("licitação e indicação em uma linha: dados da fonte, data absoluta e objeto cortado", () => {
+  const licitacao = {
+    modalidade: "Dispensa",
+    situacao: "Homologada",
+    data_publicacao: "2026-11-11",
+    valor_homologado: 0,
+    valor_estimado: 1234.5,
+    descricao: `Aquisição de material ${"x".repeat(600)}`,
+  };
+  const linha = texto(linhaLicitacao(licitacao));
+  assert.ok(linha.startsWith(" (Dispensa, Homologada, publicada em 11/11/2026, valor estimado de R$ 1.234,50): Aquisição de material"));
+  assert.ok(linha.endsWith("..."));
+  assert.ok(linha.length < 320, `linha com ${linha.length} caracteres`);
+  assert.equal(
+    texto(linhaLicitacao({ ...licitacao, modalidade: null, situacao: " ", data_publicacao: null, valor_estimado: 0, descricao: null })),
+    " (valor não informado)",
+  );
+  assert.equal(linhaIndicacao({ data_publicacao: "2026-10-09T00:00:00Z", autor: null, ementa: " Pede asfalto. " }), " (09/10/2026): Pede asfalto.");
+  assert.equal(linhaIndicacao({ data_publicacao: null, autor: "Vereador X", ementa: null }), " (autor: Vereador X)");
+  assert.equal(linhaIndicacao({ data_publicacao: null, autor: " ", ementa: "" }), "");
+  assert.equal(formatarDataCurta("2026-10-09"), "09/10/2026");
+  assert.equal(formatarDataCurta("09/10/2026"), null);
+  for (const l of [linha, linhaIndicacao({ data_publicacao: "2026-10-09", autor: "A", ementa: "B" })]) {
+    assert.doesNotMatch(l, SEM_TRAVESSAO);
+  }
+});
+
+test("as abas alcançam pelo menos o que as páginas /transparencia/* listavam", () => {
+  // /transparencia/licitacoes-camara listava 150 e /transparencia/indicacoes, 200 (origin/main antes do 308).
+  assert.ok(LICITACOES_NO_SERVIDOR >= 150);
+  assert.ok(INDICACOES_NO_SERVIDOR >= 200);
+  assert.ok(LICITACOES_EM_CARTAO < LICITACOES_NO_SERVIDOR);
+  assert.ok(INDICACOES_NO_PAINEL < INDICACOES_NO_SERVIDOR);
+  const servidor = fonteDe("src/app/camara/[aba]/bloco-servidor.tsx");
+  assert.match(servidor, /fetchLicitacoesRecentes\(LICITACOES_NO_SERVIDOR\)/);
+  assert.match(servidor, /fetchIndicacoesRecentes\(INDICACOES_NO_SERVIDOR\)/);
+  // O que passa dos cartões e do painel vai para a lista de uma linha, não é descartado.
+  const bloco = fonteDe("src/components/camara/BlocosServidorCamara.tsx");
+  assert.match(bloco, /recentes\.slice\(LICITACOES_EM_CARTAO\)/);
+  assert.match(bloco, /demais\.map\(\(l\) => \([\s\S]*?linhaLicitacao\(l\)/);
+  assert.match(bloco, /indicacoes\.slice\(INDICACOES_NO_PAINEL\)/);
+  assert.match(bloco, /demais\.map\(\(i\) => \([\s\S]*?linhaIndicacao\(i\)/);
+});
+
+test("cadastro de pessoal: a tabela traz a competência das próprias linhas", () => {
+  assert.equal(referenciaDoCadastro([{ ano: 2026, mes: 11 }, { ano: 2026, mes: 11 }]), "11/2026");
+  assert.equal(referenciaDoCadastro([{ ano: 2026, mes: 3 }]), "03/2026");
+  assert.equal(referenciaDoCadastro([]), null);
+  assert.equal(referenciaDoCadastro([{ ano: 2026, mes: 10 }, { ano: 2026, mes: 11 }]), null);
+  // Resumo por cargo de 10/2026 (cache ainda velho) e linhas de 11/2026: cada parte com o seu mês.
+  const servidor = fonteDe("src/app/camara/[aba]/bloco-servidor.tsx");
+  assert.match(servidor, /referenciaTabela=\{referenciaDoCadastro\(cadastro \?\? \[\]\)\}/);
+  const bloco = fonteDe("src/components/camara/BlocosServidorCamara.tsx");
+  assert.match(bloco, /Cadastro de pessoal\{referenciaTabela \?/);
+  assert.match(bloco, /Pessoal por cargo\{referenciaCadastro \?/);
 });

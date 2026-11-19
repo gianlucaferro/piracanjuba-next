@@ -192,3 +192,30 @@ export const fetchIndicacoesResumoServidor = unstable_cache(
   ["camara-abas-indicacoes-resumo"],
   { revalidate: 3600, tags: ["indicacoes-camara"] },
 );
+
+/**
+ * Quantas moções e quantos requerimentos a tabela ato_camara tem, por contagem exata. Ler as linhas
+ * e contar aqui (o antigo fetchAtosStats) pararia em 1.000, o limite de linhas por resposta do
+ * PostgREST, e o total afirmado no texto da aba ficaria preso nesse número. Erro é lançado: total
+ * de leitura falha não vai para o cache nem para o texto.
+ */
+export const fetchAtuacaoResumoServidor = unstable_cache(
+  async (): Promise<{ mocoes: number; requerimentos: number }> => {
+    const supabase = createPublicSupabaseClient();
+    const contar = async (tipo: "MOCAO" | "REQUERIMENTO"): Promise<number> => {
+      const { count, error } = await supabase
+        .from("ato_camara")
+        .select("*", { count: "exact", head: true })
+        .eq("tipo", tipo);
+      if (error) throw error;
+      if (count === null || count === undefined) {
+        throw new Error("Não foi possível confirmar a contagem de atos da Câmara.");
+      }
+      return count;
+    };
+    const [mocoes, requerimentos] = await Promise.all([contar("MOCAO"), contar("REQUERIMENTO")]);
+    return { mocoes, requerimentos };
+  },
+  ["camara-abas-atuacao-resumo"],
+  { revalidate: 3600, tags: ["atos-camara"] },
+);

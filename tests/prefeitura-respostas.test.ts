@@ -22,6 +22,7 @@ import {
   montarRespostaDespesas,
   montarRespostaSecretarias,
   montarRespostaServidores,
+  nomesCoincidem,
   papelDoTipo,
   pessoaExecutivoJsonLd,
   vinculosDoCargo,
@@ -32,6 +33,7 @@ import { ehLoteInicial, LOTE_CONTRATOS, MARCA_LOTE_INICIAL, SERVIDORES_POR_PAGIN
 import {
   COLUNAS_CONTRATOS,
   consultarDespesasMensaisRecentes,
+  consultarLoteContratos,
   consultarRemuneracaoExecutivo,
   MESES_DESPESAS_RECENTES,
   consultarServidoresPagina,
@@ -95,6 +97,12 @@ test("vínculo do cargo: a prefeita professora não entra no subsídio, homônim
   ];
   assert.deepEqual(vinculosDoCargo(candidatos, "Lenizia Alves Canedo", "prefeito"), ["pref"]);
   assert.deepEqual(vinculosDoCargo(candidatos, "Milton Justus", "vice"), []);
+  // Nome inteiro, não trecho: "MARIANA SILVA" contém "ANA SILVA", mas é outra pessoa.
+  assert.equal(nomesCoincidem("MARIANA SILVA", "Ana Silva"), false);
+  assert.equal(nomesCoincidem("ANA SILVA FILHA", "Ana Silva"), false);
+  assert.equal(nomesCoincidem("  LENÍZIA  ALVES-CANEDO ", "Lenizia Alves Canedo"), true);
+  assert.equal(nomesCoincidem("ANA SILVA", ""), false);
+  assert.deepEqual(vinculosDoCargo([{ id: "outra", nome: "MARIANA SILVA", cargo: "PREFEITO MUNICIPAL" }], "Ana Silva", "prefeito"), []);
 });
 
 test("subsídio: folha MENSAL mais recente, sem o adiantamento do 13º e com o reajuste de 2026-03", () => {
@@ -162,6 +170,20 @@ test("respostas de servidores, contratos, despesas e secretarias saem do dado, c
   // Sem a contagem total, o total geral não é afirmado.
   assert.doesNotMatch(montarRespostaContratos([{ valor: 10, vigencia_inicio: "2026-11-17" }], null)!, /reúne/);
   assert.equal(montarRespostaContratos([], 6610), null);
+  // Nenhum valor no lote: nada de "R$ 0,00", que seria afirmar um dado que não existe.
+  assert.equal(
+    montarRespostaContratos([{ valor: null, vigencia_inicio: "2026-11-17" }], null),
+    "O contrato mais recente, com início de vigência em 17 de novembro de 2026, não tem valor informado.",
+  );
+  assert.equal(
+    montarRespostaContratos([{ valor: null, vigencia_inicio: null }, { valor: "", vigencia_inicio: "2026-11-17" }], null),
+    "Os 2 contratos mais recentes, com início de vigência em 17 de novembro de 2026, não têm valor informado.",
+  );
+  // Zero gravado é valor informado.
+  assert.equal(
+    montarRespostaContratos([{ valor: 0, vigencia_inicio: "2026-11-17" }, { valor: null, vigencia_inicio: "2026-11-17" }], null),
+    "Os 2 contratos mais recentes, com início de vigência em 17 de novembro de 2026, somam R$ 0,00 (1 sem valor informado).",
+  );
 
   // despesas_mensais conferido no banco em 2026-11-19: as três competências mais recentes,
   // todas coletadas em 2026-11-10. Outubro, coletado 10 dias depois do fim do mês, tem pago de
@@ -251,6 +273,7 @@ test("nenhum texto gerado tem travessão", () => {
     montarRespostaChefia([prefeita, vice], []),
     montarRespostaServidores({ mensal: { competencia: "2026-10", bruto: 1, servidores: 2 }, publicacaoParcial: true }),
     montarRespostaContratos([{ valor: 1, vigencia_inicio: "2026-11-17", updated_at: "2026-11-18" }], 10),
+    montarRespostaContratos([{ valor: null, vigencia_inicio: "2026-11-17" }], 10),
     montarRespostaDespesas({ competencia: "2026-10", valor_empenhado: 1, valor_liquidado: 2, valor_pago: 3, data_coleta: "2026-11-10" }),
     montarRespostaSecretarias([{ nome: "Saúde", secretario_nome: "Fulana", updated_at: "2026-03-02" }]),
     formatarReais(1234.5),
@@ -302,7 +325,8 @@ test("lote de contratos usa as mesmas colunas e a mesma ordem de fetchContratos"
   const corpo = api.slice(api.indexOf("export async function fetchContratos"), api.indexOf("export async function fetchLicitacoes"));
   const cols = /const COLS = "([^"]+)"/.exec(corpo)?.[1];
   assert.equal(cols, COLUNAS_CONTRATOS);
-  assert.match(corpo, /\.order\("vigencia_inicio", \{ ascending: false \}\)/);
+  // Mesma coluna, direção e posição do nulo: o contrato sem início fica no fim nas duas buscas.
+  assert.match(corpo, /\.order\("vigencia_inicio", \{ ascending: false, nullsFirst: false \}\)/);
   // A aba mostra 50 contratos antes do "Carregar mais": o lote do servidor tem o mesmo tamanho.
   const cliente = fonte("../src/components/prefeitura/PrefeituraClient.tsx");
   assert.match(cliente, new RegExp(`const \\[visibleCount, setVisibleCount\\] = useState\\(${LOTE_CONTRATOS}\\)`));
@@ -317,19 +341,39 @@ test("lote de despesas segue a ordem de fetchDespesas", () => {
 });
 
 // Supabase de mentira: aplica eq, ilike, in, order, limit e range sobre tabelas em memória e
-// guarda as chamadas, para conferir a consulta e o resultado sem rede.
+// guarda as chamadas, para conferir a consulta e o resultado sem rede. Os order() somam critérios
+// na ordem declarada (o primeiro manda, os seguintes desempatam), como no PostgREST, e o nulo segue
+// o padrão do Postgres: último na crescente, primeiro na decrescente, salvo nullsFirst explícito.
 type Linha = Record<string, unknown>;
 type Resposta = { data: Linha[]; error: null; count: number | null };
+type OpcoesOrdem = { ascending?: boolean; nullsFirst?: boolean };
 type Construtor = {
   select(colunas: string, opcoes?: { count?: string }): Construtor;
   eq(campo: string, valor: unknown): Construtor;
   ilike(campo: string, padrao: string): Construtor;
   in(campo: string, valores: unknown[]): Construtor;
-  order(campo: string, opcoes?: { ascending?: boolean }): Construtor;
+  order(campo: string, opcoes?: OpcoesOrdem): Construtor;
   limit(n: number): Construtor;
   range(de: number, ate: number): Construtor;
   then(resolver: (r: Resposta) => unknown): Promise<unknown>;
 };
+function compararPorCriterios(criterios: { campo: string; opcoes?: OpcoesOrdem }[]) {
+  return (a: Linha, b: Linha) => {
+    for (const { campo, opcoes } of criterios) {
+      const crescente = opcoes?.ascending !== false;
+      const nuloPrimeiro = opcoes?.nullsFirst ?? !crescente;
+      const va = a[campo] ?? null;
+      const vb = b[campo] ?? null;
+      if (va === null || vb === null) {
+        if (va === vb) continue;
+        return (va === null) === nuloPrimeiro ? -1 : 1;
+      }
+      const diferenca = String(va) > String(vb) ? 1 : String(va) < String(vb) ? -1 : 0;
+      if (diferenca !== 0) return crescente ? diferenca : -diferenca;
+    }
+    return 0;
+  };
+}
 function supabaseFalso(tabelas: Record<string, Linha[]>) {
   const chamadas: { tabela: string; passos: [string, unknown[]][] }[] = [];
   const comoRegex = (padrao: string) =>
@@ -342,6 +386,9 @@ function supabaseFalso(tabelas: Record<string, Linha[]>) {
       let linhas = [...(tabelas[tabela] ?? [])];
       let contar = false;
       let total: number | null = null;
+      const criterios: { campo: string; opcoes?: OpcoesOrdem }[] = [];
+      // Ordena só quando a página é cortada ou entregue, com todos os critérios de uma vez.
+      const ordenar = () => { if (criterios.length) linhas.sort(compararPorCriterios(criterios)); };
       const construtor: Construtor = {
         select(colunas, opcoes) { registro.passos.push(["select", [colunas, opcoes]]); contar = Boolean(opcoes?.count); return construtor; },
         eq(campo, valor) { registro.passos.push(["eq", [campo, valor]]); linhas = linhas.filter((l) => l[campo] === valor); return construtor; },
@@ -349,13 +396,13 @@ function supabaseFalso(tabelas: Record<string, Linha[]>) {
         in(campo, valores) { registro.passos.push(["in", [campo, valores]]); linhas = linhas.filter((l) => valores.includes(l[campo])); return construtor; },
         order(campo, opcoes) {
           registro.passos.push(["order", [campo, opcoes]]);
-          const sinal = opcoes?.ascending === false ? -1 : 1;
-          linhas.sort((a, b) => (String(a[campo]) > String(b[campo]) ? sinal : String(a[campo]) < String(b[campo]) ? -sinal : 0));
+          criterios.push({ campo, opcoes });
           return construtor;
         },
-        limit(n) { registro.passos.push(["limit", [n]]); linhas = linhas.slice(0, n); return construtor; },
-        range(de, ate) { registro.passos.push(["range", [de, ate]]); total = linhas.length; linhas = linhas.slice(de, ate + 1); return construtor; },
+        limit(n) { registro.passos.push(["limit", [n]]); ordenar(); linhas = linhas.slice(0, n); return construtor; },
+        range(de, ate) { registro.passos.push(["range", [de, ate]]); ordenar(); total = linhas.length; linhas = linhas.slice(de, ate + 1); return construtor; },
         then(resolver) {
+          ordenar();
           return Promise.resolve(resolver({ data: linhas, error: null, count: contar ? (total ?? linhas.length) : null }));
         },
       };
@@ -410,4 +457,28 @@ test("consultarServidoresPagina repete a busca da aba sem texto: Prefeitura, nom
   ]);
   // A busca do navegador (fetchServidores) ordena igual.
   assert.match(fonte("../src/data/prefeituraApi.ts"), /\.order\("nome"\)\.order\("id"\)\.range\(from, to\)/);
+  // Nome manda e id só desempata: com nomes e ids em ordens opostas, ANA vem antes de ZOE.
+  const cruzados = supabaseFalso({ servidores: [
+    { id: "01", nome: "ZOE", orgao_tipo: "prefeitura" },
+    { id: "02", nome: "ANA", orgao_tipo: "prefeitura" },
+    { id: "00", nome: "ZOE", orgao_tipo: "prefeitura" },
+  ] });
+  const ordem = await consultarServidoresPagina<{ id: string }>(cruzados as never, 0);
+  assert.deepEqual(ordem.data.map((s) => s.id), ["02", "00", "01"]);
+});
+
+test("lote de contratos: do início de vigência mais recente, contrato sem início no fim", async () => {
+  const sb = supabaseFalso({ contratos: [
+    { id: "sem-1", vigencia_inicio: null },
+    { id: "set", vigencia_inicio: "2026-09-03" },
+    { id: "sem-2", vigencia_inicio: null },
+    { id: "nov", vigencia_inicio: "2026-11-17" },
+  ] });
+  const lote = await consultarLoteContratos<{ id: string }>(sb as never, 3);
+  assert.deepEqual(lote.map((c) => c.id), ["nov", "set", "sem-1"]);
+  assert.deepEqual(sb.chamadas[0].passos, [
+    ["select", [COLUNAS_CONTRATOS, undefined]],
+    ["order", ["vigencia_inicio", { ascending: false, nullsFirst: false }]],
+    ["limit", [3]],
+  ]);
 });

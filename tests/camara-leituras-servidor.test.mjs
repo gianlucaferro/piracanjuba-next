@@ -190,3 +190,31 @@ test("aba de indicações: ano corrente e leitura que lança erro, sem ano fixo"
   assert.match(trecho, /paragrafoIndicacoes\(\{ total: stats\.total, ano, doAno: stats\.doAno/);
   assert.doesNotMatch(bloco, /fetchIndicacoesStats|ano: 2026/);
 });
+
+// ---------------------------------------------------------------- atuação (revisão do PR 56)
+
+function atos(mocoes, requerimentos) {
+  const linhas = [];
+  for (let i = 0; i < mocoes; i++) linhas.push({ id: `m${i}`, tipo: "MOCAO", ano: 2026 });
+  for (let i = 0; i < requerimentos; i++) linhas.push({ id: `r${i}`, tipo: "REQUERIMENTO", ano: 2026 });
+  linhas.push({ id: "p0", tipo: "PARECER", ano: 2026 });
+  return linhas;
+}
+
+test("atuação: totais por contagem exata, sem parar nas 1.000 linhas do PostgREST", async () => {
+  const escopo = await carregar("src/lib/data/camara-abas.ts", supabaseFalso({ ato_camara: atos(1001, 5) }));
+  assert.deepEqual(plano(await escopo.fetchAtuacaoResumoServidor()), { mocoes: 1001, requerimentos: 5 });
+  const vazio = await carregar("src/lib/data/camara-abas.ts", supabaseFalso({ ato_camara: [] }));
+  assert.deepEqual(plano(await vazio.fetchAtuacaoResumoServidor()), { mocoes: 0, requerimentos: 0 });
+});
+
+test("atuação: falha na contagem lança erro em vez de virar total", async () => {
+  const escopo = await carregar("src/lib/data/camara-abas.ts", supabaseFalso(
+    { ato_camara: atos(3, 2) },
+    ({ filtros }) => filtros.some(([, chave, valor]) => chave === "tipo" && valor === "REQUERIMENTO"),
+  ));
+  await assert.rejects(escopo.fetchAtuacaoResumoServidor());
+  const bloco = await readFile(new URL("../src/app/camara/[aba]/bloco-servidor.tsx", import.meta.url), "utf8");
+  assert.match(bloco, /tentar\("atuacao-resumo", \(\) => fetchAtuacaoResumoServidor\(\)\)/);
+  assert.doesNotMatch(bloco, /fetchAtosStats/);
+});

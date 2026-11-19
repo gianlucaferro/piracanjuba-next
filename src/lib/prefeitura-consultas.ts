@@ -3,8 +3,9 @@
 // do react-query recebe exatamente o formato que a aba buscaria sozinha.
 //
 // As consultas de lote (contratos, despesas, servidores) repetem colunas e ordem das buscas de
-// src/data/prefeituraApi.ts, que a Câmara também usa; tests/prefeitura-respostas.test.ts
-// confere essa equivalência lendo o arquivo.
+// src/data/prefeituraApi.ts, que a Câmara também usa (exceção: contrato sem início de vigência,
+// ver consultarLoteContratos); tests/prefeitura-respostas.test.ts confere essa equivalência
+// lendo o arquivo.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { resumirFolhaPrefeitura, type RegistroCoberturaPrefeitura, type RegistroFolhaPrefeitura, type ResumoFolhaPrefeitura } from "./prefeitura-folha.ts";
 import {
@@ -98,12 +99,16 @@ export async function consultarServidoresPagina<T = Record<string, unknown>>(sb:
 
 // ===== Contratos e despesas (primeiro lote) =====
 
-/** Os primeiros contratos na ordem de fetchContratos (início de vigência, do mais recente). */
+/**
+ * Os primeiros contratos por início de vigência, do mais recente. Contrato sem início vai para o
+ * fim (nullsFirst: false): no Postgres a ordem decrescente põe o nulo primeiro, e o lote viraria
+ * "os mais recentes" sem data nenhuma. vigencia_inicio aceita nulo (0 de 6.610 em 2026-11-19).
+ */
 export async function consultarLoteContratos<T = Record<string, unknown>>(sb: SupabaseClient, limite: number): Promise<T[]> {
   const { data, error } = await sb
     .from("contratos")
     .select(COLUNAS_CONTRATOS)
-    .order("vigencia_inicio", { ascending: false })
+    .order("vigencia_inicio", { ascending: false, nullsFirst: false })
     .limit(limite);
   if (error) throw error;
   return (data ?? []) as T[];

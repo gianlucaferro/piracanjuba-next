@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createClient } from "@supabase/supabase-js";
 import {
   CATEGORIA_SEM_NOME,
   LOTE_ZAP,
@@ -8,11 +9,15 @@ import {
   ehNovo,
   embaralharPorDia,
   fichaParaNavegador,
+  maisUmLote,
+  paginacaoDaChave,
+  registrarContato,
   sementeDoDia,
   textoIndice,
   textoResposta,
   type CadastroZap,
   type FichaZap,
+  type PaginacaoZap,
 } from "../src/app/zap-pba/lista.ts";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
@@ -152,4 +157,78 @@ test("o índice só diz quantos são quando o total veio do banco, e trata o sin
 test("o primeiro lote fecha as grades de 1, 2 e 3 colunas", () => {
   assert.equal(LOTE_ZAP % 6, 0);
   assert.ok(LOTE_ZAP >= 40 && LOTE_ZAP <= 60);
+});
+
+test("mudar busca, categoria ou ordem volta ao primeiro lote, inclusive ao desfazer o filtro", () => {
+  const SEM_FILTRO = JSON.stringify(["", null, "recent"]);
+  const UMA_CATEGORIA = JSON.stringify(["", "Agro", "recent"]);
+  // Cada render grava no estado o que paginacaoDaChave devolve, como o ZapPbaClient faz.
+  let estado: PaginacaoZap = { chave: SEM_FILTRO, limite: LOTE_ZAP };
+  estado = maisUmLote(estado, SEM_FILTRO);
+  estado = maisUmLote(estado, SEM_FILTRO);
+  assert.equal(estado.limite, 3 * LOTE_ZAP);
+  assert.equal(paginacaoDaChave(estado, SEM_FILTRO), estado, "filtro igual: o estado não muda e o render não se repete");
+
+  // Caso relatado na revisão do PR 56: lista aberta até 144, categoria com um único
+  // resultado (nenhum "Mostrar mais" acontece nela) e categoria limpa de novo.
+  estado = paginacaoDaChave(estado, UMA_CATEGORIA);
+  assert.deepEqual(estado, { chave: UMA_CATEGORIA, limite: LOTE_ZAP });
+  estado = paginacaoDaChave(estado, SEM_FILTRO);
+  assert.deepEqual(estado, { chave: SEM_FILTRO, limite: LOTE_ZAP });
+
+  // "Mostrar mais" com o filtro recém-trocado soma ao primeiro lote da combinação nova.
+  assert.deepEqual(maisUmLote({ chave: SEM_FILTRO, limite: 3 * LOTE_ZAP }, UMA_CATEGORIA), {
+    chave: UMA_CATEGORIA,
+    limite: 2 * LOTE_ZAP,
+  });
+});
+
+function esperar(ms: number) {
+  return new Promise((resolver) => setTimeout(resolver, ms));
+}
+
+test("o clique no WhatsApp envia o incremento ao Supabase, e a ficha editorial não", async () => {
+  const corpos: unknown[] = [];
+  let chegou: () => void = () => undefined;
+  const primeiraChamada = new Promise<void>((resolver) => {
+    chegou = resolver;
+  });
+  const cliente = createClient("http://supabase.teste", "chave-de-teste", {
+    global: {
+      fetch: async (entrada: RequestInfo | URL, init?: RequestInit) => {
+        corpos.push({ url: String(entrada), corpo: JSON.parse(String(init?.body)) });
+        chegou();
+        return new Response(null, { status: 204 });
+      },
+    },
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+  const incrementar = (id: string) => cliente.rpc("increment_click_count", { establishment_id: id });
+
+  // O construtor do supabase-js só dispara a requisição no .then(): criado e
+  // descartado com `void`, como o ZapPbaClient fazia, não envia nada.
+  void incrementar("descartado");
+  await esperar(50);
+  assert.deepEqual(corpos, []);
+
+  registrarContato({ id: "/escritorio-exemplo", editorial: true }, incrementar);
+  registrarContato({ id: "c1" }, incrementar);
+  await Promise.race([primeiraChamada, esperar(2000)]);
+  await esperar(50);
+  assert.deepEqual(corpos, [
+    { url: "http://supabase.teste/rest/v1/rpc/increment_click_count", corpo: { establishment_id: "c1" } },
+  ]);
+});
+
+test("a falha do incremento não vira erro solto no navegador", async () => {
+  const soltas: unknown[] = [];
+  const ouvir = (motivo: unknown) => soltas.push(motivo);
+  process.on("unhandledRejection", ouvir);
+  try {
+    assert.doesNotThrow(() => registrarContato({ id: "c2" }, () => Promise.reject(new Error("rede fora do ar"))));
+    await esperar(20);
+  } finally {
+    process.off("unhandledRejection", ouvir);
+  }
+  assert.deepEqual(soltas, []);
 });

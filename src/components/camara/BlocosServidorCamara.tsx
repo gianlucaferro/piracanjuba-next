@@ -19,10 +19,15 @@ import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import {
   FONTE_PORTAL_CAMARA,
   FONTE_SICONFI,
+  INDICACOES_NO_PAINEL,
+  LICITACOES_EM_CARTAO,
   faqPageJsonLd,
   formatarInteiro,
   formatarPercentual,
   formatarReais,
+  linhaIndicacao,
+  linhaLicitacao,
+  valorDaLicitacao,
   valorLicitacoes,
   type ItemFaq,
   type OrcamentoCamaraAno,
@@ -41,6 +46,12 @@ function dataCurta(iso: string | null | undefined): string {
 
 function reaisOuTraco(valor: number | null | undefined): string {
   return valor === null || valor === undefined || !Number.isFinite(valor) ? "-" : formatarReais(valor);
+}
+
+/** Homologado positivo, senão estimado positivo (homologado zero não esconde o estimado). */
+function valorDoCartao(l: LicitacaoCamara): string {
+  const valor = valorDaLicitacao(l);
+  return valor ? formatarReais(valor.valor) : "Valor não informado";
 }
 
 function cnpjFormatado(c: string | null): string | null {
@@ -216,6 +227,9 @@ export function BlocoLicitacoesCamara({
 }) {
   // Sem valor homologado na fonte (2026-11-19), o cartão mostra o estimado; sem nenhum, some.
   const valor = valorLicitacoes({ totalHomologado, totalEstimado });
+  // As primeiras em cartão; as demais (até LICITACOES_NO_SERVIDOR) numa lista de uma linha cada.
+  const cartoes = recentes.slice(0, LICITACOES_EM_CARTAO);
+  const demais = recentes.slice(LICITACOES_EM_CARTAO);
   return (
     <RespostaAba titulo="Licitações da Câmara em números" paragrafo={paragrafo} fonte={FONTE_CAMARA}>
       <Destaques
@@ -254,13 +268,13 @@ export function BlocoLicitacoesCamara({
           </section>
         )}
       </div>
-      {recentes.length > 0 && (
+      {cartoes.length > 0 && (
         <section className="space-y-2">
           <h2 className="text-lg font-semibold text-foreground">Licitações publicadas mais recentemente</h2>
           <p className="text-sm text-muted-foreground">
-            As {recentes.length} mais recentes de {formatarInteiro(total)}, pela data de publicação no portal.
+            As {cartoes.length} mais recentes de {formatarInteiro(total)}, pela data de publicação no portal.
           </p>
-          {recentes.map((l) => (
+          {cartoes.map((l) => (
             <article key={l.id} className="stat-card">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -270,7 +284,7 @@ export function BlocoLicitacoesCamara({
                 </div>
                 <p className="text-sm font-bold text-foreground">
                   {/* Zero ou vazio na fonte é valor não informado, não licitação de R$ 0,00. */}
-                  {(l.valor_homologado ?? l.valor_estimado) ? formatarReais((l.valor_homologado ?? l.valor_estimado)!) : "Valor não informado"}
+                  {valorDoCartao(l)}
                 </p>
               </div>
               {l.descricao && <p className="text-sm text-foreground/85 leading-relaxed">{cortar(l.descricao, 220)}</p>}
@@ -281,6 +295,18 @@ export function BlocoLicitacoesCamara({
             </article>
           ))}
         </section>
+      )}
+      {demais.length > 0 && (
+        <details className="stat-card">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">
+            {`Mais ${demais.length} licitações publicadas, da ${LICITACOES_EM_CARTAO + 1}ª à ${recentes.length}ª mais recente, com modalidade, situação, valor e objeto`}
+          </summary>
+          <ol className="mt-3 space-y-2 text-sm text-foreground/85 leading-relaxed">
+            {demais.map((l) => (
+              <li key={l.id}><strong>{l.centi_label}</strong>{linhaLicitacao(l)}</li>
+            ))}
+          </ol>
+        </details>
       )}
       <PerguntasFrequentes itens={faq} url={`${SITE_URL}/camara/licitacoes`} />
       <h2 className="text-lg font-semibold text-foreground pt-2">Todas as licitações, com busca e resumo por IA</h2>
@@ -370,12 +396,16 @@ export function BlocoDespesasCamara({
 export function BlocoServidoresCamara({
   paragrafo,
   referenciaCadastro,
+  referenciaTabela,
   porCargo,
   cadastro,
   faq,
 }: {
   paragrafo: string;
+  /** competência do resumo por cargo (fetchFolhaStats) */
   referenciaCadastro: string | null;
+  /** competência das linhas da tabela (fetchFolhaUltimaCompetencia), lida das próprias linhas */
+  referenciaTabela: string | null;
   porCargo: Array<{ cargo: string; quantidade: number }>;
   cadastro: FolhaServidor[];
   faq: ItemFaq[];
@@ -409,7 +439,7 @@ export function BlocoServidoresCamara({
       {cadastro.length > 0 && (
         <details className="stat-card">
           <summary className="cursor-pointer text-sm font-semibold text-foreground">
-            Cadastro de pessoal{referenciaCadastro ? ` de ${referenciaCadastro}` : ""}: {cadastro.length} pessoas, com cargo, lotação e admissão
+            Cadastro de pessoal{referenciaTabela ? ` de ${referenciaTabela}` : ""}: {cadastro.length} pessoas, com cargo, lotação e admissão
           </summary>
           <div className="overflow-x-auto mt-3">
             <table className="w-full text-sm">
@@ -453,9 +483,24 @@ export function BlocoIndicacoesCamara({
   indicacoes: IndicacaoCamara[];
   total: number;
 }) {
+  // As primeiras no painel; as demais (até INDICACOES_NO_SERVIDOR) numa lista de uma linha cada.
+  const noPainel = indicacoes.slice(0, INDICACOES_NO_PAINEL);
+  const demais = indicacoes.slice(INDICACOES_NO_PAINEL);
   return (
     <RespostaAba titulo="Indicações dos vereadores em números" paragrafo={paragrafo} fonte={FONTE_CAMARA}>
-      {indicacoes.length > 0 && <IndicacoesPanel indicacoes={indicacoes} totalGeral={total} variant="full" />}
+      {noPainel.length > 0 && <IndicacoesPanel indicacoes={noPainel} totalGeral={total} variant="full" />}
+      {demais.length > 0 && (
+        <details className="stat-card">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">
+            {`Mais ${demais.length} indicações, da ${INDICACOES_NO_PAINEL + 1}ª à ${indicacoes.length}ª mais recente, com número, data e ementa`}
+          </summary>
+          <ol className="mt-3 space-y-2 text-sm text-foreground/85 leading-relaxed">
+            {demais.map((i) => (
+              <li key={i.id}><strong>{i.numero}</strong>{linhaIndicacao(i)}</li>
+            ))}
+          </ol>
+        </details>
+      )}
       <h2 className="text-lg font-semibold text-foreground pt-2">Todas as indicações, com busca e resumo por IA</h2>
     </RespostaAba>
   );

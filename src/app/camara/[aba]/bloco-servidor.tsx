@@ -18,6 +18,8 @@ import {
   chaveServidoresCamara,
 } from "@/components/camara/chaves-consulta";
 import {
+  INDICACOES_NO_SERVIDOR,
+  LICITACOES_NO_SERVIDOR,
   faqContratos,
   faqDespesas,
   faqLicitacoes,
@@ -30,11 +32,13 @@ import {
   paragrafoLicitacoes,
   paragrafoProjetos,
   paragrafoServidores,
+  referenciaDoCadastro,
   type CadastroPessoalCamara,
   type OrcamentoCamaraAno,
   type ResumoFolhaParaTexto,
 } from "@/components/camara/resposta-aba";
 import {
+  fetchAtuacaoResumoServidor,
   fetchCamaraContratosServidor,
   fetchIndicacoesResumoServidor,
   fetchOrcamentoCamaraServidor,
@@ -47,7 +51,7 @@ import { fetchLicitacoesRecentes, fetchLicitacoesStats } from "@/lib/data/licita
 import { fetchFolhaStats, fetchFolhaUltimaCompetencia } from "@/lib/data/folha-camara";
 import { fetchIndicacoesRecentes } from "@/lib/data/indicacoes-camara";
 import { fetchAtividadesLegislativas, fetchAtividadesStats } from "@/lib/data/atividades-legislativas";
-import { fetchAtosPorTipo, fetchAtosStats } from "@/lib/data/atos-camara";
+import { fetchAtosPorTipo } from "@/lib/data/atos-camara";
 
 // Leitura no servidor de cada aba da Câmara: monta a parte renderizada no servidor (parágrafo-
 // resposta, resumo, primeiro lote, perguntas frequentes) e, nas abas de contratos e servidores,
@@ -104,11 +108,12 @@ async function blocoContratos(queryClient: QueryClient): Promise<ReactNode> {
 
 async function blocoLicitacoes(): Promise<ReactNode> {
   // A aba lista a tabela camara_licitacoes pelo cliente (743 linhas, a maioria sem data de
-  // abertura); hidratá-la inteira passaria de 1 MB de HTML. O primeiro lote do servidor vem da
-  // tabela licitacao_camara (antiga /transparencia/licitacoes-camara), toda com data de publicação.
+  // abertura); hidratá-la inteira passaria de 1 MB de HTML. O lote do servidor vem da tabela
+  // licitacao_camara (antiga /transparencia/licitacoes-camara), toda com data de publicação, com as
+  // mesmas 150 mais recentes que aquela página listava (LICITACOES_NO_SERVIDOR).
   const [stats, recentes] = await Promise.all([
     tentar("licitacoes-resumo", () => fetchLicitacoesStats()),
-    tentar("licitacoes-recentes", () => fetchLicitacoesRecentes(20)),
+    tentar("licitacoes-recentes", () => fetchLicitacoesRecentes(LICITACOES_NO_SERVIDOR)),
   ]);
   if (!stats?.total) return null;
   const anos = stats.por_ano.map((a) => a.ano);
@@ -188,6 +193,7 @@ async function blocoServidores(queryClient: QueryClient): Promise<ReactNode> {
     <BlocoServidoresCamara
       paragrafo={paragrafo}
       referenciaCadastro={cadastroStats?.ultima_referencia ?? null}
+      referenciaTabela={referenciaDoCadastro(cadastro ?? [])}
       porCargo={cadastroStats?.por_cargo ?? []}
       cadastro={cadastro ?? []}
       faq={faqServidores(folha, resumoCadastro)}
@@ -201,7 +207,8 @@ async function blocoIndicacoes(): Promise<ReactNode> {
   const ano = anoEmSaoPaulo();
   const [stats, recentes] = await Promise.all([
     tentar("indicacoes-resumo", () => fetchIndicacoesResumoServidor(ano)),
-    tentar("indicacoes-recentes", () => fetchIndicacoesRecentes(50)),
+    // As mesmas 200 mais recentes que /transparencia/indicacoes listava (INDICACOES_NO_SERVIDOR).
+    tentar("indicacoes-recentes", () => fetchIndicacoesRecentes(INDICACOES_NO_SERVIDOR)),
   ]);
   if (!stats?.total) return null;
   const paragrafo = paragrafoIndicacoes({ total: stats.total, ano, doAno: stats.doAno, ultima: stats.ultima });
@@ -225,14 +232,16 @@ async function blocoProjetos(): Promise<ReactNode> {
 }
 
 async function blocoAtuacao(): Promise<ReactNode> {
-  const [mocoes, requerimentos, stats] = await Promise.all([
+  // Totais por contagem exata: contar as linhas lidas pararia em 1.000, o limite do PostgREST. Se a
+  // contagem falhar, o bloco some, em vez de afirmar um total.
+  const [mocoes, requerimentos, totais] = await Promise.all([
     tentar("atuacao-mocoes", () => fetchAtosPorTipo("MOCAO", 20)),
     tentar("atuacao-requerimentos", () => fetchAtosPorTipo("REQUERIMENTO", 20)),
-    tentar("atuacao-resumo", () => fetchAtosStats()),
+    tentar("atuacao-resumo", () => fetchAtuacaoResumoServidor()),
   ]);
-  if (!stats) return null;
-  const totalMocoes = stats.por_tipo.find((t) => t.tipo === "MOCAO")?.quantidade ?? 0;
-  const totalRequerimentos = stats.por_tipo.find((t) => t.tipo === "REQUERIMENTO")?.quantidade ?? 0;
+  if (!totais) return null;
+  const totalMocoes = totais.mocoes;
+  const totalRequerimentos = totais.requerimentos;
   const datas = [...(mocoes ?? []), ...(requerimentos ?? [])]
     .map((a) => a.data_publicacao)
     .filter((d): d is string => Boolean(d))

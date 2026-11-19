@@ -37,6 +37,34 @@ export const LOTE_ZAP = 48;
 // Categoria usada no índice para cadastros sem categoria.
 export const CATEGORIA_SEM_NOME = "Outros";
 
+// Quantos cartões a grade mostra para a combinação atual de busca, categoria e ordem
+// (a chave). Mudar a chave volta ao primeiro lote, e o componente grava esse reinício
+// no estado já no render da mudança: voltar depois a uma combinação anterior (limpar a
+// categoria, por exemplo) também começa do primeiro lote, em vez de restaurar os
+// cartões que estavam abertos antes do filtro.
+export type PaginacaoZap = { chave: string; limite: number };
+
+export function paginacaoDaChave(atual: PaginacaoZap, chave: string): PaginacaoZap {
+  return atual.chave === chave ? atual : { chave, limite: LOTE_ZAP };
+}
+
+export function maisUmLote(atual: PaginacaoZap, chave: string): PaginacaoZap {
+  return { chave, limite: paginacaoDaChave(atual, chave).limite + LOTE_ZAP };
+}
+
+// Soma um contato ao cadastro quando o visitante abre o WhatsApp pelo cartão ou pelo
+// índice; a ficha editorial não existe na tabela e fica de fora. O supabase-js 2.119
+// só envia a requisição quando o construtor devolvido por rpc() é consumido com
+// .then() ou await: com `void` sozinho, como estava desde 2026-05-03, nenhum clique
+// era contado. A falha é descartada, e o link segue para o WhatsApp sem esperar.
+export function registrarContato(
+  item: Pick<FichaZap, "id" | "editorial">,
+  incrementar: (id: string) => PromiseLike<unknown>,
+): void {
+  if (item.editorial) return;
+  incrementar(item.id).then(undefined, () => undefined);
+}
+
 const SETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function ehNovo(createdAt: string | null, agoraMs: number): boolean {

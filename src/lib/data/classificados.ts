@@ -1,13 +1,8 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
-import { buscarAnuncios } from "@/components/classificados/buscar-anuncios";
-import {
-  COLUNAS_ANUNCIO_PUBLICO,
-  type AnuncioPublico,
-} from "@/components/classificados/anuncio-publico";
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { buscarAnuncioPorId, buscarAnuncios } from "@/components/classificados/buscar-anuncios";
+import type { AnuncioPublico } from "@/components/classificados/anuncio-publico";
 
 /**
  * Lista do Compra e Venda lida no servidor (anúncios ativos e vendidos), com as
@@ -30,23 +25,19 @@ export const fetchAnunciosLista = unstable_cache(
 
 /**
  * Anúncio pelo id, só com as colunas públicas (sem codigo_gestao). null quando o
- * id não é UUID, o anúncio não existe ou a consulta falha.
+ * id não é UUID ou o anúncio não existe. Falha da consulta sobe em vez de virar null:
+ * o unstable_cache não guarda promessa rejeitada (e, com entrada vencida, devolve a
+ * anterior), então uma falha passageira não fica 60 segundos em cache como 404 com
+ * noindex. Sem entrada em cache, a página responde erro 500, que o buscador trata
+ * como passageiro.
  */
 export const fetchAnuncioPublicoPorId = unstable_cache(
   async (id: string): Promise<AnuncioPublico | null> => {
-    if (!UUID.test(id)) return null;
     try {
-      const supabase = createPublicSupabaseClient();
-      const { data, error } = await supabase
-        .from("classificados")
-        .select(COLUNAS_ANUNCIO_PUBLICO)
-        .eq("id", id)
-        .maybeSingle();
-      if (error) throw error;
-      return (data as AnuncioPublico | null) ?? null;
+      return await buscarAnuncioPorId<AnuncioPublico>(createPublicSupabaseClient(), id);
     } catch (error) {
       console.error("fetchAnuncioPublicoPorId error:", error);
-      return null;
+      throw error;
     }
   },
   ["classificado-publico-por-id"],

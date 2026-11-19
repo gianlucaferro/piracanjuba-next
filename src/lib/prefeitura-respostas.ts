@@ -120,11 +120,14 @@ export function cargoCorrespondeAoPapel(cargo: string | null | undefined, papel:
   return /^PREFEIT/.test(c);
 }
 
-/** Nome do cadastro do Executivo bate com o nome da folha (sem acento e sem caixa). */
+/**
+ * Nome do cadastro do Executivo igual ao nome da folha, inteiro (sem acento, caixa e pontuação).
+ * Trecho não basta: "MARIANA SILVA" contém "ANA SILVA", e o cargo não prova que é a mesma pessoa.
+ * Na folha de 2026-11 os dois nomes são iguais ao cadastro.
+ */
 export function nomesCoincidem(nomeFolha: string | null | undefined, nomeExecutivo: string | null | undefined): boolean {
-  const folha = normalizar(nomeFolha);
   const executivo = normalizar(nomeExecutivo);
-  return executivo.length > 0 && folha.includes(executivo);
+  return executivo.length > 0 && normalizar(nomeFolha) === executivo;
 }
 
 export type ServidorCandidato = { id: string; nome: string | null; cargo: string | null };
@@ -305,9 +308,14 @@ export function montarRespostaContratos(lote: ContratoDoLote[], total: number | 
     const ultimo = dataPorExtenso(inicios[inicios.length - 1]);
     lotes += primeiro === ultimo ? `, com início de vigência em ${primeiro},` : `, com início de vigência entre ${primeiro} e ${ultimo},`;
   }
-  lotes += lote.length === 1 ? ` vale ${formatarReais(soma)}` : ` somam ${formatarReais(soma)}`;
   const semValor = lote.length - comValor.length;
-  if (semValor > 0) lotes += ` (${formatarInteiro(semValor)} sem valor informado)`;
+  if (!comValor.length) {
+    // Nenhum valor no lote: a soma vazia daria R$ 0,00, que não é dado. Zero gravado continua valendo.
+    lotes += lote.length === 1 ? " não tem valor informado" : " não têm valor informado";
+  } else {
+    lotes += lote.length === 1 ? ` vale ${formatarReais(soma)}` : ` somam ${formatarReais(soma)}`;
+    if (semValor > 0) lotes += ` (${formatarInteiro(semValor)} sem valor informado)`;
+  }
   frases.push(`${lotes}.`);
   const atualizado = lote.map((c) => diaEmBrasilia(c.updated_at)).filter((d): d is string => d !== null).sort().pop();
   if (atualizado) frases.push(`Dados atualizados em ${dataPorExtenso(atualizado)}.`);

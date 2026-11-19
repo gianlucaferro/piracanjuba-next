@@ -2155,7 +2155,10 @@ function AnuncioCard({
 
 // ===== MAIN PAGE =====
 
-/** cabecalho: H1 e parágrafo-resposta renderizados no servidor; sem ele, vale o cabeçalho local. */
+/**
+ * cabecalho: H1 e parágrafo-resposta renderizados no servidor; sem ele, vale o cabeçalho local.
+ * O parágrafo (RespostaAnuncios) se recalcula da lista desta query a cada carga ou mudança.
+ */
 export default function CompraEVendaPBA({ cabecalho }: { cabecalho?: ReactNode } = {}) {
   const queryClient = useQueryClient();
   const {

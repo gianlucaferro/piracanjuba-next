@@ -4,13 +4,12 @@ import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { fetchAnunciosLista } from "@/lib/data/classificados";
 import ClassificadosClient from "@/components/classificados/ClassificadosWrapper";
 import ListaAnunciosServidor from "@/components/classificados/ListaAnunciosServidor";
+import RespostaAnuncios from "@/components/classificados/RespostaAnuncios";
 import { CHAVE_LISTA_ANUNCIOS } from "@/components/classificados/buscar-anuncios";
 import {
   anuncioPublico,
-  dataLocal,
-  fraseRespostaAnuncios,
   listaAnunciosJsonLd,
-  resumirAnuncios,
+  respostaDaLista,
   serializarJsonLd,
 } from "@/components/classificados/anuncio-publico";
 
@@ -39,11 +38,13 @@ export default async function ComprarEVendaPage() {
   const agora = new Date();
   const publicos = anuncios ? anuncios.filter((a) => anuncioPublico(a, agora)) : null;
   const lote = publicos ? publicos.slice(0, PRIMEIRO_LOTE) : [];
-  const resposta = publicos ? fraseRespostaAnuncios(resumirAnuncios(publicos, agora), dataLocal(agora)) : null;
+  const resposta = publicos ? respostaDaLista(publicos, agora) : null;
 
+  // A hidratação leva a mesma lista filtrada que o HTML mostra: o cache do servidor pode
+  // guardar por até 60 segundos um anúncio que venceu depois de lido.
   const queryClient = new QueryClient();
-  if (anuncios && anuncios.length <= LIMITE_HIDRATACAO) {
-    queryClient.setQueryData(CHAVE_LISTA_ANUNCIOS, anuncios);
+  if (publicos && publicos.length <= LIMITE_HIDRATACAO) {
+    queryClient.setQueryData(CHAVE_LISTA_ANUNCIOS, publicos);
   }
 
   const cabecalho = (
@@ -57,7 +58,8 @@ export default async function ComprarEVendaPage() {
       <p className="text-sm text-muted-foreground">
         Compre, venda e anuncie grátis em Piracanjuba.
       </p>
-      {resposta && <p className="text-sm text-foreground mt-2 max-w-3xl">{resposta}</p>}
+      {/* Frase do servidor no HTML; no navegador, recalculada da lista atual. */}
+      <RespostaAnuncios inicial={resposta} />
     </div>
   );
 

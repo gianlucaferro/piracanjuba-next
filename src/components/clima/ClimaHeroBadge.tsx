@@ -50,7 +50,8 @@ export default async function ClimaHeroBadge() {
         </p>
         <p className="text-base sm:text-2xl md:text-3xl font-extrabold leading-none">
           {formatarTemperatura(temperaturaPrincipal)}
-          {!agora && <span className="sr-only"> de máxima prevista</span>}
+          {/* No celular o rótulo "Previsão para ..." fica oculto: o qualificador aparece aqui. */}
+          {!agora && <span className="text-xs font-semibold text-white/80 sm:sr-only"> máx. prevista</span>}
         </p>
         <p className="text-xs sm:text-xs text-white/80 sm:mt-1 inline-flex items-center gap-1 sm:gap-2 flex-wrap leading-none sm:leading-normal">
           {diaHoje && diaHoje.temperatura_min !== null && diaHoje.temperatura_max !== null && (
