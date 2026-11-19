@@ -190,9 +190,12 @@ export function montarPainelClima(
   return { hoje, agora, diaHoje: linhaHoje ? previsaoDia(linhaHoje) : null, previsao };
 }
 
-/** Resumo do mês com pelo menos um valor (chuva, dias de chuva ou temperatura). */
+/**
+ * Resumo do mês com a chuva acumulada, o único valor dele que aparece quando a série de dias falha
+ * (a resposta do topo usa a chuva do mês; o resto do resumo só aparece junto com a série).
+ */
 export function resumoMesTemDado(resumo: ResumoMes | null): boolean {
-  return !!resumo && Object.values(resumo).some((valor) => valor !== null);
+  return resumo?.acumulado_mm != null;
 }
 
 /**

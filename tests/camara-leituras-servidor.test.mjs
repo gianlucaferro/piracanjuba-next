@@ -233,3 +233,17 @@ test("listas de licitações, indicações e atos lançam erro do Supabase em ve
   const ok = await carregar("src/lib/data/licitacoes-camara.ts", supabaseFalso({ licitacao_camara: [{ id: 1, data_publicacao: "2026-11-01" }] }));
   assert.equal((await ok.fetchLicitacoesRecentes(150)).length, 1);
 });
+
+test("atividades legislativas: total, data e ranking de todas as linhas, além das 1.000 da resposta", async () => {
+  const atividade_legislativa = [];
+  for (let i = 1; i <= 1205; i++) {
+    atividade_legislativa.push({ id: i, ato_tipo: i <= 700 ? "Requerimento" : "Projeto de Lei", ano: 2026, autores: ["A"], autoria_executivo: false, data_publicacao: i === 1205 ? "2026-11-04" : "2026-01-10" });
+  }
+  const escopo = await carregar("src/lib/data/atividades-legislativas.ts", supabaseFalso({ atividade_legislativa }));
+  const stats = plano(await escopo.fetchAtividadesStats());
+  assert.equal(stats.total, 1205);
+  assert.equal(stats.ultima_publicacao, "2026-11-04");
+  assert.deepEqual(stats.por_tipo, [{ tipo: "Requerimento", quantidade: 700 }, { tipo: "Projeto de Lei", quantidade: 505 }]);
+  const falha = await carregar("src/lib/data/atividades-legislativas.ts", supabaseFalso({ atividade_legislativa }, () => true));
+  await assert.rejects(falha.fetchAtividadesStats());
+});

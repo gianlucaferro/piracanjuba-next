@@ -322,6 +322,8 @@ test("resumo do mês com algum valor conta como dado para o aviso de sem dados",
   assert.equal(resumoMesTemDado(vazio), false);
   assert.equal(resumoMesTemDado({ ...vazio, acumulado_mm: 95.2 }), true);
   assert.equal(resumoMesTemDado({ ...vazio, acumulado_mm: 0 }), true);
+  // Só a temperatura do mês não aparece sem a série de dias: o aviso continua.
+  assert.equal(resumoMesTemDado({ ...vazio, temperatura_media: 24.1 }), false);
   const pagina = readFileSync(new URL("../src/app/clima/page.tsx", import.meta.url), "utf8");
   assert.match(pagina, /const semDados = [^;]*!resumoMesTemDado\(resumo\);/);
 });

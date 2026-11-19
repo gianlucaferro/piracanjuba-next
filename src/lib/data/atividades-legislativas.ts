@@ -62,18 +62,30 @@ export const fetchAtividadesPorAutor = unstable_cache(
 export const fetchAtividadesStats = unstable_cache(
   async (): Promise<AtividadesStats> => {
     const supabase = createPublicSupabaseClient();
-    const { data } = await supabase
-      .from("atividade_legislativa")
-      .select("ato_tipo, ano, autores, autoria_executivo, data_publicacao");
+    // Leitura em páginas de 1.000 (o máximo por resposta do PostgREST): sem isso, acima de 1.000
+    // atos o total, a data mais recente e o ranking sairiam de uma amostra cortada. Erro lança,
+    // para o cache não guardar total falso (revisão do CodeRabbit no PR 56, 2026-11-19).
+    const PAGINA = 1000;
+    const data: Array<{ ato_tipo: string; ano: number | null; autores: string[]; autoria_executivo: boolean; data_publicacao: string | null }> = [];
+    for (let de = 0; ; de += PAGINA) {
+      const { data: pagina, error } = await supabase
+        .from("atividade_legislativa")
+        .select("ato_tipo, ano, autores, autoria_executivo, data_publicacao")
+        .order("id", { ascending: true })
+        .range(de, de + PAGINA - 1);
+      if (error) throw error;
+      data.push(...((pagina ?? []) as typeof data));
+      if (!pagina || pagina.length < PAGINA) break;
+    }
 
-    if (!data) return { total: 0, por_tipo: [], por_ano: [], por_autor: [], ultima_publicacao: null };
+    if (!data.length) return { total: 0, por_tipo: [], por_ano: [], por_autor: [], ultima_publicacao: null };
 
     const porTipo = new Map<string, number>();
     const porAno = new Map<number, number>();
     const porAutor = new Map<string, { quantidade: number; tipos: Record<string, number> }>();
     let ultima: string | null = null;
 
-    for (const r of data as Array<{ ato_tipo: string; ano: number | null; autores: string[]; autoria_executivo: boolean; data_publicacao: string | null }>) {
+    for (const r of data) {
       porTipo.set(r.ato_tipo, (porTipo.get(r.ato_tipo) ?? 0) + 1);
       if (r.ano) porAno.set(r.ano, (porAno.get(r.ano) ?? 0) + 1);
       if (!r.autoria_executivo) {
