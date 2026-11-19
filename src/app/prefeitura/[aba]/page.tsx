@@ -1,9 +1,15 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
 import { pageMetadata } from "@/lib/seo";
 import PrefeituraClient from "@/components/prefeitura/PrefeituraClient";
+import { PessoasExecutivoJsonLd, respostasPrefeitura } from "@/components/prefeitura/RespostasPrefeitura";
 import { FinanciadoresExecutivoCard } from "@/components/vereadores/FinanciadoresCampanhaCard";
+import { carregarAbaPrefeitura } from "@/lib/prefeitura-ssr";
 
+// Continua dinâmica: o PrefeituraClient lê useSearchParams (?busca=), e prerenderizar a rota
+// mandaria a árvore inteira para o navegador, deixando o HTML vazio. O primeiro lote de dados
+// vem de carregarAbaPrefeitura, com cache de 1 hora por leitura.
 export const dynamic = "force-dynamic";
 
 // Cada aba da Prefeitura vira uma rota indexável com title/description/canonical próprios
@@ -40,5 +46,15 @@ export async function generateMetadata({ params }: { params: Promise<{ aba: stri
 export default async function PrefeituraAbaPage({ params }: { params: Promise<{ aba: string }> }) {
   const { aba } = await params;
   if (!ABAS[aba]) notFound();
-  return <PrefeituraClient aba={aba} financiadoresExecutivo={<FinanciadoresExecutivoCard />} />;
+  const carga = await carregarAbaPrefeitura(aba);
+  return (
+    <HydrationBoundary state={carga.estado}>
+      {aba === "chefia" && carga.chefia && <PessoasExecutivoJsonLd executivo={carga.chefia.executivo} />}
+      <PrefeituraClient
+        aba={aba}
+        financiadoresExecutivo={<FinanciadoresExecutivoCard />}
+        respostas={respostasPrefeitura(aba, carga)}
+      />
+    </HydrationBoundary>
+  );
 }

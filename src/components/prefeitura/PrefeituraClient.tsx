@@ -27,10 +27,12 @@ import {
   fetchExecutivo, fetchSecretarias, fetchServidores, fetchAllServidores,
   fetchDespesas, fetchContratos, fetchLicitacoes,
   fetchDiarias, fetchObras, fetchSecretariosRemuneracao,
-  fetchExecutivoRemuneracao,
   type Contrato, type Licitacao, type Secretaria, type Obra
 } from "@/data/prefeituraApi";
 import { fetchContratosAditivos } from "@/data/contratosAditivosApi";
+import { consultarRemuneracaoExecutivo } from "@/lib/prefeitura-consultas";
+import { ehLoteInicial, SERVIDORES_POR_PAGINA } from "@/lib/prefeitura-lote";
+import { competenciaPorExtenso, dataCurta, diasAteVencimento, hojeEmBrasilia } from "@/lib/prefeitura-respostas";
 import PullToRefresh from "@/components/PullToRefresh";
 import VeiculosTab from "@/components/prefeitura/VeiculosTab";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
@@ -107,10 +109,10 @@ function EmptyState({ icon: Icon, title, description, fonteUrl }: {
 }
 
 function ExpiryBadge({ vigenciaFim }: { vigenciaFim: string | null }) {
-  if (!vigenciaFim) return null;
-  const fim = new Date(vigenciaFim + "T23:59:59");
-  const hoje = new Date();
-  const diasRestantes = Math.ceil((fim.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+  // Por data de calendário em Brasília: o HTML do servidor (UTC) e o do navegador dão o mesmo
+  // número, e o contrato que venceu ontem aparece como vencido (antes saía "Vence em 0d").
+  const diasRestantes = diasAteVencimento(vigenciaFim, hojeEmBrasilia());
+  if (diasRestantes === null) return null;
   if (diasRestantes < 0) return <span className="text-xs px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">Vencido</span>;
   if (diasRestantes <= 30) return <span className="text-xs px-1.5 py-0.5 rounded-full bg-warning/15 text-warning">Vence em {diasRestantes}d</span>;
   return null;
@@ -126,7 +128,12 @@ function formatCurrency(value: number | null) {
 
 function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode }) {
   const { data: executivo, isLoading } = useQuery({ queryKey: ["executivo"], queryFn: fetchExecutivo });
-  const { data: remuneracoes } = useQuery({ queryKey: ["executivo-remuneracao"], queryFn: fetchExecutivoRemuneracao });
+  // Subsídio da folha mensal do vínculo do cargo (não o valor fixo antigo: R$ 19.875,00 e
+  // R$ 9.875,00 valeram até 2026-02). Mesma função que o servidor usa para hidratar a chave.
+  const { data: remuneracoes } = useQuery({
+    queryKey: ["executivo-remuneracao"],
+    queryFn: () => consultarRemuneracaoExecutivo(supabase),
+  });
 
   if (isLoading) return <div className="stat-card animate-pulse h-40" />;
 
@@ -134,7 +141,7 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
     return <EmptyState icon={Building2} title="Sem dados" description="Dados da chefia do Executivo não disponíveis." />;
   }
 
-  const getRemuneracao = (nome: string) => {
+  const getSubsidio = (nome: string) => {
     return remuneracoes?.find(r => r.nome.toLowerCase() === nome.toLowerCase());
   };
 
@@ -142,7 +149,7 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
     <div className="space-y-6">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {executivo.map((a) => {
-        const rem = getRemuneracao(a.nome);
+        const subsidio = getSubsidio(a.nome);
         return (
         <div key={a.id} className="stat-card space-y-4">
           <div className="flex items-start gap-4">
@@ -159,22 +166,18 @@ function ChefiaExecutivo({ financiadores }: { financiadores?: React.ReactNode })
               <p className="text-sm text-muted-foreground mt-1">
                 Mandato {parseInt(a.mandato_inicio)}–{parseInt(a.mandato_fim)}
               </p>
-              <div className="mt-2 space-y-1">
-                <div className="flex items-center gap-2 rounded-lg bg-accent/10 px-3 py-1.5">
-                  <DollarSign className="w-4 h-4 text-accent" />
-                  <span className="text-base font-bold text-foreground">
-                    {a.tipo === "prefeita" ? "R$ 19.875,00" : "R$ 9.875,00"}
-                  </span>
-                  <span className="text-sm text-muted-foreground">/mês</span>
-                </div>
-                {rem?.bruto && (
-                  <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1">
-                    <span className="text-sm text-muted-foreground">Bruto:</span>
-                    <span className="text-sm font-semibold text-foreground">{formatCurrency(rem.bruto)}</span>
-                    <span className="text-xs text-muted-foreground ml-auto">{rem.competencia}</span>
+              {subsidio && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center gap-2 rounded-lg bg-accent/10 px-3 py-1.5">
+                    <DollarSign className="w-4 h-4 text-accent" />
+                    <span className="text-base font-bold text-foreground">{formatCurrency(subsidio.valor)}</span>
+                    <span className="text-sm text-muted-foreground">/mês</span>
                   </div>
-                )}
-              </div>
+                  <p className="text-xs text-muted-foreground px-1">
+                    Subsídio bruto na folha mensal de {competenciaPorExtenso(subsidio.competencia)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -395,7 +398,7 @@ function ServidoresTab({ initialSearch }: { initialSearch?: string }) {
   const [page, setPage] = useState(0);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = SERVIDORES_POR_PAGINA;
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -510,13 +513,13 @@ function GastosTab() {
             <div>
               <p className="font-medium text-foreground text-sm">{d.favorecido || "Sem favorecido"}</p>
               {d.descricao && <p className="text-sm text-muted-foreground">{d.descricao}</p>}
-              <p className="text-sm text-muted-foreground">{new Date(d.data).toLocaleDateString("pt-BR")}</p>
+              <p className="text-sm text-muted-foreground">{dataCurta(d.data)}</p>
               <button
                 onClick={() =>
                   requestSummary(
                     d.id,
                     "Despesa da Prefeitura",
-                    `- Favorecido: ${d.favorecido || "não informado"}\n- Descrição: ${d.descricao || "não informada"}\n- Data: ${d.data ? new Date(d.data).toLocaleDateString("pt-BR") : "não informada"}\n- Valor: ${d.valor != null ? formatCurrency(d.valor) : "não informado"}`,
+                    `- Favorecido: ${d.favorecido || "não informado"}\n- Descrição: ${d.descricao || "não informada"}\n- Data: ${dataCurta(d.data) ?? "não informada"}\n- Valor: ${d.valor != null ? formatCurrency(d.valor) : "não informado"}`,
                     `Despesa - ${d.favorecido || "Sem favorecido"}`,
                   )
                 }
@@ -552,7 +555,11 @@ function GastosTab() {
 // clique na aba. Por isso o aviso de carregamento só aparece com a aba ativa: sem isso ele
 // entrava no HTML de todas as abas da Prefeitura.
 function ContratosTab({ ativo }: { ativo: boolean }) {
-  const { data, isLoading } = useQuery({ queryKey: ["contratos"], queryFn: fetchContratos, staleTime: 1000 * 60 * 10 });
+  const { data, isLoading, isError, dataUpdatedAt } = useQuery({ queryKey: ["contratos"], queryFn: fetchContratos, staleTime: 1000 * 60 * 10 });
+  // Em /prefeitura/contratos o servidor entrega só os contratos mais recentes (src/lib/prefeitura-ssr.ts),
+  // e a lista completa chega logo depois. Enquanto isso, nada de total, filtro, CSV ou indicador de
+  // risco calculados sobre o lote, porque sairiam errados.
+  const loteServidor = ehLoteInicial(dataUpdatedAt);
   const { data: aditivos } = useQuery({
     queryKey: ["contratos_aditivos"],
     queryFn: fetchContratosAditivos,
@@ -617,7 +624,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
   // Client-side risk scoring — chunked to avoid blocking UI
   const [suspeitos, setSuspeitos] = useState<Set<string>>(new Set());
   useEffect(() => {
-    if (!data?.length || !aditivosReady) return;
+    if (!data?.length || !aditivosReady || loteServidor) return;
     let cancelled = false;
     const normalizados = data.map(normalizarPrefeitura);
     const aditivosList = (aditivos || []).map((a) => ({
@@ -654,7 +661,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
     };
     setTimeout(processChunk, 50);
     return () => { cancelled = true; };
-  }, [data, aditivosReady, aditivos, cnpjData, aditivosPorContrato, gruposIndex]);
+  }, [data, aditivosReady, loteServidor, aditivos, cnpjData, aditivosPorContrato, gruposIndex]);
 
   const fetchResumoContrato = async (c: Contrato, forceRefresh = false) => {
     setResumo(null);
@@ -749,7 +756,8 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
   }
 
   // Extract available years from data
-  const anos = [...new Set(data.map(c => c.vigencia_inicio ? new Date(c.vigencia_inicio).getFullYear().toString() : null).filter(Boolean))]
+  // Ano direto do texto da data: new Date("2026-01-01") no fuso de Brasília cai em 2025.
+  const anos = [...new Set(data.map(c => c.vigencia_inicio ? c.vigencia_inicio.slice(0, 4) : null).filter(Boolean))]
     .sort((a, b) => Number(b) - Number(a));
 
   // Extract available statuses
@@ -759,7 +767,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
   const buscaLower = busca.toLowerCase();
   const filtered = data.filter(c => {
     if (anoFiltro !== "todos") {
-      const ano = c.vigencia_inicio ? new Date(c.vigencia_inicio).getFullYear().toString() : null;
+      const ano = c.vigencia_inicio ? c.vigencia_inicio.slice(0, 4) : null;
       if (ano !== anoFiltro) return false;
     }
     if (statusFiltro !== "todos" && c.status !== statusFiltro) return false;
@@ -792,6 +800,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
           <input
             type="text"
             placeholder="Buscar por empresa, objeto ou número..."
+            disabled={loteServidor}
             value={busca}
             onChange={e => { setBusca(e.target.value); setVisibleCount(50); }}
             className="w-full pl-9 pr-3 py-2 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -799,6 +808,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <select
+            disabled={loteServidor}
             value={anoFiltro}
             onChange={e => { setAnoFiltro(e.target.value); setVisibleCount(50); }}
             className="text-sm rounded-lg border bg-background px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -807,6 +817,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
             {anos.map(a => <option key={a} value={a!}>{a}</option>)}
           </select>
           <select
+            disabled={loteServidor}
             value={statusFiltro}
             onChange={e => { setStatusFiltro(e.target.value); setVisibleCount(50); }}
             className="text-sm rounded-lg border bg-background px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -815,9 +826,13 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
             {statuses.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <span className="text-sm text-muted-foreground self-center">
-            {filtered.length} contratos · Total: {formatCurrency(totalValor)}
+            {!loteServidor
+              ? <>{filtered.length} contratos · Total: {formatCurrency(totalValor)}</>
+              : isError
+                ? <>Mostrando os {data.length} contratos mais recentes. Não foi possível carregar a lista completa; recarregue a página.</>
+                : <>Mostrando os {data.length} contratos mais recentes. Carregando a lista completa...</>}
           </span>
-          {filtered.length > 0 && (
+          {!loteServidor && filtered.length > 0 && (
             <button onClick={() => downloadCSV(
               `contratos-prefeitura-${new Date().toISOString().slice(0, 10)}.csv`,
               ["Número", "Empresa", "Objeto", "Valor", "Status", "Início", "Fim"],
@@ -829,7 +844,7 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
         </div>
       </div>
 
-      {!aditivosReady && aditivos === undefined && (
+      {!loteServidor && !aditivosReady && aditivos === undefined && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border mb-3">
           <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />
           <p className="text-sm text-muted-foreground">
@@ -930,8 +945,8 @@ function ContratosTab({ ativo }: { ativo: boolean }) {
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span>Valor: {formatCurrency(selectedContrato?.valor ?? null)}</span>
               {selectedContrato?.vigencia_inicio && (
-                <span>Vigência: {new Date(selectedContrato.vigencia_inicio).toLocaleDateString("pt-BR")}
-                  {selectedContrato.vigencia_fim && ` a ${new Date(selectedContrato.vigencia_fim).toLocaleDateString("pt-BR")}`}
+                <span>Vigência: {dataCurta(selectedContrato.vigencia_inicio)}
+                  {selectedContrato.vigencia_fim && ` a ${dataCurta(selectedContrato.vigencia_fim)}`}
                 </span>
               )}
               {selectedContrato?.status && <span>Status: {selectedContrato.status}</span>}
@@ -3171,7 +3186,12 @@ function semTokenAdminNoServidor() {
   return false;
 }
 
-export default function Prefeitura({ financiadoresExecutivo, aba }: { financiadoresExecutivo?: React.ReactNode; aba?: string }) {
+export default function Prefeitura({ financiadoresExecutivo, aba, respostas }: {
+  financiadoresExecutivo?: React.ReactNode;
+  aba?: string;
+  /** Resposta direta renderizada no servidor, por aba (src/components/prefeitura/RespostasPrefeitura.tsx). */
+  respostas?: Partial<Record<string, React.ReactNode>>;
+}) {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -3264,20 +3284,20 @@ export default function Prefeitura({ financiadoresExecutivo, aba }: { financiado
             </TabsList>
           </div>
 
-          <TabsContent value="visao-geral"><PrefeituraDestaques /></TabsContent>
-          <TabsContent value="chefia"><ChefiaExecutivo financiadores={financiadoresExecutivo} /></TabsContent>
-          <TabsContent value="secretarias"><SecretariasTab /></TabsContent>
-          <TabsContent value="despesas"><GastosTab /></TabsContent>
+          <TabsContent value="visao-geral">{respostas?.["visao-geral"]}<PrefeituraDestaques /></TabsContent>
+          <TabsContent value="chefia">{respostas?.chefia}<ChefiaExecutivo financiadores={financiadoresExecutivo} /></TabsContent>
+          <TabsContent value="secretarias">{respostas?.secretarias}<SecretariasTab /></TabsContent>
+          <TabsContent value="despesas">{respostas?.despesas}<GastosTab /></TabsContent>
           <TabsContent value="prestacao-contas"><PrestacaoContasTab poder="prefeitura" /></TabsContent>
           <TabsContent value="tcm-go"><TCMTab /></TabsContent>
-          <TabsContent value="servidores"><ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
+          <TabsContent value="servidores">{respostas?.servidores}<ServidoresTab initialSearch={activeTab === "servidores" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="funprepi"><FunprepiTab /></TabsContent>
           <TabsContent value="decretos"><DecretosTab /></TabsContent>
           <TabsContent value="portarias"><PortariasTab /></TabsContent>
           <TabsContent value="leis"><LeisMunicipaisTab initialSearch={activeTab === "leis" ? initialBusca : undefined} /></TabsContent>
           <TabsContent value="lei-organica"><LeiOrganicaTab /></TabsContent>
           <TabsContent value="diarias"><DiariasTab /></TabsContent>
-          <TabsContent value="contratos" forceMount className={activeTab !== "contratos" ? "hidden" : ""}><ContratosTab ativo={activeTab === "contratos"} /></TabsContent>
+          <TabsContent value="contratos" forceMount className={activeTab !== "contratos" ? "hidden" : ""}>{respostas?.contratos}<ContratosTab ativo={activeTab === "contratos"} /></TabsContent>
           <TabsContent value="licitacoes"><LicitacoesTab /></TabsContent>
           <TabsContent value="obras"><ObrasTab /></TabsContent>
           <TabsContent value="veiculos"><VeiculosTab /></TabsContent>

@@ -1,8 +1,12 @@
+import { HydrationBoundary } from "@tanstack/react-query";
 import { pageMetadata, datasetJsonLd, articleJsonLd, SCHEMA_IDS } from "@/lib/seo";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import PrefeituraClient from "@/components/prefeitura/PrefeituraClient";
+import { PessoasExecutivoJsonLd, respostasPrefeitura } from "@/components/prefeitura/RespostasPrefeitura";
 import { FinanciadoresExecutivoCard } from "@/components/vereadores/FinanciadoresCampanhaCard";
+import { carregarAbaPrefeitura } from "@/lib/prefeitura-ssr";
 
+// Dinâmica pelo mesmo motivo de /prefeitura/[aba] (useSearchParams no PrefeituraClient).
 export const dynamic = "force-dynamic";
 
 export const metadata = pageMetadata({
@@ -240,13 +244,15 @@ function buildArticleSchema(a: Apontamento) {
 }
 
 export default async function PrefeituraPage() {
-  const apontamentos = await fetchApontamentos();
+  // A visão geral é a aba padrão: chefia (resposta a "prefeito de Piracanjuba") e resumo da folha.
+  const [apontamentos, carga] = await Promise.all([fetchApontamentos(), carregarAbaPrefeitura("visao-geral")]);
   const articles = apontamentos
     .filter((a) => a.ementa_resumo_ia || a.ementa) // so emite article se tiver corpo
     .map(buildArticleSchema);
 
   return (
-    <>
+    <HydrationBoundary state={carga.estado}>
+      {carga.chefia && <PessoasExecutivoJsonLd executivo={carga.chefia.executivo} />}
       {/* Datasets — uma vez cada */}
       {datasets.map((d, i) => (
         <script
@@ -263,7 +269,10 @@ export default async function PrefeituraPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(art) }}
         />
       ))}
-      <PrefeituraClient financiadoresExecutivo={<FinanciadoresExecutivoCard />} />
-    </>
+      <PrefeituraClient
+        financiadoresExecutivo={<FinanciadoresExecutivoCard />}
+        respostas={respostasPrefeitura("visao-geral", carga)}
+      />
+    </HydrationBoundary>
   );
 }
