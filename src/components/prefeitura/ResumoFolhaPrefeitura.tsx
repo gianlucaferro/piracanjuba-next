@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, ExternalLink } from "lucide-react";
-import { fetchPrefeituraResumoFolha } from "@/data/prefeituraFolhaApi";
+import { consultarResumoFolhaPrefeitura } from "@/lib/prefeitura-consultas";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { FONTES_PREFEITURA } from "@/lib/fontes-oficiais";
 import { formatCurrency } from "@/lib/formatters";
@@ -22,10 +23,13 @@ function TotaisPublicados({ totais }: { totais: TotaisFolha }) {
   );
 }
 
+const supabase = createBrowserSupabaseClient();
+
 export default function ResumoFolhaPrefeitura() {
+  // Mesma consulta que o servidor usa para hidratar esta chave em /prefeitura e /prefeitura/servidores.
   const { data: resumo, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ["prefeitura-resumo-folha"],
-    queryFn: fetchPrefeituraResumoFolha,
+    queryFn: () => consultarResumoFolhaPrefeitura(supabase),
     staleTime: 10 * 60 * 1000,
   });
 
