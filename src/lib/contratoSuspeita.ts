@@ -1,9 +1,17 @@
 /**
  * Sistema de pontuação de suspeita em contratos públicos.
- * Retorna true se pontos >= 5. Silencioso — sem explicações na UI.
+ * Retorna true se pontos >= 5. Silencioso: sem explicações na UI.
+ *
+ * Desempenho (auditoria PERF-01, 2026-11-19): a pontuação é chamada uma vez por contrato
+ * com o histórico inteiro. Antes, cada chamada refazia o mapa nome -> CNPJ e varria o
+ * histórico três vezes (com parse de data em cada item), o que dava custo quadrático e
+ * travava a thread principal por 20 a 140 s nas rotas /prefeitura (6.607 contratos).
+ * Agora os índices são montados uma vez por par (histórico, aditivos) e memoizados por
+ * identidade dos arrays; cada contrato custa O(log n) mais a janela do próprio fornecedor.
+ * As saídas são as mesmas da versão anterior (tests/contratoSuspeita.test.ts compara as duas).
  */
 
-import { getAditivosDoContrato, type AditivosLookup } from "./contratosAditivos";
+import { getAditivosDoContrato, type AditivosLookup } from "./contratosAditivos.ts";
 
 interface ContratoBase {
   id: string;
@@ -14,7 +22,7 @@ interface ContratoBase {
   vigencia_inicio: string | null;
   vigencia_fim: string | null;
   fornecedor: string | null; // empresa (prefeitura) ou credor (câmara)
-  fonte_url: string | null; // URL do portal — id autoritativo pra vincular aditivos
+  fonte_url: string | null; // URL do portal: id autoritativo pra vincular aditivos
   centi_id: string | null; // id do portal (câmara guarda como "ctr-{id}-{ano}")
 }
 
@@ -107,6 +115,126 @@ function resolverCnpj(
   return null;
 }
 
+/** Mesmo parse de data usado nas regras: meio-dia local evita virar o dia por fuso. */
+function instanteDe(data: string): number {
+  return new Date(data + "T12:00:00").getTime();
+}
+
+/** Contratos de um mesmo fornecedor, para a regra 9 (valores similares em 12 meses). */
+interface GrupoFornecedor {
+  /** Data de início válida, em ordem crescente de instante. */
+  datados: { t: number; valor: number | null }[];
+  /**
+   * Valores dos contratos com vigencia_inicio preenchida mas impossível de ler (Invalid Date).
+   * A regra 9 compara com "d < umAnoAntes || d > dataRef", que é falso para data inválida:
+   * esses contratos sempre entram na janela, e o índice preserva isso.
+   */
+  semDataValida: (number | null)[];
+}
+
+const GRUPO_VAZIO: GrupoFornecedor = { datados: [], semDataValida: [] };
+
+/** Índices de um par (histórico, aditivos), montados uma vez e reaproveitados por contrato. */
+interface ContextoSuspeita {
+  nomeToCnpj: Map<string, string>;
+  /** Regra 2: instantes válidos dos contratos emergenciais, em ordem crescente. */
+  emergenciasOrdenadas: number[];
+  /** Regra 3: quantidade de contratos por CNPJ resolvido e por nome normalizado. */
+  contagemPorCnpj: Map<string, number>;
+  contagemPorNome: Map<string, number>;
+  /** Regra 9: contratos com vigencia_inicio preenchida, por CNPJ resolvido e por nome. */
+  grupoPorCnpj: Map<string, GrupoFornecedor>;
+  grupoPorNome: Map<string, GrupoFornecedor>;
+}
+
+function adicionarAoGrupo(
+  mapa: Map<string, GrupoFornecedor>,
+  chave: string,
+  t: number,
+  valor: number | null
+) {
+  let grupo = mapa.get(chave);
+  if (!grupo) {
+    grupo = { datados: [], semDataValida: [] };
+    mapa.set(chave, grupo);
+  }
+  if (Number.isNaN(t)) grupo.semDataValida.push(valor);
+  else grupo.datados.push({ t, valor });
+}
+
+function montarContexto(historico: ContratoBase[], aditivos: AditivoInfo[]): ContextoSuspeita {
+  const nomeToCnpj = buildNomeToCnpjMap(aditivos);
+  const emergenciasOrdenadas: number[] = [];
+  const contagemPorCnpj = new Map<string, number>();
+  const contagemPorNome = new Map<string, number>();
+  const grupoPorCnpj = new Map<string, GrupoFornecedor>();
+  const grupoPorNome = new Map<string, GrupoFornecedor>();
+
+  for (const c of historico) {
+    const cnpj = resolverCnpj(c, nomeToCnpj);
+    // Mesma normalização das regras 3 e 9 (c.fornecedor?.trim().toUpperCase()).
+    const nome = c.fornecedor == null ? undefined : c.fornecedor.trim().toUpperCase();
+
+    if (cnpj) contagemPorCnpj.set(cnpj, (contagemPorCnpj.get(cnpj) || 0) + 1);
+    if (nome !== undefined) contagemPorNome.set(nome, (contagemPorNome.get(nome) || 0) + 1);
+
+    if (!c.vigencia_inicio) continue;
+    const t = instanteDe(c.vigencia_inicio);
+
+    if (c.objeto && isEmergencial(c.objeto.toLowerCase()) && !Number.isNaN(t)) {
+      emergenciasOrdenadas.push(t);
+    }
+
+    if (cnpj) adicionarAoGrupo(grupoPorCnpj, cnpj, t, c.valor);
+    if (nome !== undefined) adicionarAoGrupo(grupoPorNome, nome, t, c.valor);
+  }
+
+  emergenciasOrdenadas.sort((a, b) => a - b);
+  for (const grupo of grupoPorCnpj.values()) grupo.datados.sort((a, b) => a.t - b.t);
+  for (const grupo of grupoPorNome.values()) grupo.datados.sort((a, b) => a.t - b.t);
+
+  return { nomeToCnpj, emergenciasOrdenadas, contagemPorCnpj, contagemPorNome, grupoPorCnpj, grupoPorNome };
+}
+
+type ContextoMemo = { tamanhoHistorico: number; tamanhoAditivos: number; contexto: ContextoSuspeita };
+
+// Memo por identidade dos arrays (histórico -> aditivos -> contexto). Os chamadores passam o
+// mesmo array em todas as chamadas de um cálculo; arrays novos (nova consulta) geram contexto
+// novo, e o WeakMap libera os antigos. Mudança de tamanho também refaz o contexto. Os arrays
+// não devem ter itens alterados no lugar entre chamadas (nenhum chamador faz isso).
+const memoContexto = new WeakMap<ContratoBase[], WeakMap<AditivoInfo[], ContextoMemo>>();
+
+function contextoDe(historico: ContratoBase[], aditivos: AditivoInfo[]): ContextoSuspeita {
+  let porAditivos = memoContexto.get(historico);
+  if (!porAditivos) {
+    porAditivos = new WeakMap();
+    memoContexto.set(historico, porAditivos);
+  }
+  const memo = porAditivos.get(aditivos);
+  if (memo && memo.tamanhoHistorico === historico.length && memo.tamanhoAditivos === aditivos.length) {
+    return memo.contexto;
+  }
+  const contexto = montarContexto(historico, aditivos);
+  porAditivos.set(aditivos, { tamanhoHistorico: historico.length, tamanhoAditivos: aditivos.length, contexto });
+  return contexto;
+}
+
+/** Primeiro índice com valor >= x (ou > x, com estrito) num array crescente. */
+function primeiroIndice<T>(itens: T[], instante: (item: T) => number, x: number, estrito: boolean): number {
+  let lo = 0;
+  let hi = itens.length;
+  while (lo < hi) {
+    const meio = (lo + hi) >>> 1;
+    const t = instante(itens[meio]);
+    if (estrito ? t > x : t >= x) hi = meio;
+    else lo = meio + 1;
+  }
+  return lo;
+}
+
+const proprio = (t: number) => t;
+const doItem = (item: { t: number }) => item.t;
+
 export function calcularSuspeitaContrato(
   contrato: ContratoBase,
   historicoCompleto: ContratoBase[],
@@ -121,9 +249,9 @@ export function calcularSuspeitaContrato(
   const fornecedor = contrato.fornecedor?.trim().toUpperCase() || "";
   const objeto = contrato.objeto?.trim().toLowerCase() || "";
 
-  // Pre-compute CNPJ map (memoized per call but cheap enough)
-  const nomeToCnpj = buildNomeToCnpjMap(aditivos);
-  const meuCnpj = resolverCnpj(contrato, nomeToCnpj);
+  // Índices do histórico e mapa nome -> CNPJ: montados uma vez por conjunto (ver contextoDe).
+  const ctx = contextoDe(historicoCompleto, aditivos);
+  const meuCnpj = resolverCnpj(contrato, ctx.nomeToCnpj);
 
   // ──────────────────────────────────────────────────────────
   // 1. DISPENSA PRÓXIMA DO LIMITE (+2)
@@ -149,14 +277,20 @@ export function calcularSuspeitaContrato(
       const seisMesesAntes = new Date(dataRef);
       seisMesesAntes.setMonth(seisMesesAntes.getMonth() - 6);
 
-      const emergencias6m = historicoCompleto.filter((c) => {
-        if (!c.objeto || !c.vigencia_inicio) return false;
-        if (!isEmergencial(c.objeto.toLowerCase())) return false;
-        const d = new Date(c.vigencia_inicio + "T12:00:00");
-        return d >= seisMesesAntes && d <= dataRef;
-      });
+      // Emergenciais do histórico com data em [seisMesesAntes, dataRef]. Data inválida em
+      // qualquer ponta não conta (as comparações com NaN são falsas).
+      const inicio = seisMesesAntes.getTime();
+      const fim = dataRef.getTime();
+      let emergencias6m = 0;
+      if (!Number.isNaN(inicio) && !Number.isNaN(fim)) {
+        const lista = ctx.emergenciasOrdenadas;
+        emergencias6m = Math.max(
+          0,
+          primeiroIndice(lista, proprio, fim, true) - primeiroIndice(lista, proprio, inicio, false)
+        );
+      }
 
-      if (emergencias6m.length > 5) {
+      if (emergencias6m > 5) {
         pontos += 3;
       }
     } catch {
@@ -169,19 +303,13 @@ export function calcularSuspeitaContrato(
   //    Usa CNPJ quando disponível, senão nome do fornecedor.
   // ──────────────────────────────────────────────────────────
   if (meuCnpj) {
-    // Count by CNPJ across all contracts
-    let count = 0;
-    for (const c of historicoCompleto) {
-      const cnpj = resolverCnpj(c, nomeToCnpj);
-      if (cnpj === meuCnpj) count++;
-    }
+    // Contratos do histórico com o mesmo CNPJ resolvido
+    const count = ctx.contagemPorCnpj.get(meuCnpj) || 0;
     if (count > 20) pontos += 3;
     else if (count >= 10) pontos += 2;
   } else if (fornecedor) {
-    // Fallback: count by name
-    const count = historicoCompleto.filter(
-      (c) => c.fornecedor?.trim().toUpperCase() === fornecedor
-    ).length;
+    // Sem CNPJ: contratos com o mesmo nome normalizado
+    const count = ctx.contagemPorNome.get(fornecedor) || 0;
     if (count > 20) pontos += 3;
     else if (count >= 10) pontos += 2;
   }
@@ -297,26 +425,35 @@ export function calcularSuspeitaContrato(
       const umAnoAntes = new Date(dataRef);
       umAnoAntes.setFullYear(umAnoAntes.getFullYear() - 1);
 
-      const mesmoFornecedor12m = historicoCompleto.filter((c) => {
-        if (!c.vigencia_inicio) return false;
-        const d = new Date(c.vigencia_inicio + "T12:00:00");
-        if (d < umAnoAntes || d > dataRef) return false;
+      // Contratos do mesmo fornecedor (CNPJ primeiro, senão nome) com data que não fica
+      // antes de umAnoAntes nem depois de dataRef. Como na versão anterior, a comparação
+      // com NaN é falsa: ponta inválida não corta a janela e data inválida sempre entra.
+      const grupo =
+        (meuCnpj ? ctx.grupoPorCnpj.get(meuCnpj) : ctx.grupoPorNome.get(fornecedor)) ?? GRUPO_VAZIO;
+      const limiteInicio = umAnoAntes.getTime();
+      const limiteFim = dataRef.getTime();
+      const inicio = Number.isNaN(limiteInicio)
+        ? 0
+        : primeiroIndice(grupo.datados, doItem, limiteInicio, false);
+      const fim = Number.isNaN(limiteFim)
+        ? grupo.datados.length
+        : primeiroIndice(grupo.datados, doItem, limiteFim, true);
+      const mesmoFornecedor12m = Math.max(0, fim - inicio) + grupo.semDataValida.length;
 
-        // Match by CNPJ first, then by name
-        if (meuCnpj) {
-          const outroCnpj = resolverCnpj(c, nomeToCnpj);
-          return outroCnpj === meuCnpj;
-        }
-        return c.fornecedor?.trim().toUpperCase() === fornecedor;
-      });
-
-      if (mesmoFornecedor12m.length >= 3 && valor > 0) {
-        const valoresSimilares = mesmoFornecedor12m.filter((c) => {
-          if (!c.valor || c.valor === 0) return false;
-          const diff = Math.abs(c.valor - valor) / valor;
+      if (mesmoFornecedor12m >= 3 && valor > 0) {
+        const similar = (v: number | null) => {
+          if (!v || v === 0) return false;
+          const diff = Math.abs(v - valor) / valor;
           return diff < 0.1;
-        });
-        if (valoresSimilares.length >= 3) pontos += 2;
+        };
+        let valoresSimilares = 0;
+        for (let i = inicio; i < fim && valoresSimilares < 3; i++) {
+          if (similar(grupo.datados[i].valor)) valoresSimilares++;
+        }
+        for (let i = 0; i < grupo.semDataValida.length && valoresSimilares < 3; i++) {
+          if (similar(grupo.semDataValida[i])) valoresSimilares++;
+        }
+        if (valoresSimilares >= 3) pontos += 2;
       }
     } catch {
       // skip

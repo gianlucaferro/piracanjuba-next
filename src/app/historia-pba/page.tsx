@@ -6,9 +6,9 @@ import PessoaFoto from "@/components/historia/PessoaFoto";
 import FotoOpcional from "@/components/historia/FotoOpcional";
 
 export const metadata = pageMetadata({
-  title: "História de Piracanjuba GO: Capital das Orquídeas, festas e o leite",
+  title: "História de Piracanjuba: orquídeas e festas",
   description:
-    "A história de Piracanjuba, Goiás: a origem tupi do nome (peixe de cabeça amarela), a Festa de Agosto de Nossa Senhora d'Abadia, a Exposição Nacional de Orquídeas, o título de Capital das Orquídeas, a marca de leite que nasceu aqui e foi para Bela Vista de Goiás, e curiosidades do município.",
+    "A história de Piracanjuba, Goiás: origem tupi do nome, Festa de Agosto, Exposição Nacional de Orquídeas, a marca de leite que nasceu aqui e curiosidades.",
   path: "/historia-pba",
 });
 

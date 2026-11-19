@@ -21,10 +21,9 @@ import SubscriptionForm from "./SubscriptionForm";
 import PiracanjubaNumeros from "@/components/home/PiracanjubaNumeros";
 
 export const metadata = pageMetadata({
-  title:
-    "Sobre o Piracanjuba.ai — 1º portal de transparência com IA do Brasil | Piracanjuba GO",
+  title: "Sobre: transparência pública de Piracanjuba",
   description:
-    "Piracanjuba.ai é o primeiro portal de transparência municipal otimizado por inteligência artificial do Brasil. Independente, sem vínculo com órgão público, criado e mantido por Gianluca Ferro.",
+    "Piracanjuba.ai é o primeiro portal de transparência municipal com IA do Brasil: independente, sem vínculo com órgão público, criado por Gianluca Ferro.",
   path: "/sobre",
 });
 
