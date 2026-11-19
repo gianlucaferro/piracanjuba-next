@@ -1,0 +1,103 @@
+.pagina {
+  --tinta: #202a37;
+  --vinho: #411c22;
+  --papel: #fbf8f1;
+  --linha: #d8d1c4;
+  --ouro: #e7c47e;
+  --serifa: var(--fonte-escritorio), Georgia, serif;
+  color: var(--tinta);
+  background: var(--papel);
+  line-height: 1.55;
+}
+.pagina a:focus-visible { outline: 3px solid #b97728; outline-offset: 4px; }
+.pagina h1, .pagina h2, .pagina p, .pagina dl, .pagina dd, .pagina ul { margin: 0; }
+.capa {
+  border-bottom: 1px solid #4b3330;
+  background: radial-gradient(ellipse at 79% 13%, #55302d 0, transparent 62%), #29151b;
+  color: #fbf5e9;
+}
+.capaInterna, .atuacao, .contatoInterno, .registro, .gestaoInterna {
+  width: min(100% - 80px, 1160px);
+  margin-inline: auto;
+}
+.capaInterna {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: center;
+  padding-block: clamp(42px, 5vw, 76px);
+}
+.identidade { display: flex; align-items: center; gap: 16px; }
+.identidade img { width: 54px; height: 54px; object-fit: contain; }
+.identidade span { padding-left: 15px; border-left: 1px solid #956f59; color: #ead7b8; font-size: .83rem; }
+.pagina h1, .pagina h2, .retrato strong { font-family: var(--serifa); font-weight: 450; }
+.pagina h1 { margin-block: 24px 18px; font-size: clamp(3.9rem, 6.1vw, 5.9rem); line-height: .99; letter-spacing: -.066em; }
+.pagina h1 span { display: block; color: var(--ouro); font-size: .73em; margin-top: .11em; letter-spacing: -.052em; }
+.apresentacao > p { max-width: 47ch; color: #eee0d5; font-size: clamp(1rem, 1.35vw, 1.13rem); line-height: 1.62; }
+.acoes { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 22px; margin-top: 25px; }
+.botao, .atalho, .institucional, .informacoes a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 650; }
+.botao { min-height: 47px; border-radius: 4px; padding: 10px 17px; background: #f4e3be; color: #342126; }
+.botao :global(svg) { width: 20px; height: 20px; }
+.botao:hover { background: #fff5dd; }
+.atalho { color: #f9f0e2; min-height: 44px; font-size: .92rem; text-decoration: underline; text-underline-offset: 5px; }
+.socios { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+.retrato { display: block; min-width: 0; }
+.retrato img { width: 100%; height: auto; aspect-ratio: 4/5; object-fit: cover; border-radius: 46% 46% 2px 2px / 22% 22% 2px 2px; background: #252a2b; }
+.retrato > div { margin-top: 12px; padding-top: 11px; border-top: 1px solid #976f58; }
+.retrato strong { display: block; font-size: clamp(1.05rem, 1.65vw, 1.4rem); line-height: 1.21; letter-spacing: -.034em; }
+.retrato span { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 4px; color: #e6cda9; font-size: .78rem; }
+.retrato:hover strong, .lista a:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+.atuacao, .contatoInterno { display: grid; grid-template-columns: minmax(0,.85fr) minmax(0,1.65fr); gap: clamp(32px,6vw,92px); padding-block: clamp(48px,7vw,94px); }
+.pagina h2 { font-size: clamp(2.4rem,4vw,3.7rem); line-height: 1.05; letter-spacing: -.055em; text-wrap: balance; }
+.intro > p, .contatoTitulo > p { color: #48515a; margin-top: 16px; max-width: 40ch; }
+.institucional { min-height: 44px; color: var(--vinho); text-decoration: underline; text-underline-offset: 4px; margin-top: 12px; }
+.lista { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 28px; list-style: none; padding: 0; }
+.lista li { border-top: 1px solid var(--linha); }
+.lista a { display: flex; justify-content: space-between; gap: 12px; padding: 16px 0 22px; height: 100%; }
+.lista a > svg { flex-shrink: 0; margin-top: 2px; color: #76553e; }
+.lista strong { font-family: var(--serifa); font-weight: 550; font-size: 1.13rem; line-height: 1.28; letter-spacing: -.02em; }
+.lista p { margin-top: 4px; color: #4b5358; font-size: .94rem; line-height: 1.48; }
+.atendimento { background: #eae7df; border-top: 1px solid var(--linha); scroll-margin-top: 80px; }
+.contatoInterno { padding-block: clamp(36px,5vw,64px); align-items: start; }
+.informacoes { display: grid; grid-template-columns: 1.3fr 1fr; gap: 17px 26px; }
+.informacoes > div:first-child { grid-row: span 2; }
+.informacoes dt { display: flex; align-items: center; gap: 7px; color: #543a33; font-weight: 700; font-size: .88rem; margin-bottom: 8px; }
+.informacoes address { font-style: normal; }
+.informacoes dd > p { font-size: .88rem; color: #515657; margin-top: 6px; }
+.informacoes a { margin-top: 2px; min-height: 36px; justify-content: start; color: var(--vinho); text-decoration: underline; text-underline-offset: 4px; }
+.pagina .registro { margin: 0 auto; padding: 16px 0; border-top: 1px solid #cfc8bb; color: #4f4842; font-size: .83rem; }
+.registro span { margin-inline: 3px; }
+.gestaoInterna { padding-block: 16px 20px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 10px; color: #565651; font-size: .85rem; }
+.gestaoInterna a { color: var(--vinho); text-decoration: underline; text-underline-offset: 3px; padding-block: 5px; }
+@media (max-width: 900px) {
+  .capaInterna, .atuacao, .contatoInterno, .registro, .gestaoInterna { width: min(100% - 48px,1160px); }
+  .capaInterna { gap: 24px; }
+  .atuacao, .contatoInterno { gap: 26px; grid-template-columns: minmax(0,.8fr) minmax(0,1.55fr); }
+  .lista { column-gap: 20px; }
+}
+@media (max-width: 700px) {
+  .capaInterna, .atuacao, .contatoInterno, .registro, .gestaoInterna { width: calc(100% - 40px); }
+  .capaInterna, .atuacao, .contatoInterno { grid-template-columns: 1fr; }
+  .capaInterna { padding-block: 27px 31px; gap: 25px; }
+  .identidade img { width: 43px; height: 43px; }
+  .identidade { gap: 11px; }
+  .identidade span { padding-left: 11px; }
+  .pagina h1 { margin-block: 15px 12px; font-size: clamp(2.9rem, 10vw, 4rem); }
+  .acoes { margin-top: 13px; }
+  .socios { gap: 12px; }
+  .retrato img { aspect-ratio: 1/.92; object-position: center 27%; border-radius: 40% 40% 1px 1px / 20% 20% 1px 1px; }
+  .retrato > div { margin-top: 8px; padding-top: 7px; }
+  .atuacao { padding-block: 39px; gap: 15px; }
+  .intro > p, .contatoTitulo > p { margin-top: 10px; }
+  .institucional { margin-top: 3px; }
+  .lista { grid-template-columns: 1fr; }
+  .lista a { padding: 12px 0 15px; }
+  .contatoInterno { padding-block: 31px 24px; gap: 22px; }
+  .informacoes { grid-template-columns: 1fr; gap: 15px; }
+  .informacoes > div:first-child { grid-row: auto; }
+  .informacoes dt { margin-bottom: 3px; }
+}
+@media (max-width: 360px) {
+  .capaInterna, .atuacao, .contatoInterno, .registro, .gestaoInterna { width: calc(100% - 30px); }
+  .acoes { gap: 0 12px; }
+}

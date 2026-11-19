@@ -292,6 +292,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
+        caminho: "/pacifico-siqueira-advocacia",
+        titulo: "Pacífico Siqueira Advocacia",
+        descricao: "Escritório de advocacia no Centro de Piracanjuba. Áreas de atuação, advogados, horário de atendimento, localização e contato para agendar uma conversa.",
+      },
+      {
         caminho: "/compra-e-venda",
         titulo: "Compra e Venda PBA",
         descricao: "Classificados gratuitos de Piracanjuba: imóveis, veículos, agro, eletrônicos e serviços, com fotos e contato por WhatsApp.",

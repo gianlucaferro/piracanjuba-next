@@ -51,5 +51,5 @@ export function ehPaginaDeEmpresa(caminho: string | null | undefined): boolean {
   if (!caminho) return false;
   const limpo = caminho.split(/[?#]/)[0].replace(/\/+$/, "");
   const partes = limpo.split("/").filter(Boolean);
-  return partes.length === 1 && ehSlugEmpresa(partes[0]);
+  return partes.length === 1 && (ehSlugEmpresa(partes[0]) || partes[0] === "pacifico-siqueira-advocacia");
 }

@@ -66,12 +66,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { WHATSAPP_COMERCIAL } from "@/data/paginaEmpresa";
 import { Textarea } from "@/components/ui/textarea";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type ZapEstabelecimento = {
   id: string;
   pagina?: string;
+  editorial?: boolean;
   name: string;
   whatsapp: string;
   category: string | null;
@@ -334,7 +336,7 @@ function EstablishmentCard({
   const isNew = isNewEstablishment(item.created_at);
 
   function handleClick() {
-    void supabase.rpc("increment_click_count", { establishment_id: item.id });
+    if (!item.editorial) void supabase.rpc("increment_click_count", { establishment_id: item.id });
   }
 
   return (
@@ -405,19 +407,31 @@ function EstablishmentCard({
         >
           <Share2 className="h-4 w-4 text-muted-foreground" />
         </button>
-        <button
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onSuggest(item);
-          }}
-          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-muted"
-          aria-label={`Sugerir correção para ${item.name}`}
-          title="Sugerir correção"
-        >
-          <MessageSquare className="h-4 w-4 text-muted-foreground" />
-        </button>
+        {item.editorial ? (
+          <a
+            href={`https://wa.me/${WHATSAPP_COMERCIAL}?text=${encodeURIComponent(`Olá! Gostaria de sugerir uma correção na página de ${item.name}: https://piracanjuba.ai${item.pagina}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-muted"
+            aria-label={`Sugerir correção para ${item.name}`}
+          >
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </a>
+        ) : (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onSuggest(item);
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-muted"
+            aria-label={`Sugerir correção para ${item.name}`}
+            title="Sugerir correção"
+          >
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </button>
+        )}
       </div>
     </div>
   );
