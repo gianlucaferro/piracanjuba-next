@@ -3,6 +3,7 @@
 // Fonte: TSE, Prestação de Contas Eleitorais 2024, arquivo receitas_candidatos_2024_GO.csv,
 // campo DS_FONTE_RECEITA = "Fundo Especial" (recorte NM_UE = PIRACANJUBA). Extraído em 2026-06.
 // Dado histórico fixo (contas finais de 2024); mantido estático, sem sync.
+// Sem imports: tests/vereadores-identidade.test.ts confere os nomes com os da tabela vereadores.
 
 export interface FefcVereador {
   nome: string; // nome canônico usado no site (tabela vereadores)
@@ -33,7 +34,7 @@ export const FUNDO_ELEITORAL_2024 = {
     { nome: "Reginaldo Silva", partido: "PDT", fefc: 0, totalReceita: 2682.0 },
     { nome: "Fernando Silva", partido: "PODEMOS", fefc: 0, totalReceita: 2170.8 },
     { nome: "Sirley de Fatima", partido: "PODEMOS", fefc: 0, totalReceita: 1890.0 },
-    { nome: "Wennder Silva", partido: "PP", fefc: 0, totalReceita: 1840.0 },
+    { nome: "Wennder Trindade", partido: "PP", fefc: 0, totalReceita: 1840.0 },
     { nome: "Welton da Silva", partido: "PL", fefc: 0, totalReceita: 1490.0 },
     { nome: "Edimar Lopes", partido: "União Brasil", fefc: 0, totalReceita: 717.1 },
   ] as FefcVereador[],

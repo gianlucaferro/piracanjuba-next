@@ -76,7 +76,7 @@ const lerDespesas = unstable_cache(async (): Promise<Leitura<DadosDespesas>> => 
     consultarDespesasMensaisRecentes(sb),
   ]);
   return { lote, mensais, lidoEm: Date.now() };
-}, ["prefeitura-ssr-despesas-v1"], opcoes);
+}, ["prefeitura-ssr-despesas-v2"], opcoes);
 
 async function seguro<T>(nome: string, ler: () => Promise<T>): Promise<T | null> {
   try {

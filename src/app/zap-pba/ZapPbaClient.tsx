@@ -46,6 +46,7 @@ import {
   agruparIndice,
   embaralharPorDia,
   sementeDoDia,
+  textoIndice,
   textoResposta,
   type FichaZap,
   type GrupoIndiceZap,
@@ -607,14 +608,14 @@ function SuggestionModal({
 // Lista leve de todos os estabelecimentos, sempre no HTML: só o nome e o link de
 // cada um (a página no portal quando existe, senão o WhatsApp). É o que mantém os
 // estabelecimentos fora do primeiro lote alcançáveis por quem rastreia a página.
-function IndiceZap({ grupos, total }: { grupos: GrupoIndiceZap[]; total: number }) {
+function IndiceZap({ grupos, total }: { grupos: GrupoIndiceZap[]; total: number | null }) {
   return (
     <nav aria-labelledby="zap-indice" className="mx-auto mt-10 max-w-4xl border-t border-border pt-6">
       <h2 id="zap-indice" className="text-base font-semibold text-foreground md:text-lg">
         Índice do Zap PBA por categoria
       </h2>
       <p className="mb-3 mt-1 text-sm text-muted-foreground">
-        {`Os ${total} estabelecimentos do guia, em ordem alfabética.`}
+        {textoIndice(total)}
       </p>
       <div className="space-y-2">
         {grupos.map(({ categoria, itens }) => (
@@ -652,11 +653,15 @@ function IndiceZap({ grupos, total }: { grupos: GrupoIndiceZap[]; total: number 
 export default function ZapPbaClient({
   initialEstabelecimentos,
   dataReferencia,
+  listaCarregada,
 }: {
   initialEstabelecimentos: ZapEstabelecimento[];
   // Dia (AAAA-MM-DD) em que o servidor montou a lista: semente da ordem do dia e
   // data citada no parágrafo do topo.
   dataReferencia: string;
+  // Falso quando o banco não devolveu cadastros (só a ficha editorial está na
+  // lista): o topo e o índice não afirmam quantos estabelecimentos o guia tem.
+  listaCarregada: boolean;
 }) {
   const [busca, setBusca] = useState("");
   const [catFilter, setCatFilter] = useState<string | null>(null);
@@ -747,7 +752,9 @@ export default function ZapPbaClient({
   }, [mostrarMais, limite, restantes]);
 
   const indice = useMemo(() => agruparIndice(initialEstabelecimentos), [initialEstabelecimentos]);
-  const resposta = textoResposta(initialEstabelecimentos.length, availableCategories.length, dataReferencia);
+  const totalConfirmado = listaCarregada ? initialEstabelecimentos.length : null;
+  const resposta =
+    totalConfirmado === null ? null : textoResposta(totalConfirmado, availableCategories.length, dataReferencia);
 
   const hasFilters = Boolean(busca.trim() || catFilter);
   const emptyStateWithSearch = filtered.length === 0 && Boolean(busca.trim());
@@ -921,10 +928,10 @@ export default function ZapPbaClient({
         )}
 
         <p className="mx-auto mt-4 max-w-lg text-center text-sm text-muted-foreground">
-          Os números são fornecidos pelos próprios estabelecimentos.
+          Os números são cadastrados no portal e publicados após análise.
         </p>
 
-        {indice.length > 0 && <IndiceZap grupos={indice} total={initialEstabelecimentos.length} />}
+        {indice.length > 0 && <IndiceZap grupos={indice} total={totalConfirmado} />}
       </div>
 
       <Dialog

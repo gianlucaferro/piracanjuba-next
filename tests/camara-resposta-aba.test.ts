@@ -159,6 +159,10 @@ test("indicações, projetos e atuação: números, data e ausência de dado", (
     /2\.230 indicações registradas .* 412 delas em 2026; a mais recente foi publicada em 28 de outubro de 2026/,
   );
   assert.equal(paragrafoIndicacoes({ total: 0, ano: 2026, doAno: 0, ultima: null }), null);
+  // Começo de ano sem indicação nova: não afirma "0 delas em 2027".
+  const janeiro = texto(paragrafoIndicacoes({ total: 2230, ano: 2027, doAno: 0, ultima: "2026-12-18" }));
+  assert.doesNotMatch(janeiro, /0 delas/);
+  assert.match(janeiro, /2\.230 indicações registradas/);
   assert.match(
     texto(paragrafoProjetos({ total: 175, tipoMaisComum: { tipo: "Projeto de Lei do Executivo", quantidade: 80 }, ultima: "2026-11-04" })),
     /175 atos legislativos.*Projeto de Lei do Executivo, com 80.*4 de novembro de 2026/,

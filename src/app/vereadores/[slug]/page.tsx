@@ -37,7 +37,7 @@ import {
   subsidioMaisRecente,
   temSubsidio,
 } from "../remuneracao";
-import { referenciaParlamentar, tratamentoParlamentar } from "../tratamento";
+import { referenciaParlamentar, tituloPerfilParlamentar, tratamentoParlamentar } from "../tratamento";
 import { ANO_ELEICAO_NOME_URNA, identidadeParlamentar, nomeUrnaDiferente } from "../identidade";
 import { pessoaVereadorJsonLd, serializarJsonLd } from "../schema";
 
@@ -64,10 +64,12 @@ export async function generateMetadata({
   }
   const { vereador } = result;
   const tratamento = tratamentoParlamentar(slug);
-  // Nome de urna no título e na descrição: é o nome que eleitor e imprensa buscam.
+  // Nome de urna no título e na descrição: é o nome que eleitor e imprensa buscam. O
+  // título fica curto (até 60 caracteres com o sufixo do layout); partido e nome civil
+  // ficam no H1, na linha de identidade e no Person.
   const nomeUrna = nomeUrnaDiferente(vereador.nome, slug);
   return pageMetadata({
-    title: `${vereador.nome}${nomeUrna ? ` (${nomeUrna})` : ""}, ${tratamento}${vereador.partido ? ` do ${vereador.partido}` : ""} em Piracanjuba GO`,
+    title: tituloPerfilParlamentar(vereador.nome, slug),
     description: `Perfil ${referenciaParlamentar(tratamento, vereador.nome, nomeUrna)} em Piracanjuba GO: partido, atuação parlamentar, projetos de lei, remuneração mensal e contato.`,
     path: `/vereadores/${slug}`,
     image: vereador.foto_url || undefined,

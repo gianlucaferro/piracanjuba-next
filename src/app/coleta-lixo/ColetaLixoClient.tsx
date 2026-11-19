@@ -287,7 +287,7 @@ function EmptyState({ onPick }: { onPick: (b: string) => void }) {
       <div className="text-5xl mb-4">🏘️</div>
       <h2 className="text-xl font-semibold text-foreground mb-2">Digite o nome do seu bairro</h2>
       <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto">
-        Você vai saber os dias exatos, o saco certo e o horário limite para cada tipo de coleta.
+        Você vai saber os dias da coleta, o saco certo e até que horas colocar o lixo na rua.
       </p>
       <div className="flex flex-wrap gap-2 justify-center mt-4">
         {allBairros.map(b => (

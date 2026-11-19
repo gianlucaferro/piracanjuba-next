@@ -122,13 +122,19 @@ export async function consultarLoteDespesas<T = Record<string, unknown>>(sb: Sup
   return (data ?? []) as T[];
 }
 
+/**
+ * Meses lidos para a resposta de despesas. A coleta mensal regrava as 24 competências recentes, então
+ * o mês maduro mais recente costuma ser o terceiro; 6 dá folga se uma coleta falhar em parte.
+ */
+export const MESES_DESPESAS_RECENTES = 6;
+
 /** Totais mensais oficiais (empenhado, liquidado e pago) dos meses mais recentes. */
 export async function consultarDespesasMensaisRecentes(sb: SupabaseClient): Promise<DespesaMensalResumo[]> {
   const { data, error } = await sb
     .from("despesas_mensais")
     .select("competencia, valor_empenhado, valor_liquidado, valor_pago, fonte_nome, fonte_url, data_coleta")
     .order("competencia", { ascending: false })
-    .limit(3);
+    .limit(MESES_DESPESAS_RECENTES);
   if (error) throw error;
   return (data ?? []) as DespesaMensalResumo[];
 }

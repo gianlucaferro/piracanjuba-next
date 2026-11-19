@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
+import { SUFIXO_TITULO } from "../src/lib/abas-orgaos.ts";
+import { FUNDO_ELEITORAL_2024 } from "../src/lib/data/fundo-eleitoral-2024.ts";
 import {
   identidadeParlamentar,
   nomeUrnaDiferente,
@@ -8,7 +11,12 @@ import {
 } from "../src/app/vereadores/identidade.ts";
 import { listaVereadoresJsonLd, pessoaVereadorJsonLd, serializarJsonLd } from "../src/app/vereadores/schema.ts";
 import { fraseSubsidioParlamentar } from "../src/app/vereadores/remuneracao.ts";
-import { referenciaParlamentar, tratamentoParlamentar, urlBiografiaCamara } from "../src/app/vereadores/tratamento.ts";
+import {
+  referenciaParlamentar,
+  tituloPerfilParlamentar,
+  tratamentoParlamentar,
+  urlBiografiaCamara,
+} from "../src/app/vereadores/tratamento.ts";
 
 // Os 11 slugs em produção (2026-11-19), com o nome exibido gravado em vereadores.
 const NOMES: Record<string, string> = {
@@ -123,4 +131,40 @@ test("frase-resposta do perfil segue o formato de /vereadores, com nome de urna"
     referenciaParlamentar("Vereador", "Fernando Silva", nomeUrnaDiferente("Fernando Silva", "fernando-abraao")),
     "do vereador Fernando Silva",
   );
+});
+
+test("título dos 11 perfis cabe em 60 caracteres com o sufixo do layout", () => {
+  // O layout aplica "%s | Piracanjuba.ai" a /vereadores/[slug] (segmento filho).
+  for (const [slug, nome] of Object.entries(NOMES)) {
+    const titulo = tituloPerfilParlamentar(nome, slug);
+    const renderizado = titulo + SUFIXO_TITULO;
+    assert.ok(renderizado.length <= 60, `${slug}: título renderizado com ${renderizado.length} caracteres`);
+    assert.ok(titulo.startsWith(`${tratamentoParlamentar(slug)} `), slug);
+    assert.ok(titulo.includes(identidadeParlamentar(slug)!.nomeUrna), `${slug}: sem o nome de urna`);
+    assert.ok(titulo.endsWith(" em Piracanjuba"), slug);
+    assert.doesNotMatch(titulo, /[\u2013\u2014|]/, slug);
+  }
+  // O mais longo dos 11 (2026-11-19) fica exatamente no limite.
+  assert.equal(
+    tituloPerfilParlamentar("Sirley de Fatima", "sirley-wehbe") + SUFIXO_TITULO,
+    "Vereadora Sirley do Postinho em Piracanjuba | Piracanjuba.ai",
+  );
+  // Sem nome de urna conferido, usa o nome exibido e o tratamento neutro.
+  assert.equal(tituloPerfilParlamentar("Pessoa Nova", "slug-novo"), "Vereador(a) Pessoa Nova em Piracanjuba");
+});
+
+test("generateMetadata do perfil usa o título curto", () => {
+  const fonte = readFileSync(new URL("../src/app/vereadores/[slug]/page.tsx", import.meta.url), "utf8");
+  assert.match(fonte, /title:\s*tituloPerfilParlamentar\(vereador\.nome, slug\)/);
+});
+
+test("tabela do fundo eleitoral usa o nome exibido de cada vereador, um por perfil", () => {
+  // Mesmo nome da tabela vereadores (e da lista, do ItemList e do Person em /vereadores).
+  const exibidos = Object.values(NOMES);
+  const nomesFefc = FUNDO_ELEITORAL_2024.vereadores.map((v) => v.nome);
+  for (const nome of nomesFefc) {
+    assert.ok(exibidos.includes(nome), `nome fora da tabela vereadores no FEFC: ${nome}`);
+  }
+  assert.deepEqual([...nomesFefc].sort(), [...exibidos].sort());
+  assert.equal(nomesFefc.includes("Wennder Silva"), false);
 });

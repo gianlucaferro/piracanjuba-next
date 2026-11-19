@@ -5,10 +5,11 @@ import { summarizeClimateMonth, type ResumoMes } from "@/lib/climate-measurement
 import {
   MAX_DIAS_PREVISAO,
   hojeEmBrasilia,
-  inicioDoMes,
-  janelaUltimosDias,
+  janelaDiasEncerrados,
   montarPainelClima,
+  periodoMesEncerrado,
   somarDias,
+  ultimoDiaEncerrado,
   type ClimaPainel,
 } from "@/lib/clima-painel";
 export type { ResumoMes } from "@/lib/climate-measurements";
@@ -79,14 +80,15 @@ export const fetchChuvaMediaHistorica = unstable_cache(
 );
 
 /**
- * Soma de precipitacao nos ultimos N dias (hoje incluido) calculada do diario da
- * Open-Meteo (sync a cada 15 min). A tabela tambem guarda a previsao dos proximos
- * dias, entao a janela para em hoje (data de Brasilia).
+ * Soma de precipitacao nos ultimos N dias encerrados (de hoje - N a ontem) calculada do
+ * diario da Open-Meteo (sync a cada 15 min). A tabela tambem guarda a previsao dos proximos
+ * dias, e a linha de hoje soma a chuva ja calculada com a prevista para o resto do dia, entao
+ * a janela para em ontem (data de Brasilia).
  */
 const chuvaUltimosDiasCache = unstable_cache(
   async (dias: number, hoje: string): Promise<{ total: number; dias_com_chuva: number }> => {
     const supabase = createPublicSupabaseClient();
-    const { inicio, fim } = janelaUltimosDias(hoje, dias);
+    const { inicio, fim } = janelaDiasEncerrados(hoje, dias);
 
     const { data } = await supabase
       .from("inmet_clima_diario")
@@ -100,7 +102,7 @@ const chuvaUltimosDiasCache = unstable_cache(
       dias_com_chuva: valores.filter((v) => v > 0.1).length,
     };
   },
-  ["clima-ultimos-dias-ate-hoje"],
+  ["clima-ultimos-dias-encerrados"],
   { revalidate: 1800, tags: ["clima"] },
 );
 
@@ -132,19 +134,22 @@ export function fetchClimaUltimoDia() {
   return climaUltimoDiaCache(hojeEmBrasilia());
 }
 
-/** Ultimos N dias ate hoje, em ordem crescente (hoje e parcial). */
+/**
+ * Ultimos N dias encerrados (ate ontem), em ordem crescente. A linha de hoje fica de fora:
+ * a chuva dela inclui a previsao do resto do dia e a media e a temperatura do momento.
+ */
 const climaSerieDiasCache = unstable_cache(
   async (dias: number, hoje: string): Promise<ClimaDia[]> => {
     const supabase = createPublicSupabaseClient();
     const { data } = await supabase
       .from("inmet_clima_diario")
       .select(COLUNAS_DIA)
-      .lte("data", hoje)
+      .lte("data", ultimoDiaEncerrado(hoje))
       .order("data", { ascending: false })
       .limit(dias);
     return ((data ?? []) as ClimaDia[]).reverse();
   },
-  ["clima-serie-dias-ate-hoje"],
+  ["clima-serie-dias-encerrados"],
   { revalidate: 1800, tags: ["clima"] },
 );
 
@@ -152,19 +157,24 @@ export function fetchClimaSerieDias(dias = 30) {
   return climaSerieDiasCache(dias, hojeEmBrasilia());
 }
 
-/** Resumo do mes corrente de Brasilia, do dia 1 ate hoje. */
+/**
+ * Resumo do mes corrente de Brasilia, so com dias encerrados (do dia 1 ate ontem). No dia 1
+ * ainda nao ha dia encerrado no mes e o resumo fica sem dado.
+ */
 const climaResumoMesCache = unstable_cache(
   async (hoje: string): Promise<ResumoMes | null> => {
+    const periodo = periodoMesEncerrado(hoje);
+    if (!periodo) return null;
     const supabase = createPublicSupabaseClient();
     const { data } = await supabase
       .from("inmet_clima_diario")
       .select("temperatura_max,temperatura_min,temperatura_media,precipitacao_mm")
-      .gte("data", inicioDoMes(hoje))
-      .lte("data", hoje);
+      .gte("data", periodo.inicio)
+      .lte("data", periodo.fim);
 
     return summarizeClimateMonth(data ?? []);
   },
-  ["clima-resumo-mes-ate-hoje"],
+  ["clima-resumo-mes-encerrado"],
   { revalidate: 1800, tags: ["clima"] },
 );
 

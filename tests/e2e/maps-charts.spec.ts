@@ -20,9 +20,11 @@ test("clima mantém medição isolada, dados ausentes e gráfico dentro da tela"
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/clima");
-  const hero = page.locator("section").filter({ has: page.getByText("Última medição em Piracanjuba", { exact: true }) });
-  await expect(hero).toContainText("Sem dados");
-  await expect(hero).not.toContainText("0°C");
+  await expect(page.getByRole("heading", { level: 1, name: "Previsão do tempo em Piracanjuba" })).toBeVisible();
+  // O dado de teste não tem leitura de hoje: o bloco "Tempo agora" (Onda 2, 2026-11-19) não aparece,
+  // e nenhum valor ausente vira 0°C na página.
+  await expect(page.getByRole("heading", { name: "Tempo agora em Piracanjuba" })).toHaveCount(0);
+  expect(await page.locator("body").innerText()).not.toMatch(/(^|[^\d,.])0°C/);
   const temperature = page.locator("section").filter({ has: page.getByRole("heading", { name: /Temperatura diária/ }) });
   await temperature.scrollIntoViewIfNeeded();
   const dots = temperature.locator(".recharts-line-dot");

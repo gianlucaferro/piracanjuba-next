@@ -9,6 +9,7 @@ import {
   embaralharPorDia,
   fichaParaNavegador,
   sementeDoDia,
+  textoIndice,
   textoResposta,
   type CadastroZap,
   type FichaZap,
@@ -126,11 +127,26 @@ test("o parágrafo-resposta traz o número, as categorias, a data e a origem dos
   assert.equal(
     texto,
     "O Zap PBA reúne o WhatsApp de 423 estabelecimentos de Piracanjuba, GO, em 24 categorias, " +
-      "com números informados pelos próprios estabelecimentos (lista atualizada em 2026-11-19).",
+      "com números cadastrados no portal e publicados após análise (lista atualizada em 2026-11-19).",
   );
   assert.match(textoResposta(1, 1, "2026-11-19") ?? "", /1 estabelecimento de Piracanjuba, GO, em 1 categoria, /);
   assert.equal(textoResposta(0, 0, "2026-11-19"), null, "sem fichas, o texto não afirma nada");
   assert.doesNotMatch(texto ?? "", /[\u2013\u2014]/);
+  // O formulário aceita qualquer visitante e a ficha do escritório entra pelo portal:
+  // o dado não sustenta que os números vieram dos próprios estabelecimentos.
+  assert.doesNotMatch(texto ?? "", /próprios estabelecimentos/);
+});
+
+test("o índice só diz quantos são quando o total veio do banco, e trata o singular", () => {
+  assert.equal(textoIndice(423), "Os 423 estabelecimentos do guia, em ordem alfabética.");
+  assert.equal(textoIndice(1), "O único estabelecimento do guia.");
+  // Supabase fora do ar: só a ficha editorial na lista, sem contagem afirmada.
+  assert.equal(textoIndice(null), "Estabelecimentos do guia, em ordem alfabética.");
+  assert.equal(textoIndice(0), "Estabelecimentos do guia, em ordem alfabética.");
+  for (const total of [null, 0, 1, 2, 423]) {
+    assert.doesNotMatch(textoIndice(total), /\bOs 1 /);
+    assert.doesNotMatch(textoIndice(total), /[\u2013\u2014]/);
+  }
 });
 
 test("o primeiro lote fecha as grades de 1, 2 e 3 colunas", () => {

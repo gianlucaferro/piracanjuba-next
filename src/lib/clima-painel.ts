@@ -2,8 +2,11 @@
 //
 // A tabela inmet_clima_diario guarda, na mesma série, 2 dias passados, o dia de hoje e
 // 6 dias de previsão (sync-inmet-clima pede past_days 2 e forecast_days 7 à Open-Meteo,
-// a cada 15 minutos). Por isso toda leitura de "registrado" precisa parar em hoje, e a
-// previsão precisa vir rotulada com a data. "Hoje" é sempre a data de Brasília.
+// a cada 15 minutos). A linha de hoje também é estimativa: a chuva é o precipitation_sum do
+// dia inteiro (horas já passadas mais a previsão para o resto do dia) e a média é a
+// temperatura do momento. Por isso toda soma de "registrado" para em ontem (dias já
+// encerrados), e hoje e os dias seguintes aparecem rotulados como previsão, com a data.
+// "Hoje" é sempre a data de Brasília.
 //
 // Módulo puro (sem Next nem Supabase), testado em tests/clima-painel.test.ts.
 import { brazilDate } from "./civic-day.ts";
@@ -43,7 +46,7 @@ export type ClimaPainel = {
   /** Hoje em Brasília (AAAA-MM-DD). */
   hoje: string;
   agora: ClimaAgora | null;
-  /** Linha do dia de hoje: máxima e mínima previstas para o dia, chuva parcial. */
+  /** Linha do dia de hoje: máxima e mínima previstas e chuva estimada do dia (horas passadas mais previsão). */
   diaHoje: ClimaPrevisaoDia | null;
   /** Dias depois de hoje, em ordem crescente. */
   previsao: ClimaPrevisaoDia[];
@@ -63,14 +66,38 @@ export function somarDias(data: string, dias: number): string {
   return base.toISOString().slice(0, 10);
 }
 
-/** Janela de N dias que termina hoje (inclusive): [hoje - (N - 1), hoje]. */
-export function janelaUltimosDias(hoje: string, dias: number): { inicio: string; fim: string } {
+/** Último dia encerrado: a véspera de hoje. A linha de hoje ainda mistura chuva calculada e prevista. */
+export function ultimoDiaEncerrado(hoje: string): string {
+  return somarDias(hoje, -1);
+}
+
+/** Janela de N dias já encerrados, que termina ontem: [hoje - N, hoje - 1]. */
+export function janelaDiasEncerrados(hoje: string, dias: number): { inicio: string; fim: string } {
   const n = Math.max(1, Math.floor(dias));
-  return { inicio: somarDias(hoje, -(n - 1)), fim: hoje };
+  return { inicio: somarDias(hoje, -n), fim: ultimoDiaEncerrado(hoje) };
 }
 
 export function inicioDoMes(hoje: string): string {
   return `${hoje.slice(0, 7)}-01`;
+}
+
+/**
+ * Dias já encerrados do mês de hoje: do dia 1 até ontem. No dia 1 ainda não há dia
+ * encerrado no mês, e o resumo fica sem dado em vez de somar só a previsão de hoje.
+ */
+export function periodoMesEncerrado(hoje: string): { inicio: string; fim: string } | null {
+  const inicio = inicioDoMes(hoje);
+  const fim = ultimoDiaEncerrado(hoje);
+  return fim < inicio ? null : { inicio, fim };
+}
+
+/**
+ * Meio-dia de Brasília (UTC-3, sem horário de verão desde 2019) na data dada. Serve de
+ * referência para funções que recebem um instante e calculam o "hoje" de Brasília, como
+ * summarizeRainRisk: com a referência em ontem, a janela de 7 dias termina no último dia encerrado.
+ */
+export function meioDiaEmBrasilia(data: string): Date {
+  return new Date(`${data}T12:00:00-03:00`);
 }
 
 const MESES = [
@@ -197,11 +224,14 @@ export function respostaClima(painel: ClimaPainel, resumoMes: ResumoMes | null):
     );
   }
 
-  if (resumoMes?.acumulado_mm !== null && resumoMes?.acumulado_mm !== undefined) {
+  // O resumo do mês vem só de dias encerrados (do dia 1 até ontem); a chuva de hoje já está
+  // acima, como previsão. No dia 1 não há período encerrado e a frase não sai.
+  const periodo = periodoMesEncerrado(hoje);
+  if (periodo && resumoMes?.acumulado_mm !== null && resumoMes?.acumulado_mm !== undefined) {
     const dias = resumoMes.dias_com_chuva;
     const diasTexto = dias === null ? "" : ` em ${dias} ${dias === 1 ? "dia" : "dias"} com chuva`;
     frases.push(
-      `Em ${nomeMes(hoje)}, de ${inicioDoMes(hoje)} a ${hoje}, a chuva somou ${formatarChuva(resumoMes.acumulado_mm)}${diasTexto} (o dia de hoje ainda é parcial).`,
+      `Em ${nomeMes(hoje)}, de ${periodo.inicio} a ${periodo.fim} (dias já encerrados), a chuva somou ${formatarChuva(resumoMes.acumulado_mm)}${diasTexto}.`,
     );
   }
 
@@ -211,6 +241,15 @@ export function respostaClima(painel: ClimaPainel, resumoMes: ResumoMes | null):
 
   frases.push(`Fonte: ${FONTE_CLIMA}, com atualização a cada 15 minutos.`);
   return frases.join(" ");
+}
+
+/**
+ * Chuva do dia no selo da home. O valor de hoje soma as horas já passadas e a previsão para o
+ * resto do dia, então é dito como previsão. Com 0,1 mm ou menos o selo não mostra chuva.
+ */
+export function rotuloChuvaHoje(valor: number | null): string | null {
+  if (valor === null || valor <= 0.1) return null;
+  return `${formatarChuva(valor)} previstos para hoje`;
 }
 
 /**

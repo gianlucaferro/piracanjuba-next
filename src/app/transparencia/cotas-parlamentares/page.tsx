@@ -8,9 +8,9 @@ import { fetchVereadoresLista } from "@/lib/data/vereadores";
 import CotasParlamentaresCard from "@/components/camara/CotasParlamentaresCard";
 
 export const metadata = pageMetadata({
-  title: "Cotas Parlamentares — Inexistentes em Piracanjuba GO",
+  title: "Cotas parlamentares em Piracanjuba GO",
   description:
-    "A Câmara Municipal de Piracanjuba declarou formalmente que não existem cotas ou verba indenizatória parlamentar. Vereadores recebem apenas o subsídio mensal. Declaração oficial via portal LAI Centi 2023-2026.",
+    "Cotas parlamentares em Piracanjuba: a Câmara declarou oficialmente que não há cota nem verba indenizatória. Os vereadores recebem subsídio mensal e diárias.",
   path: "/transparencia/cotas-parlamentares",
 });
 
@@ -65,22 +65,22 @@ export default async function CotasParlamentaresPage() {
           <li className="flex items-start gap-2">
             <span className="text-emerald-600 font-bold">✓</span>
             <div>
-              <strong>Subsídio mensal</strong> — remuneração fixa estabelecida
+              <strong>Subsídio mensal</strong>: remuneração fixa estabelecida
               em lei municipal. Valor exato no perfil de cada vereador.
             </div>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-600 font-bold">✓</span>
             <div>
-              <strong>Diárias</strong> — pagamentos pontuais quando viajam a
+              <strong>Diárias</strong>: pagamentos pontuais quando viajam a
               trabalho fora da cidade (capacitações, audiências em Goiânia/Brasília).
-              Dado público — em coleta pelo Piracanjuba.AI.
+              Dado público, em coleta pelo Piracanjuba.AI.
             </div>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-red-600 font-bold">✗</span>
             <div>
-              <strong>Cota parlamentar / verba indenizatória</strong> — não
+              <strong>Cota parlamentar / verba indenizatória</strong>: não
               existe. Combustível, divulgação, alimentação, telefonia: não há
               reembolso individual.
             </div>
@@ -88,7 +88,7 @@ export default async function CotasParlamentaresPage() {
           <li className="flex items-start gap-2">
             <span className="text-red-600 font-bold">✗</span>
             <div>
-              <strong>Gabinete próprio com equipe</strong> — não há cargos
+              <strong>Gabinete próprio com equipe</strong>: não há cargos
               comissionados de gabinete individual. Servidores da Câmara são
               compartilhados.
             </div>
@@ -139,7 +139,7 @@ export default async function CotasParlamentaresPage() {
         </div>
         <p className="text-xs text-muted-foreground italic">
           Valores aproximados pra contexto. A ausência em Piracanjuba pode ser
-          vista como economia ao contribuinte municipal — em um vereador de
+          vista como economia ao contribuinte municipal: para um vereador de
           Goiânia, a cota anual chega a R$ 300.000.
         </p>
       </section>
@@ -150,8 +150,9 @@ export default async function CotasParlamentaresPage() {
           Vereadores do mandato 2025-2028
         </h2>
         <p className="text-sm text-muted-foreground">
-          Todos recebem apenas o subsídio mensal. Veja remuneração detalhada
-          clicando em cada perfil.
+          Todos recebem o subsídio mensal e, quando viajam a trabalho, diárias;
+          nenhum tem cota parlamentar. Veja a remuneração detalhada clicando em
+          cada perfil.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {vereadores.map((v) => (

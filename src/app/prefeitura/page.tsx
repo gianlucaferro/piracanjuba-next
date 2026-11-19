@@ -119,14 +119,13 @@ const datasets = [
   datasetJsonLd({
     name: "Frota de Veículos da Prefeitura de Piracanjuba",
     description:
-      "Veículos do poder executivo municipal de Piracanjuba (placa, modelo, ano, secretaria responsável) coletados via DETRAN-GO e dados de transparência municipal.",
+      "Veículos do poder executivo municipal de Piracanjuba (placa, modelo, ano, secretaria responsável), do portal de transparência da Prefeitura (piracanjuba.centi.com.br).",
     url: `${SITE_URL}/prefeitura/veiculos`,
-    creator: {
-      type: "GovernmentOrganization",
-      name: "DETRAN-GO + Prefeitura de Piracanjuba",
-    },
+    // Fonte: sync-frota-veiculos lê o portal de transparência da Prefeitura (Centi), não o DETRAN-GO
+    // (revisão da Onda 2, 2026-11-19, achado transversal-02).
+    creatorId: SCHEMA_IDS.prefeitura,
     dateModified: today,
-    keywords: ["frota municipal", "DETRAN", "Piracanjuba", "transparência"],
+    keywords: ["frota municipal", "veículos da Prefeitura", "Piracanjuba", "transparência"],
   }),
 ];
 

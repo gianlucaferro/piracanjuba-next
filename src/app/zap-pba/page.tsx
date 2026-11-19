@@ -7,8 +7,9 @@ import vinculos from "@/data/zap-pba-paginas.json";
 import ZapPbaClient from "./ZapPbaClient";
 import { dataDeReferencia, fichaParaNavegador } from "./lista";
 
+// Com o sufixo " | Piracanjuba.ai" do layout, o título renderizado tem 60 caracteres.
 export const metadata = pageMetadata({
-  title: "Zap PBA | WhatsApp de empresas e serviços em Piracanjuba",
+  title: "Zap PBA: WhatsApp de empresas em Piracanjuba",
   description:
     "Encontre empresas e prestadores de serviço de Piracanjuba, GO. Busque por nome ou categoria, conheça a atividade de cada negócio e fale pelo WhatsApp.",
   path: "/zap-pba",
@@ -36,10 +37,13 @@ export default async function ZapPbaPage() {
       ? escritorio.path
       : paginaPorCadastro.get(item.id),
   }, agora.getTime()));
+  // Com erro do Supabase, fetchZapEstabelecimentos devolve [] e só sobra a ficha
+  // editorial abaixo: o topo e o índice não afirmam contagem nesse caso.
+  const listaCarregada = estabelecimentos.length > 0;
   if (fichas.some((item) => item.pagina === escritorio.path)) {
-    return <ZapPbaClient initialEstabelecimentos={fichas} dataReferencia={dataReferencia} />;
+    return <ZapPbaClient initialEstabelecimentos={fichas} dataReferencia={dataReferencia} listaCarregada={listaCarregada} />;
   }
-  return <ZapPbaClient dataReferencia={dataReferencia} initialEstabelecimentos={[...fichas, fichaParaNavegador({
+  return <ZapPbaClient dataReferencia={dataReferencia} listaCarregada={listaCarregada} initialEstabelecimentos={[...fichas, fichaParaNavegador({
     id: escritorio.path,
     editorial: true,
     name: escritorio.nome,

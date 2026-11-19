@@ -9,11 +9,14 @@ import {
   dataCurta,
   dataPorExtenso,
   diaEmBrasilia,
+  DIAS_MATURIDADE_DESPESAS,
   diasAteVencimento,
   escolherMesFechado,
   escolherSubsidio,
   formatarReais,
+  fotoAbsoluta,
   hojeEmBrasilia,
+  mesMaduro,
   montarRespostaChefia,
   montarRespostaContratos,
   montarRespostaDespesas,
@@ -28,7 +31,9 @@ import {
 import { ehLoteInicial, LOTE_CONTRATOS, MARCA_LOTE_INICIAL, SERVIDORES_POR_PAGINA } from "../src/lib/prefeitura-lote.ts";
 import {
   COLUNAS_CONTRATOS,
+  consultarDespesasMensaisRecentes,
   consultarRemuneracaoExecutivo,
+  MESES_DESPESAS_RECENTES,
   consultarServidoresPagina,
 } from "../src/lib/prefeitura-consultas.ts";
 
@@ -38,7 +43,7 @@ const TRAVESSAO = /[\u2013\u2014]/;
 const prefeita: PessoaExecutivo = {
   tipo: "prefeita", nome: "Lenizia Alves Canedo", partido: "PP",
   mandato_inicio: "2025-01-01", mandato_fim: "2028-12-31",
-  foto_url: "https://exemplo.test/lenizia.jpg", fonte_url: "https://piracanjuba.go.gov.br/secretariado/",
+  foto_url: "/images/prefeita-lenizia.webp", fonte_url: "https://piracanjuba.go.gov.br/secretariado/",
   updated_at: "2026-02-28T06:52:29.272268+00:00",
 };
 const vice: PessoaExecutivo = {
@@ -130,11 +135,16 @@ test("resposta da chefia: nomes, partidos, mandato e subsídio com competência"
 test("respostas de servidores, contratos, despesas e secretarias saem do dado, com data", () => {
   assert.equal(
     montarRespostaServidores({ mensal: { competencia: "2026-10", bruto: 4567890.12, servidores: 1702 }, publicacaoParcial: false }),
-    "Na folha mensal de outubro de 2026, a Prefeitura de Piracanjuba pagou R$ 4.567.890,12 em remuneração bruta a 1.702 servidores.",
+    "Na folha mensal de outubro de 2026, a Prefeitura de Piracanjuba pagou R$ 4.567.890,12 em remuneração bruta a 1.702 vínculos de servidores.",
   );
   assert.match(
     montarRespostaServidores({ mensal: { competencia: "2026-10", bruto: null, servidores: 1 }, publicacaoParcial: true })!,
-    /registrou 1 servidor\. A publicação mais recente ainda está parcial/,
+    /registrou 1 vínculo de servidor\. A publicação mais recente ainda está parcial/,
+  );
+  // O número é de servidor_id distintos (vínculos), não de pessoas: o texto nunca diz "N servidores".
+  assert.doesNotMatch(
+    montarRespostaServidores({ mensal: { competencia: "2026-10", bruto: 8335898.76, servidores: 1504 } })!,
+    /\d servidores/,
   );
   assert.equal(montarRespostaServidores({ mensal: null }), null);
   assert.equal(montarRespostaServidores(null), null);
@@ -153,18 +163,27 @@ test("respostas de servidores, contratos, despesas e secretarias saem do dado, c
   assert.doesNotMatch(montarRespostaContratos([{ valor: 10, vigencia_inicio: "2026-11-17" }], null)!, /reúne/);
   assert.equal(montarRespostaContratos([], 6610), null);
 
+  // despesas_mensais conferido no banco em 2026-11-19: as três competências mais recentes,
+  // todas coletadas em 2026-11-10. Outubro, coletado 10 dias depois do fim do mês, tem pago de
+  // só 39% do empenhado (mês incompleto no portal); setembro, coletado 41 dias depois, é o maduro.
   const mensais = [
     { competencia: "2026-11", valor_empenhado: 1195071.37, valor_liquidado: 1098659.67, valor_pago: 9787.49, data_coleta: "2026-11-10T06:25:01.066+00:00" },
     { competencia: "2026-10", valor_empenhado: "6609950.24", valor_liquidado: 4939277.53, valor_pago: 2575066.85, data_coleta: "2026-11-10T06:25:01.066+00:00" },
+    { competencia: "2026-09", valor_empenhado: "15225864.89", valor_liquidado: "14677850.44", valor_pago: "14219391.75", data_coleta: "2026-11-10 06:25:01.066+00" },
   ];
-  const outubro = escolherMesFechado(mensais, "2026-11");
-  assert.equal(outubro?.competencia, "2026-10");
+  const setembro = escolherMesFechado(mensais, "2026-11");
+  assert.equal(setembro?.competencia, "2026-09");
   assert.equal(
-    montarRespostaDespesas(outubro),
-    "Em outubro de 2026, a Prefeitura de Piracanjuba empenhou R$ 6.609.950,24, liquidou R$ 4.939.277,53 e pagou R$ 2.575.066,85 em despesas." +
+    montarRespostaDespesas(setembro),
+    "Em setembro de 2026, a Prefeitura de Piracanjuba empenhou R$ 15.225.864,89, liquidou R$ 14.677.850,44 e pagou R$ 14.219.391,75 em despesas." +
     " Dados coletados em 10 de novembro de 2026.",
   );
-  assert.equal(escolherMesFechado(mensais, "2026-10"), null);
+  // Entre 2026-12-01 e 2026-12-09 (antes da coleta do dia 10), novembro coletado no meio do mês
+  // e outubro coletado 10 dias depois do fim continuam recusados.
+  assert.equal(escolherMesFechado(mensais, "2026-12")?.competencia, "2026-09");
+  assert.equal(escolherMesFechado(mensais.slice(0, 2), "2026-12"), null);
+  assert.equal(escolherMesFechado(mensais.slice(0, 2), "2026-11"), null);
+  assert.equal(escolherMesFechado(mensais, "2026-09"), null);
   assert.equal(montarRespostaDespesas({ competencia: "2026-10", valor_empenhado: null, valor_liquidado: null, valor_pago: null }), null);
 
   assert.equal(
@@ -175,6 +194,55 @@ test("respostas de servidores, contratos, despesas e secretarias saem do dado, c
     "A Prefeitura de Piracanjuba tem 2 secretarias municipais cadastradas, 1 com secretário identificado. Cadastro atualizado em 2 de março de 2026.",
   );
   assert.equal(montarRespostaSecretarias([]), null);
+});
+
+test("mês de despesas só conta como maduro com a coleta 30 dias ou mais depois do fim, no dia de Brasília", () => {
+  assert.equal(DIAS_MATURIDADE_DESPESAS, 30);
+  // Outubro termina em 2026-10-31: 30 dias depois é 2026-11-30.
+  assert.equal(mesMaduro("2026-10", "2026-11-30"), true);
+  assert.equal(mesMaduro("2026-10", "2026-11-29"), false);
+  // 02:00 UTC de 2026-11-30 ainda é 2026-11-29 em Brasília: 29 dias, não conta.
+  assert.equal(mesMaduro("2026-10", "2026-11-30T02:00:00+00:00"), false);
+  assert.equal(mesMaduro("2026-10", "2026-11-30T03:00:00+00:00"), true);
+  // Fevereiro de 2028 (bissexto) termina em 2028-02-29.
+  assert.equal(mesMaduro("2028-02", "2028-03-30"), true);
+  assert.equal(mesMaduro("2028-02", "2028-03-29"), false);
+  // Sem data de coleta ou competência fora do padrão, nada é afirmado.
+  assert.equal(mesMaduro("2026-09", null), false);
+  assert.equal(mesMaduro("2026-09", "data ruim"), false);
+  assert.equal(mesMaduro("2026-9", "2026-11-10"), false);
+  assert.equal(escolherMesFechado([{ competencia: "2026-09", data_coleta: null }], "2026-11"), null);
+  // O mais recente entre os maduros.
+  assert.equal(
+    escolherMesFechado([
+      { competencia: "2026-07", data_coleta: "2026-11-10" },
+      { competencia: "2026-09", data_coleta: "2026-11-10" },
+      { competencia: "2026-08", data_coleta: "2026-11-10" },
+    ], "2026-11")?.competencia,
+    "2026-09",
+  );
+});
+
+test("consultarDespesasMensaisRecentes lê 6 meses, para o mês maduro estar no lote", async () => {
+  assert.equal(MESES_DESPESAS_RECENTES, 6);
+  // Coleta de 2026-12-10 que só regravou dezembro (as demais linhas seguem da coleta de
+  // 2026-11-10): os três meses mais recentes (dezembro parcial, novembro coletado no meio do mês
+  // e outubro coletado 10 dias depois do fim) não têm mês maduro. O lote de 6 ainda traz setembro.
+  const competencias = ["2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12"];
+  const sb = supabaseFalso({
+    despesas_mensais: competencias.map((competencia) => ({
+      competencia, valor_empenhado: "1", valor_liquidado: "1", valor_pago: "1", fonte_nome: null, fonte_url: null,
+      data_coleta: competencia === "2026-12" ? "2026-12-10 06:25:01.066+00" : "2026-11-10 06:25:01.066+00",
+    })),
+  });
+  const linhas = await consultarDespesasMensaisRecentes(sb as never);
+  assert.deepEqual(linhas.map((l) => l.competencia), ["2026-12", "2026-11", "2026-10", "2026-09", "2026-08", "2026-07"]);
+  assert.deepEqual(sb.chamadas[0].passos.slice(1), [
+    ["order", ["competencia", { ascending: false }]],
+    ["limit", [MESES_DESPESAS_RECENTES]],
+  ]);
+  assert.equal(escolherMesFechado(linhas, "2026-12")?.competencia, "2026-09");
+  assert.equal(escolherMesFechado(linhas.slice(0, 3), "2026-12"), null);
 });
 
 test("nenhum texto gerado tem travessão", () => {
@@ -202,7 +270,15 @@ test("Person da chefia só com campos que têm fonte e ligado ao @id da Prefeitu
   assert.equal(pessoa.jobTitle, "Prefeita de Piracanjuba");
   assert.equal(pessoa.description, "Prefeita de Piracanjuba (GO), no mandato de 2025 a 2028.");
   assert.deepEqual(pessoa.worksFor, { "@type": "GovernmentOrganization", ...orgao });
-  assert.equal(pessoa.image, prefeita.foto_url);
+  // O cadastro guarda caminho do site; o schema sai com URL https absoluta.
+  assert.equal(pessoa.image, "https://piracanjuba.ai/images/prefeita-lenizia.webp");
+  const comFotoExterna = pessoaExecutivoJsonLd({ ...prefeita, foto_url: "https://piracanjuba.go.gov.br/foto.jpg" }, { paginaUrl: "https://piracanjuba.ai/prefeitura/chefia", orgao });
+  assert.equal(comFotoExterna.image, "https://piracanjuba.go.gov.br/foto.jpg");
+  for (const foto of ["http://piracanjuba.go.gov.br/foto.jpg", "//cdn.test/foto.jpg", "images/foto.jpg", "   "]) {
+    assert.equal("image" in pessoaExecutivoJsonLd({ ...prefeita, foto_url: foto }, { paginaUrl: "https://piracanjuba.ai/prefeitura/chefia", orgao }), false, foto);
+  }
+  assert.equal(fotoAbsoluta("/images/vice-milton.webp", "https://piracanjuba.ai/prefeitura/chefia"), "https://piracanjuba.ai/images/vice-milton.webp");
+  assert.equal(fotoAbsoluta("/images/vice-milton.webp", "/prefeitura/chefia"), null);
   const pessoaVice = pessoaExecutivoJsonLd(vice, { paginaUrl: "https://piracanjuba.ai/prefeitura/chefia", orgao });
   assert.equal(pessoaVice["@id"], "https://piracanjuba.ai/prefeitura/chefia#vice");
   assert.equal(pessoaVice.jobTitle, "Vice-prefeito de Piracanjuba");

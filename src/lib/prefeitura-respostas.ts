@@ -86,6 +86,12 @@ export function dataCurta(valor: string | null | undefined): string | null {
   return `${d}/${mes}/${ano}`;
 }
 
+/** Meia-noite UTC de um dia de calendário (AAAA-MM-DD), para contar dias sem depender do fuso. */
+function diaEmUtc(dia: string): number {
+  const [a, m, d] = dia.split("-").map(Number);
+  return Date.UTC(a, m - 1, d);
+}
+
 /**
  * Dias até o fim da vigência, contando o dia de hoje (fim hoje = 1, igual ao cálculo antigo
  * feito no navegador com o fim às 23:59:59). Negativo quando o contrato já venceu. Calculado
@@ -94,11 +100,7 @@ export function dataCurta(valor: string | null | undefined): string | null {
 export function diasAteVencimento(vigenciaFim: string | null | undefined, hoje: string): number | null {
   const fim = diaEmBrasilia(vigenciaFim);
   if (!fim || !/^\d{4}-\d{2}-\d{2}$/.test(hoje)) return null;
-  const emUtc = (dia: string) => {
-    const [a, m, d] = dia.split("-").map(Number);
-    return Date.UTC(a, m - 1, d);
-  };
-  const diferenca = Math.round((emUtc(fim) - emUtc(hoje)) / 86_400_000);
+  const diferenca = Math.round((diaEmUtc(fim) - diaEmUtc(hoje)) / 86_400_000);
   return diferenca < 0 ? diferenca : diferenca + 1;
 }
 
@@ -266,11 +268,15 @@ export function montarRespostaChefia(executivo: PessoaExecutivo[], subsidios: Su
 
 export type TotaisFolhaMensal = { competencia: string; bruto: number | null; servidores: number };
 
+/**
+ * "servidores" do resumo da folha conta servidor_id distintos, ou seja, vínculos (matrículas):
+ * a mesma pessoa pode ter dois. O texto diz "vínculos de servidores", igual ao card da aba.
+ */
 export function montarRespostaServidores(resumo: { mensal: TotaisFolhaMensal | null; publicacaoParcial?: boolean } | null): string | null {
   const mensal = resumo?.mensal;
   if (!mensal || mensal.servidores <= 0) return null;
   const quando = competenciaPorExtenso(mensal.competencia);
-  const servidores = `${formatarInteiro(mensal.servidores)} ${mensal.servidores === 1 ? "servidor" : "servidores"}`;
+  const servidores = `${formatarInteiro(mensal.servidores)} ${mensal.servidores === 1 ? "vínculo de servidor" : "vínculos de servidores"}`;
   let texto = mensal.bruto !== null
     ? `Na folha mensal de ${quando}, a Prefeitura de Piracanjuba pagou ${formatarReais(mensal.bruto)} em remuneração bruta a ${servidores}.`
     : `Na folha mensal de ${quando}, a Prefeitura de Piracanjuba registrou ${servidores}.`;
@@ -320,9 +326,30 @@ export type DespesaMensalResumo = {
   data_coleta?: string | null;
 };
 
-/** Mês mais recente já encerrado (competência anterior à corrente). */
-export function escolherMesFechado<T extends { competencia: string }>(linhas: T[], competenciaAtual: string): T | null {
-  const fechados = linhas.filter((l) => /^\d{4}-\d{2}$/.test(l.competencia) && l.competencia < competenciaAtual);
+/** Dias que a coleta precisa estar depois do último dia da competência para o mês contar como maduro. */
+export const DIAS_MATURIDADE_DESPESAS = 30;
+
+/**
+ * O portal de transparência segue lançando pagamentos semanas depois do fim do mês, e a coleta
+ * (dia 10 de cada mês) regrava também os meses recentes ainda incompletos. Mês maduro: o último
+ * dia da competência fica pelo menos DIAS_MATURIDADE_DESPESAS dias antes do dia da coleta, no
+ * fuso de Brasília. Sem data de coleta, não há como saber, e o mês não conta.
+ */
+export function mesMaduro(competencia: string, dataColeta: string | null | undefined): boolean {
+  const m = /^(\d{4})-(\d{2})$/.exec(competencia);
+  const coleta = diaEmBrasilia(dataColeta);
+  if (!m || !coleta) return false;
+  const ultimoDia = Date.UTC(Number(m[1]), Number(m[2]), 0);
+  return (diaEmUtc(coleta) - ultimoDia) / 86_400_000 >= DIAS_MATURIDADE_DESPESAS;
+}
+
+/**
+ * Mês mais recente já encerrado (competência anterior à corrente) e maduro na coleta. Sem mês
+ * maduro no lote, null: a página não afirma valor de mês com coleta incompleta.
+ */
+export function escolherMesFechado<T extends { competencia: string; data_coleta?: string | null }>(linhas: T[], competenciaAtual: string): T | null {
+  const fechados = linhas.filter((l) =>
+    /^\d{4}-\d{2}$/.test(l.competencia) && l.competencia < competenciaAtual && mesMaduro(l.competencia, l.data_coleta));
   if (!fechados.length) return null;
   return fechados.reduce((ultima, l) => (l.competencia > ultima.competencia ? l : ultima));
 }
@@ -365,6 +392,23 @@ export function montarRespostaSecretarias(secretarias: SecretariaResumo[]): stri
 export type OrgaoSchema = { "@id": string; name: string; url: string };
 
 /**
+ * Foto do cadastro em URL https absoluta, que é o que o campo image aceita sem ambiguidade. O
+ * cadastro guarda caminhos do próprio site ("/images/prefeita-lenizia.webp"): esses ganham a
+ * origem da página. Qualquer outra forma (http, "//", relativo sem barra) fica fora, como no
+ * schema dos vereadores (src/app/vereadores/schema.ts).
+ */
+export function fotoAbsoluta(foto: string | null | undefined, paginaUrl: string): string | null {
+  const valor = foto?.trim();
+  if (!valor) return null;
+  if (/^https:\/\//i.test(valor)) return valor;
+  if (valor.startsWith("/") && !valor.startsWith("//")) {
+    const origem = /^https:\/\/[^/?#]+/i.exec(paginaUrl)?.[0];
+    return origem ? `${origem}${valor}` : null;
+  }
+  return null;
+}
+
+/**
  * Person de schema.org para a prefeita e o vice, só com campos que têm fonte no cadastro do
  * Executivo: nome, cargo, órgão, mandato (na descrição) e foto. Liga ao GovernmentOrganization
  * da Prefeitura pelo mesmo @id do grafo do layout, com os dados repetidos para validar sozinho.
@@ -373,6 +417,7 @@ export function pessoaExecutivoJsonLd(p: PessoaExecutivo, opts: { paginaUrl: str
   const cargo = maiuscula(cargoSemArtigo(p.tipo));
   const periodo = mandato(p);
   const fragmento = papelDoTipo(p.tipo) === "vice" ? "vice" : "titular";
+  const foto = fotoAbsoluta(p.foto_url, opts.paginaUrl);
   return {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -381,7 +426,7 @@ export function pessoaExecutivoJsonLd(p: PessoaExecutivo, opts: { paginaUrl: str
     jobTitle: `${cargo} de Piracanjuba`,
     ...(periodo ? { description: `${cargo} de Piracanjuba (GO), ${periodo}.` } : {}),
     worksFor: { "@type": "GovernmentOrganization", ...opts.orgao },
-    ...(p.foto_url ? { image: p.foto_url } : {}),
+    ...(foto ? { image: foto } : {}),
     url: opts.paginaUrl,
     ...(p.fonte_url ? { subjectOf: { "@type": "WebPage", url: p.fonte_url } } : {}),
   };

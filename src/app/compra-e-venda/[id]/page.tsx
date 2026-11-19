@@ -4,9 +4,10 @@ import { fetchAnuncioPublicoPorId } from "@/lib/data/classificados";
 import AnuncioDetalheClient from "@/components/classificados/AnuncioDetalheWrapper";
 import {
   anuncioPublico,
+  descricaoAnuncio,
   produtoJsonLd,
-  rotuloCategoria,
   serializarJsonLd,
+  tituloAnuncio,
 } from "@/components/classificados/anuncio-publico";
 
 export const revalidate = 60;
@@ -34,15 +35,10 @@ export async function generateMetadata({
       noIndex: true,
     });
   }
-  const preco =
-    anuncio.preco != null
-      ? ` por ${Number(anuncio.preco).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
-      : "";
+  // Título de até 60 caracteres com o sufixo do layout; o preço vai na description.
   return pageMetadata({
-    title: `${anuncio.titulo}${preco}, Compra e Venda Piracanjuba`,
-    description:
-      anuncio.descricao?.slice(0, 160) ||
-      `Anúncio em Piracanjuba na categoria ${rotuloCategoria(anuncio.categoria)}.`,
+    title: tituloAnuncio(anuncio.titulo),
+    description: descricaoAnuncio(anuncio),
     path: `/compra-e-venda/${id}`,
     image: anuncio.fotos?.[0] || undefined,
   });

@@ -337,7 +337,9 @@ export function paragrafoIndicacoes(r: {
   if (!r.total) return null;
   const data = formatarData(r.ultima);
   return [
-    `Os vereadores de Piracanjuba têm ${plural(r.total, "indicação registrada", "indicações registradas")} no ${FONTE_PORTAL_CAMARA}, ${formatarInteiro(r.doAno)} delas em ${r.ano}${data ? `; a mais recente foi publicada em ${data}` : ""}.`,
+    // Sem indicação no ano corrente (por exemplo, no começo de janeiro), a oração do ano sai: "0 delas
+    // em 2027" leria como falha de leitura (revisão da Onda 2, 2026-11-19).
+    `Os vereadores de Piracanjuba têm ${plural(r.total, "indicação registrada", "indicações registradas")} no ${FONTE_PORTAL_CAMARA}${r.doAno > 0 ? `, ${formatarInteiro(r.doAno)} delas em ${r.ano}` : ""}${data ? `; a mais recente foi publicada em ${data}` : ""}.`,
     "Indicação é um pedido formal ao Executivo (Prefeitura), sem força de lei, para obras, saúde, educação, segurança ou outras áreas.",
   ].join(" ");
 }

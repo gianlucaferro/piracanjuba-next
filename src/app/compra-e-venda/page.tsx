@@ -14,10 +14,12 @@ import {
   serializarJsonLd,
 } from "@/components/classificados/anuncio-publico";
 
+// Título de até 60 caracteres com o sufixo do layout ("Compra e Venda PBA" segue no H1 e
+// abre a description); description de 120 a 160 (tests/classificados-seo.test.ts).
 export const metadata = pageMetadata({
-  title: "Compra e Venda PBA: classificados grátis em Piracanjuba GO",
+  title: "Classificados grátis em Piracanjuba GO",
   description:
-    "Anuncie e compre em Piracanjuba: imóveis, veículos, agro, eletrônicos, serviços. Anúncios gratuitos com WhatsApp e fotos.",
+    "Compra e Venda PBA: anuncie e compre em Piracanjuba. Imóveis, veículos, agro, eletrônicos e serviços, com anúncios gratuitos, WhatsApp e fotos.",
   path: "/compra-e-venda",
 });
 

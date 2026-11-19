@@ -29,13 +29,13 @@ import {
   paragrafoLicitacoes,
   paragrafoProjetos,
   paragrafoServidores,
-  resumirPagamentosPorAno,
   type CadastroPessoalCamara,
   type OrcamentoCamaraAno,
   type ResumoFolhaParaTexto,
 } from "@/components/camara/resposta-aba";
 import {
   fetchCamaraContratosServidor,
+  fetchIndicacoesResumoServidor,
   fetchOrcamentoCamaraServidor,
   fetchPagamentosCamaraAnos,
   fetchResumoFolhaCamaraServidor,
@@ -44,7 +44,7 @@ import {
 import { fetchContratosCamara, fetchContratosStats } from "@/lib/data/contratos-camara";
 import { fetchLicitacoesRecentes, fetchLicitacoesStats } from "@/lib/data/licitacoes-camara";
 import { fetchFolhaStats, fetchFolhaUltimaCompetencia } from "@/lib/data/folha-camara";
-import { fetchIndicacoesRecentes, fetchIndicacoesStats } from "@/lib/data/indicacoes-camara";
+import { fetchIndicacoesRecentes } from "@/lib/data/indicacoes-camara";
 import { fetchAtividadesLegislativas, fetchAtividadesStats } from "@/lib/data/atividades-legislativas";
 import { fetchAtosPorTipo, fetchAtosStats } from "@/lib/data/atos-camara";
 
@@ -139,9 +139,9 @@ async function blocoLicitacoes(): Promise<ReactNode> {
 
 async function blocoDespesas(): Promise<ReactNode> {
   // Só anos fechados: o ano corrente de camara_despesas tem linhas repetidas na fonte
-  // (2026-11-19: 25.434 linhas, 518 distintas), e a soma não é confiável.
+  // (2026-11-19: 25.694 linhas, só 588 distintas), e a soma não é confiável.
   const anoAtual = anoEmSaoPaulo();
-  const [orcamento, registros] = await Promise.all([
+  const [orcamento, resumoPagamentos] = await Promise.all([
     tentar("despesas-orcamento", () => fetchOrcamentoCamaraServidor()),
     tentar("despesas-pagamentos", () => fetchPagamentosCamaraAnos([anoAtual - 1, anoAtual - 2])),
   ]);
@@ -151,7 +151,7 @@ async function blocoDespesas(): Promise<ReactNode> {
     liquidada: o.liquidada === null ? null : Number(o.liquidada),
     periodo_referencia: o.periodo_referencia,
   }));
-  const pagamentos = pagamentosConfiaveis(resumirPagamentosPorAno(registros ?? []));
+  const pagamentos = pagamentosConfiaveis(resumoPagamentos ?? []);
   const paragrafo = paragrafoDespesas(orcamentos, pagamentos);
   if (!paragrafo) return null;
   return (
@@ -195,13 +195,15 @@ async function blocoServidores(queryClient: QueryClient): Promise<ReactNode> {
 }
 
 async function blocoIndicacoes(): Promise<ReactNode> {
+  // A contagem do ano é do ano corrente em São Paulo. Se qualquer consulta falhar, a leitura lança
+  // erro e o bloco some, em vez de afirmar "0 delas no ano".
+  const ano = anoEmSaoPaulo();
   const [stats, recentes] = await Promise.all([
-    tentar("indicacoes-resumo", () => fetchIndicacoesStats()),
+    tentar("indicacoes-resumo", () => fetchIndicacoesResumoServidor(ano)),
     tentar("indicacoes-recentes", () => fetchIndicacoesRecentes(50)),
   ]);
   if (!stats?.total) return null;
-  // fetchIndicacoesStats conta o ano de 2026 em campo próprio (ano_2026).
-  const paragrafo = paragrafoIndicacoes({ total: stats.total, ano: 2026, doAno: stats.ano_2026, ultima: stats.ultima_data });
+  const paragrafo = paragrafoIndicacoes({ total: stats.total, ano, doAno: stats.doAno, ultima: stats.ultima });
   if (!paragrafo) return null;
   return <BlocoIndicacoesCamara paragrafo={paragrafo} indicacoes={recentes ?? []} total={stats.total} />;
 }

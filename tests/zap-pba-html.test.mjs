@@ -112,7 +112,7 @@ const fichas = Array.from({ length: TOTAL }, (_, i) => {
   );
 });
 
-const props = { initialEstabelecimentos: fichas, dataReferencia: "2026-11-19" };
+const props = { initialEstabelecimentos: fichas, dataReferencia: "2026-11-19", listaCarregada: true };
 const html = renderToString(createElement(ZapPbaClient, props));
 const bytesHtml = Buffer.byteLength(html, "utf8");
 // O Next envia as props do componente cliente dentro de uma string JS no HTML
@@ -174,6 +174,59 @@ test("os ícones repetidos saem de um sprite declarado uma vez", () => {
 test("o topo responde com número, categorias, data e origem dos dados", () => {
   assert.match(
     html,
-    new RegExp(`O Zap PBA reúne o WhatsApp de ${TOTAL} estabelecimentos de Piracanjuba, GO, em 24 categorias, com números informados pelos próprios estabelecimentos \\(lista atualizada em 2026-11-19\\)`),
+    new RegExp(`O Zap PBA reúne o WhatsApp de ${TOTAL} estabelecimentos de Piracanjuba, GO, em 24 categorias, com números cadastrados no portal e publicados após análise \\(lista atualizada em 2026-11-19\\)`),
   );
+  assert.ok(html.includes(`Os ${TOTAL} estabelecimentos do guia, em ordem alfabética.`));
+});
+
+test("nem o topo nem o rodapé atribuem os números aos próprios estabelecimentos", () => {
+  // O formulário aceita qualquer visitante, sem provar que é o dono, e a ficha do
+  // escritório entra pelo próprio portal.
+  assert.doesNotMatch(html, /próprios estabelecimentos/);
+  assert.ok(html.includes("Os números são cadastrados no portal e publicados após análise."));
+});
+
+// Ficha que page.tsx acrescenta quando nenhum cadastro aprovado é o do escritório.
+const editorial = fichaParaNavegador(
+  {
+    id: "/escritorio-exemplo",
+    editorial: true,
+    name: "Escritório Exemplo",
+    whatsapp: "5564999990000",
+    category: "Advogados",
+    click_count: null,
+    created_at: null,
+    pagina: "/escritorio-exemplo",
+  },
+  AGORA,
+);
+
+test("com o Supabase fora do ar, só a ficha editorial e nenhuma contagem afirmada", () => {
+  // fetchZapEstabelecimentos devolve [] com erro do banco; page.tsx manda só a ficha
+  // editorial e listaCarregada falso.
+  const semBanco = renderToString(
+    createElement(ZapPbaClient, {
+      initialEstabelecimentos: [editorial],
+      dataReferencia: "2026-11-19",
+      listaCarregada: false,
+    }),
+  );
+  assert.ok(semBanco.includes("WhatsApps de comércios e serviços locais de Piracanjuba."), "subtítulo antigo ausente");
+  assert.doesNotMatch(semBanco, /reúne o WhatsApp de/);
+  assert.doesNotMatch(semBanco, /Os 1 estabelecimentos/);
+  assert.ok(semBanco.includes("Estabelecimentos do guia, em ordem alfabética."));
+  assert.ok(semBanco.includes(`href="${editorial.pagina}"`), "a ficha editorial continua no HTML");
+});
+
+test("com um único cadastro vindo do banco, o topo e o índice usam o singular", () => {
+  const umSo = renderToString(
+    createElement(ZapPbaClient, {
+      initialEstabelecimentos: [editorial],
+      dataReferencia: "2026-11-19",
+      listaCarregada: true,
+    }),
+  );
+  assert.match(umSo, /O Zap PBA reúne o WhatsApp de 1 estabelecimento de Piracanjuba, GO, em 1 categoria, /);
+  assert.ok(umSo.includes("O único estabelecimento do guia."));
+  assert.doesNotMatch(umSo, /Os 1 estabelecimentos/);
 });

@@ -27,13 +27,13 @@ function shortDate(s: string) {
 export default function ClimaClient({
   dias,
   resumo,
-  hoje,
+  periodoMes,
 }: {
-  /** Dias até hoje (inclusive), em ordem crescente; nunca dias de previsão. */
+  /** Dias encerrados (até ontem), em ordem crescente; nunca hoje nem dias de previsão. */
   dias: ClimaDia[];
   resumo: ResumoMes | null;
-  /** Hoje em Brasília (AAAA-MM-DD). */
-  hoje: string;
+  /** Período do resumo do mês: do dia 1 até ontem (null no dia 1, sem dia encerrado). */
+  periodoMes: { inicio: string; fim: string } | null;
 }) {
   const dataChart = useMemo(
     () =>
@@ -49,14 +49,17 @@ export default function ClimaClient({
   );
 
   const temperatura = (value: unknown) => formatChartNumber(value, (n) => `${Math.round(n)}°C`);
+  // Data do último dia da série, tirada do próprio dado (com falha de sincronização pode ser antes de ontem).
+  const ultimoDia = dias.length ? dias[dias.length - 1].data : null;
+  const periodoGrafico = ultimoDia ? `últimos ${dias.length} dias encerrados, até ${ultimoDia}` : `últimos ${dias.length} dias encerrados`;
 
   return (
     <div className="space-y-8">
-      {/* Resumo do mês, do dia 1 até hoje */}
-      {resumo && (
+      {/* Resumo do mês, do dia 1 até ontem (só dias encerrados) */}
+      {resumo && periodoMes && (
         <section aria-labelledby="resumo-mes" className="space-y-3">
           <h2 id="resumo-mes" className="text-lg font-semibold text-foreground">
-            Resumo do mês até hoje ({hoje.slice(0, 7)}-01 a {hoje})
+            Resumo do mês ({periodoMes.inicio} a {periodoMes.fim}, dias já encerrados)
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="stat-card text-center">
@@ -90,7 +93,7 @@ export default function ClimaClient({
       {/* Gráfico chuva */}
       <section>
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-3">
-          <CloudRain className="w-5 h-5 text-sky-500" /> Chuva diária registrada (últimos {dias.length} dias, até {hoje})
+          <CloudRain className="w-5 h-5 text-sky-500" /> Chuva diária ({periodoGrafico})
         </h2>
         <div className="stat-card h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -117,7 +120,7 @@ export default function ClimaClient({
       {/* Gráfico temperatura */}
       <section>
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-3">
-          <Thermometer className="w-5 h-5 text-orange-500" /> Temperatura diária (últimos {dias.length} dias, até {hoje})
+          <Thermometer className="w-5 h-5 text-orange-500" /> Temperatura diária ({periodoGrafico})
         </h2>
         <div className="stat-card h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -143,7 +146,8 @@ export default function ClimaClient({
           </ResponsiveContainer>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
-          🟧 Máxima · 🟢 Média · 🟦 Mínima. Os valores de hoje ainda são parciais.
+          🟧 Máxima · 🟢 Média · 🟦 Mínima. Os gráficos só mostram dias já encerrados; o dia de hoje está
+          na previsão do tempo, no alto da página.
         </p>
       </section>
     </div>

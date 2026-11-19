@@ -4,7 +4,11 @@ import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { resumirFolhaCamara, type RegistroFolhaCamara, type ResumoFolhaCamara } from "@/lib/camara-folha";
 import type { CamaraContrato, CamaraOrcamento } from "@/data/camaraApi";
 import type { Servidor } from "@/data/prefeituraApi";
-import type { RegistroPagamentoCamara } from "@/components/camara/resposta-aba";
+import {
+  resumirPagamentosPorAno,
+  type PagamentosCamaraAno,
+  type RegistroPagamentoCamara,
+} from "@/components/camara/resposta-aba";
 
 // Primeiro lote das abas da Câmara lido no servidor (Onda 2 de SEO, 2026-11-19).
 //
@@ -107,11 +111,14 @@ export const fetchOrcamentoCamaraServidor = unstable_cache(
 );
 
 /**
- * Pagamentos de anos fechados registrados no portal da Câmara, em páginas de mil linhas
- * (o limite do PostgREST), conferindo o total pela contagem exata.
+ * Resumo por ano (quantidade, soma e linhas repetidas) dos pagamentos de anos fechados registrados
+ * no portal da Câmara. Lê em páginas de mil linhas (o limite do PostgREST), conferindo o total pela
+ * contagem exata, e resume aqui dentro: o cache guarda poucos bytes por ano, não as linhas. Com as
+ * linhas cruas, o ano de 2026 (25.694 linhas em 2026-11-19, só 588 distintas) passaria de 4 MB, e o
+ * data cache do Next não grava item acima de 2 MB.
  */
 export const fetchPagamentosCamaraAnos = unstable_cache(
-  async (anos: number[]): Promise<RegistroPagamentoCamara[]> => {
+  async (anos: number[]): Promise<PagamentosCamaraAno[]> => {
     if (!anos.length) return [];
     const supabase = createPublicSupabaseClient();
     const registros: RegistroPagamentoCamara[] = [];
@@ -144,8 +151,44 @@ export const fetchPagamentosCamaraAnos = unstable_cache(
         throw new Error("A consulta de pagamentos da Câmara retornou registros incompletos.");
       }
     }
-    return registros;
+    return resumirPagamentosPorAno(registros);
   },
-  ["camara-abas-pagamentos"],
+  ["camara-abas-pagamentos-resumo"],
   { revalidate: 3600, tags: ["camara-despesas"] },
+);
+
+/**
+ * Contagem das indicações para o parágrafo da aba: total, quantas são do ano pedido e a data da
+ * mais recente. Mesmas consultas de fetchIndicacoesStats (src/lib/data/indicacoes-camara.ts), mas
+ * com erro lançado: lá a falha de uma consulta vira 0, e o parágrafo afirmaria "0 delas no ano"
+ * durante uma hora de cache.
+ */
+export const fetchIndicacoesResumoServidor = unstable_cache(
+  async (ano: number): Promise<{ total: number; doAno: number; ultima: string | null }> => {
+    const supabase = createPublicSupabaseClient();
+    const contar = async (apenasDoAno: boolean): Promise<number> => {
+      let query = supabase.from("indicacao_camara").select("*", { count: "exact", head: true });
+      if (apenasDoAno) query = query.eq("ano", ano);
+      const { count, error } = await query;
+      if (error) throw error;
+      if (count === null || count === undefined) {
+        throw new Error("Não foi possível confirmar a contagem de indicações da Câmara.");
+      }
+      return count;
+    };
+    const maisRecente = async (): Promise<string | null> => {
+      const { data, error } = await supabase
+        .from("indicacao_camara")
+        .select("data_publicacao")
+        .order("data_publicacao", { ascending: false, nullsFirst: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return (data?.data_publicacao as string | null | undefined) ?? null;
+    };
+    const [total, doAno, ultima] = await Promise.all([contar(false), contar(true), maisRecente()]);
+    return { total, doAno, ultima };
+  },
+  ["camara-abas-indicacoes-resumo"],
+  { revalidate: 3600, tags: ["indicacoes-camara"] },
 );

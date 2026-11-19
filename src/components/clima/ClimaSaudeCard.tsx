@@ -2,10 +2,14 @@ import Link from "next/link";
 import { CloudRain, AlertTriangle, ArrowRight } from "lucide-react";
 import { fetchClimaSerieDias } from "@/lib/data/clima";
 import { summarizeRainRisk } from "@/lib/climate-rain-risk";
+import { hojeEmBrasilia, meioDiaEmBrasilia, somarDias, ultimoDiaEncerrado } from "@/lib/clima-painel";
 
 export default async function ClimaSaudeCard() {
+  // Só dias encerrados: a linha de hoje soma a chuva já calculada com a prevista para o resto
+  // do dia. A referência em ontem faz a janela de 7 dias de summarizeRainRisk terminar em ontem.
+  const ultimoDia = ultimoDiaEncerrado(hojeEmBrasilia());
   const dias = await fetchClimaSerieDias(7);
-  const resumo = summarizeRainRisk(dias);
+  const resumo = summarizeRainRisk(dias, meioDiaEmBrasilia(ultimoDia));
   if (!resumo) return null;
   const { total: chuvaSemana, rainyDays: diasComChuva, partial: parcial, risk: risco } = resumo;
 
@@ -23,7 +27,7 @@ export default async function ClimaSaudeCard() {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm uppercase tracking-wider text-muted-foreground">
-          Chuva últimos 7 dias
+          Chuva de {somarDias(ultimoDia, -6)} a {ultimoDia}
         </p>
         <p className="text-base font-semibold text-foreground">
           {chuvaSemana} mm

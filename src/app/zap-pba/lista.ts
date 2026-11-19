@@ -123,7 +123,13 @@ export function agruparIndice(itens: readonly FichaZap[]): GrupoIndiceZap[] {
 }
 
 // Parágrafo-resposta do topo: quantos estabelecimentos, em quantas categorias, de
-// quando é a lista e de onde vêm os números. Sem fichas, não afirma nada.
+// quando é a lista e de onde vêm os números. Sem fichas, não afirma nada. Quem chama
+// só passa o total quando os cadastros vieram do banco: com o Supabase fora do ar, a
+// lista tem apenas a ficha editorial do escritório, e o topo volta ao subtítulo antigo.
+//
+// A origem descreve o que o dado sustenta: só entram cadastros com status "approved"
+// (o formulário grava "pending" e aceita qualquer visitante, sem provar que é o dono),
+// mais a ficha editorial que o próprio portal acrescenta.
 export function textoResposta(total: number, categorias: number, data: string): string | null {
   if (total <= 0) return null;
   const estabelecimentos = total === 1 ? "estabelecimento" : "estabelecimentos";
@@ -131,6 +137,13 @@ export function textoResposta(total: number, categorias: number, data: string): 
     categorias > 0 ? `, em ${categorias} ${categorias === 1 ? "categoria" : "categorias"}` : "";
   return (
     `O Zap PBA reúne o WhatsApp de ${total} ${estabelecimentos} de Piracanjuba, GO${emCategorias}, ` +
-    `com números informados pelos próprios estabelecimentos (lista atualizada em ${data}).`
+    `com números cadastrados no portal e publicados após análise (lista atualizada em ${data}).`
   );
+}
+
+// Frase de abertura do índice. Sem o total confirmado pelo banco, não diz quantos são.
+export function textoIndice(total: number | null): string {
+  if (total === null || total <= 0) return "Estabelecimentos do guia, em ordem alfabética.";
+  if (total === 1) return "O único estabelecimento do guia.";
+  return `Os ${total} estabelecimentos do guia, em ordem alfabética.`;
 }

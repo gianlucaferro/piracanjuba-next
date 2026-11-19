@@ -14,15 +14,16 @@ import {
   formatarChuva,
   formatarTemperatura,
   hojeEmBrasilia,
+  periodoMesEncerrado,
   respostaClima,
   somarDias,
 } from "@/lib/clima-painel";
 import ClimaClient from "./ClimaClient";
 
 export const metadata = pageMetadata({
-  title: "Previsão do tempo em Piracanjuba GO: hoje e próximos dias",
+  title: "Previsão do tempo em Piracanjuba GO hoje",
   description:
-    "Previsão do tempo em Piracanjuba (GO) para hoje e os próximos dias: máxima, mínima e chuva prevista, temperatura agora e chuva do mês. Dados Open-Meteo a cada 15 min.",
+    "Previsão do tempo em Piracanjuba (GO) para hoje e os próximos dias: máxima, mínima e chuva prevista, temperatura agora e chuva do mês. Dados Open-Meteo.",
   path: "/clima",
 });
 
@@ -167,7 +168,7 @@ export default async function ClimaPage() {
             </section>
           )}
 
-          {dias.length > 0 && <ClimaClient dias={dias} resumo={resumo} hoje={hoje} />}
+          {dias.length > 0 && <ClimaClient dias={dias} resumo={resumo} periodoMes={periodoMesEncerrado(hoje)} />}
         </>
       )}
     </div>

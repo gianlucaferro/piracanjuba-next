@@ -165,6 +165,30 @@ test("descrições dizem só o que a tela mostra", () => {
   }
 });
 
+// Trecho de uma página nos dois textos: a linha do llms.txt e o bloco do llms-full.txt.
+function trechoDaPagina(texto: string, caminho: string): string {
+  const url = `${SITE_URL}${caminho}`;
+  const inicio = texto.indexOf(url);
+  assert.ok(inicio >= 0, `${caminho} fora do texto`);
+  const fim = texto === LLMS ? texto.indexOf("\n", inicio) : texto.indexOf("\n#", inicio);
+  return texto.slice(inicio, fim === -1 ? undefined : fim);
+}
+
+test("frota e coleta: fonte e alcance que o dado sustenta", () => {
+  // A frota vem do portal de transparência da Prefeitura (piracanjuba.centi.com.br, em
+  // supabase/functions/sync-frota-veiculos). O DETRAN-GO só fornece sinistros e infrações.
+  // A coleta só tem os dias por bairro (cronograma de 2025) e a regra geral de pôr o lixo
+  // até as 18h do dia anterior: não há horário do caminhão por bairro.
+  for (const texto of [LLMS, LLMS_FULL]) {
+    const frota = trechoDaPagina(texto, "/prefeitura/veiculos");
+    assert.match(frota, /portal de transparência da Prefeitura \(Centi\)/);
+    assert.doesNotMatch(frota, /DETRAN/i);
+    const coleta = trechoDaPagina(texto, "/coleta-lixo");
+    assert.match(coleta, /cronograma de 2025/);
+    assert.doesNotMatch(coleta, /horários/i);
+  }
+});
+
 test("nota de transparência cita o ranking do TCM-GO pelo nome oficial e com o ano dos dados", () => {
   const descricao = paginaCurada("/nota-pba")?.descricao ?? "";
   assert.ok(descricao.includes(`Ranking da Transparência ${NOTA_PNTP.ano} do TCM-GO`));

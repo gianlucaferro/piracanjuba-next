@@ -1,15 +1,20 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
+import { SUFIXO_TITULO } from "../src/lib/abas-orgaos.ts";
 import {
   COLUNAS_ANUNCIO_PUBLICO,
   anuncioPublico,
+  cortarPorPalavra,
   dataLocal,
+  descricaoAnuncio,
   fraseRespostaAnuncios,
   listaAnunciosJsonLd,
   precoDaOferta,
   produtoJsonLd,
   resumirAnuncios,
   serializarJsonLd,
+  tituloAnuncio,
   type AnuncioPublico,
 } from "../src/components/classificados/anuncio-publico.ts";
 import { buscarAnuncios, CHAVE_LISTA_ANUNCIOS } from "../src/components/classificados/buscar-anuncios.ts";
@@ -180,4 +185,111 @@ test("data do dado sai no fuso de Piracanjuba e o JSON-LD não fecha a tag scrip
   const s = serializarJsonLd({ name: "</script><script>alert(1)</script>" });
   assert.equal(s.includes("<"), false);
   assert.deepEqual(JSON.parse(s), { name: "</script><script>alert(1)</script>" });
+});
+
+// Inspirado nos 5 anúncios ativos em produção em 2026-11-19 (3 sem descrição e 1 com 95
+// caracteres); títulos reais, descrições simplificadas. Antes, o título renderizado ia de 74 a 148 caracteres e o fallback da
+// description tinha 44.
+const PRODUCAO: Partial<AnuncioPublico>[] = [
+  { titulo: "Ford ka 2019", categoria: "veiculos", preco: 45000, preco_tipo: "negociavel", bairro: "Setor Magalhães" },
+  {
+    titulo: "Casa 3 quartos sendo uma suíte, todos com ar condicionado, com armários e mini poço.5",
+    categoria: "imoveis",
+    preco: 550000,
+    preco_tipo: "negociavel",
+    bairro: "Parque machado. Avenida das palmeiras.",
+    descricao: null,
+  },
+  { titulo: "Palio Acttractive 12/13", categoria: "veiculos", preco: 32000, preco_tipo: "fixo", bairro: "Piracanjuba", descricao: null },
+  {
+    titulo: "Casa 3 quartos toda no porcelanato e na laje, garagem ampla, mini poço...",
+    categoria: "imoveis",
+    preco: 620000,
+    preco_tipo: "negociavel",
+    bairro: "Jardim goiás 1ª etapa",
+    descricao: null,
+  },
+  {
+    titulo: "Tracker premier",
+    categoria: "veiculos",
+    preco: 105000,
+    preco_tipo: "fixo",
+    bairro: "Norte",
+    descricao: "Carro novo, revisado na concessionária, completo, único dono, IPVA pago e manual em dia aqui.",
+  },
+];
+
+test("título do detalhe cabe em 60 caracteres com o sufixo do layout, sem repetir título", () => {
+  const titulos = PRODUCAO.map((p) => tituloAnuncio(anuncio(p).titulo));
+  for (const titulo of titulos) {
+    const renderizado = titulo + SUFIXO_TITULO;
+    assert.ok(renderizado.length <= 60, `${renderizado} (${renderizado.length})`);
+    assert.doesNotMatch(titulo, /[\u2013\u2014|]/);
+  }
+  assert.deepEqual(titulos, [
+    "Ford ka 2019 em Piracanjuba",
+    "Casa 3 quartos sendo uma suíte",
+    "Palio Acttractive 12/13 em Piracanjuba",
+    "Casa 3 quartos toda no porcelanato",
+    "Tracker premier em Piracanjuba",
+  ]);
+  // Título que já cita a cidade não ganha "em Piracanjuba" de novo.
+  assert.equal(tituloAnuncio("Lote em Piracanjuba"), "Lote em Piracanjuba");
+});
+
+test("corte por palavra não parte palavra nem termina em pontuação ou ligação", () => {
+  assert.equal(cortarPorPalavra("Casa 3 quartos toda no porcelanato e na laje", 39), "Casa 3 quartos toda no porcelanato");
+  assert.equal(cortarPorPalavra("  Moto   revisada, ", 40), "Moto revisada");
+  assert.equal(cortarPorPalavra("Palavragigante", 5), "Palav");
+});
+
+test("description do detalhe fica entre 120 e 160 caracteres, só com dados do anúncio", () => {
+  const descricoes = PRODUCAO.map((p) => espacos(descricaoAnuncio(anuncio(p))));
+  for (const d of descricoes) {
+    assert.ok(d.length >= 120 && d.length <= 160, `${d} (${d.length})`);
+    assert.doesNotMatch(d, /[\u2013\u2014]/);
+  }
+  assert.equal(
+    descricoes[2],
+    "Palio Acttractive 12/13 em Piracanjuba, por R$ 32.000,00. Anúncio na categoria Veículos do Compra e Venda PBA, com contato direto pelo WhatsApp.",
+  );
+  // Descrição curta do anunciante (95 caracteres) dá lugar à frase montada, com o bairro.
+  assert.equal(
+    descricoes[4],
+    "Tracker premier em Piracanjuba (Norte), por R$ 105.000,00. Anúncio na categoria Veículos do Compra e Venda PBA, com contato direto pelo WhatsApp.",
+  );
+  // Descrição longa do anunciante é usada, cortada por palavra.
+  const longa = "Carro conservado, revisado, pneus novos, documentação em dia, IPVA pago, único dono, aceito troca por moto de menor valor e financiamento pelo banco, chame no WhatsApp.";
+  const propria = descricaoAnuncio(anuncio({ descricao: longa }));
+  assert.ok(propria.length >= 120 && propria.length <= 160, String(propria.length));
+  assert.ok(longa.startsWith(propria));
+  // Sem preço informado e gratuito: nada de valor inventado.
+  const consultar = espacos(descricaoAnuncio(anuncio({ preco: null, descricao: null, titulo: "Sofá", categoria: "outros" })));
+  assert.match(consultar, /^Sofá em Piracanjuba \(Centro\), preço a consultar\. /);
+  assert.equal(consultar.includes("R$"), false);
+  const gratis = descricaoAnuncio(anuncio({ preco: null, preco_tipo: "gratuito", descricao: null, titulo: "TV", bairro: null }));
+  assert.ok(gratis.length >= 120 && gratis.length <= 160, String(gratis.length));
+  assert.match(gratis, /^TV em Piracanjuba, grátis\. /);
+});
+
+function fonte(arquivo: string): string {
+  return readFileSync(new URL(arquivo, import.meta.url), "utf8");
+}
+
+test("/compra-e-venda: título até 60 caracteres e description de 120 a 160, sem travessão", () => {
+  const m = fonte("../src/app/compra-e-venda/page.tsx").match(
+    /export const metadata = pageMetadata\(\{\s*title:\s*"([^"]+)",\s*description:\s*"([^"]+)"/,
+  );
+  assert.ok(m, "não achei title e description em pageMetadata");
+  const [, title, description] = m;
+  const renderizado = title + SUFIXO_TITULO;
+  assert.ok(renderizado.length <= 60, `título renderizado com ${renderizado.length} caracteres`);
+  assert.ok(description.length >= 120 && description.length <= 160, `description com ${description.length}`);
+  assert.doesNotMatch(title + description, /[\u2013\u2014|]/);
+});
+
+test("detalhe do anúncio monta title e description pelas funções testadas", () => {
+  const detalhe = fonte("../src/app/compra-e-venda/[id]/page.tsx");
+  assert.match(detalhe, /title:\s*tituloAnuncio\(anuncio\.titulo\)/);
+  assert.match(detalhe, /description:\s*descricaoAnuncio\(anuncio\)/);
 });

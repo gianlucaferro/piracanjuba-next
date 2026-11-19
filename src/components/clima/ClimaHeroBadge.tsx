@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CloudRain, Droplets } from "lucide-react";
 import { fetchClimaPainel, type ClimaPainel } from "@/lib/data/clima";
-import { formatarTemperatura, rotuloSeloClima } from "@/lib/clima-painel";
+import { formatarTemperatura, rotuloChuvaHoje, rotuloSeloClima } from "@/lib/clima-painel";
 import ClimaHeroIcon from "./ClimaHeroIcon";
 
 /**
@@ -26,6 +26,8 @@ export default async function ClimaHeroBadge() {
   if (temperaturaPrincipal === null) return null;
   const umidade = agora ? agora.umidade : diaHoje?.umidade_media ?? null;
   const chuvaHoje = diaHoje?.precipitacao_mm ?? null;
+  // A chuva de hoje soma as horas já passadas e a previsão para o resto do dia: vai como previsão.
+  const chuvaHojeTexto = rotuloChuvaHoje(chuvaHoje);
   const ariaLabel = agora
     ? `Tempo agora em Piracanjuba: ${formatarTemperatura(agora.temperatura)} às ${agora.hora} de ${agora.data}. Ver previsão do tempo`
     : `Previsão do tempo em Piracanjuba para ${diaHoje?.data}. Ver previsão completa`;
@@ -61,9 +63,9 @@ export default async function ClimaHeroBadge() {
               <Droplets className="w-3 h-3" /> {Math.round(umidade)}%
             </span>
           )}
-          {chuvaHoje !== null && chuvaHoje > 0.1 && (
+          {chuvaHojeTexto && (
             <span className="hidden sm:inline-flex items-center gap-1">
-              <CloudRain className="w-3 h-3" /> {chuvaHoje.toFixed(1)}mm hoje
+              <CloudRain className="w-3 h-3" /> {chuvaHojeTexto}
             </span>
           )}
         </p>

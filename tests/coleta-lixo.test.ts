@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
+import { SUFIXO_TITULO } from "../src/lib/abas-orgaos.ts";
 import {
   BAIRROS_COLETA,
   COLETA_COMUM,
@@ -108,4 +110,22 @@ test("FAQ visível e JSON-LD FAQPage têm exatamente o mesmo texto", () => {
   );
   const validade = perguntas.find((p) => p.pergunta.includes("2026"));
   assert.match(validade?.resposta ?? "", /ainda não confirmou/);
+});
+
+test("meta e texto de /coleta-lixo não prometem horário por bairro (o dado só tem os dias e a regra das 18h)", () => {
+  const fonte = (arquivo: string) => readFileSync(new URL(arquivo, import.meta.url), "utf8");
+  const m = fonte("../src/app/coleta-lixo/page.tsx").match(
+    /export const metadata = pageMetadata\(\{\s*title:\s*"([^"]+)",\s*description:\s*"([^"]+)"/,
+  );
+  assert.ok(m, "não achei title e description em pageMetadata");
+  const [, title, description] = m;
+  assert.doesNotMatch(`${title} ${description}`, /hor[áa]rios?/i);
+  assert.match(description, /^Dias da coleta de lixo/);
+  assert.match(description, /cronograma de 2025/);
+  // Limites do Bing: título renderizado até 60 e description de 120 a 160 caracteres.
+  assert.ok((title + SUFIXO_TITULO).length <= 60, `título renderizado com ${(title + SUFIXO_TITULO).length}`);
+  assert.ok(description.length >= 120 && description.length <= 160, `description com ${description.length}`);
+  assert.doesNotMatch(title + description, TRAVESSOES);
+  // O buscador também não promete horário por tipo de coleta.
+  assert.doesNotMatch(fonte("../src/app/coleta-lixo/ColetaLixoClient.tsx"), /horário limite para cada tipo/);
 });

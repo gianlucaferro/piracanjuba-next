@@ -8,6 +8,8 @@
 // pelo nome: slug fora desta lista usa a forma neutra "Vereador(a)".
 // Sem imports de alias: os testes em tests/ importam este arquivo direto no Node.
 
+import { identidadeParlamentar } from "./identidade.ts";
+
 export type Tratamento = "Vereador" | "Vereadora" | "Vereador(a)";
 
 const TRATAMENTO_POR_SLUG: Record<string, "Vereador" | "Vereadora"> = {
@@ -69,4 +71,14 @@ export function referenciaParlamentar(
   nomeUrna: string | null,
 ): string {
   return `${perfilDe(tratamento)} ${nome}${nomeUrna ? ` (${nomeUrna})` : ""}`;
+}
+
+/**
+ * Título do perfil, sem o sufixo do layout: "Vereadora Sirley do Postinho em Piracanjuba".
+ * Usa o nome de urna (o que eleitor e imprensa buscam) ou, sem ele, o nome exibido.
+ * Partido e nome civil ficam no H1, na linha de identidade e no Person: assim o título
+ * renderizado, com " | Piracanjuba.ai", cabe em 60 caracteres nos 11 perfis.
+ */
+export function tituloPerfilParlamentar(nome: string, slug: string | null | undefined): string {
+  return `${tratamentoParlamentar(slug)} ${identidadeParlamentar(slug)?.nomeUrna ?? nome} em Piracanjuba`;
 }

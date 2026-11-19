@@ -2,7 +2,7 @@ import { ShieldCheck, ExternalLink, Info } from "lucide-react";
 import type { CamaraDeclaracao } from "@/lib/data/camara-declaracoes";
 
 function fmtData(d: string | null) {
-  if (!d) return "—";
+  if (!d) return "sem data";
   try {
     return new Date(d).toLocaleDateString("pt-BR");
   } catch {
@@ -37,7 +37,8 @@ export default function CotasParlamentaresCard({
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
               A Câmara de Piracanjuba <strong>declarou formalmente</strong> que
               não há regulamentação nem valores de cota/verba indenizatória pra
-              vereadores. Vereadores recebem <strong>apenas o subsídio mensal</strong>.
+              vereadores. Além do <strong>subsídio mensal</strong>, vereadores só recebem diárias
+              quando viajam a serviço, que são indenização e não cota.
             </p>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
               <span>📅 Vigência: {fmtData(declaracao.data_inicio_vigencia)} →</span>
@@ -57,7 +58,7 @@ export default function CotasParlamentaresCard({
     );
   }
 
-  // Variant "full" — pra página /transparencia/cotas-parlamentares
+  // Variant "full": página /transparencia/cotas-parlamentares
   return (
     <section className="stat-card border-emerald-500/30 bg-gradient-to-br from-emerald-500/5 to-transparent space-y-4">
       <div className="flex items-start gap-3">
@@ -111,7 +112,7 @@ export default function CotasParlamentaresCard({
           sistemas de <strong>cota parlamentar</strong> (verba indenizatória)
           que reembolsa vereadores por despesas com combustível, divulgação,
           alimentação ou telefonia. Em Piracanjuba, esse instrumento{" "}
-          <strong>não existe</strong> — vereadores são remunerados exclusivamente
+          <strong>não existe</strong>: vereadores são remunerados exclusivamente
           pelo subsídio mensal estabelecido em lei municipal.
         </p>
         <p className="mt-2">
