@@ -58,3 +58,15 @@ export function perfilDe(tratamento: Tratamento): string {
   if (tratamento === "Vereador") return "do vereador";
   return "de vereador(a)";
 }
+
+/**
+ * "da vereadora Aparecida Cordeiro (Cida do Carmindo)": tratamento, nome exibido e,
+ * quando diferente, o nome de urna entre parênteses.
+ */
+export function referenciaParlamentar(
+  tratamento: Tratamento,
+  nome: string,
+  nomeUrna: string | null,
+): string {
+  return `${perfilDe(tratamento)} ${nome}${nomeUrna ? ` (${nomeUrna})` : ""}`;
+}

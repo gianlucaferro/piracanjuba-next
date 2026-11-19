@@ -2,7 +2,7 @@
 
 import NextImage from "next/image";
 
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { AuthError } from "@supabase/supabase-js";
 import { getErrorMessage } from "@/components/admin/request-error";
@@ -11,6 +11,7 @@ import Link from "next/link";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { buscarAnuncios, CHAVE_LISTA_ANUNCIOS } from "./buscar-anuncios";
 const supabase = createBrowserSupabaseClient();
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,8 @@ type Classificado = {
   expira_em: string;
   created_at: string;
   updated_at: string;
-  user_id: string | null;
+  // A lista não lê user_id (fica fora de COLUNAS_ANUNCIO_PUBLICO); "Meus anúncios" lê.
+  user_id?: string | null;
   bairro: string | null;
   foto_perfil: string | null;
 };
@@ -407,14 +409,9 @@ function Lightbox({
 
 // ===== FETCH =====
 
-async function fetchAnuncios(): Promise<Classificado[]> {
-  const { data, error } = await supabase
-    .from("classificados")
-    .select("*")
-    .in("status", ["ativo", "vendido"])
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data || []) as Classificado[];
+// Mesma função do prefetch do servidor em src/app/compra-e-venda/page.tsx.
+function fetchAnuncios(): Promise<Classificado[]> {
+  return buscarAnuncios<Classificado>(supabase);
 }
 
 // ===== AUTH ICONS =====
@@ -2158,7 +2155,8 @@ function AnuncioCard({
 
 // ===== MAIN PAGE =====
 
-export default function CompraEVendaPBA() {
+/** cabecalho: H1 e parágrafo-resposta renderizados no servidor; sem ele, vale o cabeçalho local. */
+export default function CompraEVendaPBA({ cabecalho }: { cabecalho?: ReactNode } = {}) {
   const queryClient = useQueryClient();
   const {
     user, loading: authLoading,
@@ -2225,7 +2223,7 @@ export default function CompraEVendaPBA() {
     }
   };
   const { data, isLoading, dataUpdatedAt } = useQuery({
-    queryKey: ["classificados"],
+    queryKey: CHAVE_LISTA_ANUNCIOS,
     queryFn: fetchAnuncios,
     staleTime: 1000 * 60 * 2,
   });
@@ -2369,34 +2367,23 @@ export default function CompraEVendaPBA() {
         title="Classificados Piracanjuba | Compra e Venda PBA Grátis"
         description="Classificados Piracanjuba GO — Anúncios gratuitos de compra e venda. Encontre imóveis, veículos, eletrônicos e serviços. Alternativa OLX Piracanjuba com contato direto via WhatsApp. Anuncie grátis agora!"
         path="/compra-e-venda"
-        jsonLd={visible.length > 0 ? {
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          "name": "Compra e Venda PBA — Classificados de Piracanjuba",
-          "description": "Anúncios gratuitos de compra e venda em Piracanjuba, Goiás",
-          "numberOfItems": filtered.length,
-          "itemListElement": visible.slice(0, 10).map((item, i) => ({
-            "@type": "ListItem",
-            "position": i + 1,
-            "url": `https://piracanjuba.ai/compra-e-venda/${item.id}`,
-            "name": item.titulo,
-            "image": item.fotos[0] || undefined,
-          })),
-        } : undefined}
       />
+      {/* O ItemList em JSON-LD sai do servidor, em src/app/compra-e-venda/page.tsx. */}
       <div className="container w-full max-w-full px-4 sm:px-6 py-6 space-y-5 overflow-x-hidden box-border" style={{ overscrollBehaviorX: 'none', touchAction: 'pan-y pinch-zoom' }}>
         {/* Header */}
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Package className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">
-              Compra e Venda <span className="text-[#25D366]">PBA</span>
-            </h1>
+        {cabecalho ?? (
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Package className="w-6 h-6 text-primary" />
+              <h1 className="text-xl font-bold text-foreground">
+                Compra e Venda <span className="text-[#25D366]">PBA</span>
+              </h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Compre, venda e anuncie grátis em Piracanjuba.
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Compre, venda e anuncie grátis em Piracanjuba.
-          </p>
-        </div>
+        )}
 
         {/* Session bar */}
         {!authLoading && (
