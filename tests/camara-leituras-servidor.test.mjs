@@ -218,3 +218,18 @@ test("atuação: falha na contagem lança erro em vez de virar total", async () 
   assert.match(bloco, /tentar\("atuacao-resumo", \(\) => fetchAtuacaoResumoServidor\(\)\)/);
   assert.doesNotMatch(bloco, /fetchAtosStats/);
 });
+
+// ---------------------------------------------------------------- CodeRabbit, PR 56 (2026-11-19)
+
+test("listas de licitações, indicações e atos lançam erro do Supabase em vez de cachear lista vazia", async () => {
+  const falhaSempre = () => true;
+  const licitacoes = await carregar("src/lib/data/licitacoes-camara.ts", supabaseFalso({}, falhaSempre));
+  await assert.rejects(licitacoes.fetchLicitacoesRecentes(150));
+  const indicacoes = await carregar("src/lib/data/indicacoes-camara.ts", supabaseFalso({}, falhaSempre));
+  await assert.rejects(indicacoes.fetchIndicacoesRecentes(200));
+  const atos = await carregar("src/lib/data/atos-camara.ts", supabaseFalso({}, falhaSempre));
+  await assert.rejects(atos.fetchAtosPorTipo("MOCAO", 20));
+  // Sem erro, a lista vem normalmente.
+  const ok = await carregar("src/lib/data/licitacoes-camara.ts", supabaseFalso({ licitacao_camara: [{ id: 1, data_publicacao: "2026-11-01" }] }));
+  assert.equal((await ok.fetchLicitacoesRecentes(150)).length, 1);
+});

@@ -10,6 +10,7 @@ import {
   hojeEmBrasilia,
   periodoMesEncerrado,
   respostaClima,
+  resumoMesTemDado,
   somarDias,
 } from "@/lib/clima-painel";
 import ClimaClient from "./ClimaClient";
@@ -54,7 +55,8 @@ export default async function ClimaPage() {
   const { hoje, agora } = painel;
   const diasPrevistos = [...(painel.diaHoje ? [painel.diaHoje] : []), ...painel.previsao];
   const resposta = respostaClima(painel, resumo);
-  const semDados = dias.length === 0 && diasPrevistos.length === 0 && !agora;
+  // O aviso só aparece quando nada veio: o resumo do mês, que a resposta do topo usa, também conta.
+  const semDados = dias.length === 0 && diasPrevistos.length === 0 && !agora && !resumoMesTemDado(resumo);
 
   return (
     <div className="container py-8 space-y-8">

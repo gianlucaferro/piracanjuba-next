@@ -17,12 +17,15 @@ export type AtoCamara = {
 export const fetchAtosPorTipo = unstable_cache(
   async (tipo: AtoCamara["tipo"], limit = 100): Promise<AtoCamara[]> => {
     const supabase = createPublicSupabaseClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("ato_camara")
       .select("id, numero, ano, tipo, tipo_centi, data_publicacao, ementa, autor, vereador_id")
       .eq("tipo", tipo)
       .order("data_publicacao", { ascending: false, nullsFirst: false })
       .limit(limit);
+    // Erro do Supabase lança, para o unstable_cache não guardar uma lista vazia falsa por 1 hora
+    // (revisão do CodeRabbit no PR 56, 2026-11-19); quem chama trata a falha.
+    if (error) throw error;
     return (data ?? []) as AtoCamara[];
   },
   ["atos-por-tipo"],

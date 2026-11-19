@@ -17,6 +17,7 @@ import {
   nomeMes,
   periodoMesEncerrado,
   respostaClima,
+  resumoMesTemDado,
   rotuloChuvaHoje,
   rotuloSeloClima,
   somarDias,
@@ -313,4 +314,14 @@ test("/clima usa 'Previsão do tempo em Piracanjuba' no título e no H1", () => 
   assert.match(pagina, /title: "Previsão do tempo em Piracanjuba GO/);
   assert.match(pagina, /<h1[^>]*>\s*Previsão do tempo em Piracanjuba\s*<\/h1>/);
   assert.match(pagina, /path: "\/clima"/);
+});
+
+test("resumo do mês com algum valor conta como dado para o aviso de sem dados", () => {
+  const vazio = { acumulado_mm: null, dias_com_chuva: null, temperatura_media: null, temperatura_max_absoluta: null, temperatura_min_absoluta: null };
+  assert.equal(resumoMesTemDado(null), false);
+  assert.equal(resumoMesTemDado(vazio), false);
+  assert.equal(resumoMesTemDado({ ...vazio, acumulado_mm: 95.2 }), true);
+  assert.equal(resumoMesTemDado({ ...vazio, acumulado_mm: 0 }), true);
+  const pagina = readFileSync(new URL("../src/app/clima/page.tsx", import.meta.url), "utf8");
+  assert.match(pagina, /const semDados = [^;]*!resumoMesTemDado\(resumo\);/);
 });

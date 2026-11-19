@@ -18,11 +18,14 @@ export type IndicacaoCamara = {
 export const fetchIndicacoesRecentes = unstable_cache(
   async (limit = 50): Promise<IndicacaoCamara[]> => {
     const supabase = createPublicSupabaseClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("indicacao_camara")
       .select("*")
       .order("data_publicacao", { ascending: false, nullsFirst: false })
       .limit(limit);
+    // Erro do Supabase lança, para o unstable_cache não guardar uma lista vazia falsa por 1 hora
+    // (revisão do CodeRabbit no PR 56, 2026-11-19); quem chama trata a falha.
+    if (error) throw error;
     return (data ?? []) as IndicacaoCamara[];
   },
   ["indicacoes-recentes"],

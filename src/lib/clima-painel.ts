@@ -190,6 +190,11 @@ export function montarPainelClima(
   return { hoje, agora, diaHoje: linhaHoje ? previsaoDia(linhaHoje) : null, previsao };
 }
 
+/** Resumo do mês com pelo menos um valor (chuva, dias de chuva ou temperatura). */
+export function resumoMesTemDado(resumo: ResumoMes | null): boolean {
+  return !!resumo && Object.values(resumo).some((valor) => valor !== null);
+}
+
 /**
  * Junta as três leituras de /clima com Promise.allSettled: cada uma falha sozinha. Se o painel
  * (leitura atual e previsão) cair, a série dos dias encerrados e o resumo do mês continuam na
