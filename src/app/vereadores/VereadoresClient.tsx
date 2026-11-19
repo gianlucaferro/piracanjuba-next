@@ -8,14 +8,18 @@ import Instagram from "@/components/icons/InstagramIcon";
 import { Input } from "@/components/ui/input";
 import type { Vereador } from "@/lib/data/vereadores";
 import FundoEleitoralCard from "@/components/vereadores/FundoEleitoralCard";
+import { nomeUrnaDiferente, textoBuscaParlamentar } from "./identidade";
+
+// Busca sem acento e sem caixa: "marcao" acha "Marcão Serra Negra".
+const semAcento = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 export default function VereadoresClient({ vereadores }: { vereadores: Vereador[] }) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("nome");
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
+    const q = semAcento(search);
     return vereadores
-      .filter((v) => !q || `${v.nome} ${v.partido || ""} ${v.cargo_mesa || ""}`.toLowerCase().includes(q))
+      .filter((v) => !q || semAcento(`${textoBuscaParlamentar(v.nome, v.slug)} ${v.partido || ""} ${v.cargo_mesa || ""}`).includes(q))
       .sort((a, b) => {
         if (sort === "votos") return Number(b.votos_eleicao || 0) - Number(a.votos_eleicao || 0);
         if (sort === "mesa") return String(a.cargo_mesa || "zz").localeCompare(String(b.cargo_mesa || "zz"));
@@ -34,7 +38,7 @@ export default function VereadoresClient({ vereadores }: { vereadores: Vereador[
       <div className="flex flex-col md:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar vereador por nome, partido ou cargo..." className="pl-10" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar vereador por nome, nome de urna, partido ou cargo..." className="pl-10" />
         </div>
         <div className="flex gap-1 overflow-x-auto">
           {[
@@ -64,6 +68,11 @@ export default function VereadoresClient({ vereadores }: { vereadores: Vereador[
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-semibold text-foreground text-base truncate">{v.nome}</h2>
+                {nomeUrnaDiferente(v.nome, v.slug) && (
+                  <p className="text-xs text-muted-foreground truncate">
+                    Nome de urna: <span className="text-foreground">{nomeUrnaDiferente(v.nome, v.slug)}</span>
+                  </p>
+                )}
                 <p className="text-sm text-muted-foreground">
                   {v.partido || "Sem partido"}
                   {v.cargo_mesa && <span className="ml-2 text-primary">· {v.cargo_mesa}</span>}

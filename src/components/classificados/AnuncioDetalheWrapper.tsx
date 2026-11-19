@@ -1,17 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import type { AnuncioDetalheClientProps } from "./AnuncioDetalheClient";
+import AnuncioDetalheClient, { type AnuncioDetalheClientProps } from "./AnuncioDetalheClient";
 
-const AnuncioDetalheClient = dynamic<AnuncioDetalheClientProps>(() => import("./AnuncioDetalheClient"), {
-  ssr: false,
-  loading: () => (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
-      <div className="animate-pulse h-32 bg-muted rounded" />
-    </div>
-  ),
-});
-
+// Renderizado também no servidor: título, preço, descrição e breadcrumb do anúncio
+// vão no HTML inicial. O que depende do browser (favoritos, contagem de visita,
+// compartilhar, lightbox) roda só depois da hidratação.
 export default function AnuncioDetalheWrapper(props: AnuncioDetalheClientProps) {
   return <AnuncioDetalheClient {...props} />;
 }

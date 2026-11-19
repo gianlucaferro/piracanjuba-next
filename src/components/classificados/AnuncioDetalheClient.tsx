@@ -2,7 +2,7 @@
 
 import NextImage from "next/image";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +10,15 @@ import { createPortal } from "react-dom";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
-const supabase = createBrowserSupabaseClient();
+import { COLUNAS_ANUNCIO_PUBLICO } from "./anuncio-publico";
+
+// O detalhe também renderiza no servidor (o anúncio chega pronto em initialAnuncio):
+// o cliente Supabase do browser só é criado na primeira consulta ou ação, no browser.
+let clienteSupabase: ReturnType<typeof createBrowserSupabaseClient> | null = null;
+function supabaseBrowser() {
+  clienteSupabase ??= createBrowserSupabaseClient();
+  return clienteSupabase;
+}
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -27,7 +35,12 @@ import type { Database } from "@/lib/supabase/types";
 
 // ===== TYPES =====
 
-type ClassificadoRecord = Database["public"]["Tables"]["classificados"]["Row"];
+// Sem codigo_gestao, notificado_expiracao e user_id: o anúncio passa do servidor ao
+// cliente como prop e vai inteiro para o HTML (ver COLUNAS_ANUNCIO_PUBLICO).
+type ClassificadoRecord = Omit<
+  Database["public"]["Tables"]["classificados"]["Row"],
+  "codigo_gestao" | "notificado_expiracao" | "user_id"
+>;
 type Classificado = Omit<
   ClassificadoRecord,
   "created_at" | "denuncias" | "expira_em" | "fotos" | "preco_tipo" | "updated_at" | "visualizacoes" | "whatsapp_clicks"
@@ -333,7 +346,7 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
   const { data, isLoading } = useQuery({
     queryKey: ["anuncios-similares", currentId, categoria],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseBrowser()
         .from("classificados")
         .select("id, titulo, preco, preco_tipo, fotos, bairro, categoria")
         .eq("status", "ativo")
@@ -393,6 +406,34 @@ function AnunciosSimilares({ currentId, categoria }: { currentId: string; catego
   );
 }
 
+// ===== FAVORITOS (localStorage) =====
+
+const CHAVE_FAVORITOS = "pba-favoritos";
+const ouvintesFavoritos = new Set<() => void>();
+
+function lerFavoritos(): string[] {
+  try {
+    const raw = localStorage.getItem(CHAVE_FAVORITOS);
+    const ids: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(ids) ? ids.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function assinarFavoritos(ouvinte: () => void) {
+  ouvintesFavoritos.add(ouvinte);
+  window.addEventListener("storage", ouvinte);
+  return () => {
+    ouvintesFavoritos.delete(ouvinte);
+    window.removeEventListener("storage", ouvinte);
+  };
+}
+
+function avisarFavoritos() {
+  ouvintesFavoritos.forEach((ouvinte) => ouvinte());
+}
+
 // ===== PAGE =====
 
 export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientProps) {
@@ -400,29 +441,29 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
   const [imgIdx, setImgIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const galleryTouchX = useRef(0);
-  const [isFav, setIsFav] = useState(() => {
-    try {
-      const raw = localStorage.getItem("pba-favoritos");
-      return raw ? (JSON.parse(raw) as string[]).includes(id || "") : false;
-    } catch { return false; }
-  });
+  // No servidor e na hidratação o coração sai vazio; o favorito salvo no aparelho
+  // aparece logo depois, sem divergir do HTML do servidor.
+  const isFav = useSyncExternalStore(
+    assinarFavoritos,
+    () => lerFavoritos().includes(id || ""),
+    () => false,
+  );
 
   const toggleFav = () => {
     try {
-      const raw = localStorage.getItem("pba-favoritos");
-      const ids: string[] = raw ? JSON.parse(raw) : [];
+      const ids = lerFavoritos();
       const next = isFav ? ids.filter((x) => x !== id) : [...ids, id!];
-      localStorage.setItem("pba-favoritos", JSON.stringify(next));
-      setIsFav(!isFav);
+      localStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(next));
+      avisarFavoritos();
     } catch {}
   };
 
   const { data: rawItem, isLoading } = useQuery<ClassificadoRecord>({
     queryKey: ["anuncio", id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseBrowser()
         .from("classificados")
-        .select("*")
+        .select(COLUNAS_ANUNCIO_PUBLICO)
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -438,14 +479,14 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
   useEffect(() => {
     if (item && !viewed.current) {
       viewed.current = true;
-      supabase.rpc("increment_classificado_view", { classificado_id: item.id }).then(() => {});
+      supabaseBrowser().rpc("increment_classificado_view", { classificado_id: item.id }).then(() => {});
     }
   }, [item]);
 
   // Track WhatsApp click
   const trackWhatsAppClick = () => {
     if (!item) return;
-    supabase
+    supabaseBrowser()
       .from("classificados")
       .update({ whatsapp_clicks: (item.whatsapp_clicks || 0) + 1 })
       .eq("id", item.id)
@@ -455,7 +496,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
   const handleDenunciar = async () => {
     if (!item) return;
     if (!confirm("Deseja denunciar este anúncio como inapropriado?")) return;
-    await supabase.rpc("denunciar_classificado", { classificado_id: item.id });
+    await supabaseBrowser().rpc("denunciar_classificado", { classificado_id: item.id });
     toast.success("Denúncia registrada.");
   };
 
@@ -515,22 +556,8 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
         path={`/compra-e-venda/${item.id}`}
         type="article"
         image={item.fotos[0] || undefined}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: item.titulo,
-          description: item.descricao || undefined,
-          image: item.fotos[0] || undefined,
-          offers: {
-            "@type": "Offer",
-            price: item.preco || 0,
-            priceCurrency: "BRL",
-            availability: isVendido
-              ? "https://schema.org/SoldOut"
-              : "https://schema.org/InStock",
-          },
-        }}
       />
+      {/* Product e BreadcrumbList em JSON-LD saem do servidor, em src/app/compra-e-venda/[id]/page.tsx. */}
 
       <div className="mx-auto w-full max-w-2xl px-4 py-6 space-y-5">
         {/* Breadcrumbs */}
@@ -662,7 +689,7 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap pt-2 border-t border-border">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
-              {new Date(item.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+              {new Date(item.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric", timeZone: "America/Sao_Paulo" })}
             </span>
             <span className="flex items-center gap-1">
               <Eye className="w-3.5 h-3.5" /> {item.visualizacoes} visualizações

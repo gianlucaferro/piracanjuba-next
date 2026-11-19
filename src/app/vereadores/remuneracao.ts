@@ -98,3 +98,12 @@ export function descreverSubsidio(resumo: ResumoSubsidio): string {
   if (menor === maior) return `é ${formatarReais(menor)}`;
   return `varia de ${formatarReais(menor)} a ${formatarReais(maior)}`;
 }
+
+/**
+ * Início da frase-resposta do perfil, no mesmo formato da frase de /vereadores:
+ * "O subsídio mensal da vereadora X é R$ 9.721,92 (competência 2026-07)". A página
+ * completa com a fonte (folha de pagamento da Câmara, com link).
+ */
+export function fraseSubsidioParlamentar(referencia: string, subsidio: SubsidioCompetencia): string {
+  return `O subsídio mensal ${referencia} é ${formatarReais(subsidio.valor)} (competência ${subsidio.competencia})`;
+}
