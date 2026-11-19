@@ -144,8 +144,11 @@ test("nada redirecionado fica no sitemap nem nas exclusões", () => {
   }
 });
 
-test("as páginas /transparencia/* que ficaram estão no sitemap", () => {
+test("as páginas /transparencia/* que ficaram têm destino definido", () => {
   const restantes = [...PAGINAS.keys()].filter((rota) => rota.startsWith("/transparencia/")).sort();
   assert.deepEqual(restantes, ["/transparencia/cotas-parlamentares", "/transparencia/processos-publicos"]);
-  for (const rota of restantes) assert.ok(NO_SITEMAP.has(rota), `${rota} fora do sitemap`);
+  assert.ok(NO_SITEMAP.has("/transparencia/cotas-parlamentares"), "/transparencia/cotas-parlamentares fora do sitemap");
+  // Processos judiciais de pessoas nomeadas: alcance pendente de decisão do operador (2026-11-19).
+  assert.ok(!NO_SITEMAP.has("/transparencia/processos-publicos"), "/transparencia/processos-publicos não entra no sitemap sem decisão do operador");
+  assert.ok("/transparencia/processos-publicos" in ROTAS_FORA_DO_SITEMAP);
 });

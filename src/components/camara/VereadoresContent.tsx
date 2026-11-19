@@ -81,10 +81,6 @@ export function VereadoresContent() {
             <Link href="/transparencia/cotas-parlamentares" className="text-primary hover:underline">
               declaração da Câmara sobre cotas parlamentares
             </Link>
-            . Consulte também os{" "}
-            <Link href="/transparencia/processos-publicos" className="text-primary hover:underline">
-              processos judiciais de agentes públicos de Piracanjuba
-            </Link>
             .
           </p>
         </div>

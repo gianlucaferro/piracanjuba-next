@@ -18,11 +18,11 @@ const SITE_URL = "https://piracanjuba.ai";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
+    default: "Piracanjuba.ai: transparência de Piracanjuba GO com IA",
     template: "%s | Piracanjuba.ai",
   },
   description:
-    "Piracanjuba GO — Portal de transparência municipal com inteligência artificial. Classificados gratuitos, farmácias de plantão, WhatsApp de comércios, coleta de lixo, vereadores, contratos, licitações, servidores, salários e gastos públicos de Piracanjuba, Goiás.",
+    "Piracanjuba GO: portal de transparência municipal com inteligência artificial. Classificados gratuitos, farmácias de plantão, WhatsApp de comércios, coleta de lixo, vereadores, contratos, licitações, servidores, salários e gastos públicos de Piracanjuba, Goiás.",
   authors: [{ name: "Ferro Labs Tecnologia LTDA" }],
   creator: "Ferro Labs Tecnologia LTDA",
   publisher: "Ferro Labs Tecnologia LTDA",
@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: SITE_URL,
     siteName: "Piracanjuba.ai",
-    title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
+    title: "Piracanjuba.ai: transparência de Piracanjuba GO com IA",
     description:
       "Portal de transparência municipal com IA. Projetos de lei, contratos, licitações, servidores e gastos públicos.",
     images: [OG_IMAGEM_PADRAO],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
+    title: "Piracanjuba.ai: transparência de Piracanjuba GO com IA",
     description:
       "Portal de transparência municipal com IA. Projetos de lei, contratos, licitações, servidores e gastos públicos.",
     images: [OG_IMAGEM_PADRAO],

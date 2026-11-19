@@ -54,10 +54,9 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/dados-pba", changeFrequency: "monthly", priority: 0.7 },
   { path: "/comparador", changeFrequency: "monthly", priority: 0.6 },
   { path: "/privacidade", changeFrequency: "yearly", priority: 0.3 },
-  // Páginas /transparencia/* sem aba equivalente na Câmara (Onda 2, IDX-03, 2026-11-19): ficam,
-  // entram no sitemap e recebem link da aba Vereadores (/camara).
+  // Página /transparencia/* sem aba equivalente na Câmara (Onda 2, IDX-03, 2026-11-19): fica,
+  // entra no sitemap e recebe link da aba Vereadores (/camara).
   { path: "/transparencia/cotas-parlamentares", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/transparencia/processos-publicos", changeFrequency: "monthly", priority: 0.6 },
 ];
 
 // Abas indexáveis da Prefeitura e da Câmara (rotas próprias para SEO). Precisam bater com
@@ -85,6 +84,9 @@ export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>
   "/acompanhar": { motivo: "favoritos e avisos de quem está logado", noindex: true },
   "/anuncie/cadastro": { motivo: "formulário de cadastro de empresa", noindex: true },
   "/anuncie/cadastro/obrigado": { motivo: "confirmação de envio do cadastro", noindex: true },
+  // Processos judiciais de pessoas nomeadas: dar mais alcance (sitemap e link interno) é decisão
+  // do operador, pendente desde a Onda 2 (2026-11-19). Até lá, a página segue como estava.
+  "/transparencia/processos-publicos": { motivo: "alcance pendente de decisão do operador", noindex: false },
 };
 
 // Endereços antigos que respondem 308 (redirect permanente). As seis páginas /transparencia/*

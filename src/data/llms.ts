@@ -293,8 +293,8 @@ export const SECOES_LLMS: SecaoLlms[] = [
       },
       {
         caminho: "/clima",
-        titulo: "Clima",
-        descricao: "Tempo em Piracanjuba: temperatura atual, máxima e mínima, chuva, umidade e histórico mensal.",
+        titulo: "Previsão do tempo",
+        descricao: "Previsão do tempo em Piracanjuba para hoje e os próximos dias, leitura atual com horário, chuva do mês e histórico mensal.",
       },
       {
         caminho: "/zap-pba",

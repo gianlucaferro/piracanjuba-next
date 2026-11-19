@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { HydrationBoundary } from "@tanstack/react-query";
 import { pageMetadata } from "@/lib/seo";
+import { metaAbaPrefeitura } from "@/lib/abas-orgaos";
 import PrefeituraClient from "@/components/prefeitura/PrefeituraClient";
 import { PessoasExecutivoJsonLd, respostasPrefeitura } from "@/components/prefeitura/RespostasPrefeitura";
 import { FinanciadoresExecutivoCard } from "@/components/vereadores/FinanciadoresCampanhaCard";
@@ -15,6 +16,9 @@ export const dynamic = "force-dynamic";
 // Cada aba da Prefeitura vira uma rota indexável com title/description/canonical próprios
 // (ex: /prefeitura/contratos). "visao-geral" e "admin" ficam fora: a primeira mora em
 // /prefeitura, a segunda não deve ser indexada.
+// Title e description vêm de metaAbaPrefeitura (src/lib/abas-orgaos.ts), com os limites do Bing
+// testados em tests/abas-orgaos.test.ts; os textos abaixo ficam só como reserva. As chaves
+// continuam aqui porque os testes de sitemap, llms.txt e rodapé leem a lista de abas deste mapa.
 const ABAS: Record<string, { title: string; description: string }> = {
   chefia: { title: "Prefeita e Vice de Piracanjuba GO", description: "Prefeita, vice-prefeito, remuneração e financiadores de campanha do Executivo de Piracanjuba, Goiás. Dados oficiais." },
   secretarias: { title: "Secretarias da Prefeitura de Piracanjuba GO", description: "Secretarias municipais de Piracanjuba, secretários e remuneração. Transparência do Poder Executivo." },
@@ -36,7 +40,7 @@ const ABAS: Record<string, { title: string; description: string }> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ aba: string }> }): Promise<Metadata> {
   const { aba } = await params;
-  const info = ABAS[aba];
+  const info = metaAbaPrefeitura(aba) ?? ABAS[aba];
   if (!info) {
     return pageMetadata({ title: "Prefeitura de Piracanjuba GO", description: "Dados oficiais da Prefeitura de Piracanjuba, Goiás.", path: `/prefeitura/${aba}` });
   }

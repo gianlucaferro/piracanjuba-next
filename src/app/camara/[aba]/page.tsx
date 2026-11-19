@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { pageMetadata } from "@/lib/seo";
+import { metaAbaCamara } from "@/lib/abas-orgaos";
 import CamaraClient from "@/components/camara/CamaraClient";
 import { carregarBlocoServidor } from "./bloco-servidor";
 
@@ -9,6 +10,9 @@ export const dynamic = "force-dynamic";
 
 // Cada aba da Câmara vira rota indexável com metadata própria (ex: /camara/projetos).
 // "vereadores" (padrão) fica em /camara.
+// Title e description vêm de metaAbaCamara (src/lib/abas-orgaos.ts), com os limites do Bing
+// testados em tests/abas-orgaos.test.ts; os textos abaixo ficam só como reserva. As chaves
+// continuam aqui porque os testes de sitemap, llms.txt e rodapé leem a lista de abas deste mapa.
 const ABAS: Record<string, { title: string; description: string }> = {
   servidores: { title: "Servidores da Câmara de Piracanjuba GO", description: "Servidores e folha de pagamento da Câmara Municipal de Piracanjuba. Transparência do Poder Legislativo." },
   contratos: { title: "Contratos da Câmara de Piracanjuba GO", description: "Contratos da Câmara Municipal de Piracanjuba: fornecedores, valores e vigência, com resumo por IA." },
@@ -29,7 +33,7 @@ const ABAS: Record<string, { title: string; description: string }> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ aba: string }> }): Promise<Metadata> {
   const { aba } = await params;
-  const info = ABAS[aba];
+  const info = metaAbaCamara(aba) ?? ABAS[aba];
   if (!info) {
     return pageMetadata({ title: "Câmara Municipal de Piracanjuba GO", description: "Dados da Câmara Municipal de Piracanjuba, Goiás.", path: `/camara/${aba}` });
   }
