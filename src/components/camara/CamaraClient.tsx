@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, type ReactNode } from "react";
 import { Users, Megaphone, Landmark, UserCheck, Search, Download, ChevronLeft, ChevronRight, FileText, Gavel, FileSignature, Receipt, TrendingUp, Plane, ScrollText, Video, BookOpen, ClipboardList, FileStack, HandMetal, ClipboardCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
@@ -25,6 +25,7 @@ import AtosTab from "@/components/camara/AtosTab";
 import TransmissaoCard from "@/components/camara/TransmissaoCard";
 import ResumoFolhaCamara from "@/components/camara/ResumoFolhaCamara";
 import ServidorResumoDialog from "@/components/servidores/ServidorResumoDialog";
+import { PAGINA_SERVIDORES_CAMARA, chaveServidoresCamara } from "@/components/camara/chaves-consulta";
 import PrestacaoContasTab from "@/components/transparencia/PrestacaoContasTab";
 import { usePathname } from "next/navigation";
 import {
@@ -60,7 +61,7 @@ function ServidoresCamaraTab() {
   const [page, setPage] = useState(0);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = PAGINA_SERVIDORES_CAMARA;
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -68,7 +69,7 @@ function ServidoresCamaraTab() {
   };
 
   const { data: result, isLoading, isError } = useQuery({
-    queryKey: ["servidores-camara", search, page],
+    queryKey: chaveServidoresCamara(search, page),
     queryFn: () => fetchServidores(search || undefined, undefined, page, PAGE_SIZE, "camara"),
   });
 
@@ -195,7 +196,7 @@ function TransmissaoTab() {
   );
 }
 
-export default function CamaraMunicipal({ aba }: { aba?: string }) {
+export default function CamaraMunicipal({ aba, blocoServidor }: { aba?: string; blocoServidor?: ReactNode }) {
   // A aba ativa vem da URL. Assim o link do rodapé para outra aba, o Voltar e o Avançar
   // mostram a aba do endereço mesmo quando o Next reaproveita este componente montado.
   const pathname = usePathname();
@@ -216,6 +217,9 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
       window.history.replaceState(null, "", hrefAbaCamara(v));
     }
   }, [pathname]);
+  // Parte lida no servidor (parágrafo-resposta, resumo e primeiro lote, src/app/camara/[aba]):
+  // pertence à aba do endereço que o servidor renderizou e só aparece nela.
+  const blocoDa = (valor: string) => (valor === aba ? blocoServidor : null);
 
   return (
     <Layout>
@@ -257,18 +261,23 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
           <VereadoresContent />
         </TabsContent>
         <TabsContent value="servidores">
+          {blocoDa("servidores")}
           <ServidoresCamaraTab />
         </TabsContent>
         <TabsContent value="contratos">
+          {blocoDa("contratos")}
           <ContratosTab />
         </TabsContent>
         <TabsContent value="projetos">
+          {blocoDa("projetos")}
           <ProjetosContent />
         </TabsContent>
         <TabsContent value="atuacao">
+          {blocoDa("atuacao")}
           <AtuacaoContent embutido />
         </TabsContent>
         <TabsContent value="indicacoes">
+          {blocoDa("indicacoes")}
           <AtosTab tipoCodigo={24} tipoNome="Indicações" descricao="Indicações dos vereadores da Câmara Municipal de Piracanjuba." />
         </TabsContent>
         <TabsContent value="resolucoes">
@@ -287,9 +296,11 @@ export default function CamaraMunicipal({ aba }: { aba?: string }) {
           <TransmissaoTab />
         </TabsContent>
         <TabsContent value="licitacoes">
+          {blocoDa("licitacoes")}
           <LicitacoesTab />
         </TabsContent>
         <TabsContent value="despesas">
+          {blocoDa("despesas")}
           <DespesasTab />
         </TabsContent>
         <TabsContent value="receitas">

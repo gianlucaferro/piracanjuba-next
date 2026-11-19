@@ -112,6 +112,12 @@ async function mockFolha(page: Page, rows = folha(), metadata = cobertura()) {
   return requests;
 }
 
+// O Supabase é simulado no navegador; a aba precisa carregar pelo navegador, sem o dado que o
+// servidor de e2e leria no Supabase falso (ver src/lib/ssr-hidratacao.ts).
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([{ name: "e2e_sem_busca_servidor", value: "1", url: "http://127.0.0.1:4318" }]);
+});
+
 test("Prefeitura separa mensal, rescisões e 13º e informa os órgãos ainda ausentes", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));

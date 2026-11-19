@@ -1,10 +1,11 @@
 import { Users } from "lucide-react";
-import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { fetchVereadoresLista } from "@/lib/data/vereadores";
 import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import VereadoresClient from "./VereadoresClient";
 import { descreverSubsidio } from "./remuneracao";
 import { fetchSubsidioAtualVereadores } from "./subsidio-atual";
+import { listaVereadoresJsonLd, serializarJsonLd } from "./schema";
 
 export const metadata = pageMetadata({
   title: "Vereadores de Piracanjuba GO",
@@ -21,8 +22,24 @@ export default async function VereadoresPage() {
     fetchSubsidioAtualVereadores(),
   ]);
 
+  // ItemList na ordem em que a lista aparece (nome, A-Z), uma Person por perfil.
+  const jsonLd = [
+    breadcrumbJsonLd([
+      { name: "Início", path: "/" },
+      { name: "Vereadores", path: "/vereadores" },
+    ]),
+    ...(vereadores.length > 0 ? [listaVereadoresJsonLd(vereadores)] : []),
+  ];
+
   return (
     <>
+      {jsonLd.map((dado, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializarJsonLd(dado) }}
+        />
+      ))}
       <section className="bg-gradient-to-br from-primary/15 to-primary/5 border-b border-border">
         <div className="container py-10 md:py-14">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">

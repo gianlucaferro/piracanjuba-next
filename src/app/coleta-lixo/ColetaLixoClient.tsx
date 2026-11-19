@@ -6,29 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  AVISO_VALIDADE_COLETA,
+  BAIRROS_COLETA,
+  COLETA_COMUM,
+  COLETA_SELETIVA,
+  FONTE_COLETA,
+  diasDoBairro,
+} from "@/data/coletaLixo";
 
-const COLETA_COMUM: Record<string, string[]> = {
-  "Segunda-feira": ["Aeroporto","Aeroporto Sul","BNH","Bueno","Cascalho","Centro","Country Club","Ely Rocha","Estiva","Filismina","Jardim dos Buritis","Jardim Europa","Jardim Goiás 1 e 2","Jardim Primavera","Piracanjuba","Pouso Alto","Primavera","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Vila União"],
-  "Terça-feira": ["Aeroporto","Aeroporto Sul","BNH","Bueno","Cascalho","Centro","Conjunto Pouso Alto","Corredor do Homero","Country Club","Ely Rocha","Estiva","Filismina","Jardim dos Buritis","Jardim Europa","Jardim Primavera","Pecuária","Piracanjuba","Pouso Alto","Primavera","Recanto do Bosque","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Vila União"],
-  "Quarta-feira": ["Aeroporto","Aeroporto Sul","BNH","Bueno","Cascalho","Centro","Country Club","Ely Rocha","Estiva","Filismina","Jardim dos Buritis","Jardim Europa","Jardim Goiás 1 e 2","Jardim Primavera","Piracanjuba","Pouso Alto","Primavera","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Vila União"],
-  "Quinta-feira": ["Aeroporto","Aeroporto Sul","BNH","Bueno","Cascalho","Centro","Country Club","Ely Rocha","Estiva","Filismina","Jardim dos Buritis","Jardim Europa","Jardim Goiás 1 e 2","Jardim Primavera","Piracanjuba","Pouso Alto","Primavera","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Vila União"],
-  "Sexta-feira": ["Aeroporto","Aeroporto Sul","BNH","Bueno","Cascalho","Centro","Conjunto Pouso Alto","Country Club","Ely Rocha","Estiva","Filismina","Jardim dos Buritis","Jardim Europa","Jardim Goiás 1 e 2","Jardim Primavera","Pecuária","Piracanjuba","Pouso Alto","Primavera","Recanto do Bosque","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Vila União"],
-  "Sábado": ["Av. Expedicionário","Cachoeira","Cargil","Centro","Contêineres","Grão Dourado","Rochedo","Silo da COAPIL"],
-};
-
-const COLETA_SELETIVA: Record<string, string[]> = {
-  "Segunda-feira": ["Centro"],
-  "Sexta-feira": ["Centro"],
-  "Terça-feira": ["Jardim Goiás 1 e 2","BNH","Estiva","Jardim Primavera","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Bueno","Setor Fernandes","Setor Magalhães","Setor Parque Machado","São Francisco de Assis"],
-  "Quarta-feira": ["Aeroporto","Cascalho","Jardim dos Buritis","Jardim Europa","Setor Oeste","Pouso Alto","Aeroporto Sul","Setor das Orquídeas","Setor Roberto"],
-  "Quinta-feira": ["Country Club","Ely Rocha","Filismina","Piracanjuba","Primavera","Recanto do Bosque","Setor Lima","Setor Norte","Setor Planalto","Vila União"],
-};
-
-const WEEK_ORDER = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
 const WEEK_IDX: Record<string, number> = { "Segunda-feira":1,"Terça-feira":2,"Quarta-feira":3,"Quinta-feira":4,"Sexta-feira":5,"Sábado":6 };
-const EXEMPLOS = [
-  "Aeroporto","Aeroporto Sul","Av. Expedicionário","BNH","Bueno","Cachoeira","Cargil","Cascalho","Centro","Conjunto Pouso Alto","Contêineres","Corredor do Homero","Country Club","Ely Rocha","Estiva","Filismina","Grão Dourado","Jardim dos Buritis","Jardim Europa","Jardim Goiás 1 e 2","Jardim Primavera","Pecuária","Piracanjuba","Pouso Alto","Primavera","Recanto do Bosque","Rochedo","São Francisco de Assis","São Vicente de Paula","Sebastião de Oliveira","Setor Boa Vista","Setor das Orquídeas","Setor Fernandes","Setor Lima","Setor Magalhães","Setor Norte","Setor Oeste","Setor Parque Machado","Setor Planalto","Setor Roberto","Silo da COAPIL","Vila União",
-];
 
 function norm(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9\s]/g,"").trim();
@@ -42,11 +29,7 @@ function matchBairro(bairro: string, query: string) {
   return nq.split(" ").every(w => nb.includes(w));
 }
 
-const allBairros = [...new Set([...Object.values(COLETA_COMUM).flat(),...Object.values(COLETA_SELETIVA).flat()])].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-
-function getDias(bairro: string, data: Record<string, string[]>) {
-  return Object.entries(data).filter(([,l])=>l.some(x=>matchBairro(x,bairro)||matchBairro(bairro,x))).map(([d])=>d);
-}
+const allBairros = BAIRROS_COLETA;
 
 type Status = "hoje" | "amanha" | "futuro" | "passou" | "proxima";
 
@@ -123,12 +106,12 @@ function gerarEventosCalendario(bairro: string, diasComum: string[], diasSeletiv
     const inicio = proximaOcorrenciaAnterior(dia);
     const params = new URLSearchParams({
       action: "TEMPLATE",
-      text: `🗑️ Coloque o lixo na rua hoje! — ${bairro}`,
+      text: `🗑️ Coloque o lixo na rua hoje! (${bairro})`,
       details: `Amanhã é dia de coleta de LIXO COMUM no ${bairro}.\n\n✅ Use saco PRETO\n✅ Coloque na calçada até as 18h (hoje!)\n\nO caminhão passa amanhã cedo.`,
       dates: horarioEvento(inicio),
       recur: `RRULE:FREQ=WEEKLY;BYDAY=${rrule}`,
     });
-    eventos.push({ label: `Lixo comum — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "comum" });
+    eventos.push({ label: `Lixo comum: lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "comum" });
   });
   diasSeletiva.forEach(dia => {
     const rrule = WEEK_RRULE_ANTERIOR[dia];
@@ -136,12 +119,12 @@ function gerarEventosCalendario(bairro: string, diasComum: string[], diasSeletiv
     const inicio = proximaOcorrenciaAnterior(dia);
     const params = new URLSearchParams({
       action: "TEMPLATE",
-      text: `♻️ Coloque os recicláveis na rua hoje! — ${bairro}`,
+      text: `♻️ Coloque os recicláveis na rua hoje! (${bairro})`,
       details: `Amanhã é dia de COLETA SELETIVA no ${bairro}.\n\n✅ Use saco BRANCO, AZUL ou VERDE\n✅ Materiais devem estar limpos e secos\n✅ Coloque na calçada até as 18h (hoje!)\n\nO caminhão passa amanhã cedo.`,
       dates: horarioEvento(inicio),
       recur: `RRULE:FREQ=WEEKLY;BYDAY=${rrule}`,
     });
-    eventos.push({ label: `Seletiva — lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "seletiva" });
+    eventos.push({ label: `Seletiva: lembrete (${dia})`, url: `https://calendar.google.com/calendar/render?${params}`, tipo: "seletiva" });
   });
   return eventos;
 }
@@ -304,10 +287,10 @@ function EmptyState({ onPick }: { onPick: (b: string) => void }) {
       <div className="text-5xl mb-4">🏘️</div>
       <h2 className="text-xl font-semibold text-foreground mb-2">Digite o nome do seu bairro</h2>
       <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto">
-        Você vai saber os dias exatos, o saco certo e o horário limite para cada tipo de coleta.
+        Você vai saber os dias da coleta, o saco certo e até que horas colocar o lixo na rua.
       </p>
       <div className="flex flex-wrap gap-2 justify-center mt-4">
-        {EXEMPLOS.map(b => (
+        {allBairros.map(b => (
           <button key={b} onClick={() => onPick(b)} className="bg-secondary text-secondary-foreground rounded-full px-4 py-1.5 text-sm hover:bg-secondary/80 transition-colors">{b}</button>
         ))}
       </div>
@@ -402,24 +385,15 @@ export default function ColetaLixoClient() {
     });
   }
 
-  const diasC = selected ? getDias(selected, COLETA_COMUM) : [];
-  const diasS = selected ? getDias(selected, COLETA_SELETIVA) : [];
+  // Nome exato: o bairro escolhido sempre vem da lista (clique ou ?bairro= da URL).
+  const diasC = selected ? diasDoBairro(selected, COLETA_COMUM) : [];
+  const diasS = selected ? diasDoBairro(selected, COLETA_SELETIVA) : [];
   const proxC = selected ? getProximaDia(diasC) : null;
   const proxS = selected ? getProximaDia(diasS) : null;
   const eventos = selected ? gerarEventosCalendario(selected, diasC, diasS) : [];
 
   return (
-    <div className="container max-w-2xl py-6 space-y-6">
-      <div className="text-center space-y-3 pb-2">
-        <div className="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800 rounded-full px-3 py-1 text-sm font-medium text-green-800 dark:text-green-300">
-          🗑️ Prefeitura de Piracanjuba
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Quando colocar o lixo na rua?</h1>
-        <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto">
-          Digite seu bairro e saiba exatamente quais dias o caminhão passa, qual saco usar e o horário certo.
-        </p>
-      </div>
-
+    <div className="space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground">Qual é o seu bairro?</label>
         <div className="relative">
@@ -526,7 +500,7 @@ export default function ColetaLixoClient() {
             <ColetaCard
               titulo="🗑️ Lixo comum"
               subtitulo="Restos de comida e resíduos úmidos"
-              dias={WEEK_ORDER.filter(d => diasC.includes(d))}
+              dias={diasC}
               sacos={[{ cor: "#1c1917", borda: "#57534e", label: "Preto" }]}
               seletivaMsg={null}
               reciclaveis={null}
@@ -548,8 +522,8 @@ export default function ColetaLixoClient() {
           </div>
 
           <div className="bg-secondary/50 rounded-xl p-4 text-center space-y-0.5">
-            <p className="text-sm text-muted-foreground">Dados fornecidos pela Prefeitura Municipal de Piracanjuba · 2025</p>
-            <p className="text-sm text-muted-foreground">Dúvidas? Entre em contato com a Prefeitura.</p>
+            <p className="text-sm text-muted-foreground">{FONTE_COLETA}.</p>
+            <p className="text-sm text-muted-foreground">{AVISO_VALIDADE_COLETA} Dúvidas? Entre em contato com a Prefeitura.</p>
           </div>
         </div>
       )}

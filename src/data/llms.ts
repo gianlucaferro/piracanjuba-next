@@ -175,7 +175,7 @@ const ABAS_PREFEITURA: PaginaLlms[] = [
   { caminho: "/prefeitura/diarias", titulo: "Diárias da Prefeitura", descricao: "Diárias pagas pela Prefeitura, com favorecido, destino e valor." },
   { caminho: "/prefeitura/licitacoes", titulo: "Licitações da Prefeitura", descricao: "Licitações, modalidades e editais." },
   { caminho: "/prefeitura/obras", titulo: "Obras públicas", descricao: "Obras municipais com situação, empresa responsável e valores." },
-  { caminho: "/prefeitura/veiculos", titulo: "Frota de veículos da Prefeitura", descricao: "Veículos do Executivo (placa, modelo, ano e secretaria), com dados do DETRAN-GO." },
+  { caminho: "/prefeitura/veiculos", titulo: "Frota de veículos da Prefeitura", descricao: "Veículos do Executivo (placa, tipo, marca, ano, combustível, órgão e situação), com dados do portal de transparência da Prefeitura (Centi)." },
 ];
 
 const ABAS_CAMARA: PaginaLlms[] = [
@@ -227,6 +227,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Lista dos vereadores com partido, cargo na Mesa Diretora, votos na eleição e contato, com link para o perfil de cada um.",
       },
       {
+        caminho: "/transparencia/cotas-parlamentares",
+        titulo: "Cotas parlamentares na Câmara",
+        descricao: "Declaração oficial da Câmara de que não há cota parlamentar nem verba indenizatória para os vereadores, com o que eles recebem: subsídio mensal e diárias.",
+      },
+      {
         caminho: "/atuacao-parlamentar",
         titulo: "Atuação parlamentar",
         descricao: "Requerimentos, indicações, moções e proposições dos vereadores.",
@@ -264,7 +269,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/coleta-lixo",
         titulo: "Coleta de lixo",
-        descricao: "Dias e horários da coleta de lixo comum e da coleta seletiva, por bairro.",
+        descricao: "Dias da coleta de lixo comum e da coleta seletiva em cada bairro (cronograma de 2025), cor do saco e horário para pôr o lixo na calçada.",
       },
       {
         caminho: "/horarios-onibus",
@@ -283,8 +288,8 @@ export const SECOES_LLMS: SecaoLlms[] = [
       },
       {
         caminho: "/clima",
-        titulo: "Clima",
-        descricao: "Tempo em Piracanjuba: temperatura atual, máxima e mínima, chuva, umidade e histórico mensal.",
+        titulo: "Previsão do tempo",
+        descricao: "Previsão do tempo em Piracanjuba para hoje e os próximos dias, leitura atual com horário, chuva do mês e histórico mensal.",
       },
       {
         caminho: "/zap-pba",

@@ -118,6 +118,12 @@ async function openServidor(page: Page, orgao: Orgao, name = "Ana de Teste") {
   return dialog;
 }
 
+// O Supabase é simulado no navegador; a aba precisa carregar pelo navegador, sem o dado que o
+// servidor de e2e leria no Supabase falso (ver src/lib/ssr-hidratacao.ts).
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([{ name: "e2e_sem_busca_servidor", value: "1", url: "http://127.0.0.1:4318" }]);
+});
+
 for (const orgao of ["prefeitura", "camara"] as const) {
   test(`${orgao}: resumo individual separa mensal, rescisão e 13º com suas competências`, async ({ page }) => {
     const errors: string[] = [];

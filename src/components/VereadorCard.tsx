@@ -14,6 +14,7 @@ import {
   subsidioMaisRecente,
   type LinhaRemuneracao,
 } from "@/app/vereadores/remuneracao";
+import { nomeUrnaDiferente } from "@/app/vereadores/identidade";
 import { Badge } from "@/components/ui/badge";
 import ShareButton from "@/components/ShareButton";
 import { formatCurrency, getInitials } from "@/lib/formatters";
@@ -38,6 +39,7 @@ async function fetchFolhaRecenteVereador(vereadorId: string): Promise<LinhaRemun
 
 export default function VereadorCard({ v }: { v: Vereador }) {
   const initials = getInitials(v.nome);
+  const nomeUrna = nomeUrnaDiferente(v.nome, v.slug);
 
   const { data: counts } = useQuery({
     // nome no queryKey + queryFn pra incluir coautorias (autor_texto lista todos os autores)
@@ -99,6 +101,9 @@ export default function VereadorCard({ v }: { v: Vereador }) {
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-foreground truncate">{v.nome}</h3>
+          {nomeUrna && (
+            <p className="text-xs text-muted-foreground truncate">Nome de urna: {nomeUrna}</p>
+          )}
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             {v.cargo_mesa && (
               <Badge variant="secondary" className="text-sm">

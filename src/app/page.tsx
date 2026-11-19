@@ -44,7 +44,7 @@ import { HomeCivicInsights, HomeCivicSearch } from "@/components/home/HomeCivicC
 import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
 
 export const metadata = pageMetadata({
-  title: "Piracanjuba.ai — Transparência municipal de Piracanjuba GO com IA",
+  title: "Piracanjuba.ai: transparência municipal de Piracanjuba GO com IA",
   description:
     "Portal de transparência municipal de Piracanjuba, Goiás com IA. Câmara, prefeitura, vereadores, contratos, classificados, farmácias e mais.",
   path: "/",
@@ -118,8 +118,7 @@ export default async function HomePage() {
       >
         <Image
           src="/hero-piracanjuba.webp"
-          alt=""
-          aria-hidden
+          alt="Ilustração da torre da Praça do Relógio, em Piracanjuba"
           fill
           priority
           fetchPriority="high"

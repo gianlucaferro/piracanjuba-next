@@ -86,7 +86,7 @@ const server = createServer((request, response) => {
   response.end(request.method === "HEAD" ? undefined : JSON.stringify(request.headers.accept?.includes("application/vnd.pgrst.object+json") ? (data[0] ?? null) : data));
 });
 server.listen(4319, "127.0.0.1", () => {
-  const next = spawn(process.execPath, [resolve(root, "node_modules/next/dist/bin/next"), "dev", "--hostname", "127.0.0.1", "--port", "4318"], { cwd: root, stdio: "inherit", env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:4319", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-test-fixture", NEXT_TELEMETRY_DISABLED: "1" } });
+  const next = spawn(process.execPath, [resolve(root, "node_modules/next/dist/bin/next"), "dev", "--hostname", "127.0.0.1", "--port", "4318"], { cwd: root, stdio: "inherit", env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:4319", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-test-fixture", NEXT_TELEMETRY_DISABLED: "1", PIRACANJUBA_E2E: "1" } });
   const stop = () => { next.kill("SIGTERM"); server.close(); };
   process.on("SIGTERM", stop); process.on("SIGINT", stop);
   next.on("exit", (code) => { server.close(); process.exitCode = code ?? 1; });

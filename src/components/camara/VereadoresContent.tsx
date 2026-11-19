@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { Search } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
@@ -74,6 +75,13 @@ export function VereadoresContent() {
               portal de transparência Centi
             </a>
             . Vereadores com zero projetos ainda não apresentaram proposições nesta legislatura (2025–2028).
+          </p>
+          <p className="mt-2">
+            Os vereadores de Piracanjuba recebem subsídio e diárias, sem cota parlamentar: veja a{" "}
+            <Link href="/transparencia/cotas-parlamentares" className="text-primary hover:underline">
+              declaração da Câmara sobre cotas parlamentares
+            </Link>
+            .
           </p>
         </div>
 

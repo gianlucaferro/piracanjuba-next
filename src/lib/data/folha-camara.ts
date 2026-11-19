@@ -41,17 +41,29 @@ export const fetchFolhaUltimaCompetencia = unstable_cache(
   { revalidate: 3600, tags: ["folha-camara"] },
 );
 
+// Lê só a última competência: a tabela inteira passa do limite de 1.000 linhas por resposta do
+// PostgREST (549 linhas em 2026-11-19, cerca de 36 por mês), e sem ordem as mais novas ficariam de
+// fora. Erro é lançado para o cache não guardar um resumo falso; o único chamador
+// (src/app/camara/[aba]/bloco-servidor.tsx) trata a falha.
 export const fetchFolhaStats = unstable_cache(
   async () => {
     const supabase = createPublicSupabaseClient();
-    const { data } = await supabase
+    const { data: ultimaRef, error: erroUltima } = await supabase
       .from("folha_servidor")
-      .select("ano, mes, cargo, lotacao");
-    if (!data?.length) return null;
-    const ultimaRef = data
-      .map((r) => ({ ano: r.ano, mes: r.mes }))
-      .sort((a, b) => b.ano - a.ano || b.mes - a.mes)[0];
-    const ultimos = data.filter((r) => r.ano === ultimaRef.ano && r.mes === ultimaRef.mes);
+      .select("ano, mes")
+      .order("ano", { ascending: false })
+      .order("mes", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (erroUltima) throw erroUltima;
+    if (!ultimaRef) return null;
+    const { data: ultimos, error } = await supabase
+      .from("folha_servidor")
+      .select("cargo, lotacao")
+      .eq("ano", ultimaRef.ano)
+      .eq("mes", ultimaRef.mes);
+    if (error) throw error;
+    if (!ultimos?.length) return null;
     const porCargo = new Map<string, number>();
     const porLotacao = new Map<string, number>();
     for (const r of ultimos) {

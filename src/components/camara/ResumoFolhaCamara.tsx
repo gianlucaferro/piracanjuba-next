@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import { formatCurrency } from "@/lib/formatters";
 import type { TotaisFolha } from "@/lib/camara-folha";
+import { CHAVE_RESUMO_FOLHA_CAMARA } from "@/components/camara/chaves-consulta";
 
 function TotaisPublicados({ totais }: { totais: TotaisFolha }) {
   return (
@@ -23,7 +24,7 @@ function TotaisPublicados({ totais }: { totais: TotaisFolha }) {
 
 export default function ResumoFolhaCamara() {
   const { data: resumo, isPending, isError, isFetching, refetch } = useQuery({
-    queryKey: ["camara-resumo-folha"],
+    queryKey: CHAVE_RESUMO_FOLHA_CAMARA,
     queryFn: fetchCamaraResumoFolha,
     staleTime: 10 * 60 * 1000,
   });

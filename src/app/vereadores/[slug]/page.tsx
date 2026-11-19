@@ -12,7 +12,8 @@ import {
   DollarSign,
 } from "lucide-react";
 import Instagram from "@/components/icons/InstagramIcon";
-import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { FONTES_CAMARA } from "@/lib/fontes-oficiais";
 import { fetchVereadorBySlug, listVereadorSlugs } from "@/lib/data/vereadores";
 import {
   fetchProcessosPorVereadorSlug,
@@ -31,11 +32,14 @@ import IndicacoesPanel from "@/components/camara/IndicacoesPanel";
 import AtividadesLegislativasPanel from "@/components/camara/AtividadesLegislativasPanel";
 import {
   SUBSIDIO_NAO_INFORMADO,
+  fraseSubsidioParlamentar,
   remuneracoesComPagamento,
   subsidioMaisRecente,
   temSubsidio,
 } from "../remuneracao";
-import { perfilDe, tratamentoParlamentar } from "../tratamento";
+import { referenciaParlamentar, tituloPerfilParlamentar, tratamentoParlamentar } from "../tratamento";
+import { ANO_ELEICAO_NOME_URNA, identidadeParlamentar, nomeUrnaDiferente } from "../identidade";
+import { pessoaVereadorJsonLd, serializarJsonLd } from "../schema";
 
 export const revalidate = 3600;
 
@@ -53,16 +57,20 @@ export async function generateMetadata({
   const result = await fetchVereadorBySlug(slug);
   if (!result) {
     return pageMetadata({
-      title: "Vereador não encontrado — Piracanjuba GO",
+      title: "Vereador não encontrado, Piracanjuba GO",
       description: "Este vereador não foi encontrado.",
       path: `/vereadores/${slug}`,
     });
   }
   const { vereador } = result;
   const tratamento = tratamentoParlamentar(slug);
+  // Nome de urna no título e na descrição: é o nome que eleitor e imprensa buscam. O
+  // título fica curto (até 60 caracteres com o sufixo do layout); partido e nome civil
+  // ficam no H1, na linha de identidade e no Person.
+  const nomeUrna = nomeUrnaDiferente(vereador.nome, slug);
   return pageMetadata({
-    title: `${vereador.nome} (${vereador.partido || "s/p"}), ${tratamento} em Piracanjuba GO`,
-    description: `Perfil ${perfilDe(tratamento)} ${vereador.nome} em Piracanjuba GO: partido, atuação parlamentar, projetos de lei, remuneração mensal e contato.`,
+    title: tituloPerfilParlamentar(vereador.nome, slug),
+    description: `Perfil ${referenciaParlamentar(tratamento, vereador.nome, nomeUrna)} em Piracanjuba GO: partido, atuação parlamentar, projetos de lei, remuneração mensal e contato.`,
     path: `/vereadores/${slug}`,
     image: vereador.foto_url || undefined,
   });
@@ -121,9 +129,27 @@ export default async function VereadorPage({
     ultimaRemuneracao !== undefined && (!brutoNaMesmaCompetencia || ultimoBruto !== subsidio?.valor);
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
+  const tratamento = tratamentoParlamentar(slug);
+  const identidade = identidadeParlamentar(slug);
+  const nomeUrna = nomeUrnaDiferente(vereador.nome, slug);
+  const jsonLd = [
+    pessoaVereadorJsonLd({ ...vereador, slug }),
+    breadcrumbJsonLd([
+      { name: "Início", path: "/" },
+      { name: "Vereadores", path: "/vereadores" },
+      { name: vereador.nome, path: `/vereadores/${slug}` },
+    ]),
+  ];
 
   return (
     <div className="container py-6 md:py-10 space-y-8">
+      {jsonLd.map((dado, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializarJsonLd(dado) }}
+        />
+      ))}
       <Link
         href="/vereadores"
         className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
@@ -154,6 +180,13 @@ export default async function VereadorPage({
           <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">
             {vereador.nome}
           </h1>
+          {identidade && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Nome de urna ({ANO_ELEICAO_NOME_URNA}):{" "}
+              <span className="font-medium text-foreground">{identidade.nomeUrna}</span>
+              <span className="ml-2">· Nome civil: {identidade.nomeCivil}</span>
+            </p>
+          )}
           <p className="mt-1 text-muted-foreground">
             <span className="font-medium">{vereador.partido || "Sem partido"}</span>
             {vereador.cargo_mesa && (
@@ -195,6 +228,23 @@ export default async function VereadorPage({
           </div>
         </div>
       </header>
+
+      {/* Frase-resposta (mesmo formato de /vereadores): valor, competência e fonte. */}
+      {subsidio && (
+        <p className="text-foreground max-w-3xl">
+          {fraseSubsidioParlamentar(referenciaParlamentar(tratamento, vereador.nome, nomeUrna), subsidio)},
+          segundo a{" "}
+          <a
+            href={FONTES_CAMARA.folhas}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            folha de pagamento da Câmara Municipal
+          </a>
+          .
+        </p>
+      )}
 
       {/* Stats em destaque */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">

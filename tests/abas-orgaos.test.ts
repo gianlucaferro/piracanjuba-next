@@ -6,9 +6,13 @@ import {
   abaDoCaminho,
   abaExibida,
   abaPermitidaPrefeitura,
+  abasComMeta,
   deveTrocarAbaNoCliente,
   hrefAbaCamara,
   hrefAbaPrefeitura,
+  metaAbaCamara,
+  metaAbaPrefeitura,
+  SUFIXO_TITULO,
   tituloAbaCamara,
   tituloAbaPrefeitura,
   type CliqueAba,
@@ -42,7 +46,8 @@ test("H1 diz o tema da aba e volta ao nome do órgão fora das abas conhecidas",
   assert.equal(tituloAbaCamara("toString"), "Câmara Municipal de Piracanjuba");
 });
 
-// Lê as chaves de ABAS da rota, para o H1 não ficar para trás quando uma aba nova entrar lá.
+// Lê as chaves de ABAS da rota, para o H1 e o title não ficarem para trás quando uma aba nova
+// entrar lá.
 function abasDaRota(arquivo: string): string[] {
   const fonte = readFileSync(new URL(arquivo, import.meta.url), "utf8");
   const bloco = fonte.slice(fonte.indexOf("const ABAS"), fonte.indexOf("};", fonte.indexOf("const ABAS")));
@@ -64,6 +69,50 @@ test("toda aba das rotas tem H1 próprio e sem travessão", () => {
     assert.notEqual(titulo, "Câmara Municipal de Piracanjuba", `aba ${aba} sem H1 próprio`);
     assert.doesNotMatch(titulo, /[\u2013\u2014]/);
   }
+});
+
+test("toda aba das rotas tem title e description próprios, e nenhuma a mais", () => {
+  const abasPrefeitura = abasDaRota("../src/app/prefeitura/[aba]/page.tsx");
+  const abasCamara = abasDaRota("../src/app/camara/[aba]/page.tsx");
+  assert.deepEqual([...abasComMeta("prefeitura")].sort(), [...abasPrefeitura].sort());
+  assert.deepEqual([...abasComMeta("camara")].sort(), [...abasCamara].sort());
+});
+
+test("title e description das abas seguem os limites do Bing (2026-11-19)", () => {
+  const metas = [
+    ...abasComMeta("prefeitura").map((aba) => ({ aba: `prefeitura/${aba}`, meta: metaAbaPrefeitura(aba) })),
+    ...abasComMeta("camara").map((aba) => ({ aba: `camara/${aba}`, meta: metaAbaCamara(aba) })),
+  ];
+  assert.ok(metas.length > 25);
+  const titulos = new Set<string>();
+  const descricoes = new Set<string>();
+  for (const { aba, meta } of metas) {
+    assert.ok(meta, `${aba} sem meta`);
+    const tituloRenderizado = meta.title + SUFIXO_TITULO;
+    assert.ok(tituloRenderizado.length <= 60, `${aba}: título com ${tituloRenderizado.length} caracteres`);
+    assert.ok(
+      meta.description.length >= 120 && meta.description.length <= 160,
+      `${aba}: description com ${meta.description.length} caracteres`
+    );
+    assert.match(meta.title, /Piracanjuba/, `${aba}: título sem o nome da cidade`);
+    assert.match(meta.description, /Piracanjuba/, `${aba}: description sem o nome da cidade`);
+    assert.doesNotMatch(meta.title + meta.description, /[\u2013\u2014]/, `${aba}: travessão`);
+    assert.doesNotMatch(meta.title, /\|/, `${aba}: o sufixo vem do layout, não do título`);
+    assert.equal(meta.description, meta.description.trim());
+    assert.ok(!titulos.has(meta.title), `${aba}: título repetido`);
+    assert.ok(!descricoes.has(meta.description), `${aba}: description repetida`);
+    titulos.add(meta.title);
+    descricoes.add(meta.description);
+  }
+});
+
+test("aba sem rota própria, aba padrão e chave herdada não têm meta", () => {
+  assert.equal(metaAbaPrefeitura("visao-geral"), null);
+  assert.equal(metaAbaPrefeitura("admin"), null);
+  assert.equal(metaAbaPrefeitura("toString"), null);
+  assert.equal(metaAbaCamara("vereadores"), null);
+  assert.equal(metaAbaCamara("constructor"), null);
+  assert.equal(metaAbaCamara("projetos")?.title, "Projetos de lei da Câmara de Piracanjuba GO");
 });
 
 test("toda aba das rotas sai do caminho, com e sem barra final, e volta ao mesmo endereço", () => {

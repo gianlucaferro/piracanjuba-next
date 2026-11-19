@@ -54,6 +54,9 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/dados-pba", changeFrequency: "monthly", priority: 0.7 },
   { path: "/comparador", changeFrequency: "monthly", priority: 0.6 },
   { path: "/privacidade", changeFrequency: "yearly", priority: 0.3 },
+  // Página /transparencia/* sem aba equivalente na Câmara (Onda 2, IDX-03, 2026-11-19): fica,
+  // entra no sitemap e recebe link da aba Vereadores (/camara).
+  { path: "/transparencia/cotas-parlamentares", changeFrequency: "monthly", priority: 0.6 },
 ];
 
 // Abas indexáveis da Prefeitura e da Câmara (rotas próprias para SEO). Precisam bater com
@@ -81,16 +84,23 @@ export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>
   "/acompanhar": { motivo: "favoritos e avisos de quem está logado", noindex: true },
   "/anuncie/cadastro": { motivo: "formulário de cadastro de empresa", noindex: true },
   "/anuncie/cadastro/obrigado": { motivo: "confirmação de envio do cadastro", noindex: true },
-  // As 8 páginas /transparencia/* repetem temas das abas da Câmara. A escolha da URL
-  // canônica de cada tema fica para a Onda 2 (auditoria SEO de 2026-11-17, IDX-03).
-  "/transparencia/atividades-legislativas": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/atos-camara": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/contratos-camara": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/cotas-parlamentares": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/folha-camara": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/indicacoes": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/licitacoes-camara": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
-  "/transparencia/processos-publicos": { motivo: "canonical pendente (IDX-03, Onda 2)", noindex: false },
+  // Processos judiciais de pessoas nomeadas: dar mais alcance (sitemap e link interno) é decisão
+  // do operador, pendente desde a Onda 2 (2026-11-19). Até lá, a página segue como estava.
+  "/transparencia/processos-publicos": { motivo: "alcance pendente de decisão do operador", noindex: false },
+};
+
+// Endereços antigos que respondem 308 (redirect permanente). As seis páginas /transparencia/*
+// com aba equivalente na Câmara tiveram o conteúdo levado à parte renderizada no servidor da aba
+// e deixaram de existir (Onda 2, IDX-03 e CONT-03, 2026-11-19). next.config.ts repete esta lista
+// em redirects(); tests/sitemap-rotas.test.ts confere que as duas batem, que o destino existe e
+// que nenhuma origem ficou no sitemap.
+export const REDIRECIONAMENTOS_PERMANENTES: Readonly<Record<string, string>> = {
+  "/transparencia/contratos-camara": "/camara/contratos",
+  "/transparencia/licitacoes-camara": "/camara/licitacoes",
+  "/transparencia/folha-camara": "/camara/servidores",
+  "/transparencia/indicacoes": "/camara/indicacoes",
+  "/transparencia/atividades-legislativas": "/camara/projetos",
+  "/transparencia/atos-camara": "/camara/atuacao",
 };
 
 // Rotas dinâmicas e de onde src/app/sitemap.ts tira as URLs de cada uma.

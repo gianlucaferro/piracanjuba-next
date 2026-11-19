@@ -20,11 +20,14 @@ export type LicitacaoCamara = {
 export const fetchLicitacoesRecentes = unstable_cache(
   async (limit = 100): Promise<LicitacaoCamara[]> => {
     const supabase = createPublicSupabaseClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("licitacao_camara")
       .select("id, centi_label, numero, ano, modalidade, situacao, data_publicacao, data_abertura, data_encerramento, valor_estimado, valor_homologado, descricao")
       .order("data_publicacao", { ascending: false, nullsFirst: false })
       .limit(limit);
+    // Erro do Supabase lança, para o unstable_cache não guardar uma lista vazia falsa por 1 hora
+    // (revisão do CodeRabbit no PR 56, 2026-11-19); quem chama trata a falha.
+    if (error) throw error;
     return (data ?? []) as LicitacaoCamara[];
   },
   ["licitacoes-recentes"],
