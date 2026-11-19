@@ -19,6 +19,7 @@ export type PreviaZap = {
   site?: string;
   facebook?: string;
   logo?: string;
+  logoHorizontal?: boolean;
   cor?: string;
   foto?: string;
   fotoAlt?: string;

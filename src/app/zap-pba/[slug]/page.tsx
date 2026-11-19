@@ -63,7 +63,7 @@ export default async function PreviaEmpresa({ params }: Props) {
         <header className={css.capa}>
           <div className={css.texto}>
             {logo && foto && (
-              <div className={css.assinatura}>
+              <div className={css.assinatura} data-horizontal={ficha.logoHorizontal || undefined}>
                 <Image src={logo} alt={"Logo de " + nome} width={96} height={96} unoptimized />
               </div>
             )}

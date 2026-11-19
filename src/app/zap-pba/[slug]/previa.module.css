@@ -68,6 +68,12 @@
   overflow: hidden;
 }
 
+.assinatura[data-horizontal] {
+  width: min(100%, 192px);
+  aspect-ratio: 4 / 1;
+  padding: 5px 8px;
+}
+
 .assinatura img, .marcaAmpliada img { width: 100%; height: 100%; object-fit: contain; }
 
 .atividade {
