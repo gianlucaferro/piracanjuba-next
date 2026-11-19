@@ -741,7 +741,7 @@ export default function ZapPbaClient({
 
   const mostrarMais = useCallback(() => {
     setPaginacao((atual) => maisUmLote(atual, chaveDosFiltros));
-  }, [chaveDosFiltros]);
+  }, [chaveDosFiltros, setPaginacao]);
 
   useEffect(() => {
     const sentinela = sentinelaRef.current;
