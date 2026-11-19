@@ -6,48 +6,19 @@ import {
   useMemo,
   useRef,
   useState,
-  type ComponentType,
   type FormEvent,
   type MouseEvent,
 } from "react";
 import Link from "next/link";
 import {
   ArrowUpDown,
-  Briefcase,
-  Car,
   ChevronLeft,
   ChevronRight,
-  Cpu,
-  Dog,
-  Dumbbell,
-  Flame,
-  Gift,
-  GraduationCap,
-  HardHat,
-  Heart,
-  Home,
-  Hotel,
-  MessageSquare,
-  MoreHorizontal,
-  Palette,
-  PawPrint,
-  PersonStanding,
-  Pill,
   Plus,
-  Scale,
   Search,
-  Share2,
-  Shirt,
-  ShoppingCart,
-  Sofa,
-  Sparkles,
   Store,
-  Tractor,
-  UtensilsCrossed,
-  Wrench,
   X,
 } from "lucide-react";
-import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,17 +40,18 @@ import {
 import { WHATSAPP_COMERCIAL } from "@/data/paginaEmpresa";
 import { Textarea } from "@/components/ui/textarea";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { CategoryIcon, ICONE_ZAP, SpriteZap, UsoIcone, idIconeCategoria } from "./icones";
+import {
+  LOTE_ZAP,
+  agruparIndice,
+  embaralharPorDia,
+  sementeDoDia,
+  textoResposta,
+  type FichaZap,
+  type GrupoIndiceZap,
+} from "./lista";
 
-type ZapEstabelecimento = {
-  id: string;
-  pagina?: string;
-  editorial?: boolean;
-  name: string;
-  whatsapp: string;
-  category: string | null;
-  click_count: number | null;
-  created_at: string | null;
-};
+type ZapEstabelecimento = FichaZap;
 
 type SortMode = "recent" | "popular";
 
@@ -111,38 +83,6 @@ const CATEGORIES = [
   "Tecnologia",
   "Outros",
 ];
-
-const CATEGORY_ICONS: Record<string, ComponentType<{ className?: string }>> = {
-  Alimentação: UtensilsCrossed,
-  Supermercados: ShoppingCart,
-  Saúde: Heart,
-  "Beleza e Estética": Sparkles,
-  "Farmácia e Drogaria": Pill,
-  Advogados: Scale,
-  Educação: GraduationCap,
-  Esportes: Dumbbell,
-  Automotivo: Car,
-  Agro: Tractor,
-  "Moda e Vestuário": Shirt,
-  "Serviços Especializados": Briefcase,
-  "Materiais de Construção": HardHat,
-  "Móveis e Decoração": Sofa,
-  "Pet Shop": PawPrint,
-  Veterinários: Dog,
-  "Personal Trainer": PersonStanding,
-  Imobiliário: Home,
-  "Hospedagem e Turismo": Hotel,
-  "Papelaria e Presentes": Gift,
-  Artesanato: Palette,
-  "Serviços Gerais": Wrench,
-  Tecnologia: Cpu,
-  Outros: MoreHorizontal,
-};
-
-function CategoryIcon({ category, className }: { category: string; className?: string }) {
-  const Icon = CATEGORY_ICONS[category] || Store;
-  return <Icon className={className} />;
-}
 
 function normalizeStr(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -181,26 +121,6 @@ function toWhatsappLink(value: string) {
   const digits = extractWhatsappDigits(value);
   const message = encodeURIComponent("Olá, vim pelo Piracanjuba.Ai");
   return `https://wa.me/55${digits}?text=${message}`;
-}
-
-function isNewEstablishment(createdAt: string | null) {
-  if (!createdAt) return false;
-  const created = new Date(createdAt).getTime();
-  if (Number.isNaN(created)) return false;
-  return Date.now() - created < 7 * 24 * 60 * 60 * 1000;
-}
-
-function shuffleByDay(items: ZapEstabelecimento[]) {
-  const today = new Date();
-  const seed =
-    today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-  const shuffled = [...items];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const mixed = Math.imul(seed + i, 2654435761) >>> 0;
-    const j = mixed % (i + 1);
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
 }
 
 function CategoryScrollArea({
@@ -299,13 +219,17 @@ function CategoryScrollArea({
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             }`}
           >
-            <CategoryIcon category={category} className="h-3.5 w-3.5" />
+            <UsoIcone id={idIconeCategoria(category)} className="h-3.5 w-3.5" />
             {category}
           </button>
         ))}
       </div>
     </div>
   );
+}
+
+function contarContato(item: ZapEstabelecimento) {
+  if (!item.editorial) void supabase.rpc("increment_click_count", { establishment_id: item.id });
 }
 
 function shareEstablishment(event: MouseEvent<HTMLButtonElement>, item: ZapEstabelecimento) {
@@ -333,10 +257,9 @@ function EstablishmentCard({
   onSuggest: (item: ZapEstabelecimento) => void;
 }) {
   const clickCount = item.click_count || 0;
-  const isNew = isNewEstablishment(item.created_at);
 
   function handleClick() {
-    if (!item.editorial) void supabase.rpc("increment_click_count", { establishment_id: item.id });
+    contarContato(item);
   }
 
   return (
@@ -351,7 +274,7 @@ function EstablishmentCard({
       />
 
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#25D366]/10 transition-colors group-hover:bg-[#25D366]/20 sm:h-12 sm:w-12">
-        <WhatsAppIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+        <UsoIcone id={ICONE_ZAP.whatsapp} className="h-5 w-5 sm:h-6 sm:w-6" />
       </div>
 
       <div className="min-w-0 flex-1">
@@ -359,7 +282,7 @@ function EstablishmentCard({
           <p className="truncate text-[15px] font-semibold leading-tight text-foreground transition-colors group-hover:text-[#25D366] sm:text-base">
             {item.name}
           </p>
-          {isNew && (
+          {item.novo && (
             <Badge className="h-5 shrink-0 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 text-xs font-semibold text-amber-700">
               Novo
             </Badge>
@@ -370,18 +293,17 @@ function EstablishmentCard({
         </p>
         <div className="mt-1 flex flex-wrap items-center gap-2">
           {item.category && (
-            <Badge
-              variant="secondary"
-              className="inline-flex items-center gap-1 px-2 py-0 text-xs"
-            >
-              <CategoryIcon category={item.category} className="h-3 w-3" />
+            // Mesmo visual do <Badge variant="secondary">, sem as cerca de 600 letras de
+            // classes de foco e validação que ele repetia em cada cartão.
+            <span className="inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-4xl border border-transparent bg-secondary px-2 py-0 text-xs font-medium text-secondary-foreground">
+              <UsoIcone id={idIconeCategoria(item.category)} className="h-3 w-3" />
               {item.category}
-            </Badge>
+            </span>
           )}
           {clickCount > 0 && (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Flame className="h-3 w-3 text-orange-500" />
-              {clickCount} {clickCount === 1 ? "contato" : "contatos"}
+              <UsoIcone id={ICONE_ZAP.contatos} className="h-3 w-3 text-orange-500" />
+              {`${clickCount} ${clickCount === 1 ? "contato" : "contatos"}`}
             </span>
           )}
           {item.pagina && (
@@ -391,7 +313,7 @@ function EstablishmentCard({
               aria-label={`Ver detalhes de ${item.name}`}
               className="relative z-20 inline-flex min-h-6 items-center gap-0.5 text-xs font-semibold text-foreground underline decoration-muted-foreground/50 underline-offset-2 hover:decoration-current"
             >
-              Ver detalhes <ChevronRight aria-hidden="true" className="h-3 w-3" />
+              Ver detalhes <UsoIcone id={ICONE_ZAP.detalhes} className="h-3 w-3" />
             </Link>
           )}
         </div>
@@ -405,7 +327,7 @@ function EstablishmentCard({
           aria-label={`Compartilhar ${item.name}`}
           title="Compartilhar"
         >
-          <Share2 className="h-4 w-4 text-muted-foreground" />
+          <UsoIcone id={ICONE_ZAP.compartilhar} className="h-4 w-4 text-muted-foreground" />
         </button>
         {item.editorial ? (
           <a
@@ -415,7 +337,7 @@ function EstablishmentCard({
             className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-muted"
             aria-label={`Sugerir correção para ${item.name}`}
           >
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <UsoIcone id={ICONE_ZAP.sugerir} className="h-4 w-4 text-muted-foreground" />
           </a>
         ) : (
           <button
@@ -429,7 +351,7 @@ function EstablishmentCard({
             aria-label={`Sugerir correção para ${item.name}`}
             title="Sugerir correção"
           >
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <UsoIcone id={ICONE_ZAP.sugerir} className="h-4 w-4 text-muted-foreground" />
           </button>
         )}
       </div>
@@ -682,10 +604,59 @@ function SuggestionModal({
   );
 }
 
+// Lista leve de todos os estabelecimentos, sempre no HTML: só o nome e o link de
+// cada um (a página no portal quando existe, senão o WhatsApp). É o que mantém os
+// estabelecimentos fora do primeiro lote alcançáveis por quem rastreia a página.
+function IndiceZap({ grupos, total }: { grupos: GrupoIndiceZap[]; total: number }) {
+  return (
+    <nav aria-labelledby="zap-indice" className="mx-auto mt-10 max-w-4xl border-t border-border pt-6">
+      <h2 id="zap-indice" className="text-base font-semibold text-foreground md:text-lg">
+        Índice do Zap PBA por categoria
+      </h2>
+      <p className="mb-3 mt-1 text-sm text-muted-foreground">
+        {`Os ${total} estabelecimentos do guia, em ordem alfabética.`}
+      </p>
+      <div className="space-y-2">
+        {grupos.map(({ categoria, itens }) => (
+          <details key={categoria} className="rounded-lg border border-border bg-card px-3 py-2">
+            <summary className="cursor-pointer text-sm font-medium text-foreground">
+              {`${categoria} (${itens.length})`}
+            </summary>
+            <ul className="mt-2 gap-x-6 text-sm text-muted-foreground sm:columns-2 lg:columns-3 [&_a]:underline-offset-2 [&_a:hover]:text-foreground [&_a:hover]:underline [&_li]:break-inside-avoid [&_li]:py-0.5">
+              {itens.map((item) => (
+                <li key={item.id}>
+                  {item.pagina ? (
+                    <Link href={item.pagina} prefetch={false}>
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <a
+                      href={toWhatsappLink(item.whatsapp)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => contarContato(item)}
+                    >
+                      {item.name}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export default function ZapPbaClient({
   initialEstabelecimentos,
+  dataReferencia,
 }: {
   initialEstabelecimentos: ZapEstabelecimento[];
+  // Dia (AAAA-MM-DD) em que o servidor montou a lista: semente da ordem do dia e
+  // data citada no parágrafo do topo.
+  dataReferencia: string;
 }) {
   const [busca, setBusca] = useState("");
   const [catFilter, setCatFilter] = useState<string | null>(null);
@@ -742,8 +713,41 @@ export default function ZapPbaClient({
       return [...pinnedFirst, ...pinnedSecond, ...rest];
     }
 
-    return [...pinnedFirst, ...pinnedSecond, ...shuffleByDay(rest)];
-  }, [busca, catFilter, initialEstabelecimentos, sortMode]);
+    return [...pinnedFirst, ...pinnedSecond, ...embaralharPorDia(rest, sementeDoDia(dataReferencia))];
+  }, [busca, catFilter, dataReferencia, initialEstabelecimentos, sortMode]);
+
+  // O servidor renderiza só o primeiro lote de cartões; os demais entram conforme a
+  // rolagem chega perto do fim da grade, ou pelo botão "Mostrar mais". Mudar a busca,
+  // a categoria ou a ordem volta ao primeiro lote.
+  const chaveDosFiltros = JSON.stringify([busca, catFilter, sortMode]);
+  const [paginacao, setPaginacao] = useState({ chave: chaveDosFiltros, limite: LOTE_ZAP });
+  const limite = paginacao.chave === chaveDosFiltros ? paginacao.limite : LOTE_ZAP;
+  const visiveis = filtered.slice(0, limite);
+  const restantes = filtered.length - visiveis.length;
+  const sentinelaRef = useRef<HTMLDivElement>(null);
+
+  const mostrarMais = useCallback(() => {
+    setPaginacao((atual) => ({
+      chave: chaveDosFiltros,
+      limite: (atual.chave === chaveDosFiltros ? atual.limite : LOTE_ZAP) + LOTE_ZAP,
+    }));
+  }, [chaveDosFiltros]);
+
+  useEffect(() => {
+    const sentinela = sentinelaRef.current;
+    if (!sentinela || typeof IntersectionObserver === "undefined") return;
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((entrada) => entrada.isIntersecting)) mostrarMais();
+      },
+      { rootMargin: "0px 0px 800px 0px" },
+    );
+    observador.observe(sentinela);
+    return () => observador.disconnect();
+  }, [mostrarMais, limite, restantes]);
+
+  const indice = useMemo(() => agruparIndice(initialEstabelecimentos), [initialEstabelecimentos]);
+  const resposta = textoResposta(initialEstabelecimentos.length, availableCategories.length, dataReferencia);
 
   const hasFilters = Boolean(busca.trim() || catFilter);
   const emptyStateWithSearch = filtered.length === 0 && Boolean(busca.trim());
@@ -761,16 +765,17 @@ export default function ZapPbaClient({
 
   return (
     <>
+      <SpriteZap categorias={availableCategories} />
       <div className="container px-3 py-4 pb-24 sm:px-4 md:py-8 md:pb-8">
         <div className="mb-5 text-center md:mb-8">
           <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#25D366]/15 md:h-16 md:w-16">
-            <WhatsAppIcon className="h-6 w-6 md:h-8 md:w-8" />
+            <UsoIcone id={ICONE_ZAP.whatsapp} className="h-6 w-6 md:h-8 md:w-8" />
           </div>
           <h1 className="mb-1 text-xl font-bold text-foreground md:text-3xl">
             Zap <span className="text-[#25D366]">PBA</span>
           </h1>
-          <p className="mx-auto max-w-md text-sm text-muted-foreground md:text-base">
-            WhatsApps de comércios e serviços locais de Piracanjuba.
+          <p className={`mx-auto text-sm text-muted-foreground md:text-base ${resposta ? "max-w-xl" : "max-w-md"}`}>
+            {resposta ?? "WhatsApps de comércios e serviços locais de Piracanjuba."}
           </p>
         </div>
 
@@ -853,15 +858,29 @@ export default function ZapPbaClient({
         </div>
 
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
-            {filtered.map((item) => (
-              <EstablishmentCard
-                key={item.id}
-                item={item}
-                onSuggest={setSuggestionTarget}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
+              {visiveis.map((item) => (
+                <EstablishmentCard
+                  key={item.id}
+                  item={item}
+                  onSuggest={setSuggestionTarget}
+                />
+              ))}
+            </div>
+            {restantes > 0 && (
+              <div ref={sentinelaRef} className="mt-4 text-center">
+                <button
+                  type="button"
+                  onClick={mostrarMais}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                >
+                  <Plus className="h-4 w-4" />
+                  Mostrar mais estabelecimentos ({restantes})
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="py-12 text-center">
             <Store className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
@@ -904,6 +923,8 @@ export default function ZapPbaClient({
         <p className="mx-auto mt-4 max-w-lg text-center text-sm text-muted-foreground">
           Os números são fornecidos pelos próprios estabelecimentos.
         </p>
+
+        {indice.length > 0 && <IndiceZap grupos={indice} total={initialEstabelecimentos.length} />}
       </div>
 
       <Dialog

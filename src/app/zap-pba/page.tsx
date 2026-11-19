@@ -5,6 +5,7 @@ import { PACIFICO_SIQUEIRA } from "@/data/pacifico-siqueira";
 import { previas } from "@/data/previas-zap";
 import vinculos from "@/data/zap-pba-paginas.json";
 import ZapPbaClient from "./ZapPbaClient";
+import { dataDeReferencia, fichaParaNavegador } from "./lista";
 
 export const metadata = pageMetadata({
   title: "Zap PBA | WhatsApp de empresas e serviços em Piracanjuba",
@@ -24,19 +25,21 @@ const paginaPorCadastro = new Map(Object.entries(vinculos).filter(([, pagina]) =
 
 export default async function ZapPbaPage() {
   const estabelecimentos = await fetchZapEstabelecimentos();
+  const agora = new Date();
+  const dataReferencia = dataDeReferencia(agora);
 
   const escritorio = PACIFICO_SIQUEIRA;
   const digitos = escritorio.telefone.slice(-11);
-  const fichas = estabelecimentos.map((item) => ({
+  const fichas = estabelecimentos.map((item) => fichaParaNavegador({
     ...item,
     pagina: item.whatsapp.replace(/\D/g, "").slice(-11) === digitos
       ? escritorio.path
       : paginaPorCadastro.get(item.id),
-  }));
+  }, agora.getTime()));
   if (fichas.some((item) => item.pagina === escritorio.path)) {
-    return <ZapPbaClient initialEstabelecimentos={fichas} />;
+    return <ZapPbaClient initialEstabelecimentos={fichas} dataReferencia={dataReferencia} />;
   }
-  return <ZapPbaClient initialEstabelecimentos={[...fichas, {
+  return <ZapPbaClient dataReferencia={dataReferencia} initialEstabelecimentos={[...fichas, fichaParaNavegador({
     id: escritorio.path,
     editorial: true,
     name: escritorio.nome,
@@ -45,5 +48,5 @@ export default async function ZapPbaPage() {
     click_count: null,
     created_at: null,
     pagina: escritorio.path,
-  }]} />;
+  }, agora.getTime())]} />;
 }
