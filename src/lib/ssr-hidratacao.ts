@@ -1,13 +1,17 @@
 /**
- * Os testes de navegador (tests/e2e) simulam o Supabase no próprio navegador, com page.route.
- * Com a busca no servidor da Onda 2 de SEO (2026-11-19), o HTML já chega com os dados lidos pelo
- * servidor no Supabase falso de scripts/validation/e2e-server.mjs, e o navegador não busca de novo:
- * o teste deixaria de ver o dado que ele mesmo simulou.
+ * Testes de navegador que simulam o Supabase no próprio navegador (page.route) precisam que a aba
+ * carregue pelo navegador. Com a busca no servidor da Onda 2 de SEO (2026-11-19), o HTML chegaria
+ * com o dado do Supabase falso de scripts/validation/e2e-server.mjs, e o navegador não buscaria de
+ * novo. Outros testes conferem justamente esse HTML do servidor, então o desligamento é por teste:
+ * o arquivo de teste grava o cookie COOKIE_SEM_BUSCA_SERVIDOR.
  *
- * O servidor de e2e liga PIRACANJUBA_E2E_SEM_BUSCA_SERVIDOR=1 e as abas de Prefeitura e Câmara
- * voltam a carregar só pelo navegador, que é o mesmo caminho de quando o Supabase falha no
- * servidor. Em produção e na prévia a variável não existe.
+ * O cookie só vale com PIRACANJUBA_E2E=1, que o servidor de e2e liga. Em produção e na prévia a
+ * variável não existe, a função devolve false sem ler cookie e as abas buscam no servidor sempre.
  */
-export function buscaNoServidorDesligada(): boolean {
-  return process.env.PIRACANJUBA_E2E_SEM_BUSCA_SERVIDOR === "1";
+export const COOKIE_SEM_BUSCA_SERVIDOR = "e2e_sem_busca_servidor";
+
+export async function buscaNoServidorDesligada(): Promise<boolean> {
+  if (process.env.PIRACANJUBA_E2E !== "1") return false;
+  const { cookies } = await import("next/headers");
+  return (await cookies()).get(COOKIE_SEM_BUSCA_SERVIDOR)?.value === "1";
 }

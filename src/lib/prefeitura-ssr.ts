@@ -105,7 +105,7 @@ export async function carregarAbaPrefeitura(aba: string): Promise<CargaPrefeitur
   const cliente = new QueryClient();
   const carga: Omit<CargaPrefeitura, "estado"> = { chefia: null, resumoFolha: null, contratos: null, despesas: null, secretarias: null };
   // Testes de navegador com o Supabase simulado no navegador: nada vem do servidor (ver ssr-hidratacao.ts).
-  if (buscaNoServidorDesligada()) return { estado: dehydrate(cliente), ...carga };
+  if (await buscaNoServidorDesligada()) return { estado: dehydrate(cliente), ...carga };
 
   const querChefia = aba === "visao-geral" || aba === "chefia";
   const querFolha = aba === "visao-geral" || aba === "servidores";

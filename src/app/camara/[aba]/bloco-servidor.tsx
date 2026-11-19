@@ -257,7 +257,7 @@ async function blocoAtuacao(): Promise<ReactNode> {
 /** Parte da aba lida no servidor. Abas sem bloco próprio devolvem null. */
 export async function carregarBlocoServidor(aba: string, queryClient: QueryClient): Promise<ReactNode> {
   // Testes de navegador com o Supabase simulado no navegador: nada vem do servidor (ver ssr-hidratacao.ts).
-  if (buscaNoServidorDesligada()) return null;
+  if (await buscaNoServidorDesligada()) return null;
   switch (aba) {
     case "contratos": return blocoContratos(queryClient);
     case "licitacoes": return blocoLicitacoes();
