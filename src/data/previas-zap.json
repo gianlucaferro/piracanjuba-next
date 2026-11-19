@@ -3054,8 +3054,10 @@
       "5562992814081"
     ],
     "foto": "/marcas-zap/setores/academia.webp",
-    "resumo": "Henrique trabalha como personal trainer e acompanha a prática de exercícios físicos.",
-    "atividade": "Treinamento físico individual"
+    "resumo": "Henrique é personal trainer em Piracanjuba. Converse com ele sobre o seu objetivo de treino e consulte os locais e horários de atendimento.",
+    "atividade": "Treinamento físico individual",
+    "acao": "Consultar treinamento com Henrique",
+    "mensagem": "Olá, Henrique! Gostaria de saber como funciona o acompanhamento com personal trainer. Quais são os locais e horários disponíveis para treinar?"
   },
   {
     "slug": "hidrauflex-componentes-hidraulicos",
@@ -3075,7 +3077,9 @@
     "cor": "#194f34",
     "foto": "/marcas-zap/setores/oficina.webp",
     "resumo": "A Hidrauflex fornece componentes e presta serviços para sistemas hidráulicos de máquinas agrícolas e automóveis.",
-    "atividade": "Hidráulica agrícola e automotiva"
+    "atividade": "Hidráulica agrícola e automotiva",
+    "acao": "Consultar peça ou serviço hidráulico",
+    "mensagem": "Olá, Hidrauflex! Preciso de uma peça ou serviço hidráulico. Posso enviar a referência do componente e o modelo da máquina ou do carro para consultar o atendimento?"
   },
   {
     "slug": "hospital-sao-vicente-de-paulo-de-piracanjuba",
@@ -3087,8 +3091,10 @@
     ],
     "endereco": "Praça Dimas Costa, Centro, Piracanjuba, GO",
     "foto": "/marcas-zap/setores/saude.webp",
-    "resumo": "O Hospital São Vicente de Paulo presta atendimento hospitalar em Piracanjuba.",
-    "atividade": "Atendimento hospitalar"
+    "resumo": "O Hospital São Vicente de Paulo fica na Praça Dimas Costa, no Centro de Piracanjuba. Consulte o hospital para informações sobre seus atendimentos e setores.",
+    "atividade": "Atendimento hospitalar",
+    "acao": "Consultar informações do hospital",
+    "mensagem": "Olá! Gostaria de informações sobre o atendimento do Hospital São Vicente de Paulo de Piracanjuba. Com qual setor devo falar?"
   },
   {
     "slug": "hotel-dborges",
@@ -3098,13 +3104,15 @@
     "telefones": [
       "5564993128856"
     ],
-    "endereco": "Rua Industrial, quadra 5, lote 8, Piracanjuba - GO",
+    "endereco": "Rua Industrial, quadra 5, lote 8, Setor Primavera Norte, Piracanjuba - GO, 75643-148",
     "mapa": "https://www.google.com/maps?cid=13239067923594310701",
     "logo": "/marcas-zap/logos/aced1d77d9b1ac6b.webp",
     "cor": "#4f3419",
     "foto": "/marcas-zap/setores/viagem.webp",
     "resumo": "O Hotel D’Borges oferece hospedagem no Setor Primavera Norte, em Piracanjuba.",
-    "atividade": "Hospedagem"
+    "atividade": "Hospedagem",
+    "acao": "Consultar diárias e disponibilidade",
+    "mensagem": "Olá, Hotel D’Borges! Gostaria de consultar a disponibilidade para hospedagem. Como envio as datas de entrada e saída e o número de hóspedes para saber o valor?"
   },
   {
     "slug": "ideal-seguranca-eletronica",
@@ -3115,8 +3123,10 @@
       "5564993450190"
     ],
     "foto": "/marcas-zap/setores/seguranca.webp",
-    "resumo": "A Ideal trabalha com sistemas de segurança eletrônica.",
-    "atividade": "Segurança eletrônica"
+    "resumo": "A Ideal Segurança Eletrônica atua em Piracanjuba. Conte o tipo de ambiente em que você pretende usar um sistema de segurança e consulte as opções oferecidas pela empresa.",
+    "atividade": "Segurança eletrônica",
+    "acao": "Consultar segurança eletrônica",
+    "mensagem": "Olá, Ideal! Gostaria de saber quais soluções de segurança eletrônica vocês oferecem em Piracanjuba e como solicitar uma cotação."
   },
   {
     "slug": "impacto-forro",
@@ -3127,8 +3137,10 @@
       "5564992739225"
     ],
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "A Impacto Forro trabalha com forros para ambientes.",
-    "atividade": "Forros para ambientes"
+    "resumo": "A Impacto Forro é um contato para quem procura forro em Piracanjuba. Para conversar sobre o seu ambiente, descreva o espaço e consulte as opções diretamente com a empresa.",
+    "atividade": "Forros para ambientes",
+    "acao": "Consultar forro para o ambiente",
+    "mensagem": "Olá, Impacto Forro! Gostaria de conhecer as opções de forro para um ambiente. Quais informações sobre o espaço ajudam a consultar o valor?"
   },
   {
     "slug": "instalar-materiais-eletricos",
@@ -3148,8 +3160,10 @@
     "site": "https://mechamenozap.com.br/instalarmateriaiseletricosehidraulicos/",
     "siteRotulo": "Perfil da loja",
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "A Instalar comercializa materiais para instalações elétricas e hidráulicas. Genilson é o contato da empresa.",
-    "atividade": "Materiais elétricos e hidráulicos"
+    "resumo": "A Instalar fica no Centro de Piracanjuba e vende itens para obras e reformas. Fale com Genilson para cotar a lista de materiais da sua instalação.",
+    "atividade": "Materiais para instalações",
+    "acao": "Cotar materiais com Genilson",
+    "mensagem": "Olá, Genilson! Gostaria de cotar materiais elétricos ou hidráulicos na Instalar. Como envio a lista de itens, medidas e quantidades para saber os valores?"
   },
   {
     "slug": "izadora-fisioterapia",
@@ -3159,8 +3173,11 @@
     "telefones": [
       "5564999678787"
     ],
-    "resumo": "Izadora trabalha com atendimento em fisioterapia.",
-    "atividade": "Fisioterapia"
+    "resumo": "Izadora é fisioterapeuta em Piracanjuba. Você pode falar diretamente com ela para saber como funciona o atendimento e consultar a agenda.",
+    "atividade": "Fisioterapia",
+    "foto": "/marcas-zap/setores/faixa-e-bola.webp",
+    "acao": "Consultar fisioterapia com Izadora",
+    "mensagem": "Olá, Izadora! Gostaria de saber como funciona o atendimento de fisioterapia. Quais são os horários e o local disponíveis?"
   },
   {
     "slug": "j-r-radiadores",
@@ -3171,15 +3188,18 @@
       "5564992583624"
     ],
     "oferta": [
-      "Radiadores",
-      "Intercoolers",
-      "Condensadores"
+      "Radiadores novos e colmeias",
+      "Conserto de radiadores",
+      "Reparo de intercoolers",
+      "Reparo de condensadores de ar-condicionado"
     ],
     "endereco": "Rua G7 Qd 35 Lt 16 Jardim Goiás 2, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=3891429254792993044",
     "foto": "/marcas-zap/setores/oficina.webp",
-    "resumo": "A J.R Radiadores vende radiadores novos e colmeias. A oficina conserta radiadores, intercoolers e condensadores de ar-condicionado.",
-    "atividade": "Radiadores e sistemas de arrefecimento"
+    "resumo": "A J.R Radiadores atende no Jardim Goiás 2, em Piracanjuba, e trabalha com radiadores nacionais e importados. Para consultar uma peça ou reparo, informe o modelo e o ano do veículo.",
+    "atividade": "Oficina de arrefecimento",
+    "acao": "Consultar peça ou reparo",
+    "mensagem": "Olá, J.R Radiadores! Gostaria de consultar uma peça ou um reparo. Como envio o modelo e o ano do veículo para verificar o atendimento?"
   },
   {
     "slug": "jairo-cesar-fotografia",
@@ -3189,9 +3209,11 @@
     "telefones": [
       "5564993018315"
     ],
-    "resumo": "Jairo César atua como fotógrafo em Piracanjuba.",
+    "resumo": "Jairo César trabalha com fotografia em Piracanjuba. Conte o que você quer fotografar e informe a data e o local para consultar a disponibilidade.",
     "atividade": "Fotografia",
-    "foto": "/marcas-zap/setores/fotografia.webp"
+    "foto": "/marcas-zap/setores/fotografia.webp",
+    "acao": "Consultar fotografia com Jairo",
+    "mensagem": "Olá, Jairo! Gostaria de consultar uma cobertura ou sessão de fotos. Como envio a data, o local e a ideia para saber se você atende esse tipo de trabalho?"
   },
   {
     "slug": "janaine-ferreira-estetica-corporal",
@@ -3201,9 +3223,11 @@
     "telefones": [
       "5564992954574"
     ],
-    "resumo": "Janaine Ferreira trabalha com cuidados estéticos voltados ao corpo.",
+    "resumo": "Janaine Ferreira atua com estética corporal em Piracanjuba. Consulte diretamente com a profissional os cuidados disponíveis e como funciona o atendimento.",
     "atividade": "Estética corporal",
-    "foto": "/marcas-zap/setores/estetica.webp"
+    "foto": "/marcas-zap/setores/estetica.webp",
+    "acao": "Consultar estética corporal",
+    "mensagem": "Olá, Janaine! Gostaria de conhecer os atendimentos de estética corporal que você oferece. Quais opções estão disponíveis e como consulto os horários?"
   },
   {
     "slug": "janine-rodrigues",
@@ -3214,7 +3238,10 @@
       "5564992377986"
     ],
     "resumo": "Janine Rodrigues atua como massoterapeuta e realiza sessões de massagem.",
-    "atividade": "Massoterapia"
+    "atividade": "Massoterapia",
+    "foto": "/marcas-zap/setores/massoterapia.webp",
+    "acao": "Consultar sessão de massoterapia",
+    "mensagem": "Olá, Janine! Gostaria de saber como funcionam as sessões de massoterapia. Quais horários e locais de atendimento estão disponíveis?"
   },
   {
     "slug": "janine-silva-moda-e-acessorios",
@@ -3225,8 +3252,10 @@
       "5564992531480"
     ],
     "foto": "/marcas-zap/setores/moda.webp",
-    "resumo": "Janine Silva trabalha com a venda de roupas e acessórios de moda.",
-    "atividade": "Roupas e acessórios"
+    "resumo": "Janine Silva trabalha com roupas e acessórios em Piracanjuba. Se você procura uma peça para combinar com o que já tem, envie uma referência e consulte as opções disponíveis.",
+    "atividade": "Roupas e acessórios",
+    "acao": "Consultar peças e acessórios",
+    "mensagem": "Oi, Janine! Gostaria de conhecer as roupas e acessórios disponíveis. Como consulto um modelo, o tamanho e o valor?"
   },
   {
     "slug": "jao-lanches",
@@ -3241,9 +3270,11 @@
     "site": "https://linktr.ee/jaolanchespba",
     "logo": "/marcas-zap/logos/cbcd656fb2527d14.webp",
     "cor": "#4f4219",
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "O Jaó Lanches é um pit dog de Piracanjuba, com preparo de sanduíches.",
-    "atividade": "Pit dog e lanchonete"
+    "foto": "/marcas-zap/setores/lanche-na-mesa.webp",
+    "resumo": "O Jaó Lanches é um pit dog no Setor Aeroporto, em Piracanjuba. Consulte os sanduíches do dia e veja como pedir com a equipe da lanchonete.",
+    "atividade": "Pit dog e lanchonete",
+    "acao": "Consultar lanches do Jaó",
+    "mensagem": "Oi, Jaó Lanches! Quais sanduíches vocês têm hoje e como posso fazer meu pedido?"
   },
   {
     "slug": "joao-bortoloti-engenharia-civil",
@@ -3254,8 +3285,10 @@
       "5564992475535"
     ],
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "João Bortoloti presta serviços na área de engenharia civil.",
-    "atividade": "Engenharia civil"
+    "resumo": "João Bortoloti é engenheiro civil em Piracanjuba. Conte em que etapa está sua obra e que orientação você procura para consultar o atendimento.",
+    "atividade": "Engenharia civil",
+    "acao": "Conversar com o engenheiro",
+    "mensagem": "Olá, João! Gostaria de consultar um serviço de engenharia civil. Que informações sobre o imóvel e a etapa da obra ajudam na primeira conversa?"
   },
   {
     "slug": "joelinho-taxista",
@@ -3267,7 +3300,9 @@
     ],
     "resumo": "Joelinho faz corridas de táxi e também leva encomendas para Goiânia.",
     "atividade": "Táxi e transporte de encomendas",
-    "foto": "/marcas-zap/setores/taxi.webp"
+    "foto": "/marcas-zap/setores/taxi.webp",
+    "acao": "Consultar corrida ou envio",
+    "mensagem": "Olá, Joelinho! Quero consultar uma corrida ou o envio de uma encomenda para Goiânia. Como verifico o valor para a data e o trajeto de que preciso?"
   },
   {
     "slug": "jook-sushi",
@@ -3277,14 +3312,16 @@
     "telefones": [
       "5564993385738"
     ],
-    "endereco": "Rua 20, quadra 34, lote 7, Setor Pouso Alto, Piracanjuba - GO",
+    "endereco": "Rua 20, quadra 34, lote 7, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=9393447079546810952",
     "site": "https://app.cardapioweb.com/jook_sushi_comida_oriental",
     "siteRotulo": "Ver cardápio",
     "logo": "/marcas-zap/logos/a70ee71c8e925f22.webp",
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "A Jook Sushi prepara pratos da culinária japonesa e trabalha com pedidos para entrega.",
-    "atividade": "Delivery de comida japonesa"
+    "foto": "/marcas-zap/setores/sushi.webp",
+    "resumo": "O Jook Sushi prepara comida japonesa para entrega em Piracanjuba. Consulte o cardápio digital para escolher os pratos e fale com a equipe sobre a entrega no seu bairro.",
+    "atividade": "Delivery de comida japonesa",
+    "acao": "Consultar entrega de sushi",
+    "mensagem": "Olá, Jook Sushi! Gostaria de consultar a entrega de comida japonesa. Como verifico o prazo e a taxa para o meu bairro?"
   },
   {
     "slug": "jorge-acabamentos-residenciais",
@@ -3295,8 +3332,10 @@
       "5564993247224"
     ],
     "foto": "/marcas-zap/setores/construcao.webp",
-    "resumo": "Jorge executa serviços de acabamento em obras residenciais.",
-    "atividade": "Acabamentos residenciais"
+    "resumo": "Jorge é o contato de acabamentos residenciais no guia de Piracanjuba. Conte qual ambiente da casa está em obra e consulte as opções de acabamento.",
+    "atividade": "Acabamentos residenciais",
+    "acao": "Consultar acabamentos com Jorge",
+    "mensagem": "Olá, Jorge! Estou escolhendo acabamentos para uma residência. Quais opções você oferece e como posso consultar um orçamento para o ambiente?"
   },
   {
     "slug": "jornal-o-piracan",
@@ -3310,7 +3349,9 @@
     "site": "https://www.opiracan.com/",
     "logo": "/marcas-zap/logos/208d72f856e8324f.webp",
     "resumo": "O Piracan acompanha o cotidiano de Piracanjuba. A cobertura do jornal inclui política, esportes e cultura.",
-    "atividade": "Jornalismo local"
+    "atividade": "Jornalismo local",
+    "acao": "Falar com o jornal",
+    "mensagem": "Olá, Jornal O Piracan! Gostaria de conversar sobre uma notícia de Piracanjuba. Qual é a melhor forma de encaminhar uma informação ao jornal?"
   },
   {
     "slug": "jose-candido",
@@ -3321,8 +3362,10 @@
       "5564992925506"
     ],
     "foto": "/marcas-zap/setores/agro.webp",
-    "resumo": "José Cândido trabalha como pisteiro, profissional que atua na pista durante os leilões rurais.",
-    "atividade": "Pista de leilões rurais"
+    "resumo": "José Cândido atua como pisteiro em leilões rurais. Para consultar sua participação em um leilão, informe a data e o município do evento.",
+    "atividade": "Pisteiro em leilões rurais",
+    "acao": "Consultar pisteiro para leilão",
+    "mensagem": "Olá, José Cândido! Gostaria de consultar sua disponibilidade como pisteiro em um leilão rural. Como envio a data e o local do evento?"
   },
   {
     "slug": "jose-roberto",
@@ -3332,9 +3375,11 @@
     "telefones": [
       "5564992145353"
     ],
-    "resumo": "José Roberto conserta máquinas de lavar roupas.",
+    "resumo": "José Roberto conserta máquinas de lavar roupas em Piracanjuba. Informe a marca e o modelo e descreva o que a lavadora está fazendo para consultar o atendimento.",
     "atividade": "Conserto de lavadoras",
-    "foto": "/marcas-zap/setores/lavadora.webp"
+    "foto": "/marcas-zap/setores/lavadora.webp",
+    "acao": "Consultar conserto de lavadora",
+    "mensagem": "Olá, José Roberto! Preciso de conserto para uma máquina de lavar. Como envio a marca, o modelo e o que acontece quando tento usá-la?"
   },
   {
     "slug": "juhe-marmitaria-hamburgueria-e-pizzaria",
@@ -3353,9 +3398,11 @@
     "mapa": "https://www.google.com/maps?cid=16803621694021035881",
     "logo": "/marcas-zap/logos/81133eae8197d6ce.webp",
     "cor": "#4f2719",
-    "foto": "/marcas-zap/setores/mesa.webp",
-    "resumo": "A Juhe é uma empresa familiar que prepara marmitas, hambúrgueres e pizzas. A cozinha também atende pedidos de almoço e lanches para entrega.",
-    "atividade": "Marmitas, hambúrgueres e pizzas"
+    "foto": "/marcas-zap/setores/marmita-brasileira.webp",
+    "resumo": "A Juhe é uma cozinha familiar de Piracanjuba. O cardápio vai do almoço ao lanche e inclui esfihas abertas doces e salgadas. Consulte a equipe sobre o que está saindo hoje e as condições de entrega.",
+    "atividade": "Delivery de almoço e lanches",
+    "acao": "Consultar cardápio e entrega",
+    "mensagem": "Olá, Juhe! Gostaria de ver as opções de hoje e consultar a entrega no meu bairro. Como faço meu pedido?"
   },
   {
     "slug": "jujuba-moda-mini",
@@ -3367,9 +3414,11 @@
     ],
     "endereco": "R. Dr. Ruy Brasil Cavalcante, 154 - Centro, Piracanjuba - GO",
     "mapa": "https://www.google.com/maps?cid=1930402770889574351",
-    "foto": "/marcas-zap/setores/moda.webp",
-    "resumo": "A Jujuba Moda Mini reúne roupas do bebê ao adolescente, com peças que vão de 0 a 16 anos.",
-    "atividade": "Moda infantil e juvenil"
+    "foto": "/marcas-zap/setores/roupas-infantis.webp",
+    "resumo": "A Jujuba Moda Mini vende roupas para crianças e adolescentes de 0 a 16 anos no Centro de Piracanjuba. A loja oferece peças para o dia a dia e para ocasiões especiais.",
+    "atividade": "Moda infantil e juvenil",
+    "acao": "Consultar roupas por tamanho",
+    "mensagem": "Olá, Jujuba! Quero escolher uma roupa infantil ou juvenil. Como consulto os modelos disponíveis para a idade e o tamanho que procuro?"
   },
   {
     "slug": "junior-cortinas-persianas-e-toldos",
@@ -3384,9 +3433,11 @@
       "Persianas",
       "Toldos"
     ],
-    "foto": "/marcas-zap/setores/decoracao.webp",
+    "foto": "/marcas-zap/setores/cortinas.webp",
     "resumo": "Júnior trabalha com cortinas, persianas e toldos para o controle da entrada de sol nos ambientes.",
-    "atividade": "Cortinas, persianas e toldos"
+    "atividade": "Cortinas, persianas e toldos",
+    "acao": "Cotar cortina, persiana ou toldo",
+    "mensagem": "Olá, Júnior! Gostaria de cotar uma cortina, persiana ou toldo. Quais medidas e fotos do espaço ajudam vocês a orientar o orçamento?"
   },
   {
     "slug": "kamila-duarte",
