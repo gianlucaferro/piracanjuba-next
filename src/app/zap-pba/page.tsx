@@ -1,6 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import { fetchZapEstabelecimentos } from "@/lib/data/listings";
-import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
+import { SLUGS_PAGINAS_EMPRESARIAIS } from "@/data/empresas-slugs";
 import { PACIFICO_SIQUEIRA } from "@/data/pacifico-siqueira";
 import { previas } from "@/data/previas-zap";
 import vinculos from "@/data/zap-pba-paginas.json";
@@ -19,7 +19,7 @@ export const revalidate = 600;
 
 const paginasAtivas = new Set([
   ...previas.map(({ slug }) => `/zap-pba/${slug}`),
-  ...SLUGS_EMPRESAS.map((slug) => `/${slug}`),
+  ...SLUGS_PAGINAS_EMPRESARIAIS.map((slug) => `/${slug}`),
 ]);
 // Um negócio pode ter dois cadastros aprovados com nomes diferentes.
 const paginaPorCadastro = new Map(Object.entries(vinculos).filter(([, pagina]) => paginasAtivas.has(pagina)));

@@ -8,6 +8,13 @@
 // silêncio e a página paga sumiria.
 export const SLUGS_EMPRESAS = ["vitorinoperfumes", "apareca"] as const;
 
+// Inclui os escritórios com rota própria para a navegação do portal e do guia.
+export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
+  ...SLUGS_EMPRESAS,
+  "pacifico-siqueira-advocacia",
+  "evadvocacia",
+];
+
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
 
 export function ehSlugEmpresa(valor: string): valor is SlugEmpresa {
@@ -39,10 +46,10 @@ export function caminhoCanonicoEmpresa(caminho: string): string | null {
   const partes = caminho.split("/").filter(Boolean);
   if (partes.length !== 1) return null;
   const [segmento] = partes;
-  if (ehSlugEmpresa(segmento)) return null;
+  if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento)) return null;
   const normalizado = normalizarSegmento(segmento);
   if (!normalizado) return null;
-  const slug = SLUGS_EMPRESAS.find((s) => s.replace(/-/g, "") === normalizado);
+  const slug = SLUGS_PAGINAS_EMPRESARIAIS.find((s) => s.replace(/-/g, "") === normalizado);
   return slug ? `/${slug}` : null;
 }
 
@@ -51,5 +58,5 @@ export function ehPaginaDeEmpresa(caminho: string | null | undefined): boolean {
   if (!caminho) return false;
   const limpo = caminho.split(/[?#]/)[0].replace(/\/+$/, "");
   const partes = limpo.split("/").filter(Boolean);
-  return partes.length === 1 && (ehSlugEmpresa(partes[0]) || partes[0] === "pacifico-siqueira-advocacia");
+  return partes.length === 1 && SLUGS_PAGINAS_EMPRESARIAIS.includes(partes[0]);
 }

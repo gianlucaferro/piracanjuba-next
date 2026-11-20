@@ -2,9 +2,8 @@
 // com react-dom/server e uma lista sintética maior que a de produção.
 //
 // O componente é .tsx, que o node:test não lê sozinho: os ganchos abaixo transpilam
-// os arquivos de src/ com o TypeScript do projeto e trocam duas dependências que só
-// funcionam dentro do Next (o cliente do Supabase, que exige as variáveis de ambiente,
-// e o next/link, que exige o roteador) por equivalentes mínimos.
+// os arquivos de src/ com o TypeScript do projeto, carregam os catálogos JSON
+// e simulam a consulta ao Supabase, o cliente do navegador e o next/link.
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { registerHooks } from "node:module";
@@ -16,6 +15,12 @@ const SRC = new URL("../src/", import.meta.url);
 const STUB = "zap-pba-teste:";
 const STUBS = new Map([
   ["@/lib/supabase/client", "export function createBrowserSupabaseClient() { return {}; }"],
+  ["@/lib/data/listings", `export async function fetchZapEstabelecimentos() {
+    return [{
+      id: "438f49be-eddf-478e-9092-21f88c903de3", name: "Ellen Vieira Advocacia",
+      whatsapp: "5564992817816", category: "Advogados", created_at: null, click_count: 0,
+    }];
+  }`],
   [
     "next/link",
     // Com prefetch={false}, o Link do Next renderiza só o <a href> com as demais props.
@@ -50,6 +55,9 @@ const ganchos = registerHooks({
     if (url.startsWith(STUB)) {
       return { format: "module", source: STUBS.get(url.slice(STUB.length)), shortCircuit: true };
     }
+    if (url.startsWith(SRC.href) && url.endsWith(".json")) {
+      return { format: "module", source: "export default " + readFileSync(new URL(url), "utf8"), shortCircuit: true };
+    }
     if (url.startsWith(SRC.href) && /\.tsx?$/.test(url)) {
       const { outputText } = ts.transpileModule(readFileSync(new URL(url), "utf8"), {
         fileName: fileURLToPath(url),
@@ -65,10 +73,17 @@ const ganchos = registerHooks({
   },
 });
 const { default: ZapPbaClient } = await import("../src/app/zap-pba/ZapPbaClient.tsx");
+const { default: ZapPbaPage } = await import("../src/app/zap-pba/page.tsx");
 const { LOTE_ZAP, fichaParaNavegador } = await import("../src/app/zap-pba/lista.ts");
 const { createElement } = await import("react");
 const { renderToString } = await import("react-dom/server");
 ganchos.deregister();
+
+test("o índice renderizado no servidor liga o cadastro da Ellen à página própria", async () => {
+  const guia = renderToString(await ZapPbaPage());
+  assert.match(guia, /<li[^>]*><a[^>]*href="\/evadvocacia"[^>]*>Ellen Vieira Advocacia<\/a><\/li>/);
+  assert.ok(!guia.includes("/zap-pba/ellen-vieira-advocacia"));
+});
 
 // Partes fixas da página fora do ZapPbaClient (head, cabeçalho, rodapé, scripts do
 // Next e o restante do payload RSC). Medido em https://piracanjuba.ai/zap-pba em

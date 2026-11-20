@@ -297,6 +297,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
+        caminho: "/evadvocacia",
+        titulo: "Ellen Vieira Advocacia e Consultoria Jurídica",
+        descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito Civil, Penal, do Consumidor, Imobiliário e Previdenciário, com endereço e contato por WhatsApp.",
+      },
+      {
         caminho: "/pacifico-siqueira-advocacia",
         titulo: "Pacífico Siqueira Advocacia",
         descricao: "Escritório de advocacia no Centro de Piracanjuba. Áreas de atuação, advogados, horário de atendimento, localização e contato para agendar uma conversa.",
