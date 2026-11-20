@@ -38,9 +38,16 @@
 .apresentacao { text-align: center; }
 .marca { width: min(100%, 420px); margin: 0 auto; }
 .marca img { display: block; width: 100%; height: auto; }
+.apresentacao h1 {
+  margin: .85rem 0 0;
+  color: var(--vinho);
+  font: 500 clamp(1.65rem, 2.6vw, 2.55rem)/1.13 var(--serifa);
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
 .apresentacao > p {
   max-width: 46ch;
-  margin: 1rem auto 0;
+  margin: .65rem auto 0;
   color: #442d2d;
   font-size: clamp(1rem, 1.4vw, 1.12rem);
   line-height: 1.65;
