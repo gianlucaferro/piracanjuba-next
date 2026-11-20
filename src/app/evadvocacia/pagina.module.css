@@ -142,9 +142,13 @@
   .contatoGrade { grid-template-columns: 1fr; gap: 28px; }
 }
 
+@media (max-width: 520px) {
+  .linhaGuia .cidade { display: none; }
+  .linhaGuia a, .linhaGuia .dadosCapa { flex-wrap: nowrap; white-space: nowrap; }
+}
+
 @media (max-width: 370px) {
   .linhaGuia { font-size: .72rem; }
-  .linhaGuia .cidade { display: none; }
   .acoes { column-gap: 9px; }
   .botao { padding-inline: 12px; font-size: .85rem; }
   .atalho { font-size: .8rem; gap: 4px; }
