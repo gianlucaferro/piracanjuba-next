@@ -23,6 +23,7 @@ const caminho = "/evadvocacia";
 const url = portal + caminho;
 const imagens = "/empresas/evadvocacia";
 const nome = "Ellen Vieira Advocacia";
+const profissional = "Ellen Vieira de Freitas";
 const registro = "OAB-GO 42.685";
 const razaoSocial = "Vieira de Freitas Sociedade Individual de Advocacia";
 const cnpj = "65.979.766/0001-05";
@@ -56,8 +57,8 @@ const areas = [
   },
 ];
 
-const titulo = "Ellen Vieira Advocacia em Piracanjuba (GO)";
-const descricao = "Advogada Ellen Vieira, OAB-GO 42.685. Atendimento em Direito Civil, Penal, do Consumidor, Imobiliário e Previdenciário em Piracanjuba. Consulte o WhatsApp.";
+const titulo = "Advogada em Piracanjuba (GO) | Ellen Vieira Advocacia";
+const descricao = "Ellen Vieira, advogada em Piracanjuba, GO (OAB-GO 42.685). Direito Civil, Penal, do Consumidor, Imobiliário e Previdenciário. Agende pelo WhatsApp.";
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
   alt: "Marca de Ellen Vieira Advocacia e retrato da advogada em Piracanjuba",
@@ -83,6 +84,8 @@ const esquema = {
       taxID: cnpj, url, mainEntityOfPage: { "@id": url + "#pagina" },
       image: portal + imagens + "/escritorio.webp", logo: portal + imagens + "/marca.webp",
       telephone: "+" + telefone, hasMap: mapa, employee: { "@id": url + "#ellen-vieira" },
+      sameAs: "https://www.google.com/maps?cid=11737208517747835487",
+      areaServed: { "@type": "City", name: "Piracanjuba", containedInPlace: { "@type": "State", name: "Goiás" } },
       address: {
         "@type": "PostalAddress", streetAddress: rua, addressLocality: "Piracanjuba",
         addressRegion: "GO", postalCode: cep, addressCountry: "BR",
@@ -95,7 +98,7 @@ const esquema = {
       },
     },
     {
-      "@type": "Person", "@id": url + "#ellen-vieira", name: "Ellen Vieira", jobTitle: "Advogada",
+      "@type": "Person", "@id": url + "#ellen-vieira", name: profissional, alternateName: "Ellen Vieira", jobTitle: "Advogada",
       image: portal + imagens + "/retrato.webp", worksFor: { "@id": url + "#escritorio" },
       identifier: { "@type": "PropertyValue", propertyID: "OAB-GO", value: "42.685" },
     },
@@ -118,12 +121,12 @@ export default function EllenVieira() {
           </div>
           <div className={s.capaGrade}>
             <div className={s.apresentacao}>
-              <h1 className={s.marca}>
-                <span className="sr-only">Ellen Vieira Advocacia e Consultoria Jurídica em Piracanjuba</span>
-                <Image src={imagens + "/marca.webp"} width={1040} height={636} alt="" loading="eager"
+              <div className={s.marca}>
+                <Image src={imagens + "/marca.webp"} width={1040} height={636} alt="Ellen Vieira Advocacia e Consultoria Jurídica" loading="eager"
                   sizes="(max-width: 700px) 290px, (max-width: 1000px) 37vw, 420px" />
-              </h1>
-              <p>Orientação jurídica em Piracanjuba para quem precisa analisar um contrato, preparar uma defesa ou pedir um benefício ao INSS.</p>
+              </div>
+              <h1>Advogada em Piracanjuba</h1>
+              <p>{profissional} orienta sobre contratos, relações de consumo, imóveis e benefícios do INSS. Também atua na defesa criminal.</p>
               <div className={s.acoes}>
                 <a href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
                 <a href="#atuacao" className={s.atalho}>Áreas de atuação <ArrowDown size={15} aria-hidden="true" /></a>
@@ -164,8 +167,8 @@ export default function EllenVieira() {
         <div className={s.largura}>
           <div className={s.contatoGrade}>
             <div className={s.convite}>
-              <h2 id="titulo-contato">Atendimento em Piracanjuba</h2>
-              <p>Para combinar um horário com a advogada, entre em contato pelo WhatsApp.</p>
+              <h2 id="titulo-contato">Como falar com um advogado em Piracanjuba?</h2>
+              <p>Pelo WhatsApp, você pode agendar uma consulta com Ellen Vieira e confirmar como chegar ao escritório na Rua Moacir Teles.</p>
             </div>
             <div className={s.dados}>
               <div>
