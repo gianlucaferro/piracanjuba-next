@@ -15,7 +15,8 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v7
         with:
-          ref: refs/pull/57/head
+          # Head do PR 57 com a barra de navegação ajustada para celular.
+          ref: cfb57a7c787a9cfd13ea9bd5e169d7d39e6007e1
           path: app
           persist-credentials: false
       - uses: actions/setup-node@v7
