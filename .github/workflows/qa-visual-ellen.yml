@@ -1,0 +1,47 @@
+name: QA visual da Ellen
+on:
+  push:
+    branches: [codex/qa-visual-ellen-20261120]
+permissions:
+  contents: read
+jobs:
+  capturas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: qa
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/pull/57/head
+          path: app
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: npx playwright install --with-deps chromium
+        working-directory: app
+      - name: Fotografar e verificar quatro larguras
+        env:
+          ELLEN_APP: ${{ github.workspace }}/app
+        run: |
+          mkdir -p qa/qa-visual/local
+          git -C app rev-parse HEAD > qa/qa-visual/local/commit.txt
+          node app/scripts/validation/e2e-server.mjs > qa/qa-visual/local/servidor.log 2>&1 &
+          servidor=$!
+          trap 'kill "$servidor" 2>/dev/null || true' EXIT
+          curl --silent --show-error --fail --retry 24 --retry-delay 2 --retry-connrefused --max-time 120 --output /dev/null http://127.0.0.1:4318/evadvocacia
+          node qa/qa-visual/validar.cjs http://127.0.0.1:4318 local
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: capturas-ellen
+          path: qa/qa-visual/local/
+          if-no-files-found: error
+          retention-days: 7
