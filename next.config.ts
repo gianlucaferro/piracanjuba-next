@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/suaempresa", destination: "/anuncie", permanent: false },
+      { source: "/zap-pba/ellen-vieira-advocacia", destination: "/evadvocacia", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
@@ -23,6 +24,12 @@ const nextConfig: NextConfig = {
       { source: "/transparencia/atividades-legislativas", destination: "/camara/projetos", permanent: true },
       { source: "/transparencia/atos-camara", destination: "/camara/atuacao", permanent: true },
     ];
+  },
+  async rewrites() {
+    return [{
+      source: "/marcas-zap/compartilhar/ellen-vieira-advocacia.jpg",
+      destination: "/empresas/evadvocacia/compartilhar.jpg",
+    }];
   },
 };
 

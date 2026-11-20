@@ -129,12 +129,21 @@ test("os redirects permanentes de next.config.ts são os de REDIRECIONAMENTOS_PE
 });
 
 test("cada origem do redirect aponta para rota que existe e não tem mais página própria", () => {
-  assert.equal(Object.keys(REDIRECIONAMENTOS_PERMANENTES).length, 6);
+  assert.equal(Object.keys(REDIRECIONAMENTOS_PERMANENTES).filter((rota) => rota.startsWith("/transparencia/")).length, 6);
   for (const [origem, destino] of Object.entries(REDIRECIONAMENTOS_PERMANENTES)) {
     assert.ok(rotaExiste(destino), `${origem} aponta para ${destino}, que não existe`);
     assert.ok(!PAGINAS.has(origem), `${origem} redireciona, mas a page.tsx dela continua em src/app`);
     assert.ok(!(destino in REDIRECIONAMENTOS_PERMANENTES), `${destino} também redireciona (cadeia de redirects)`);
   }
+});
+
+test("a antiga prévia da Ellen redireciona e só a nova página entra no sitemap", () => {
+  const origem = "/zap-pba/ellen-vieira-advocacia";
+  const destino = "/evadvocacia";
+  const fichas: { slug: string }[] = JSON.parse(readFileSync(join(RAIZ, "src/data/previas-zap.json"), "utf8"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
+  assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));
+  assert.ok(NO_SITEMAP.has(destino));
 });
 
 test("nada redirecionado fica no sitemap nem nas exclusões", () => {

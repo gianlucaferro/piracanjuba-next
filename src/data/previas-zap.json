@@ -2375,22 +2375,6 @@
     "mensagem": "Olá, Servitec! Gostaria de informações sobre o atendimento de eletrônica ou TV em Piracanjuba. Com quem posso falar?"
   },
   {
-    "slug": "ellen-vieira-advocacia",
-    "nome": "Ellen Vieira Advocacia",
-    "categoria": "Advogados",
-    "setor": "Advogados",
-    "telefones": [
-      "5564992817816"
-    ],
-    "endereco": "R. Moacir Teles, 713 - Setor Planalto, Piracanjuba - GO",
-    "mapa": "https://www.google.com/maps?cid=11737208517747835487",
-    "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "A advogada Ellen Vieira de Freitas atende na Rua Moacir Teles, 713, no Setor Planalto, em Piracanjuba. Fale com o escritório para combinar um horário.",
-    "atividade": "Advocacia",
-    "acao": "Consultar horário com Ellen Vieira",
-    "mensagem": "Olá, Dra. Ellen! Gostaria de agendar uma conversa sobre atendimento jurídico. Quais horários estão disponíveis no escritório?"
-  },
-  {
     "slug": "emporium-country",
     "nome": "Emporium Country",
     "categoria": "Moda e Vestuário",

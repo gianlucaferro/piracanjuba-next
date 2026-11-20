@@ -116,6 +116,7 @@ test("identifica a página de empresa só no primeiro nível do caminho", () => 
   assert.equal(ehPaginaDeEmpresa("/apareca"), true);
   assert.equal(ehPaginaDeEmpresa("/vitorinoperfumes/"), true);
   assert.equal(ehPaginaDeEmpresa("/apareca?utm_source=teste"), true);
+  assert.equal(ehPaginaDeEmpresa("/evadvocacia"), true);
   assert.equal(ehPaginaDeEmpresa("/apareca/outra"), false);
   assert.equal(ehPaginaDeEmpresa("/"), false);
   assert.equal(ehPaginaDeEmpresa("/sobre"), false);
@@ -129,6 +130,8 @@ test("endereço digitado com maiúscula, acento ou hífen redireciona para a pá
   assert.equal(caminhoCanonicoEmpresa("/APARECA/"), "/apareca");
   assert.equal(caminhoCanonicoEmpresa("/apare%C3%A7a"), "/apareca");
   assert.equal(caminhoCanonicoEmpresa("/Apareça"), "/apareca");
+  assert.equal(caminhoCanonicoEmpresa("/EV-Advocacia"), "/evadvocacia");
+  assert.equal(caminhoCanonicoEmpresa("/evadvocacia"), null);
   // Já certo, outra seção, dois níveis ou codificação inválida: sem redirecionar.
   assert.equal(caminhoCanonicoEmpresa("/apareca"), null);
   assert.equal(caminhoCanonicoEmpresa("/Sobre"), null);
