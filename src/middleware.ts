@@ -32,7 +32,8 @@ export const config = {
      * - _next/image (image optimization)
      * - favicon.ico, sitemap.xml, robots.txt
      * - public assets (images, icons, etc)
+     * - descadastro de e-mail, sem cookies de sessão
      */
-    "/((?!_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|.*\\.png$|.*\\.webp$|.*\\.svg$|.*\\.ico$).*)",
+    "/((?!descadastro/|_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|.*\\.png$|.*\\.webp$|.*\\.svg$|.*\\.ico$).*)",
   ],
 };
