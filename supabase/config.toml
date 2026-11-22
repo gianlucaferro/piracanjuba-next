@@ -270,3 +270,6 @@ verify_jwt = true
 
 [functions.pedido-pagina-empresa]
 verify_jwt = false
+
+[functions.descadastro-email]
+verify_jwt = true
