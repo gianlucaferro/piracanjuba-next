@@ -1,0 +1,145 @@
+.pagina {
+  --vermelho: #bb131a;
+  background: #fff;
+  color: #202020;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-bottom: clamp(2.75rem, 6vw, 5rem);
+}
+.pagina a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 4px;
+}
+.trilha, .capa, .servicos, .contato, .gestao {
+  width: min(calc(100% - 2.5rem), 69rem);
+  margin-inline: auto;
+}
+.trilha {
+  display: flex;
+  padding-block: 1rem;
+}
+.trilha a, .servicos li a {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-weight: 650;
+}
+.trilha a { color: #535353; font-size: .88rem; }
+.trilha a:hover, .servicos li a:hover, .contato dd a:hover { text-decoration: underline; }
+.capa {
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1.24fr 1fr;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.7rem;
+  background: linear-gradient(116deg, #ba0c14 0%, #d82027 64%, #ad1018 100%);
+  color: white;
+}
+.intro { align-self: center; padding: clamp(2.5rem, 5vw, 4.5rem); }
+.intro > img { display: block; height: auto; width: clamp(4.3rem, 8vw, 6.5rem); }
+.intro h1, .servicos h2, .contato h2, .servicos h3 {
+  line-height: 1.03;
+  font-weight: 750;
+  letter-spacing: -.055em;
+}
+.intro h1 {
+  margin: 1.7rem 0 1rem;
+  font-size: clamp(2.4rem, 5.7vw, 5.2rem);
+  overflow-wrap: anywhere;
+}
+.intro p {
+  max-width: 35ch;
+  line-height: 1.52;
+  font-size: clamp(1rem, 1.65vw, 1.22rem);
+}
+.botaoClaro, .botaoMapa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  min-height: 3rem;
+  padding: .75rem 1.4rem;
+}
+.botaoClaro { margin-top: 1.8rem; background: white; color: #9e1016; }
+.botaoClaro:hover { background: #ffe8e8; }
+.botaoClaro svg { width: 1.3rem; height: 1.3rem; }
+.cidade {
+  position: relative;
+  margin: 1rem 1rem 1rem 0;
+  min-height: 21rem;
+  border-radius: 7rem 1rem 1rem 1rem;
+  overflow: hidden;
+  background: #251c1d;
+}
+.cidade img { object-fit: cover; object-position: 50% 37%; }
+.cidade figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  padding: 3.2rem 1.15rem .85rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / .83));
+  color: #fff;
+  font-size: .8rem;
+}
+.servicos { padding-block: clamp(3rem, 6vw, 5rem); }
+.servicos h2, .contato h2 { font-size: clamp(2rem, 4.2vw, 3.35rem); }
+.servicos ul {
+  margin: 1.65rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+.servicos li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid #e4dfde;
+  border-radius: 1.2rem;
+  padding: clamp(1.35rem, 2.4vw, 2rem);
+}
+.iconeServico { color: var(--vermelho); }
+.servicos h3 { font-size: clamp(1.35rem, 2.4vw, 1.85rem); margin: 1.1rem 0 .65rem; }
+.servicos p { max-width: 34ch; color: #4c4949; line-height: 1.55; margin-bottom: 1.25rem; }
+.servicos li a { margin-top: auto; min-height: 2.75rem; color: #a51016; font-size: .9rem; }
+.contato {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  background: #f7f3f1;
+  border-radius: 1.7rem;
+  padding: clamp(1.6rem, 5vw, 4rem);
+}
+.botaoMapa { margin-top: 1.45rem; color: #fff; background: var(--vermelho); }
+.botaoMapa:hover { background: #940d13; }
+.contato dl { margin: 0; }
+.contato dl > div { padding: .8rem 0; border-bottom: 1px solid #d6cfcc; }
+.contato dl > div:first-child { padding-top: 0; }
+.contato dl > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.contato dt { display: flex; align-items: center; gap: .55rem; font-size: .89rem; font-weight: 700; }
+.contato dt svg { color: var(--vermelho); }
+.contato dd { margin: .4rem 0 0 1.7rem; line-height: 1.5; }
+.contato address { font-style: normal; }
+.contato dd a { color: #a51016; font-weight: 700; }
+
+.gestao { margin-top: 1.4rem; color: #605b5b; font-size: .82rem; }
+.gestao a { text-decoration: underline; text-underline-offset: .15em; }
+
+@media (max-width: 700px) {
+  .trilha, .capa, .servicos, .contato, .gestao { width: min(calc(100% - 1.75rem), 40rem); }
+  .capa, .contato { grid-template-columns: 1fr; }
+  .intro { padding: 2rem 1.6rem; }
+  .intro h1 { margin-top: 1.3rem; font-size: clamp(2.4rem, 10.5vw, 4.2rem); }
+  .cidade { margin: 0 .65rem .65rem; min-height: 0; height: clamp(10.5rem, 41vw, 16rem); border-radius: 4rem .7rem .7rem .7rem; }
+  .cidade img { object-position: 50% 29%; }
+  .servicos ul { grid-template-columns: 1fr; gap: .75rem; }
+  .servicos li { padding: 1.3rem; }
+  .servicos h3 { margin-top: .8rem; }
+  .servicos p { max-width: none; margin-bottom: .5rem; }
+  .contato { gap: 1.8rem; }
+}

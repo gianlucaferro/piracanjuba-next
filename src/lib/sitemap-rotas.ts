@@ -37,6 +37,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/horarios-onibus", changeFrequency: "daily", priority: 0.7 },
   { path: "/pacifico-siqueira-advocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/evadvocacia", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/claro-piracanjuba", changeFrequency: "monthly", priority: 0.5 },
   { path: "/zap-pba", changeFrequency: "weekly", priority: 0.7 },
   { path: "/compra-e-venda", changeFrequency: "daily", priority: 0.9 },
   { path: "/anuncie", changeFrequency: "monthly", priority: 0.6 },
@@ -97,6 +98,7 @@ export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>
 // que nenhuma origem ficou no sitemap.
 export const REDIRECIONAMENTOS_PERMANENTES: Readonly<Record<string, string>> = {
   "/zap-pba/ellen-vieira-advocacia": "/evadvocacia",
+  "/zap-pba/claro": "/claro-piracanjuba",
   "/transparencia/contratos-camara": "/camara/contratos",
   "/transparencia/licitacoes-camara": "/camara/licitacoes",
   "/transparencia/folha-camara": "/camara/servidores",
