@@ -2,6 +2,7 @@ import { CheckCircle2 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import {
   DESCONTO_PAGINA_EMPRESA_TEXTO,
+  PERMANENCIA_PAGINA_EMPRESA_TEXTO,
   PIX_RECEBEDOR,
   PRAZO_PAGINA_EMPRESA_TEXTO,
   PRECO_CHEIO_PAGINA_EMPRESA_TEXTO,
@@ -15,7 +16,7 @@ const INCLUI = [
   "Logo, foto, serviços e botão de WhatsApp",
   "Versão para celular e preparada para o Google",
   "Textos e montagem pela equipe do portal",
-  "No ar enquanto o portal existir",
+  PERMANENCIA_PAGINA_EMPRESA_TEXTO,
 ];
 
 const DEPOIS = [

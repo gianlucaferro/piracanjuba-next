@@ -52,15 +52,16 @@ test("anuncie vende a página de empresa com preço, exemplos e WhatsApp", async
 test("perguntas frequentes abrem e mostram a resposta", async ({ page }) => {
   await page.goto("/anuncie");
   await page.getByText("Em quanto tempo a página fica pronta?").click();
-  await expect(page.getByText(/A página vai ao ar em até 7 dias após o envio do material/)).toBeVisible();
+  await expect(page.getByText(/A página vai ao ar em até 4 dias após o envio do material/)).toBeVisible();
   await page.getByText("Por quanto tempo a página fica no ar?").click();
-  await expect(page.getByText("Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir.")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Perguntas frequentes" }).getByText(/A página fica no ar para sempre\./)).toBeVisible();
 });
 
 test("anuncie lista endereço, horário e mapa entre o que vem na página", async ({ page }) => {
   await page.goto("/anuncie");
   const lista = page.getByRole("region", { name: "O que vem na página" });
   await expect(lista.getByText("Endereço, horário de atendimento e link do mapa")).toBeVisible();
+  await expect(lista.getByText("A página fica no ar para sempre", { exact: true })).toBeVisible();
 });
 
 test("o endereço de exemplo /suaempresa leva à página de venda", async ({ page }) => {
