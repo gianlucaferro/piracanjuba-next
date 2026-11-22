@@ -34,7 +34,8 @@ test("cadastro registra o pedido e mostra o PIX da Ferro Labs com o código", as
   // trocada (conferido na prévia da Vercel em 2026-11-17), por isso a checagem é pela tag noindex.
   await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(1);
   await expect(page.getByRole("heading", { level: 1, name: "Cadastro da página de empresa" })).toBeVisible();
-  await expect(page.getByText("Escrevemos a página, você revisa e ela vai ao ar em até 7 dias após o envio do material.")).toBeVisible();
+  await expect(page.getByText("Escrevemos a página, você revisa e ela vai ao ar em até 4 dias após o envio do material.")).toBeVisible();
+  await expect(page.getByText("A página fica no ar para sempre", { exact: true })).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "Dados" }).first()).toHaveAttribute("aria-current", "step");
   await expect(page.getByRole("radio", { name: /Cartão de crédito/ })).toBeEnabled();
   await expect(page.getByRole("radio", { name: /PIX/ })).toBeChecked();

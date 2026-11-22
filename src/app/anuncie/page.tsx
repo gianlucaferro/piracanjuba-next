@@ -25,6 +25,7 @@ import { MATERIAS_NA_MIDIA } from "@/data/naMidia";
 import {
   DESCONTO_PAGINA_EMPRESA_TEXTO,
   LINK_STRIPE_PAGINA_EMPRESA,
+  PERMANENCIA_PAGINA_EMPRESA_TEXTO,
   PRECO_CHEIO_PAGINA_EMPRESA_TEXTO,
   PRECO_PAGINA_EMPRESA,
   PRAZO_PAGINA_EMPRESA_TEXTO,
@@ -36,10 +37,9 @@ import { linkWhatsapp } from "@/lib/whatsapp";
 
 // Página de vendas do "outdoor digital": a página de empresa em
 // piracanjuba.ai/<slug>. Termos decididos pelo operador em 2026-11-16:
-// preço público de R$ 600 em pagamento único, sem mensalidade, página no ar
-// sem prazo (enquanto o portal existir), sem os antigos planos de banner e
-// sem números de audiência (nunca foram conferidos). Também do operador, no
-// mesmo dia: exceções de saída com aviso de 30 dias se o portal encerrar,
+// preço público de R$ 600 em pagamento único, sem mensalidade, sem os antigos
+// planos de banner e sem números de audiência (nunca foram conferidos).
+// Também do operador, no mesmo dia: hipóteses específicas de retirada,
 // correção de contato sem custo, e nenhuma regra publicada sobre propaganda
 // política (cada caso é decidido na conversa). Em 2026-11-17: preço "de R$ 1.000
 // (riscado) por R$ 600", termos "pagamento único" e "sem mensalidade" em destaque,
@@ -136,8 +136,7 @@ const PERGUNTAS = [
   },
   {
     pergunta: "Por quanto tempo a página fica no ar?",
-    resposta:
-      "Sem prazo: a página fica no ar enquanto o Piracanjuba.ai existir. Ela só sai antes disso a pedido da empresa, se a empresa encerrar as atividades, por ordem judicial ou se a informação ficar falsa e não puder ser corrigida. Se o portal for encerrado, a empresa é avisada com 30 dias de antecedência.",
+    resposta: `${PERMANENCIA_PAGINA_EMPRESA_TEXTO}. Ela só é retirada a pedido da empresa, se a empresa encerrar as atividades, por ordem judicial ou se uma informação falsa não puder ser corrigida.`,
   },
   {
     pergunta: "Posso editar ou postar na página depois?",
@@ -385,7 +384,7 @@ export default function AnunciePage() {
               <span>{texto}</span>
             </li>
           ))}
-          {["No ar enquanto o portal existir", "Textos e montagem pela equipe do portal"].map((texto) => (
+          {[PERMANENCIA_PAGINA_EMPRESA_TEXTO, "Textos e montagem pela equipe do portal"].map((texto) => (
             <li key={texto} className="flex items-start gap-3 text-foreground">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
               <span>{texto}</span>
