@@ -1248,33 +1248,6 @@
     "mensagem": "Oi, Cida! Gostaria de saber como funciona o acompanhamento com personal trainer. Posso contar meu objetivo e consultar locais e horários de atendimento?"
   },
   {
-    "slug": "claro",
-    "nome": "Claro",
-    "categoria": "Tecnologia",
-    "setor": "Tecnologia",
-    "telefones": [
-      "5564992834030"
-    ],
-    "oferta": [
-      "Internet",
-      "Telefonia",
-      "TV"
-    ],
-    "endereco": "R. Dom Pedro II, 620 - S. Central, Piracanjuba - GO",
-    "mapa": "https://www.google.com/maps?cid=15981786211909156690",
-    "instagram": "https://www.instagram.com/clarobrasil/",
-    "instagramRede": true,
-    "site": "https://www.claro.com.br/",
-    "siteRede": true,
-    "siteRotulo": "Site da rede",
-    "logo": "/marcas-zap/logos/17cb409e30851b3c.webp",
-    "cor": "#4f1919",
-    "resumo": "A loja autorizada Claro em Piracanjuba fica na Rua Dom Pedro II, 620. Consulte planos de celular, telefonia residencial, internet por fibra e TV, conforme a disponibilidade para seu endereço.",
-    "atividade": "Telefonia, internet e TV",
-    "acao": "Consultar planos em Piracanjuba",
-    "mensagem": "Olá, Claro Piracanjuba! Gostaria de saber quais planos vocês têm para o serviço que procuro. Como posso consultar opções e disponibilidade no meu bairro?"
-  },
-  {
     "slug": "cleones-bar",
     "nome": "Cleone’s Bar",
     "categoria": "Alimentação",

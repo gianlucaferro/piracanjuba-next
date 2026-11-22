@@ -8,11 +8,12 @@
 // silêncio e a página paga sumiria.
 export const SLUGS_EMPRESAS = ["vitorinoperfumes", "apareca"] as const;
 
-// Inclui os escritórios com rota própria para a navegação do portal e do guia.
+// Inclui as empresas com rota própria para a navegação do portal e do guia.
 export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   ...SLUGS_EMPRESAS,
   "pacifico-siqueira-advocacia",
   "evadvocacia",
+  "claro-piracanjuba",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
