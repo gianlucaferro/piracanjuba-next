@@ -29,7 +29,6 @@ export const metadata = pageMetadata({
   path: "/agro-franca",
   image: origemPrevia + midia + "/campo.webp",
   imageAlt: "Colheita de milho no Pivô 1 da Fazenda Agro França em Piracanjuba",
-  noIndex: true,
 });
 
 export default function AgroFranca() {

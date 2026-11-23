@@ -297,6 +297,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
+        caminho: "/agro-franca",
+        titulo: "Grupo Agro França",
+        descricao: "Produção de milho e soja em Piracanjuba, dados da safra, Encontro Técnico Agro França e contato pelo Instagram do grupo.",
+      },
+      {
         caminho: "/claro-piracanjuba",
         titulo: "Claro Piracanjuba",
         descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",

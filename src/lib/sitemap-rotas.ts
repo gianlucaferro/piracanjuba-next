@@ -38,6 +38,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/pacifico-siqueira-advocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/evadvocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/claro-piracanjuba", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/agro-franca", changeFrequency: "monthly", priority: 0.5 },
   { path: "/zap-pba", changeFrequency: "weekly", priority: 0.7 },
   { path: "/compra-e-venda", changeFrequency: "daily", priority: 0.9 },
   { path: "/anuncie", changeFrequency: "monthly", priority: 0.6 },
@@ -84,7 +85,6 @@ export type MotivoForaDoSitemap = {
 export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>> = {
   "/admin": { motivo: "painel interno da equipe", noindex: true },
   "/acompanhar": { motivo: "favoritos e avisos de quem está logado", noindex: true },
-  "/agro-franca": { motivo: "prévia para aprovação do Grupo Agro França", noindex: true },
   "/anuncie/cadastro": { motivo: "formulário de cadastro de empresa", noindex: true },
   "/anuncie/cadastro/obrigado": { motivo: "confirmação de envio do cadastro", noindex: true },
   // Processos judiciais de pessoas nomeadas: dar mais alcance (sitemap e link interno) é decisão
