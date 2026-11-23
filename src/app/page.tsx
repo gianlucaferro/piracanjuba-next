@@ -37,6 +37,7 @@ import {
 } from "@/lib/data/home";
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import NaMidiaFaixa from "@/components/home/NaMidiaFaixa";
+import CotacoesCambio from "@/components/home/CotacoesCambio";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
 import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
@@ -155,6 +156,8 @@ export default async function HomePage() {
       </section>
 
       <div className="container py-8 space-y-10">
+        <CotacoesCambio />
+
         {/* Na mídia: logos dos principais veículos que citaram o projeto
             (no lugar do bloco "Hoje em Piracanjuba", decisão do operador de 2026-11-17) */}
         <NaMidiaFaixa />
