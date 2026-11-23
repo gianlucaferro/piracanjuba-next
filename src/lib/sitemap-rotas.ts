@@ -84,6 +84,7 @@ export type MotivoForaDoSitemap = {
 export const ROTAS_FORA_DO_SITEMAP: Readonly<Record<string, MotivoForaDoSitemap>> = {
   "/admin": { motivo: "painel interno da equipe", noindex: true },
   "/acompanhar": { motivo: "favoritos e avisos de quem está logado", noindex: true },
+  "/agro-franca": { motivo: "prévia para aprovação do Grupo Agro França", noindex: true },
   "/anuncie/cadastro": { motivo: "formulário de cadastro de empresa", noindex: true },
   "/anuncie/cadastro/obrigado": { motivo: "confirmação de envio do cadastro", noindex: true },
   // Processos judiciais de pessoas nomeadas: dar mais alcance (sitemap e link interno) é decisão
