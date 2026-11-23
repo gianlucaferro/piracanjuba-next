@@ -1,0 +1,113 @@
+.pagina {
+  --floresta: #173d26;
+  --folha: #386529;
+  --palha: #f6f3e9;
+  --milho: #f7cd68;
+  --terra: #6a3614;
+  background: var(--palha);
+  color: var(--floresta);
+  font-family: var(--font-jakarta), Arial, sans-serif;
+}
+.miolo { width: min(82rem, 100% - clamp(2.5rem, 11vw, 11rem)); margin-inline: auto; }
+.pagina h1, .pagina h2, .numeros strong {
+  font-family: var(--agro-titulo), "Arial Narrow", sans-serif;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: .94;
+}
+.pagina a { text-decoration: none; }
+.pagina a:focus-visible { outline: 3px solid #bd6922; outline-offset: 5px; }
+.pagina :is(section, header)[id] { scroll-margin-top: 5rem; }
+.marcaBarra { background: white; }
+.marcaMiolo { min-height: 5.3rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.marca { width: clamp(8.8rem, 14vw, 11rem); height: 3.35rem; object-fit: contain; object-position: left center; }
+.nav, .perfil, .local, .acaoCapa, .linkTexto, .sobretitulo, .acaoEvento, .contatoPerfil { display: inline-flex; align-items: center; }
+.nav { gap: clamp(1.25rem, 3.1vw, 3rem); font-size: .85rem; font-weight: 700; }
+.nav a, .linkTexto { min-height: 44px; }
+.linkSecao { display: grid; align-items: center; }
+.linkSecao:hover, .linkTexto:hover, .contatoPerfil:hover span { text-decoration: underline; text-underline-offset: .3em; }
+.perfil { border: 1px solid #b0bdab; border-radius: .35rem; padding: .5rem .85rem; gap: .55rem; }
+.perfil:hover { background: #eff4eb; }
+.capa {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  min-height: clamp(32rem, 46vw, 46rem);
+  color: #fffaf0;
+  background: #24462b;
+}
+.fotoCapa { object-fit: cover; object-position: 59% 48%; z-index: -3; }
+.sombra {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background: linear-gradient(90deg, #0c291eea 0%, #122e21cc 23%, #0b281b77 46%, transparent 78%),
+    linear-gradient(0deg, #1926194d, transparent 40%);
+}
+.capaMiolo { position: relative; padding-block: clamp(3.2rem, 5.5vw, 5.6rem); }
+.local, .sobretitulo { gap: .57rem; font-size: .73rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; line-height: 1.45; }
+.local { color: #fff7de; }
+.local svg { color: var(--milho); }
+.capa h1 { margin: 1.05rem 0 1.9rem; font-size: clamp(4.4rem, 8.6vw, 8.7rem); line-height: .89; }
+.capa em, .evento em { color: var(--milho); font-style: italic; }
+.acaoCapa, .acaoEvento { min-height: 47px; gap: 1.25rem; padding: .8rem 1.15rem; border-radius: .3rem; font-size: .87rem; font-weight: 800; transition: background .16s ease; }
+.acaoCapa { color: var(--floresta); background: #fffaf0; }
+.acaoCapa:hover, .acaoEvento:hover { background: #ffe4a0; }
+.producao { display: grid; grid-template-columns: 1fr 1.12fr; align-items: center; gap: clamp(3rem, 8vw, 8rem); padding-block: clamp(4rem, 7vw, 7rem); }
+.sobretitulo { color: var(--terra); }
+.sobretitulo::before { content: ""; width: 1.9rem; height: 2px; background: #ac7935; }
+.textoSafra h2, .contato h2 { font-size: clamp(3.3rem, 5.1vw, 5.3rem); margin: .65rem 0 1.15rem; }
+.textoSafra > p:not(.sobretitulo), .textoEvento > p:not(.sobretitulo) { font-size: clamp(.98rem, 1.25vw, 1.11rem); line-height: 1.64; max-width: 43ch; }
+.textoSafra > p:not(.sobretitulo) { color: #414c3f; }
+.numeros { margin: 1.8rem 0 1rem; display: grid; grid-template-columns: auto 1fr; gap: clamp(1.2rem, 3vw, 3.5rem); }
+.numeros > div { display: flex; flex-direction: column-reverse; align-items: flex-start; }
+.numeros > div + div { border-left: 1px solid #c2c5ae; padding-left: clamp(1.2rem, 3vw, 3.5rem); }
+.numeros dt { font-size: .81rem; color: #485147; margin-top: .45rem; }
+.numeros dd { margin: 0; }
+.numeros small { display: block; color: #475345; font-size: .77rem; line-height: 1.5; }
+.numeros strong { display: block; white-space: nowrap; color: var(--folha); font-size: clamp(2.85rem, 4.2vw, 4rem); }
+.numeros abbr { text-decoration: none; font-size: .57em; }
+.linkTexto { gap: .6rem; color: var(--floresta); font-size: .86rem; font-weight: 750; }
+.figura { margin: 0; min-width: 0; }
+.moldura { position: relative; aspect-ratio: 1.43; overflow: hidden; background: #d1d2ac; border-radius: .35rem; }
+.moldura img { object-fit: cover; object-position: center; }
+.figura figcaption { display: flex; justify-content: space-between; gap: .7rem; margin-top: .62rem; font-size: .74rem; font-weight: 650; color: #435342; }
+.figura figcaption span { font-weight: 500; }
+.evento { isolation: isolate; position: relative; overflow: hidden; background: var(--floresta); color: #fffaf1; }
+.evento::before { content: ""; pointer-events: none; position: absolute; z-index: -1; inset: 0; background: repeating-radial-gradient(ellipse at 138% 135%, transparent 0 37px, #c4d58c20 38px 39px, transparent 40px 61px); mask-image: linear-gradient(90deg, transparent 15%, #000 85%); }
+.eventoMiolo { display: grid; grid-template-columns: 1fr .73fr; gap: clamp(2rem, 7vw, 7rem); align-items: center; padding-block: clamp(3.4rem, 6vw, 6rem); }
+.evento .sobretitulo { color: #fae0a0; }
+.evento .sobretitulo::before { display: none; }
+.textoEvento h2 { font-size: clamp(3.8rem, 6.2vw, 6.6rem); margin: 1.1rem 0 1.35rem; }
+.textoEvento > p:not(.sobretitulo) { color: #e7ecdf; }
+.acaoEvento { background: var(--milho); color: #28341f; margin-top: 1.6rem; }
+.cartaz { display: block; width: min(100%, 19rem); margin: 0 auto; }
+.cartaz img { display: block; width: 100%; height: auto; border-radius: .3rem; box-shadow: 0 14px 32px #08150b55; }
+.contato { display: flex; justify-content: space-between; gap: 1.4rem; align-items: center; padding-block: clamp(3.2rem, 6.2vw, 6.2rem); }
+.contato h2 { margin-bottom: 0; }
+.contatoPerfil { gap: .75rem; padding: .9rem 0; border-bottom: 2px solid var(--folha); font-weight: 750; font-size: clamp(.97rem, 1.6vw, 1.35rem); }
+@media (max-width: 760px) {
+  .miolo { width: min(100% - 2.5rem, 38rem); }
+  .marcaMiolo { min-height: 4.25rem; }
+  .marca { width: 8.25rem; height: 2.8rem; }
+  .nav .linkSecao { display: none; }
+  .perfil { padding-inline: .68rem; }
+  .capa { min-height: clamp(31rem, 112vw, 38rem); align-items: end; }
+  .capaMiolo { padding-block: 3rem; }
+  .capa h1 { font-size: clamp(4.15rem, 12.5vw, 6rem); }
+  .sombra { background: linear-gradient(90deg, #10281c90 0%, transparent 87%), linear-gradient(0deg, #10291ded 0%, #112b1f8f 54%, #152c1810 95%); }
+  .producao, .eventoMiolo { grid-template-columns: 1fr; gap: 2rem; }
+  .producao { padding-block: 3.4rem; }
+  .moldura { aspect-ratio: 1.5; }
+  .cartaz { justify-self: start; margin: .5rem 0 0; width: min(75vw, 18rem); }
+  .contato { flex-direction: column; align-items: start; }
+}
+@media (max-width: 355px) {
+  .miolo { width: calc(100% - 2rem); }
+  .capa h1 { font-size: 3.85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pagina a { transition: none; }
+}

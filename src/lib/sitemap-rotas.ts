@@ -38,6 +38,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/pacifico-siqueira-advocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/evadvocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/claro-piracanjuba", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/agro-franca", changeFrequency: "monthly", priority: 0.5 },
   { path: "/zap-pba", changeFrequency: "weekly", priority: 0.7 },
   { path: "/compra-e-venda", changeFrequency: "daily", priority: 0.9 },
   { path: "/anuncie", changeFrequency: "monthly", priority: 0.6 },
