@@ -32,6 +32,7 @@ const fonteSeguranca = "https://www.nccih.nih.gov/health/spinal-manipulation-wha
 const fonteDiretriz = "https://www.nice.org.uk/guidance/ng59/chapter/recommendations#manual-therapies";
 
 const estudoVentosas = "https://bmjopen.bmj.com/content/15/5/e087340";
+const mapaEvidenciasVentosas = "https://docs.bvsalud.org/biblioref/2022/12/1410874/efetividade-da-ventosaterapia.pdf";
 const fonteVentosas = "https://www.nccih.nih.gov/health/cupping";
 
 const beneficios = [
@@ -89,7 +90,7 @@ const dados = {
     {
       "@type": "WebPage", "@id": url, url, name: titulo, description: descricao,
       inLanguage: "pt-BR", isPartOf: { "@id": portal + "/#website" },
-      citation: [fonteEvidencia, fonteDiretriz, fonteSeguranca, fonteQuiropraxia, estudoVentosas, fonteVentosas],
+      citation: [fonteEvidencia, fonteDiretriz, fonteSeguranca, fonteQuiropraxia, estudoVentosas, mapaEvidenciasVentosas, fonteVentosas],
       mainEntity: { "@id": url + "#servico" }, breadcrumb: { "@id": url + "#navegacao" },
     },
     {
@@ -195,8 +196,8 @@ export default function Quiropraxia() {
               <p>As ventosas são copos que criam sucção na pele. A técnica é usada como complemento no cuidado da dor muscular e pode deixar marcas circulares temporárias.</p>
               <p>Em pessoas com dor persistente nas costas ou no pescoço, alguns estudos observaram alívio logo após a sessão. Ainda há incerteza sobre quanto tempo esse alívio dura.</p>
               <div className={s.fontesVentosas}>
-                <a className={s.link} href={estudoVentosas}>Estudos sobre alívio da dor <ArrowUpRight size={15} aria-hidden="true" /></a>
-                <a className={s.link} href={fonteVentosas}>Cuidados com a pele <ArrowUpRight size={15} aria-hidden="true" /></a>
+                <a className={s.link} href={mapaEvidenciasVentosas}>Pesquisas em português (PDF) <ArrowUpRight size={15} aria-hidden="true" /></a>
+                <a className={s.link} href={fonteVentosas}>Efeitos na pele <ArrowUpRight size={15} aria-hidden="true" /></a>
               </div>
             </section>
           </div>
