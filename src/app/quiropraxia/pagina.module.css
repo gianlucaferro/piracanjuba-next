@@ -19,7 +19,16 @@
   letter-spacing: -.055em;
   line-height: 1.02;
 }
-.capa { color: #f9f6ee; background: var(--tinta); }
+.capa { position: relative; isolation: isolate; color: #f9f6ee; background: var(--tinta); }
+.capa::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 3.8rem 0 .5rem;
+  background: url("/empresas/quiropraxia/coluna-hero.webp") no-repeat 56% center / auto 96%;
+  opacity: .37;
+  pointer-events: none;
+}
 .topo {
   display: flex;
   justify-content: space-between;
@@ -112,7 +121,16 @@
 .convite p { max-width: 58ch; margin: 1rem 0 0; color: #dfe8dd; line-height: 1.7; }
 .convite .botao { justify-self: start; color: var(--tinta); background: #eff3db; }
 .convite .botao:hover { background: #d8e8c6; }
+@media (min-width: 721px) and (max-width: 1000px) {
+  .capa::before { opacity: .25; }
+}
 @media (max-width: 720px) {
+  .capa::before {
+    inset: 3.15rem 0 auto;
+    height: 27rem;
+    background-position: calc(100% + .6rem) center;
+    opacity: .21;
+  }
   .miolo { width: min(100% - 2.5rem, 35rem); }
   .topo { min-height: 3.15rem; }
   .topo nav { gap: 1rem; }
