@@ -10,9 +10,10 @@
 }
 .miolo { width: min(76rem, calc(100% - clamp(2.5rem, 10vw, 9rem))); margin-inline: auto; }
 .pagina a { text-decoration: none; }
-.pagina a:focus-visible { outline: 3px solid #b5632e; outline-offset: 5px; }
+.pagina :is(a, summary):focus-visible { outline: 3px solid #88521d; outline-offset: 4px; }
+.pagina :is(.capa, .convite) a:focus-visible { outline-color: #e0efab; }
 .pagina section[id] { scroll-margin-top: 5rem; }
-.pagina h1, .pagina h2, .viagem h3 {
+.pagina h1, .pagina h2, .cards h3 {
   font-family: var(--quiro-fonte), Georgia, serif;
   font-weight: 400;
   letter-spacing: -.055em;
@@ -34,8 +35,7 @@
 .topo a:hover, .ancora:hover, .link:hover { text-decoration: underline; text-underline-offset: .32em; }
 .topo nav { display: flex; gap: clamp(1.1rem, 3vw, 2.6rem); }
 .composicao { display: grid; grid-template-columns: 1.12fr .88fr; gap: clamp(2rem, 5.4vw, 5.2rem); align-items: center; padding-block: clamp(2.75rem, 5.3vw, 5rem); }
-.assinatura { display: flex; align-items: center; gap: .8rem; }
-.assinatura img { width: 3.25rem; height: 3.25rem; object-fit: cover; border-radius: 50%; border: 1px solid #ffffff60; }
+.assinatura { border-left: 2px solid #a6c6ac; padding-left: .85rem; }
 .nome { font-size: .88rem; font-weight: 700; line-height: 1.45; }
 .nome span { display: block; color: var(--menta); font-size: .78rem; font-weight: 500; }
 .antetitulo { font-size: .76rem; font-weight: 750; letter-spacing: .12em; line-height: 1.5; text-transform: uppercase; }
@@ -49,17 +49,16 @@
 .capa .botao:hover { background: #d8e8c6; }
 .ancora { color: #fff; font-size: .86rem; font-weight: 650; }
 .figura { min-width: 0; margin: 0; }
-.quadro { position: relative; width: 100%; aspect-ratio: 1.28; overflow: hidden; background: #6a8072; border-radius: 5rem .5rem 5rem .5rem; }
-.quadro img { object-fit: cover; object-position: 52% 52%; }
-.figura figcaption { display: flex; align-items: center; gap: .45rem; color: #d3ddd2; font-size: .74rem; margin-top: .75rem; }
-.praticas { display: grid; grid-template-columns: .82fr 1.18fr; gap: clamp(2rem, 8vw, 8rem); padding-block: clamp(3.5rem, 7.5vw, 7.4rem); }
+.quadro { position: relative; width: 100%; aspect-ratio: 1.25; overflow: hidden; background: #59665e; border-radius: clamp(2.8rem, 5vw, 5rem) .5rem; box-shadow: .6rem .6rem 0 #37594e; }
+.quadro img { object-fit: cover; object-position: 50% 40%; }
+.praticas, .duvidas { display: grid; grid-template-columns: .95fr 1.05fr; gap: clamp(2rem, 7vw, 6.5rem); padding-block: clamp(3.3rem, 6.4vw, 6rem); }
 .antetitulo { color: var(--musgo); font-size: .71rem; }
-.indice h2, .local h2 { font-size: clamp(2.8rem, 4.4vw, 4.65rem); margin: .85rem 0 0; text-wrap: balance; }
+.indice h2, .local h2, .cabecalhoBeneficios h2, .convite h2 { font-size: clamp(2.8rem, 4.4vw, 4.65rem); margin: .85rem 0 0; text-wrap: balance; }
 .indice em { display: block; color: var(--musgo); font-style: italic; }
 .metodos > div { border-top: 1px solid var(--borda); padding-top: 1.15rem; }
 .metodos > div + div { margin-top: 1.4rem; }
 .metodos h3 { font-size: clamp(1.2rem, 1.8vw, 1.65rem); font-weight: 650; line-height: 1.3; letter-spacing: -.04em; }
-.metodos p, .viagem p, .local address { font-size: 1rem; line-height: 1.7; color: #40554d; }
+.metodos p, .introPraticas, .local address { font-size: 1rem; line-height: 1.7; color: #40554d; }
 .metodos p { max-width: 48ch; margin-top: .53rem; }
 .link { color: var(--musgo); font-size: .85rem; font-weight: 750; margin-top: .2rem; }
 .regiao { background: #e7ede4; color: var(--tinta); }
@@ -69,23 +68,70 @@
 .acoesLocal .link { margin: 0; }
 .local .botao { color: #fff; background: var(--musgo); }
 .local .botao:hover { background: var(--tinta); }
-.viagem { border-left: 1px solid #b6c5ba; padding-left: clamp(1.6rem, 4vw, 4rem); }
-.viagem h3 { margin: 0 0 .75rem; font-size: clamp(1.85rem, 2.65vw, 3rem); }
-.viagem p { max-width: 44ch; }
-.viagem .link { margin-top: .65rem; }
+.beneficios { padding-block: clamp(3.5rem, 6.5vw, 6rem); }
+.cabecalhoBeneficios { display: grid; grid-template-columns: 1fr .78fr; align-items: end; gap: 2rem; }
+.cabecalhoBeneficios h2, .duvidas h2, .convite h2 { margin: 0; }
+.cabecalhoBeneficios h2 em, .convite h2 em { display: block; color: var(--musgo); font-weight: 400; }
+.cabecalhoBeneficios > p, .cards p, .perguntas p { color: #41554c; line-height: 1.7; font-size: 1rem; }
+.cabecalhoBeneficios > p { max-width: 48ch; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.85rem, 1.8vw, 1.5rem); padding: 0; margin: clamp(1.7rem, 3.4vw, 3.1rem) 0 0; list-style: none; }
+.cards li { display: flex; flex-direction: column; align-items: flex-start; background: #e7ecdf; border: 1px solid #d1d9c9; border-radius: .45rem 2rem .45rem .45rem; padding: clamp(1.25rem, 2.35vw, 2.3rem); }
+.cards li:nth-child(2) { background: #e6edeb; border-color: #cbd8d2; }
+.cards li:nth-child(3) { background: #f4eade; border-color: #e0d3be; }
+.iconeCard { display: inline-grid; place-items: center; width: 3.1rem; height: 3.1rem; color: #2f5242; background: #f9f9ef; border: 1px solid #ced5c7; border-radius: 50%; }
+.cards h3 { margin: 1.5rem 0 .7rem; font-size: clamp(1.75rem, 2.45vw, 2.55rem); line-height: 1.12; }
+.cards p { font-size: .96rem; }
+.fontes { display: flex; align-items: center; flex-wrap: wrap; gap: .1rem 1.35rem; margin-top: .9rem; }
+.fontes > span { color: #4a5950; font-size: .78rem; }
+.fontes .link { margin: 0; }
+.faixaPraticas { background: #edf1e9; }
+.praticas { align-items: center; }
+.praticas h2 { margin-top: 0; }
+.introPraticas { max-width: 46ch; margin-top: 1rem; }
+.fotoClinica { margin-top: 1.35rem; width: 100%; max-width: 30rem; height: auto; aspect-ratio: 2.55; object-fit: cover; object-position: center 50%; border-radius: .3rem 1.3rem; }
+.perguntas { min-width: 0; }
+.perguntas details { border-top: 1px solid #bdcbbb; }
+.perguntas details:last-child { border-bottom: 1px solid #bdcbbb; }
+.perguntas summary { min-height: 3.8rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem .2rem; cursor: pointer; font-size: 1.02rem; font-weight: 650; line-height: 1.45; }
+.perguntas summary::-webkit-details-marker { display: none; }
+.perguntas summary svg { flex: none; color: var(--musgo); }
+.perguntas details[open] summary svg { transform: rotate(45deg); }
+.perguntas p { padding: .1rem .2rem 1rem; }
+.perguntas details > a { margin: -.4rem .2rem .45rem; }
+.mapa > a:first-child { display: block; }
+.mapa img { display: block; width: 100%; height: auto; border-radius: .45rem 2rem; border: 1px solid #c5cfc3; }
+.credito { display: inline-flex; align-items: center; min-height: 44px; color: #40554d; font-size: .74rem; }
+.credito:hover { text-decoration: underline; }
+.convite { color: #fff9eb; background: var(--tinta); }
+.agendaGrade { padding-block: clamp(3rem, 6vw, 5.5rem); display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2rem; }
+.convite h2 em { color: #c9dad2; display: inline; }
+.convite p { max-width: 58ch; margin: 1rem 0 0; color: #dfe8dd; line-height: 1.7; }
+.convite .botao { justify-self: start; color: var(--tinta); background: #eff3db; }
+.convite .botao:hover { background: #d8e8c6; }
 @media (max-width: 720px) {
   .miolo { width: min(100% - 2.5rem, 35rem); }
   .topo { min-height: 3.15rem; }
-  .topo nav a:first-child { display: none; }
-  .composicao, .praticas, .localGrade { grid-template-columns: 1fr; gap: 1.9rem; }
+  .topo nav { gap: 1rem; }
+  .topo nav a:nth-child(2) { display: none; }
+  .composicao, .praticas, .localGrade, .cabecalhoBeneficios, .duvidas, .agendaGrade { grid-template-columns: 1fr; gap: 1.9rem; }
   .composicao { padding-block: 2.5rem 2.25rem; }
   .abertura { padding: 0; }
   .capa h1 { font-size: clamp(2.95rem, 9.7vw, 4.9rem); margin: .8rem 0 1rem; }
   .acoes { margin-top: 1.35rem; }
-  .quadro { aspect-ratio: 1.33; border-radius: 3.7rem .4rem 3.7rem .4rem; }
+  .quadro { aspect-ratio: 1.25; box-shadow: .3rem .3rem 0 #37594e; }
   .indice em { display: inline; }
   .localGrade { gap: 2rem; }
-  .viagem { border-left: 0; border-top: 1px solid #b6c5ba; padding: 1.7rem 0 0; }
+  .cards { grid-template-columns: 1fr; gap: .8rem; }
+  .cards li { display: grid; grid-template-columns: auto 1fr; column-gap: .85rem; align-items: center; }
+  .cards h3 { margin: 0; font-size: 1.68rem; }
+  .cards p { grid-column: 1 / -1; margin-top: .8rem; }
+  .iconeCard { width: 2.6rem; height: 2.6rem; }
+  .fontes { gap: 0 1rem; }
+  .fontes > span { flex-basis: 100%; margin: .3rem 0; }
+  .cabecalhoBeneficios { gap: .8rem; }
+  .duvidas { gap: 1.25rem; }
+  .fotoClinica { max-width: 100%; }
+  .convite h2 em { display: block; }
 }
 @media (max-width: 365px) {
   .miolo { width: calc(100% - 2rem); }

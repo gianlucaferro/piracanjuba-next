@@ -5,11 +5,56 @@ test("a página de quiropraxia identifica a cidade do consultório e o contato d
   const artigo = page.getByRole("article");
   await expect(artigo.getByRole("heading", { level: 1 })).toContainText(/quiropraxia/i);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai/quiropraxia");
-  await expect(artigo.locator('a[href="https://www.instagram.com/juancmesquita/"]').first()).toBeVisible();
+  const agendar = artigo.getByRole("link", { name: /agendar.*instagram/i });
+  await expect(agendar).toBeVisible();
+  await expect(agendar).toHaveAttribute("href", "https://www.instagram.com/juancmesquita/");
+  const clinica = artigo.getByRole("region", { name: /clínica essência/i });
+  const linksWaze = clinica.getByRole("link", { name: /waze/i });
+  await expect(linksWaze.first()).toBeVisible();
+  for (const link of await linksWaze.all()) {
+    const rota = new URL((await link.getAttribute("href"))!);
+    expect(rota.origin + rota.pathname).toBe("https://www.waze.com/ul");
+    expect(rota.searchParams.get("ll")).toBe("-17.3121852,-49.0332367");
+    expect(rota.searchParams.get("navigate")).toBe("yes");
+  }
   for (const cidade of ["Piracanjuba", "Professor Jamil", "Cristianópolis", "Morrinhos", "Caldas Novas"]) {
     await expect(artigo).toContainText(cidade);
   }
   await expect(artigo.locator('a[href="/estetica"]').first()).toBeVisible();
+});
+
+test("os cards de benefícios citam a revisão em português e a diretriz clínica", async ({ page }) => {
+  await page.goto("/quiropraxia");
+  const beneficios = page.getByRole("region", { name: /benefícios/i });
+  const cards = beneficios.getByRole("listitem");
+  expect(await cards.count()).toBeGreaterThanOrEqual(2);
+  for (const card of await cards.all()) {
+    await expect(card.getByRole("heading", { level: 3 })).toBeVisible();
+    await expect(card.getByRole("paragraph")).toHaveText(/\S/);
+  }
+  const cochrane = beneficios.getByRole("link", { name: /cochrane/i });
+  await expect(cochrane).toBeVisible();
+  await expect(cochrane).toHaveAttribute("href", /^https:\/\/(?:www\.)?cochrane\.org\/pt(?:-br)?\//i);
+  const nice = beneficios.getByRole("link", { name: /nice/i });
+  await expect(nice).toBeVisible();
+  await expect(nice).toHaveAttribute("href", /^https:\/\/www\.nice\.org\.uk\/guidance\/ng59\//i);
+});
+
+test("as dúvidas de quiropraxia abrem e fecham pelo teclado", async ({ page }) => {
+  await page.goto("/quiropraxia");
+  const perguntas = page.getByRole("article").locator("details");
+  const primeira = perguntas.first();
+  const pergunta = primeira.locator("summary");
+  const resposta = primeira.getByRole("paragraph", { includeHidden: true });
+  await expect(resposta).toBeHidden();
+  await pergunta.focus();
+  await page.keyboard.press("Enter");
+  await expect(resposta).toBeVisible();
+  await expect(resposta).toHaveText(/\S/);
+  await page.keyboard.press("Space");
+  await expect(resposta).toBeHidden();
+  await page.keyboard.press("Tab");
+  await expect(perguntas.nth(1).locator("summary")).toBeFocused();
 });
 
 test("a página de estética liga cada agendamento ao contato indicado pela clínica", async ({ page }) => {

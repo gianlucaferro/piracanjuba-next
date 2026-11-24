@@ -304,7 +304,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/quiropraxia",
         titulo: "Quiropraxia em Piracanjuba | Juan Carlos Mesquita de Souza",
-        descricao: "Atendimento de quiropraxia na Clínica Essência, em Piracanjuba, com informações de contato para quem vem de Professor Jamil, Cristianópolis, Morrinhos, Caldas Novas e região.",
+        descricao: "Quiropraxia e liberação miofascial com Juan na Clínica Essência em Piracanjuba. Benefícios e limites para dor lombar, dúvidas da primeira visita, contato e rotas para quem vem da região.",
       },
       {
         caminho: "/agro-franca",
