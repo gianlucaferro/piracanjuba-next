@@ -20,7 +20,7 @@ const caminho = "/oticas-diego";
 const portal = "https://piracanjuba.ai";
 const url = portal + caminho;
 const marca = "Óticas Diego";
-const logo = "/marcas-zap/logos/a43247c841f19764.webp";
+const logo = "/empresas/oticas-diego/logo.webp";
 const foto = "/empresas/oticas-diego/interior.webp";
 const whatsapp = "5564992470659";
 const fixo = "556434051198";
@@ -34,7 +34,7 @@ const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela Ó
 const titulo = "Óticas Diego | Ótica em Piracanjuba, GO";
 const descricao = "Óticas Diego, ótica em Piracanjuba com armações, lentes de grau, óculos de sol, relógios e acessórios. Veja o WhatsApp, os horários e como chegar à loja no Centro.";
 const compartilhamento = {
-  url: portal + "/empresas/oticas-diego/compartilhar.jpg", width: 1200, height: 630,
+  url: portal + "/empresas/oticas-diego/compartilhar-logo.jpg", width: 1200, height: 630,
   alt: "Marca da Óticas Diego e interior da loja em Piracanjuba",
 };
 const meta = pageMetadata({ title: titulo, description: descricao, path: caminho, image: compartilhamento.url });
@@ -92,7 +92,7 @@ export default function OticasDiego() {
         <div className={s.largura}>
           <div className={s.barra}>
             <div className={s.marca}>
-              <Image src={logo} width={54} height={54} alt="" />
+              <Image src={logo} width={68} height={68} sizes="(max-width: 760px) 56px, 68px" alt="" />
             </div>
             <nav className={s.navegacao} aria-label="Navegação da ótica">
               <a href="#produtos">Produtos</a>

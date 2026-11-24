@@ -23,7 +23,12 @@
 .pagina section[id] { scroll-margin-top: 6rem; }
 .largura { width: min(100% - clamp(2.5rem, 9vw, 8rem), 78rem); margin-inline: auto; }
 
-.capa { color: #fffdf6; background: var(--verde); }
+.capa {
+  --direcao-degrade: 115deg;
+  color: #fffdf6;
+  background-color: var(--verde);
+  background-image: linear-gradient(var(--direcao-degrade), #102f2a 0%, #15463e 40%, #185557 69%, #236960 100%);
+}
 .barra, .marca, .navegacao, .cabecalho, .guia { display: flex; align-items: center; }
 .barra {
   justify-content: space-between;
@@ -32,7 +37,7 @@
   border-bottom: 1px solid #ffffff36;
 }
 .marca { gap: .8rem; }
-.marca img { flex: none; width: 3.25rem; height: auto; border-radius: .25rem; }
+.marca img { flex: none; width: 4.25rem; height: auto; border-radius: .25rem; }
 .navegacao { gap: clamp(1.35rem, 2.6vw, 2.6rem); }
 .navegacao a {
   display: inline-flex;
@@ -81,7 +86,7 @@
 .pagina .botao:focus-visible { outline-color: white; }
 .botao svg { width: 1.24rem; height: 1.24rem; }
 .imagem { width: min(100%, 680px); min-width: 0; }
-.imagem img { display: block; width: 100%; height: auto; }
+.imagem img { display: block; width: 100%; height: auto; box-shadow: 0 .7rem 1.9rem -.95rem #061e1eb3; }
 .imagem figcaption { display: flex; justify-content: flex-end; align-items: center; gap: .45rem; margin-top: .65rem; color: #e1efde; font-size: .82rem; }
 
 .catalogo { padding-block: clamp(3.5rem, 6.5vw, 6.25rem); }
@@ -143,10 +148,11 @@
 .guia a:last-child { text-align: right; }
 
 @media (max-width: 760px) {
+  .capa { --direcao-degrade: 157deg; }
   .largura { width: calc(100% - clamp(2.25rem, 8vw, 3.75rem)); }
   .barra { min-height: 4.25rem; }
   .marca { gap: .5rem; }
-  .marca img { width: 2.6rem; }
+  .marca img { width: 3.5rem; }
   .navegacao { gap: 1rem; }
   .navegacao a { font-size: .81rem; }
   .abertura { grid-template-columns: 1fr; gap: 1.9rem; padding-block: 2.7rem 1rem; }
