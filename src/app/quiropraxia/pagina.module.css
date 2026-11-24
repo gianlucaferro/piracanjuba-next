@@ -43,6 +43,7 @@
 .capa h1 { font-size: clamp(3.3rem, 6.9vw, 6.65rem); margin: 1.15rem 0 1.5rem; }
 .capa h1 span { display: block; color: var(--menta); }
 .resumo { max-width: 39ch; font-size: clamp(1rem, 1.35vw, 1.16rem); line-height: 1.7; color: #e5e9e0; }
+.resumo .linkVentosas { color: inherit; text-decoration: underline; text-underline-offset: .19em; }
 .acoes { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1.7rem; margin-top: 1.85rem; }
 .botao { min-height: 48px; padding: .72rem 1.15rem; border-radius: 3rem; font-size: .88rem; font-weight: 750; line-height: 1.4; }
 .capa .botao { color: var(--tinta); background: #eff3db; }
@@ -59,6 +60,10 @@
 .metodos h3 { font-size: clamp(1.2rem, 1.8vw, 1.65rem); font-weight: 650; line-height: 1.3; letter-spacing: -.04em; }
 .metodos p, .introPraticas, .local address { font-size: 1rem; line-height: 1.7; color: #40554d; }
 .metodos p { max-width: 48ch; margin-top: .53rem; }
+.ventosas { margin-top: 1.4rem; padding: clamp(1.1rem, 2vw, 1.7rem); background: var(--papel); border: 1px solid #cbd5c7; border-radius: .45rem 2rem .45rem .45rem; }
+.ventosas h3 { display: flex; align-items: center; gap: .55rem; }
+.ventosas h3 svg { flex: none; color: var(--musgo); }
+.fontesVentosas { display: flex; flex-wrap: wrap; gap: 0 1.2rem; margin-top: .45rem; }
 .link { color: var(--musgo); font-size: .85rem; font-weight: 750; margin-top: .2rem; }
 .regiao { background: #e7ede4; color: var(--tinta); }
 .localGrade { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 7vw, 7rem); align-items: center; padding-block: clamp(3.2rem, 6.2vw, 6rem); }

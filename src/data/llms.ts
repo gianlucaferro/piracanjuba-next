@@ -304,7 +304,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/quiropraxia",
         titulo: "Quiropraxia em Piracanjuba | Juan Carlos Mesquita de Souza",
-        descricao: "Quiropraxia e liberação miofascial com Juan na Clínica Essência em Piracanjuba. Benefícios e limites para dor lombar, dúvidas da primeira visita, contato e rotas para quem vem da região.",
+        descricao: "Quiropraxia, liberação miofascial e ventosaterapia com Juan na Clínica Essência em Piracanjuba. Possíveis benefícios e limites das técnicas, dúvidas da primeira visita, contato e rotas para quem vem da região.",
       },
       {
         caminho: "/agro-franca",

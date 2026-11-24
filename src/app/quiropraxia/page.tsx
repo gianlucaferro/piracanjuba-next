@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import localFont from "next/font/local";
-import { Activity, ArrowDown, ArrowLeft, ArrowUpRight, Footprints, HandHeart, MapPin, Navigation, Plus } from "lucide-react";
+import { Activity, ArrowDown, ArrowLeft, ArrowUpRight, CircleDot, Footprints, HandHeart, MapPin, Navigation, Plus } from "lucide-react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import { CLINICA_ESSENCIA } from "@/data/clinica-essencia";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
@@ -26,10 +26,14 @@ const fonteQuiropraxia = "https://www.gov.br/saude/pt-br/composicao/saps/pics/re
 const midia = "/empresas/quiropraxia";
 const descricaoArte = "Juan Carlos Mesquita. Quiropraxia - Liberação Miofascial - ventosas";
 const titulo = "Quiropraxia em Piracanjuba (GO) | Juan Carlos Mesquita";
-const descricao = "Conheça Juan Carlos Mesquita, quiropraxista em Piracanjuba. Veja possíveis benefícios para a dor lombar, como chegar à Clínica Essência e como agendar.";
+const descricao = "Juan Carlos Mesquita, quiropraxista em Piracanjuba, atende com liberação miofascial e ventosas na Clínica Essência. Conheça as técnicas e veja como agendar.";
 const fonteEvidencia = "https://www.cochrane.org/pt/evidence/CD008112_what-are-benefits-and-risks-spinal-manipulative-therapy-chronic-low-back-pain";
 const fonteSeguranca = "https://www.nccih.nih.gov/health/spinal-manipulation-what-you-need-to-know";
 const fonteDiretriz = "https://www.nice.org.uk/guidance/ng59/chapter/recommendations#manual-therapies";
+
+const estudoVentosas = "https://bmjopen.bmj.com/content/15/5/e087340";
+const mapaEvidenciasVentosas = "https://docs.bvsalud.org/biblioref/2022/12/1410874/efetividade-da-ventosaterapia.pdf";
+const fonteVentosas = "https://www.nccih.nih.gov/health/cupping";
 
 const beneficios = [
   {
@@ -86,12 +90,12 @@ const dados = {
     {
       "@type": "WebPage", "@id": url, url, name: titulo, description: descricao,
       inLanguage: "pt-BR", isPartOf: { "@id": portal + "/#website" },
-      citation: [fonteEvidencia, fonteDiretriz, fonteSeguranca, fonteQuiropraxia],
+      citation: [fonteEvidencia, fonteDiretriz, fonteSeguranca, fonteQuiropraxia, estudoVentosas, mapaEvidenciasVentosas, fonteVentosas],
       mainEntity: { "@id": url + "#servico" }, breadcrumb: { "@id": url + "#navegacao" },
     },
     {
       "@type": "Service", "@id": url + "#servico", name: "Quiropraxia em Piracanjuba",
-      serviceType: "Quiropraxia", areaServed: { "@type": "City", name: "Piracanjuba" },
+      serviceType: ["Quiropraxia", "Liberação miofascial", "Ventosaterapia"], areaServed: { "@type": "City", name: "Piracanjuba" },
       provider: { "@id": url + "#juan" },
       availableChannel: { "@type": "ServiceChannel", serviceLocation: { "@id": url + "#clinica" } },
     },
@@ -128,7 +132,7 @@ export default function Quiropraxia() {
                 <p className={s.nome}>{profissional}<span>Quiropraxista · Clínica Essência</span></p>
               </div>
               <h1>Quiropraxia <span>em Piracanjuba</span></h1>
-              <p className={s.resumo}>Juan atende na Clínica Essência com quiropraxia e liberação miofascial. Conheça as técnicas e converse com ele para marcar sua visita.</p>
+              <p className={s.resumo}>Juan atende na Clínica Essência com quiropraxia, liberação miofascial e <a className={s.linkVentosas} href="#ventosas">ventosas</a>. Conheça as técnicas e converse com ele para marcar sua visita.</p>
               <div className={s.acoes}>
                 <a className={s.botao} href={perfil}><InstagramIcon width={18} height={18} /> Agendar pelo Instagram</a>
                 <a className={s.ancora} href="#beneficios">Conhecer os benefícios <ArrowDown size={16} aria-hidden="true" /></a>
@@ -187,6 +191,15 @@ export default function Quiropraxia() {
               <p>A fáscia é o tecido conjuntivo que envolve os músculos. Juan mostra em vídeo como a liberação miofascial faz parte do seu atendimento.</p>
               <a className={s.link} href={publicacao}>Ver a demonstração de Juan <ArrowUpRight size={15} aria-hidden="true" /></a>
             </div>
+            <section id="ventosas" className={s.ventosas} aria-labelledby="titulo-ventosas">
+              <h3 id="titulo-ventosas"><CircleDot size={22} aria-hidden="true" /> Ventosas (ventosaterapia)</h3>
+              <p>As ventosas são copos que criam sucção na pele. A técnica é usada como complemento no cuidado da dor muscular e pode deixar marcas circulares temporárias.</p>
+              <p>Em pessoas com dor persistente nas costas ou no pescoço, alguns estudos observaram alívio logo após a sessão. Ainda há incerteza sobre quanto tempo esse alívio dura.</p>
+              <div className={s.fontesVentosas}>
+                <a className={s.link} href={mapaEvidenciasVentosas}>Pesquisas em português (PDF) <ArrowUpRight size={15} aria-hidden="true" /></a>
+                <a className={s.link} href={fonteVentosas}>Efeitos na pele <ArrowUpRight size={15} aria-hidden="true" /></a>
+              </div>
+            </section>
           </div>
         </div>
       </section>
