@@ -319,7 +319,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/evadvocacia",
         titulo: "Ellen Vieira Advocacia e Consultoria Jurídica",
-        descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito Civil, Penal, do Consumidor, Imobiliário e Previdenciário, com endereço e contato por WhatsApp.",
+        descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito de Família e Sucessões, Penal, Civil, do Consumidor, Previdenciário e Imobiliário, com endereço e contato por WhatsApp.",
       },
       {
         caminho: "/pacifico-siqueira-advocacia",
