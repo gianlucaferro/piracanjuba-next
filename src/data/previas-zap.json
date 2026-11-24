@@ -4545,32 +4545,6 @@
     "mensagem": "Olá, Oliveiras Japa Food! Gostaria de conhecer os pratos disponíveis e seus valores. Como posso fazer um pedido?"
   },
   {
-    "slug": "oticas-diego",
-    "nome": "Óticas Diego",
-    "categoria": "Ótica",
-    "setor": "Saúde",
-    "telefones": [
-      "5564992470659"
-    ],
-    "oferta": [
-      "Armações",
-      "Lentes de grau",
-      "Óculos de sol",
-      "Relógios",
-      "Acessórios"
-    ],
-    "endereco": "R. Dom Pedro II, 491, Piracanjuba - GO",
-    "mapa": "https://www.google.com/maps?cid=7810940027426027358",
-    "instagram": "https://www.instagram.com/oticasdiego/",
-    "logo": "/marcas-zap/logos/a43247c841f19764.webp",
-    "cor": "#194f42",
-    "foto": "/marcas-zap/setores/otica.webp",
-    "resumo": "A Óticas Diego fica na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Para escolher um modelo, converse sobre o estilo que procura ou consulte a equipe sobre a disponibilidade de lentes.",
-    "atividade": "Ótica",
-    "acao": "Consultar óculos e acessórios",
-    "mensagem": "Olá, Óticas Diego! Gostaria de conhecer os óculos e acessórios disponíveis na loja. Como consulto um modelo e seu valor?"
-  },
-  {
     "slug": "pao-gostoso",
     "nome": "Pão Gostoso",
     "categoria": "Alimentação",

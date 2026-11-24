@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
       { source: "/zap-pba/ellen-vieira-advocacia", destination: "/evadvocacia", permanent: true },
       { source: "/zap-pba/claro", destination: "/claro", permanent: true },
       { source: "/claro-piracanjuba", destination: "/claro", permanent: true },
+      { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
+      { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
@@ -34,6 +36,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/claro.jpg",
       destination: "/empresas/claro-piracanjuba/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/oticas-diego.jpg",
+      destination: "/empresas/oticas-diego/compartilhar.jpg",
     }];
   },
 };

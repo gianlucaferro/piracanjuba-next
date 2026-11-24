@@ -137,13 +137,20 @@ test("cada origem do redirect aponta para rota que existe e não tem mais págin
   }
 });
 
-test("a antiga prévia da Ellen redireciona e só a nova página entra no sitemap", () => {
-  const origem = "/zap-pba/ellen-vieira-advocacia";
-  const destino = "/evadvocacia";
+test("prévias com página própria saem do catálogo e apontam à canônica do sitemap e do guia", () => {
   const fichas: { slug: string }[] = JSON.parse(readFileSync(join(RAIZ, "src/data/previas-zap.json"), "utf8"));
-  assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
-  assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));
-  assert.ok(NO_SITEMAP.has(destino));
+  const vinculos: Record<string, string> = JSON.parse(readFileSync(join(RAIZ, "src/data/zap-pba-paginas.json"), "utf8"));
+  for (const [origem, destino] of [
+    ["/zap-pba/ellen-vieira-advocacia", "/evadvocacia"],
+    ["/zap-pba/claro", "/claro"],
+    ["/zap-pba/oticas-diego", "/oticas-diego"],
+  ]) {
+    assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
+    assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));
+    assert.ok(NO_SITEMAP.has(destino));
+    assert.ok(Object.values(vinculos).includes(destino));
+    assert.ok(!Object.values(vinculos).includes(origem));
+  }
 });
 
 test("nada redirecionado fica no sitemap nem nas exclusões", () => {
