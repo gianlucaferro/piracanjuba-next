@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import Link from "next/link";
 import {
   ArrowDown, ArrowLeft, ArrowUpRight, FileText, House, Landmark, MapPin,
-  Scale, Shield, ShoppingBag,
+  Scale, Shield, ShoppingBag, Users,
 } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
@@ -36,29 +36,33 @@ const mapa = "https://www.google.com/maps/search/?api=1&query=" +
 
 const areas = [
   {
-    titulo: "Direito Civil", icone: FileText,
-    resumo: "Contratos, cobranças e reparação de danos. Orientação sobre acordos e conflitos entre pessoas ou empresas.",
+    titulo: "Direito de Família e Sucessões", icone: Users,
+    resumo: "Divórcio consensual e litigioso, reconhecimento e dissolução de união estável. Guarda e visitas de filhos, regulamentação de convivência, fixação e revisão de pensão alimentícia. Inventários, partilha de bens, testamentos e planejamento sucessório.",
   },
   {
     titulo: "Direito Penal", icone: Shield,
-    resumo: "Orientação sobre intimações, acompanhamento de investigações e defesa em processos criminais.",
+    resumo: "Orientação sobre intimações, acompanhamento em delegacias e flagrantes e em audiências de custódia. Pedidos de liberdade provisória e de revogação de prisão, habeas corpus, defesa em inquéritos policiais e ações penais, além de recursos criminais.",
+  },
+  {
+    titulo: "Direito Civil", icone: FileText,
+    resumo: "Elaboração, revisão e rescisão de contratos. Acordos, cobranças e execuções de dívidas. Ações de indenização por danos materiais, morais e estéticos, além de questões de posse, propriedade e responsabilidade civil.",
   },
   {
     titulo: "Direito do Consumidor", icone: ShoppingBag,
-    resumo: "Atendimento em casos de cobranças indevidas, produtos com defeito e problemas na contratação de serviços.",
-  },
-  {
-    titulo: "Direito Imobiliário", icone: House,
-    resumo: "Análise de contratos de compra, venda e locação de imóveis e orientação em questões de posse e propriedade.",
+    resumo: "Negativação indevida no SPC/Serasa, cobranças abusivas e negativas de cobertura por planos de saúde. Problemas com companhias aéreas, como atrasos, cancelamentos e extravio de bagagem. Fraudes bancárias, compras pela internet, produtos com defeito e problemas na contratação de serviços.",
   },
   {
     titulo: "Direito Previdenciário", icone: Landmark,
-    resumo: "Orientação sobre aposentadorias, pensões e benefícios por incapacidade, do pedido ao recurso junto ao INSS.",
+    resumo: "Planejamento previdenciário e pedidos de aposentadoria por idade, tempo de contribuição, especial ou por incapacidade. Auxílio por incapacidade temporária (auxílio-doença), pensão por morte, salário-maternidade e BPC/LOAS. Recursos administrativos ou judiciais contra o INSS.",
+  },
+  {
+    titulo: "Direito Imobiliário", icone: House,
+    resumo: "Análise de riscos (due diligence) antes da compra de imóveis. Elaboração e revisão de contratos de compra e venda, locação e permuta. Ações de despejo, cobrança de aluguéis, usucapião judicial e extrajudicial, adjudicação compulsória e reintegração de posse. Regularização documental junto a cartórios e prefeituras.",
   },
 ];
 
 const titulo = "Advogada em Piracanjuba (GO) | Ellen Vieira Advocacia";
-const descricao = "Ellen Vieira, advogada em Piracanjuba, GO (OAB-GO 42.685). Direito Civil, Penal, do Consumidor, Imobiliário e Previdenciário. Agende pelo WhatsApp.";
+const descricao = "Ellen Vieira, advogada em Piracanjuba (GO), OAB-GO 42.685. Família e Sucessões, Direito Penal, Civil, do Consumidor, Previdenciário e Imobiliário. Agende pelo WhatsApp.";
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
   alt: "Marca de Ellen Vieira Advocacia e retrato da advogada em Piracanjuba",
@@ -126,7 +130,7 @@ export default function EllenVieira() {
                   sizes="(max-width: 700px) 290px, (max-width: 1000px) 37vw, 420px" />
               </div>
               <h1>Advogada em Piracanjuba</h1>
-              <p>{profissional} orienta sobre contratos, relações de consumo, imóveis e benefícios do INSS. Também atua na defesa criminal.</p>
+              <p>{profissional} orienta sobre divórcio, guarda, inventários, contratos, relações de consumo, imóveis e benefícios do INSS. Também atua na defesa criminal.</p>
               <div className={s.acoes}>
                 <a href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
                 <a href="#atuacao" className={s.atalho}>Áreas de atuação <ArrowDown size={15} aria-hidden="true" /></a>
