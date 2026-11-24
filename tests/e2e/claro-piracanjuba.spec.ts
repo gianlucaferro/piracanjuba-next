@@ -1,10 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-test("a prévia da Claro leva à página da loja e seus contatos locais", async ({ page, request }) => {
-  const destino = "/claro-piracanjuba";
-  const anterior = await request.get("/zap-pba/claro", { maxRedirects: 0 });
-  expect(anterior.status()).toBe(308);
-  expect(new URL(anterior.headers().location, anterior.url()).pathname).toBe(destino);
+test("os endereços anteriores da Claro levam à página da loja e aos contatos locais", async ({ page, request }) => {
+  const destino = "/claro";
+  for (const origem of ["/zap-pba/claro", "/claro-piracanjuba"]) {
+    const anterior = await request.get(origem + "?utm_source=teste", { maxRedirects: 0 });
+    expect(anterior.status()).toBe(308);
+    const redirecionamento = new URL(anterior.headers().location, anterior.url());
+    expect(redirecionamento.pathname + redirecionamento.search).toBe(destino + "?utm_source=teste");
+  }
 
   await page.goto(destino);
   const artigo = page.getByRole("article");

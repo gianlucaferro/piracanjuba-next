@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { formatarTelefoneBr, linkWhatsapp } from "@/lib/whatsapp";
 import s from "./pagina.module.css";
 
-const caminho = "/claro-piracanjuba";
+const caminho = "/claro";
 const portal = "https://piracanjuba.ai";
 const telefone = "5564992834030";
 const rua = "Rua Dom Pedro II, 620";
@@ -93,7 +93,7 @@ export default function ClaroPiracanjuba() {
         </div>
         <dl>
           <div><dt><MapPin size={18} />Endereço</dt><dd><address>{rua}, {bairro}<br />Piracanjuba, GO</address></dd></div>
-          <div><dt><Clock3 size={18} />Horários</dt><dd>Segunda a sexta, das 8h às 18h<br />Sábado, das 8h às 13h</dd></div>
+          <div><dt><Clock3 size={18} />Horários</dt><dd>Segunda a sexta, das 8h às 18h<br />Sábado, das 8h às 13h<br />Domingo, fechado</dd></div>
           <div><dt><Phone size={18} />Telefone da loja</dt><dd><a href={"tel:+" + telefone}>{formatarTelefoneBr(telefone)}</a></dd></div>
         </dl>
       </section>
