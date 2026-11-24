@@ -31,7 +31,7 @@ const cep = "75640-116";
 const conversa = linkWhatsapp(whatsapp, "Olá, Óticas Diego! Vi a loja no Piracanjuba.ai e gostaria de consultar os modelos disponíveis.");
 const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela Óticas Diego e gostaria de solicitar um ajuste ou a retirada da ficha " + url);
 
-const titulo = "Ótica em Piracanjuba, GO | Óticas Diego";
+const titulo = "Óticas Diego | Ótica em Piracanjuba, GO";
 const descricao = "Óticas Diego, ótica em Piracanjuba com armações, lentes de grau, óculos de sol, relógios e acessórios. Veja o WhatsApp, os horários e como chegar à loja no Centro.";
 const compartilhamento = {
   url: portal + "/empresas/oticas-diego/compartilhar.jpg", width: 1200, height: 630,
@@ -53,9 +53,9 @@ const produtos = [
   },
   {
     nome: "Óculos de sol", Icone: Sun,
-    resumo: "Tem um modelo em mente? Pergunte pelas cores e formatos de óculos solares disponíveis para experimentar na loja.",
+    resumo: "Tem um modelo em mente? Consulte a equipe sobre as cores, os formatos e os valores dos óculos solares antes de ir à loja.",
     link: "Consultar óculos de sol",
-    mensagem: "Olá, Óticas Diego! Quais modelos de óculos de sol posso experimentar na loja?",
+    mensagem: "Olá, Óticas Diego! Gostaria de consultar os modelos e as cores de óculos de sol da loja.",
   },
   {
     nome: "Relógios e acessórios", Icone: Watch,
@@ -93,7 +93,6 @@ export default function OticasDiego() {
           <div className={s.barra}>
             <div className={s.marca}>
               <Image src={logo} width={54} height={54} alt="" />
-              <span>{marca}</span>
             </div>
             <nav className={s.navegacao} aria-label="Navegação da ótica">
               <a href="#produtos">Produtos</a>
@@ -103,8 +102,8 @@ export default function OticasDiego() {
           </div>
           <div className={s.abertura}>
             <div className={s.chamada}>
-              <h1>Ótica em <span>Piracanjuba</span></h1>
-              <p>Encontre armações para seus óculos de grau e experimente os modelos de sol na Óticas Diego, no Centro de Piracanjuba.</p>
+              <h1>{marca} <span>Ótica em Piracanjuba</span></h1>
+              <p>Converse com a equipe sobre armações, lentes de grau e óculos de sol. Consulte a cor ou o formato que procura antes de visitar a loja no Centro.</p>
               <div className={s.acoes}>
                 <a className={s.botao} href={conversa}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
                 <a className={s.rotaCapa} href={mapa}>Como chegar <ArrowUpRight size={17} aria-hidden="true" /></a>

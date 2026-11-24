@@ -13,7 +13,7 @@
 }
 
 .pagina :where(h1, h2, h3, p, ul, figure, dl, dd) { margin: 0; }
-.pagina :where(h1, h2, .produtos h3, .marca span) {
+.pagina :where(h1, h2, .produtos h3) {
   font-family: var(--fonte-otica), Georgia, serif;
   font-weight: 400;
   letter-spacing: -.045em;
@@ -33,7 +33,6 @@
 }
 .marca { gap: .8rem; }
 .marca img { flex: none; width: 3.25rem; height: auto; border-radius: .25rem; }
-.marca span { font-size: clamp(1.25rem, 1.8vw, 1.65rem); }
 .navegacao { gap: clamp(1.35rem, 2.6vw, 2.6rem); }
 .navegacao a {
   display: inline-flex;
@@ -53,8 +52,8 @@
   padding-block: clamp(3rem, 5.8vw, 5.6rem) clamp(2.5rem, 4.5vw, 4.25rem);
 }
 .chamada { min-width: 0; padding-bottom: 1rem; }
-.chamada h1 { font-size: clamp(3rem, 6.4vw, 6.65rem); line-height: .99; }
-.chamada h1 span { display: block; color: var(--menta); }
+.chamada h1 { font-size: clamp(3rem, 6.4vw, 6.65rem); line-height: 1.03; }
+.chamada h1 span { display: block; margin-top: .5em; color: var(--menta); font-size: clamp(1.45rem, 2.5vw, 2.55rem); line-height: 1.15; letter-spacing: -.023em; }
 .chamada p {
   max-width: 37ch;
   margin-block: clamp(1.3rem, 2vw, 2rem) 1.85rem;
@@ -148,7 +147,6 @@
   .barra { min-height: 4.25rem; }
   .marca { gap: .5rem; }
   .marca img { width: 2.6rem; }
-  .marca span { font-size: 1.25rem; }
   .navegacao { gap: 1rem; }
   .navegacao a { font-size: .81rem; }
   .abertura { grid-template-columns: 1fr; gap: 1.9rem; padding-block: 2.7rem 1rem; }
