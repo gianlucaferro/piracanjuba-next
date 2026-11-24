@@ -38,7 +38,10 @@ const nextConfig: NextConfig = {
       destination: "/empresas/claro-piracanjuba/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/oticas-diego.jpg",
-      destination: "/empresas/oticas-diego/compartilhar.jpg",
+      destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
+    }, {
+      source: "/empresas/oticas-diego/compartilhar.jpg",
+      destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
     }];
   },
 };
