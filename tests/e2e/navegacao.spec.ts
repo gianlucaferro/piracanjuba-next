@@ -20,6 +20,15 @@ test("HTML inicial da home traz os links do menu Mais, do rodapé e da Câmara",
   }
 });
 
+test("o convite no rodapé de uma página de empresa abre a oferta do portal", async ({ page }) => {
+  await page.goto("/oticas-diego");
+  const convite = page.getByRole("contentinfo").getByRole("link", { name: "Quero uma página para minha empresa" });
+  await expect(convite).toBeVisible();
+  await convite.click();
+  await expect(page).toHaveURL(/\/anuncie$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Sua empresa com página própria");
+});
+
 test("menu Mais começa fechado com os links no DOM, abre e fecha com Esc devolvendo o foco", async ({ page }) => {
   await page.goto("/");
   const botao = page.locator('button[aria-label="Mais seções"]:visible');

@@ -21,7 +21,7 @@ const portal = "https://piracanjuba.ai";
 const url = portal + caminho;
 const marca = "Óticas Diego";
 const logo = "/empresas/oticas-diego/logo.webp";
-const foto = "/empresas/oticas-diego/interior.webp";
+const foto = "/empresas/oticas-diego/interior-hd.jpg";
 const whatsapp = "5564992470659";
 const fixo = "556434051198";
 const instagram = "https://www.instagram.com/oticasdiego/";
@@ -110,7 +110,7 @@ export default function OticasDiego() {
               </div>
             </div>
             <figure className={s.imagem}>
-              <Image src={foto} width={680} height={510} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
+              <Image src={foto} width={1280} height={960} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
                 alt="Interior da Óticas Diego, com expositor de óculos, balcão de madeira e painel verde com a marca da loja" />
               <figcaption><MapPin size={16} aria-hidden="true" />{rua}, Centro</figcaption>
             </figure>

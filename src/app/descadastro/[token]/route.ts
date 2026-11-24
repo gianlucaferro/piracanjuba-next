@@ -1,3 +1,5 @@
+import { CONVITE_RODAPE_EMPRESA } from "../../../data/paginaEmpresa.ts";
+
 export const dynamic = "force-dynamic";
 
 type Context = { params: Promise<{ token: string }> };
@@ -14,7 +16,10 @@ function page(title: string, message: string, status = 200, form = false) {
   return new Response(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title} | Piracanjuba.ai</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7f4;color:#19372e;font:1rem/1.55 system-ui,sans-serif}main{max-width:39rem;margin:clamp(2rem,13vh,9rem) auto;padding:2rem}h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;letter-spacing:-.045em;margin:.8em 0 .3em}p{max-width:36em}button{border:0;border-radius:.5rem;background:#135c43;color:white;padding:.8rem 1.15rem;font:inherit;font-weight:650;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #ad6500;outline-offset:3px}a{color:inherit}footer{border-top:1px solid #c6d5cd;margin-top:3rem;padding-top:1rem;font-size:.85rem}
-</style></head><body><main><strong>Piracanjuba.ai</strong><h1>${title}</h1><p>${message}</p>${button}<footer><a href="https://apareca.ai/" rel="noreferrer">Site desenvolvido por Ferro Labs Tecnologia LTDA</a></footer></main></body></html>`, {
+footer p{margin:0 0 1.25rem}footer p a{display:inline-block;padding:.5rem 0;color:#135c43;font-weight:650;text-underline-offset:.2em}
+</style></head><body><main><strong>Piracanjuba.ai</strong><h1>${title}</h1><p>${message}</p>${button}<footer>
+<p>${CONVITE_RODAPE_EMPRESA.pergunta}<br><a href="${CONVITE_RODAPE_EMPRESA.href}" rel="noreferrer">${CONVITE_RODAPE_EMPRESA.acao}</a></p>
+<a href="https://apareca.ai/" rel="noreferrer">Site desenvolvido por Ferro Labs Tecnologia LTDA</a></footer></main></body></html>`, {
     status, headers: { ...headers, "Content-Type": "text/html; charset=utf-8" },
   });
 }

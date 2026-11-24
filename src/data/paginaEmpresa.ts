@@ -1,8 +1,14 @@
 // Termos do produto "página de empresa" (piracanjuba.ai/<slug>), decididos pelo
 // operador em 2026-11-16: preço público em pagamento único, sem mensalidade,
-// página no ar sem prazo. Usado no /anuncie, na home, no rodapé e no cadastro.
+// página no ar sem prazo. Usado no /anuncie, na home e no cadastro.
 export const PRECO_PAGINA_EMPRESA = 600;
 export const PRECO_PAGINA_EMPRESA_TEXTO = `R$ ${PRECO_PAGINA_EMPRESA}`;
+
+export const CONVITE_RODAPE_EMPRESA = {
+  pergunta: "Quer ter uma página exclusiva da sua empresa no Piracanjuba.ai?",
+  acao: "Quero uma página para minha empresa",
+  href: "/anuncie",
+} as const;
 
 // Preço "de" riscado, pedido do operador em 2026-11-17 ("de R$ 1000 (riscado) por
 // R$ 600"); ele escolheu manter o riscado depois do aviso sobre o CDC.

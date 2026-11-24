@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { HeartHandshake } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Instagram from "@/components/icons/InstagramIcon";
 import HeaderControls from "./HeaderControls";
 import DesktopNav from "./DesktopNav";
@@ -9,7 +9,7 @@ import QueryProvider from "@/components/providers/QueryProvider";
 import ChatWidget from "@/components/chat/ChatWidget";
 import FollowingBanner from "@/components/FollowingBanner";
 import SomenteNoPortal from "./SomenteNoPortal";
-import { PRECO_PAGINA_EMPRESA_TEXTO } from "@/data/paginaEmpresa";
+import { CONVITE_RODAPE_EMPRESA } from "@/data/paginaEmpresa";
 import { SECOES_RODAPE } from "@/data/secoesRodape";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -41,36 +41,27 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         </SomenteNoPortal>
         <main className="flex-1 pb-20 md:pb-0">{children}</main>
 
-        <SomenteNoPortal>
-        <section className="border-t bg-accent/5 py-6 hidden md:block">
-          <div className="container">
-            <Link
-              href="/anuncie"
-              className="flex items-center justify-between gap-4 stat-card card-hover border-primary/30 max-w-xl mx-auto"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                  <HeartHandshake className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    Anuncie no Piracanjuba<span className="text-[#25D366]">.ai</span>
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Página própria da sua empresa, por {PRECO_PAGINA_EMPRESA_TEXTO} em pagamento único.
-                  </p>
-                </div>
-              </div>
-              <span className="text-xs font-medium text-primary whitespace-nowrap">
-                Saiba mais →
-              </span>
-            </Link>
-          </div>
-        </section>
-        </SomenteNoPortal>
-
         <footer className="border-t bg-card">
           <div className="container pt-4 pb-24 md:py-8">
+            <section
+              aria-labelledby="rodape-convite-empresa"
+              className="mb-6 flex flex-col items-start gap-4 rounded-xl border border-primary/15 bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between md:mb-8 md:px-7 md:py-5"
+            >
+              <h2
+                id="rodape-convite-empresa"
+                className="max-w-xl text-balance text-base font-semibold leading-snug text-foreground md:text-lg"
+              >
+                {CONVITE_RODAPE_EMPRESA.pergunta}
+              </h2>
+              <Link
+                href={CONVITE_RODAPE_EMPRESA.href}
+                prefetch={false}
+                className="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-center text-sm font-semibold leading-snug text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:shrink-0"
+              >
+                {CONVITE_RODAPE_EMPRESA.acao}
+                <ArrowRight size={16} aria-hidden="true" className="shrink-0" />
+              </Link>
+            </section>
             {/* Seções: links fixos no HTML, com âncora descritiva, para páginas que
                 não recebiam link interno (LINK-02, auditoria de SEO de 2026-11-17).
                 Fica fora das páginas de empresa, que usam a moldura enxuta.
@@ -118,13 +109,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 <span>Piracanjuba.ai — Piracanjuba, GO</span>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-                <Link
-                  href="/anuncie"
-                  className="hover:text-foreground transition-colors flex items-center gap-1"
-                >
-                  <HeartHandshake className="w-3.5 h-3.5 text-primary" />
-                  Anuncie
-                </Link>
                 <Link href="/na-midia" className="hover:text-foreground transition-colors">
                   Na mídia
                 </Link>
