@@ -110,8 +110,10 @@ export default function OticasDiego() {
               </div>
             </div>
             <figure className={s.imagem}>
-              <Image src={foto} width={1280} height={960} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
-                alt="Interior da Óticas Diego, com expositor de óculos, balcão de madeira e painel verde com a marca da loja" />
+              <div className={s.moldura}>
+                <Image src={foto} width={1280} height={960} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
+                  alt="Interior da Óticas Diego, com expositor de óculos, balcão de madeira e painel verde com a marca da loja" />
+              </div>
               <figcaption><MapPin size={16} aria-hidden="true" />{rua}, Centro</figcaption>
             </figure>
           </div>
