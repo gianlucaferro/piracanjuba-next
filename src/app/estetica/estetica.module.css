@@ -1,0 +1,154 @@
+.pagina {
+  --creme: #f2ebe2;
+  --papel: #fbf8f2;
+  --tinta: #352921;
+  --castanha: #634936;
+  --linha: #ccbaa8;
+  --margem: max(6vw, calc((100% - 1216px) / 2));
+  width: 100%;
+  min-width: 0;
+  overflow: clip;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--font-sans), Arial, sans-serif;
+}
+.pagina :where(h1, h2, h3, p, address) { margin: 0; }
+.pagina :where(h1, h2, h3, .contatos strong) {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -.047em;
+}
+.pagina a:focus-visible { outline: 3px solid #ab6340; outline-offset: 5px; }
+.pagina :where(section[id]) { scroll-margin-top: 6.5rem; }
+.abertura { background: var(--creme); }
+.navegacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 5rem;
+  padding: .75rem var(--margem);
+  border-bottom: 1px solid #ccbaa8b3;
+}
+.navegacao img { width: 8.55rem; height: auto; }
+.navegacao > div { display: flex; align-items: center; gap: clamp(.8rem, 2.6vw, 3rem); }
+.navegacao a { display: inline-flex; align-items: center; min-height: 44px; font-size: .87rem; font-weight: 600; text-decoration: none; }
+.navegacao a:hover { color: #865b3b; }
+.navegacao .rede { gap: .45rem; }
+.capa { display: grid; grid-template-columns: 1.12fr 1fr; min-height: 32rem; }
+.capaTexto {
+  align-self: center;
+  padding: clamp(2.5rem, 6vw, 6rem) clamp(1.4rem, 4vw, 4rem) clamp(3rem, 6.5vw, 6rem) var(--margem);
+}
+.localidade { display: flex; align-items: center; gap: .45rem; font-size: .82rem; color: var(--castanha); font-weight: 600; }
+.capa h1 { margin: 1.6rem 0 1.35rem; font-size: clamp(2.85rem, 4.6vw, 5.1rem); line-height: 1.035; text-wrap: balance; }
+.capa h1 em { font-weight: 400; color: #76533d; }
+.intro { max-width: 32rem; color: #594d42; font-size: clamp(1rem, 1.18vw, 1.13rem); line-height: 1.7; }
+.acoes { display: flex; flex-wrap: wrap; gap: .65rem 1.45rem; align-items: center; margin-top: 1.9rem; }
+.botao, .link {
+  min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+  gap: .48rem; font-weight: 650; font-size: .88rem; text-decoration: none;
+}
+.botao { background: var(--castanha); color: #fff9ed; border-radius: 50px; padding: .78rem 1.22rem; }
+.botao:hover { background: #483222; }
+.link { color: var(--castanha); text-underline-offset: .3rem; }
+.link:hover { text-decoration: underline; }
+.fotoEquipe { position: relative; min-height: 100%; background: #c9bdad; overflow: hidden; }
+.fotoEquipe > img:first-child { object-fit: cover; object-position: 50% 25%; }
+.fotoEquipe .selo {
+  position: absolute; bottom: 1.5rem; right: 1.6rem; height: auto; width: clamp(2.7rem, 4vw, 4rem);
+  padding: .45rem; background: #f3ebddb8; border-radius: 50%;
+}
+.procedimentos { padding: clamp(3.5rem, 6vw, 6rem) var(--margem); }
+.cabecalhoSecao { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.6rem; }
+.pagina h2 { font-size: clamp(2.35rem, 3.9vw, 4.2rem); line-height: 1.08; text-wrap: balance; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.05rem, 2.4vw, 2.4rem); }
+.fotoServico { position: relative; width: 100%; aspect-ratio: 1.48; overflow: hidden; background: #ddcfbf; border-radius: .22rem; }
+.fotoServico img { object-fit: cover; }
+.card h3 { font-size: clamp(1.55rem, 2.3vw, 2.4rem); line-height: 1.15; margin: 1.02rem 0 .55rem; }
+.card p, .agenda p, .endereco p, .endereco address { line-height: 1.7; font-size: .98rem; }
+.card p { color: #5d5046; max-width: 42ch; }
+.experiencias { margin-top: clamp(2.5rem, 4.7vw, 5rem); border-block: 1px solid var(--linha); padding: 2rem 0; }
+.escolha { display: flex; flex-wrap: wrap; align-items: baseline; gap: .65rem 1.75rem; }
+.escolha h3 { font-size: clamp(1.85rem, 3vw, 2.8rem); line-height: 1.15; }
+.escolha p, .rituais p { font-size: .92rem; color: #615347; line-height: 1.65; }
+.rituais { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: clamp(.8rem, 2.3vw, 2rem); margin-top: 1.5rem; }
+.rituais a { display: block; padding-top: .7rem; color: var(--tinta); text-decoration: none; border-top: 1px solid var(--linha); }
+.ritualTopo { display: flex; gap: .35rem; align-items: center; color: var(--castanha); margin-bottom: .5rem; }
+.ritualTopo strong { font: 400 clamp(1.42rem, 2vw, 2rem)/1.3 Georgia, serif; letter-spacing: -.04em; flex: 1; }
+.ritualTopo span { font-size: .8rem; white-space: nowrap; }
+.rituais a:hover strong { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2rem; }
+.agenda {
+  display: grid; grid-template-columns: .83fr 1.17fr; align-items: center; gap: clamp(2.35rem, 8vw, 8rem);
+  padding: clamp(3.5rem, 5.9vw, 6rem) var(--margem); background: #503e31; color: #fff8ec;
+}
+.agenda h2 { margin-bottom: 1.15rem; }
+.agenda p { max-width: 35ch; color: #e9dccc; }
+.instagram { display: inline-flex; min-height: 44px; align-items: center; gap: .48rem; margin-top: .9rem; color: #fff7ea; font-size: .9rem; text-underline-offset: .25rem; }
+.contatos > a { display: flex; align-items: center; justify-content: space-between; gap: .9rem; text-decoration: none;
+  border-top: 1px solid #bba99580; padding: 1.05rem 0; color: inherit; }
+.contatos > a:last-child { border-bottom: 1px solid #bba99580; }
+.contatos a:hover strong { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25rem; }
+.contatos a > span:first-child { flex: 1; }
+.contatos small { display: block; color: #e7d5bf; font-weight: 500; font-size: .79rem; margin-bottom: .28rem; }
+.contatos strong { display: block; font-size: clamp(1.45rem, 2.3vw, 2.1rem); line-height: 1.15; }
+.numero { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; white-space: nowrap; }
+.visita { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center;
+  gap: clamp(2rem, 6.4vw, 7rem); padding: clamp(3.5rem, 6vw, 6rem) var(--margem); }
+.mapa { min-width: 0; }
+.figuraMapa { position: relative; display: block; aspect-ratio: 2; overflow: hidden; background: #ded3bf; border-radius: .22rem; }
+.figuraMapa img { object-fit: contain; }
+.credito { display: inline-flex; align-items: center; min-height: 32px; font-size: .72rem; color: #655344; text-underline-offset: .15em; }
+.mapaFoto { position: absolute; left: .7rem; top: .7rem; min-height: 44px; display: inline-flex; gap: .45rem; align-items: center;
+  background: #fffaf2; border-radius: 2rem; color: var(--tinta); font-size: .85rem; font-weight: 650; padding: .65rem 1rem; box-shadow: 0 2px 12px #27201830; }
+.figuraMapa:hover .mapaFoto { background: var(--creme); }
+.endereco address { font-style: normal; margin: 1rem 0 .2rem; color: #594d42; }
+.endereco p { margin-top: .85rem; border-top: 1px solid var(--linha); padding-top: 1rem; color: #5d5046; max-width: 39ch; font-size: .85rem; }
+.endereco p a { color: var(--castanha); text-decoration: underline; text-underline-offset: .2rem; }
+@media (min-width: 1550px) {
+  .capa { max-width: 1600px; margin-inline: auto; }
+  .capaTexto { padding-left: max(5.5rem, calc((100% - 43rem) / 2)); }
+}
+@media (max-width: 900px) {
+  .pagina { --margem: 5vw; }
+  .capaTexto { padding-left: 5vw; }
+  .capa h1 { font-size: clamp(2.6rem, 5.9vw, 3.8rem); }
+  .capa { min-height: 29rem; }
+  .contatos > a { flex-wrap: wrap; }
+  .numero { font-size: .79rem; }
+  .agenda { grid-template-columns: .8fr 1.2fr; gap: 2rem; }
+}
+@media (max-width: 700px) {
+  .pagina { --margem: 6vw; }
+  .pagina img { content-visibility: visible; }
+  .navegacao { min-height: 4.2rem; }
+  .navegacao img { width: 6.7rem; }
+  .navegacao > div { gap: .75rem; }
+  .navegacao > div > a:first-child { display: none; }
+  .navegacao a { font-size: .8rem; }
+  .capa { min-height: 0; grid-template-columns: 1fr; }
+  .capaTexto { padding: 2.6rem var(--margem) 2.1rem; }
+  .capa h1 { font-size: clamp(2.5rem, 9.1vw, 3.85rem); margin-top: 1.1rem; }
+  .capa h1 br { display: none; }
+  .acoes { margin-top: 1.3rem; }
+  .fotoEquipe { width: 100%; min-height: 0; aspect-ratio: 1.51; }
+  .fotoEquipe > img:first-child { object-position: 50% 22%; }
+  .cards, .agenda, .visita { grid-template-columns: 1fr; }
+  .cards { gap: 1.9rem; }
+  .rituais { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.3rem; }
+  .cabecalhoSecao { flex-wrap: wrap; gap: .1rem .8rem; }
+  .agenda { gap: 1.7rem; }
+  .agenda h2 br { display: none; }
+  .contatos > a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .4rem .65rem; }
+  .contatos > a > span:first-child { grid-column: 1; }
+  .contatos > a > svg { grid-column: 2; grid-row: 1 / 3; }
+  .contatos .numero { grid-column: 1; grid-row: 2; font-size: .91rem; }
+  .fotoServico { aspect-ratio: 1.65; }
+  .visita { gap: 1.5rem; }
+  .endereco p { max-width: 100%; }
+}
+@media (max-width: 390px) {
+  .navegacao .rede span { display: none; }
+  .capaTexto { padding-top: 2rem; }
+  .acoes { gap: .25rem .8rem; }
+}
