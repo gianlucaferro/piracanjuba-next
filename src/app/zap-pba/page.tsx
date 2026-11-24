@@ -1,6 +1,7 @@
 import { pageMetadata } from "@/lib/seo";
 import { fetchZapEstabelecimentos } from "@/lib/data/listings";
 import { SLUGS_PAGINAS_EMPRESARIAIS } from "@/data/empresas-slugs";
+import { CLINICA_ESSENCIA } from "@/data/clinica-essencia";
 import { PACIFICO_SIQUEIRA } from "@/data/pacifico-siqueira";
 import { previas } from "@/data/previas-zap";
 import vinculos from "@/data/zap-pba-paginas.json";
@@ -23,34 +24,34 @@ const paginasAtivas = new Set([
 ]);
 // Um negócio pode ter dois cadastros aprovados com nomes diferentes.
 const paginaPorCadastro = new Map(Object.entries(vinculos).filter(([, pagina]) => paginasAtivas.has(pagina)));
+const fichasEditoriais = [
+  { nome: PACIFICO_SIQUEIRA.nome, telefone: PACIFICO_SIQUEIRA.telefone, path: PACIFICO_SIQUEIRA.path, categoria: "Advogados" },
+  { nome: "Essência Estética e Spa | Laurieni Costa", telefone: CLINICA_ESSENCIA.telefoneEsteticaSpa, path: CLINICA_ESSENCIA.path, categoria: "Beleza e Estética" },
+];
+const paginaPorTelefone = new Map(fichasEditoriais.map((item) => [item.telefone.slice(-11), item.path]));
 
 export default async function ZapPbaPage() {
   const estabelecimentos = await fetchZapEstabelecimentos();
   const agora = new Date();
   const dataReferencia = dataDeReferencia(agora);
 
-  const escritorio = PACIFICO_SIQUEIRA;
-  const digitos = escritorio.telefone.slice(-11);
   const fichas = estabelecimentos.map((item) => fichaParaNavegador({
     ...item,
-    pagina: item.whatsapp.replace(/\D/g, "").slice(-11) === digitos
-      ? escritorio.path
-      : paginaPorCadastro.get(item.id),
+    pagina: paginaPorTelefone.get(item.whatsapp.replace(/\D/g, "").slice(-11)) ?? paginaPorCadastro.get(item.id),
   }, agora.getTime()));
-  // Com erro do Supabase, fetchZapEstabelecimentos devolve [] e só sobra a ficha
-  // editorial abaixo: o topo e o índice não afirmam contagem nesse caso.
-  const listaCarregada = estabelecimentos.length > 0;
-  if (fichas.some((item) => item.pagina === escritorio.path)) {
-    return <ZapPbaClient initialEstabelecimentos={fichas} dataReferencia={dataReferencia} listaCarregada={listaCarregada} />;
+  for (const item of fichasEditoriais) {
+    if (fichas.some((ficha) => ficha.pagina === item.path)) continue;
+    fichas.push(fichaParaNavegador({
+      id: item.path,
+      editorial: true,
+      name: item.nome,
+      whatsapp: item.telefone,
+      category: item.categoria,
+      click_count: null,
+      created_at: null,
+      pagina: item.path,
+    }, agora.getTime()));
   }
-  return <ZapPbaClient dataReferencia={dataReferencia} listaCarregada={listaCarregada} initialEstabelecimentos={[...fichas, fichaParaNavegador({
-    id: escritorio.path,
-    editorial: true,
-    name: escritorio.nome,
-    whatsapp: escritorio.telefone,
-    category: "Advogados",
-    click_count: null,
-    created_at: null,
-    pagina: escritorio.path,
-  }, agora.getTime())]} />;
+  const listaCarregada = estabelecimentos.length > 0;
+  return <ZapPbaClient initialEstabelecimentos={fichas} dataReferencia={dataReferencia} listaCarregada={listaCarregada} />;
 }

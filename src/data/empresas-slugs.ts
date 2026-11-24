@@ -15,6 +15,8 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "evadvocacia",
   "claro",
   "agro-franca",
+  "quiropraxia",
+  "estetica",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];

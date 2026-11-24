@@ -663,7 +663,7 @@ export default function ZapPbaClient({
   // Dia (AAAA-MM-DD) em que o servidor montou a lista: semente da ordem do dia e
   // data citada no parágrafo do topo.
   dataReferencia: string;
-  // Falso quando o banco não devolveu cadastros (só a ficha editorial está na
+  // Falso quando o banco não devolveu cadastros (só fichas editoriais estão na
   // lista): o topo e o índice não afirmam quantos estabelecimentos o guia tem.
   listaCarregada: boolean;
 }) {
