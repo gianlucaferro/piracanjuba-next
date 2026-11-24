@@ -24,6 +24,7 @@ const clinica = "Clínica Essência";
 const { rua, bairro, cep, mapa, coordenadas, waze } = CLINICA_ESSENCIA;
 const fonteQuiropraxia = "https://www.gov.br/saude/pt-br/composicao/saps/pics/recursos-teraupeticos/quiropraxia";
 const midia = "/empresas/quiropraxia";
+const descricaoArte = "Juan Carlos Mesquita. Quiropraxia - Liberação Miofascial - ventosas";
 const titulo = "Quiropraxia em Piracanjuba (GO) | Juan Carlos Mesquita";
 const descricao = "Conheça Juan Carlos Mesquita, quiropraxista em Piracanjuba. Veja possíveis benefícios para a dor lombar, como chegar à Clínica Essência e como agendar.";
 const fonteEvidencia = "https://www.cochrane.org/pt/evidence/CD008112_what-are-benefits-and-risks-spinal-manipulative-therapy-chronic-low-back-pain";
@@ -69,8 +70,8 @@ const perguntas = [
 ];
 
 export const metadata = {
-  ...pageMetadata({ title: titulo, description: descricao, path: caminho, image: midia + "/compartilhar.jpg",
-    imageAlt: "Quiropraxia em Piracanjuba com Juan Carlos Mesquita" }),
+  ...pageMetadata({ title: titulo, description: descricao, path: caminho, image: midia + "/juan-servicos-social.jpg",
+    imageAlt: descricaoArte }),
   title: { absolute: titulo },
   other: {
     "geo.region": "BR-GO", "geo.placename": "Piracanjuba, Goiás",
@@ -134,9 +135,14 @@ export default function Quiropraxia() {
               </div>
             </div>
             <figure className={s.figura}>
-              <div className={s.quadro}>
-                <Image src={midia + "/juan-consultorio.webp"} fill sizes="(max-width: 720px) 92vw, 42vw" preload alt="Juan Carlos Mesquita de Souza, quiropraxista em Piracanjuba" />
-              </div>
+              <Image
+                src={midia + "/juan-servicos.webp"}
+                width={1088}
+                height={1344}
+                sizes="(max-width: 424px) calc(100vw - 2.5rem), (max-width: 720px) 384px, (max-width: 1024px) 38vw, 384px"
+                preload
+                alt={descricaoArte}
+              />
             </figure>
           </div>
         </div>
