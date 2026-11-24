@@ -178,7 +178,7 @@ export default function Quiropraxia() {
           <div className={s.indice}>
             <h2 id="titulo-praticas">Conheça o <em>atendimento.</em></h2>
             <p className={s.introPraticas}>Juan é quiropraxista em Piracanjuba. Na Clínica Essência, trabalha com técnicas manuais. Em seu perfil, você pode ver uma demonstração e falar com ele sobre o que motivou a sua visita.</p>
-            <Image className={s.fotoClinica} src={midia + "/clinica-essencia.webp"} width={1200} height={698} sizes="(max-width: 720px) 90vw, 36vw" alt="Fachada da Clínica Essência, onde Juan atende em Piracanjuba" />
+            <Image className={s.fotoClinica} src={midia + "/fachada-clinica-essencia.webp"} width={680} height={405} sizes="(max-width: 600px) calc(100vw - 2rem), (max-width: 720px) 560px, (max-width: 1200px) 40vw, 480px" alt="Fachada da Clínica Essência, onde Juan atende em Piracanjuba" />
           </div>
           <div className={s.metodos}>
             <div>

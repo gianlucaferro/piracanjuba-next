@@ -92,7 +92,7 @@
 .praticas { align-items: center; }
 .praticas h2 { margin-top: 0; }
 .introPraticas { max-width: 46ch; margin-top: 1rem; }
-.fotoClinica { margin-top: 1.35rem; width: 100%; max-width: 30rem; height: auto; aspect-ratio: 2.55; object-fit: cover; object-position: center 50%; border-radius: .3rem 1.3rem; }
+.fotoClinica { margin-top: 1.35rem; width: 100%; max-width: 30rem; height: auto; }
 .perguntas { min-width: 0; }
 .perguntas details { border-top: 1px solid #bdcbbb; }
 .perguntas details:last-child { border-bottom: 1px solid #bdcbbb; }
