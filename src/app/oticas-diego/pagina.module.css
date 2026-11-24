@@ -44,7 +44,7 @@
   font-weight: 600;
 }
 .navegacao a:last-child { justify-content: center; min-width: 44px; }
-.navegacao a:hover, .imagem a:hover { color: var(--menta); }
+.navegacao a:hover { color: var(--menta); }
 .abertura {
   display: grid;
   grid-template-columns: .93fr 1.07fr;
@@ -62,6 +62,9 @@
   font-size: clamp(1rem, 1.23vw, 1.18rem);
   line-height: 1.68;
 }
+.acoes { display: flex; align-items: center; flex-wrap: wrap; gap: .25rem 1.35rem; }
+.rotaCapa { display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; color: #fffdf6; font-size: .92rem; font-weight: 700; }
+.rotaCapa:hover { text-decoration: underline; text-underline-offset: .25em; }
 .botao {
   display: inline-flex;
   align-items: center;
@@ -80,8 +83,7 @@
 .botao svg { width: 1.24rem; height: 1.24rem; }
 .imagem { width: min(100%, 680px); min-width: 0; }
 .imagem img { display: block; width: 100%; height: auto; }
-.imagem figcaption { display: flex; justify-content: flex-end; }
-.imagem a { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; color: #e1efde; font-size: .82rem; }
+.imagem figcaption { display: flex; justify-content: flex-end; align-items: center; gap: .45rem; margin-top: .65rem; color: #e1efde; font-size: .82rem; }
 
 .catalogo { padding-block: clamp(3.5rem, 6.5vw, 6.25rem); }
 .cabecalho { justify-content: space-between; gap: 1rem; margin-bottom: clamp(1.6rem, 3.2vw, 3rem); }

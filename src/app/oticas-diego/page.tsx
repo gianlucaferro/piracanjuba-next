@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import localFont from "next/font/local";
@@ -32,12 +33,16 @@ const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela Ó
 
 const titulo = "Ótica em Piracanjuba, GO | Óticas Diego";
 const descricao = "Óticas Diego, ótica em Piracanjuba com armações, lentes de grau, óculos de sol, relógios e acessórios. Veja o WhatsApp, os horários e como chegar à loja no Centro.";
-const meta = pageMetadata({
-  title: titulo, description: descricao, path: caminho,
-  image: "/empresas/oticas-diego/compartilhar.jpg",
-  imageAlt: "Óticas Diego em Piracanjuba",
-});
-export const metadata = { ...meta, title: { absolute: titulo } };
+const compartilhamento = {
+  url: portal + "/empresas/oticas-diego/compartilhar.jpg", width: 1200, height: 630,
+  alt: "Marca da Óticas Diego e interior da loja em Piracanjuba",
+};
+const meta = pageMetadata({ title: titulo, description: descricao, path: caminho, image: compartilhamento.url });
+export const metadata: Metadata = {
+  ...meta, title: { absolute: titulo },
+  openGraph: { ...meta.openGraph, images: [compartilhamento] },
+  twitter: { ...meta.twitter, card: "summary_large_image", images: [compartilhamento] },
+};
 
 const produtos = [
   {
@@ -66,6 +71,7 @@ const dados = {
     {
       "@type": "Optician", "@id": url + "#loja", name: marca, url, description: descricao,
       logo: portal + logo, image: portal + foto, telephone: "+" + whatsapp,
+      contactPoint: { "@type": "ContactPoint", telephone: "+" + fixo, contactType: "Atendimento da loja" },
       sameAs: [instagram], hasMap: mapa,
       address: {
         "@type": "PostalAddress", streetAddress: rua + ", Centro", addressLocality: "Piracanjuba",
@@ -99,12 +105,15 @@ export default function OticasDiego() {
             <div className={s.chamada}>
               <h1>Ótica em <span>Piracanjuba</span></h1>
               <p>Encontre armações para seus óculos de grau e experimente os modelos de sol na Óticas Diego, no Centro de Piracanjuba.</p>
-              <a className={s.botao} href={conversa}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
+              <div className={s.acoes}>
+                <a className={s.botao} href={conversa}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
+                <a className={s.rotaCapa} href={mapa}>Como chegar <ArrowUpRight size={17} aria-hidden="true" /></a>
+              </div>
             </div>
             <figure className={s.imagem}>
               <Image src={foto} width={680} height={510} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
                 alt="Interior da Óticas Diego, com expositor de óculos, balcão de madeira e painel verde com a marca da loja" />
-              <figcaption><a href={mapa}><MapPin size={16} aria-hidden="true" />{rua}, Centro <ArrowUpRight size={15} aria-hidden="true" /></a></figcaption>
+              <figcaption><MapPin size={16} aria-hidden="true" />{rua}, Centro</figcaption>
             </figure>
           </div>
         </div>
