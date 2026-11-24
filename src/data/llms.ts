@@ -302,7 +302,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Produção de milho e soja em Piracanjuba, dados da safra, Encontro Técnico Agro França e contato pelo Instagram do grupo.",
       },
       {
-        caminho: "/claro-piracanjuba",
+        caminho: "/claro",
         titulo: "Claro Piracanjuba",
         descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",
       },

@@ -13,7 +13,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   ...SLUGS_EMPRESAS,
   "pacifico-siqueira-advocacia",
   "evadvocacia",
-  "claro-piracanjuba",
+  "claro",
   "agro-franca",
 ];
 
@@ -51,6 +51,7 @@ export function caminhoCanonicoEmpresa(caminho: string): string | null {
   if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento)) return null;
   const normalizado = normalizarSegmento(segmento);
   if (!normalizado) return null;
+  if (normalizado === "claropiracanjuba") return "/claro";
   const slug = SLUGS_PAGINAS_EMPRESARIAIS.find((s) => s.replace(/-/g, "") === normalizado);
   return slug ? `/${slug}` : null;
 }

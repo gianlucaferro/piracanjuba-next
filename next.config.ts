@@ -15,7 +15,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/suaempresa", destination: "/anuncie", permanent: false },
       { source: "/zap-pba/ellen-vieira-advocacia", destination: "/evadvocacia", permanent: true },
-      { source: "/zap-pba/claro", destination: "/claro-piracanjuba", permanent: true },
+      { source: "/zap-pba/claro", destination: "/claro", permanent: true },
+      { source: "/claro-piracanjuba", destination: "/claro", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
