@@ -312,6 +312,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Produção de milho e soja em Piracanjuba, dados da safra, Encontro Técnico Agro França e contato pelo Instagram do grupo.",
       },
       {
+        caminho: "/oticas-diego",
+        titulo: "Óticas Diego em Piracanjuba",
+        descricao: "Ótica na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, relógios e acessórios. Consulte o horário, o WhatsApp e a rota até a loja.",
+      },
+      {
         caminho: "/claro",
         titulo: "Claro Piracanjuba",
         descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",
