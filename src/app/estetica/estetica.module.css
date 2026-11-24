@@ -32,7 +32,7 @@
 }
 .navegacao img { width: 8.55rem; height: auto; }
 .navegacao > div { display: flex; align-items: center; gap: clamp(.8rem, 2.6vw, 3rem); }
-.navegacao a { display: inline-flex; align-items: center; min-height: 44px; font-size: .87rem; font-weight: 600; text-decoration: none; }
+.navegacao a { color: var(--tinta); display: inline-flex; align-items: center; min-height: 44px; font-size: .87rem; font-weight: 600; text-decoration: none; }
 .navegacao a:hover { color: #865b3b; }
 .navegacao .rede { gap: .45rem; }
 .capa { display: grid; grid-template-columns: 1.12fr 1fr; min-height: 32rem; }
@@ -76,12 +76,14 @@
 .rituais a { display: block; padding-top: .7rem; color: var(--tinta); text-decoration: none; border-top: 1px solid var(--linha); }
 .ritualTopo { display: flex; gap: .35rem; align-items: center; color: var(--castanha); margin-bottom: .5rem; }
 .ritualTopo strong { font: 400 clamp(1.42rem, 2vw, 2rem)/1.3 Georgia, serif; letter-spacing: -.04em; flex: 1; }
+.ritualTopo svg { flex-shrink: 0; }
 .ritualTopo span { font-size: .8rem; white-space: nowrap; }
 .rituais a:hover strong { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2rem; }
 .agenda {
   display: grid; grid-template-columns: .83fr 1.17fr; align-items: center; gap: clamp(2.35rem, 8vw, 8rem);
   padding: clamp(3.5rem, 5.9vw, 6rem) var(--margem); background: #503e31; color: #fff8ec;
 }
+.agenda a:focus-visible { outline-color: #fff8ec; }
 .agenda h2 { margin-bottom: 1.15rem; }
 .agenda p { max-width: 35ch; color: #e9dccc; }
 .instagram { display: inline-flex; min-height: 44px; align-items: center; gap: .48rem; margin-top: .9rem; color: #fff7ea; font-size: .9rem; text-underline-offset: .25rem; }
@@ -98,7 +100,7 @@
 .mapa { min-width: 0; }
 .figuraMapa { position: relative; display: block; aspect-ratio: 2; overflow: hidden; background: #ded3bf; border-radius: .22rem; }
 .figuraMapa img { object-fit: contain; }
-.credito { display: inline-flex; align-items: center; min-height: 32px; font-size: .72rem; color: #655344; text-underline-offset: .15em; }
+.credito { display: inline-flex; align-items: center; min-height: 44px; font-size: .72rem; color: #655344; text-underline-offset: .15em; }
 .mapaFoto { position: absolute; left: .7rem; top: .7rem; min-height: 44px; display: inline-flex; gap: .45rem; align-items: center;
   background: #fffaf2; border-radius: 2rem; color: var(--tinta); font-size: .85rem; font-weight: 650; padding: .65rem 1rem; box-shadow: 0 2px 12px #27201830; }
 .figuraMapa:hover .mapaFoto { background: var(--creme); }
@@ -148,6 +150,8 @@
   .endereco p { max-width: 100%; }
 }
 @media (max-width: 390px) {
+  .rituais { grid-template-columns: 1fr; gap: .9rem; }
+  .navegacao .rede { min-width: 44px; justify-content: center; }
   .navegacao .rede span { display: none; }
   .capaTexto { padding-top: 2rem; }
   .acoes { gap: .25rem .8rem; }

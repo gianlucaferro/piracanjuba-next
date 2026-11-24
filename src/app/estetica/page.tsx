@@ -40,7 +40,7 @@ const servicos = [
 
 const experiencias = [
   { nome: "Zen", minutos: 40, detalhes: "Massagem capilar e no pescoço, com secagem suave dos fios ao final." },
-  { nome: "Essence", minutos: 50, detalhes: "Acrescenta massagem facial e no pescoço, hidratação capilar e máscara para o rosto." },
+  { nome: "Essence", minutos: 50, detalhes: "Combina massagem capilar, facial e no pescoço com hidratação dos fios e máscara para o rosto." },
   { nome: "Glow", minutos: 60, detalhes: "Massagem capilar e facial, hidratação dos fios e do rosto e finalização com secagem." },
   { nome: "Luxo", minutos: 80, detalhes: "Inclui massagem corporal, capilar e facial, hidratação dos fios e máscara para o rosto." },
 ];
@@ -64,6 +64,7 @@ const dados = {
       logo: portal + midia + "/marca.webp", image: portal + midia + "/essencia-piracanjuba.jpg",
       sameAs: [clinica.instagram, "https://bio.site/clinicaessenciaestetica"],
       hasMap: clinica.mapa,
+      geo: { "@type": "GeoCoordinates", ...clinica.coordenadas },
       address: { "@type": "PostalAddress", streetAddress: clinica.rua + ", " + clinica.bairro,
         addressLocality: "Piracanjuba", addressRegion: "GO", addressCountry: "BR", postalCode: clinica.cep },
       contactPoint: profissionais.map(({ nome, area, numero }) => ({
@@ -123,29 +124,30 @@ export default function EssenciaEstetica() {
             </div>
           ))}
         </div>
-        <div className={s.experiencias} aria-labelledby="titulo-experiencias">
+        <section className={s.experiencias} aria-labelledby="titulo-experiencias">
           <div className={s.escolha}><h3 id="titulo-experiencias">Escolha o seu Head Spa</h3><p>Cada ritual tem seu tempo. Toque no nome para consultar a agenda com Laurieni.</p></div>
           <div className={s.rituais}>
             {experiencias.map(({ nome, minutos, detalhes }) => (
-              <a key={nome} href={linkWhatsapp(clinica.telefoneEsteticaSpa, "Olá, Laurieni! Gostaria de consultar a agenda do Head Spa " + nome + " na Essência.")} aria-label={"Consultar Head Spa " + nome + " de " + minutos + " minutos com Laurieni no WhatsApp"}>
+              <a key={nome} href={linkWhatsapp(clinica.telefoneEsteticaSpa, "Olá, Laurieni! Gostaria de consultar a agenda do Head Spa " + nome + " de " + minutos + " minutos na Essência.")}>
                 <span className={s.ritualTopo}><strong>{nome}</strong><span>{minutos} min</span><ArrowUpRight size={16} aria-hidden="true" /></span>
                 <p>{detalhes}</p>
+                <span className="sr-only">Consultar Head Spa {nome} com Laurieni no WhatsApp.</span>
               </a>
             ))}
           </div>
-        </div>
+        </section>
       </section>
       <section id="equipe" className={s.agenda} aria-labelledby="titulo-agenda">
         <div className={s.agendaTexto}>
           <h2 id="titulo-agenda">Agende com<br /> a sua profissional.</h2>
-          <p>Escolha a área de atendimento para conversar sobre procedimentos, valores e horários pelo WhatsApp.</p>
+          <p>Para massagens, cuidados faciais e Head Spa, fale com Laurieni. Você também pode chamar Neuzirene ou Adryellen diretamente pelo WhatsApp.</p>
           <a href={clinica.instagram} className={s.instagram}><InstagramIcon width={19} height={19} /> @essenciaclinicaestetica_</a>
         </div>
         <div className={s.contatos}>
           {profissionais.map(({ nome, area, numero }) => (
-            <a key={numero} href={contato(nome, numero)} aria-label={"WhatsApp de " + nome + ", " + area + ", " + formatarTelefoneBr(numero)}>
+            <a key={numero} href={contato(nome, numero)}>
               <span><small>{area}</small><strong>{nome}</strong></span>
-              <span className={s.numero}><WhatsAppIcon className="h-4 w-4" fill="currentColor" /> {formatarTelefoneBr(numero)}</span>
+              <span className={s.numero}><WhatsAppIcon className="h-4 w-4" fill="currentColor" /> <span className="sr-only">WhatsApp</span>{formatarTelefoneBr(numero)}</span>
               <ArrowUpRight size={20} aria-hidden="true" />
             </a>
           ))}
