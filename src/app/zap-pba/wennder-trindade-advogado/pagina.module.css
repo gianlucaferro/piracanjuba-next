@@ -1,0 +1,265 @@
+.pagina {
+  --marinho: #15283a;
+  --papel: #f8f6f0;
+  --ouro: #d5b98e;
+  --texto: #1d3040;
+  color: var(--texto);
+  background: var(--papel);
+}
+
+.largura {
+  width: min(1064px, calc(100% - 80px));
+  margin-inline: auto;
+}
+
+.pagina h1, .pagina h2 {
+  font-family: var(--wennder-serifa), Georgia, serif;
+  font-weight: 400;
+}
+
+.pagina a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 5px;
+}
+
+.capa {
+  color: #fbf7ef;
+  background: linear-gradient(115deg, #112436 12%, var(--marinho) 58%, #203649);
+  border-bottom: 4px solid var(--ouro);
+}
+
+.navegacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ffffff2e;
+  color: #e0e6e8;
+  font-size: .81rem;
+  letter-spacing: .015em;
+}
+
+.navegacao div, .navegacao a, .acoes, .botao, .linkCapa, .linkTexto, .rodape a, .contato dt, .contato dd a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.navegacao a {
+  gap: 9px;
+  min-height: 49px;
+}
+
+.navegacao div { gap: 28px; }
+
+.navegacao a:hover, .linkCapa:hover, .rodape a:hover { text-decoration: underline; }
+
+.apresentacao {
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  padding: 42px 12px 44px 0;
+}
+
+.registro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 20px;
+  color: var(--ouro);
+  font-size: .78rem;
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.registro::before {
+  content: "";
+  width: 42px;
+  height: 1px;
+  background: currentColor;
+}
+
+.pagina h1 {
+  margin: 0;
+  font-size: clamp(4.5rem, 8vw, 7.25rem);
+  line-height: .95;
+  letter-spacing: -.045em;
+}
+
+.pagina h1 em {
+  display: block;
+  color: var(--ouro);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -.055em;
+}
+
+.tituloProfissional {
+  margin: 25px 0 0;
+  color: #e4e8e8;
+  font-size: clamp(1.03rem, 1.5vw, 1.22rem);
+  line-height: 1.55;
+}
+
+.acoes {
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 29px;
+}
+
+.botao, .linkCapa { gap: 9px; min-height: 47px; font-size: .91rem; }
+
+.botao {
+  padding: 0 20px;
+  border: 1px solid var(--ouro);
+  border-radius: 4px;
+  background: var(--ouro);
+  color: #162636;
+  font-weight: 700;
+}
+
+.botao:hover { background: #ead5b3; }
+.botao svg { width: 18px; height: 18px; }
+
+.linkCapa { color: #f2eee8; }
+
+.retrato {
+  position: relative;
+  width: min(100%, 418px);
+  aspect-ratio: .98;
+  margin-left: auto;
+  isolation: isolate;
+}
+
+.retrato::before {
+  position: absolute;
+  content: "";
+  z-index: -1;
+  inset: -10px -10px 12px 12px;
+  border: 1px solid #d5b98e99;
+}
+
+.retrato img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 72%;
+}
+
+.informacoes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 85px);
+  align-items: start;
+  padding-block: clamp(44px, 6vw, 78px);
+}
+
+.perfil, .contato { scroll-margin-top: 78px; }
+.pagina h2 { margin: 0; font-size: clamp(2rem, 3.25vw, 3rem); line-height: 1.08; letter-spacing: -.035em; }
+
+.perfil h2::before {
+  display: block;
+  content: "";
+  width: 46px;
+  height: 2px;
+  background: #987649;
+  margin-bottom: 22px;
+}
+
+.perfil p {
+  font-size: 1.01rem;
+  line-height: 1.8;
+  color: #41505a;
+  margin: 16px 0 0;
+}
+
+.perfil strong { font-weight: 700; color: var(--texto); }
+
+.linkTexto {
+  gap: 6px;
+  font-size: .9rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: #8b9394;
+  text-underline-offset: 4px;
+}
+
+.fonte { text-decoration: underline; text-decoration-color: #a7aaa6; text-underline-offset: 3px; }
+.fonte:hover { text-decoration-color: currentColor; }
+.linkTexto:hover { text-decoration-color: currentColor; }
+.perfil > a { margin-top: 16px; min-height: 40px; }
+
+.contato {
+  padding: 27px 30px 25px;
+  border: 1px solid #dad4c6;
+  border-top: 3px solid #9f8057;
+  background: #fffcf7;
+}
+
+.contato h2 { font-size: clamp(1.7rem, 2.5vw, 2.1rem); }
+.contato dl { margin: 16px 0 0; }
+
+.contato dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid #e2ddd0;
+}
+
+.contato dt { gap: 8px; color: #4a565e; font-size: .81rem; font-weight: 600; }
+.contato dt svg { flex-shrink: 0; width: 16px; height: 16px; color: #836941; }
+.contato dd { margin: 0; font-size: .92rem; font-weight: 600; }
+.contato dd a { gap: 4px; min-height: 35px; }
+.contato dd a:hover { text-decoration: underline; }
+
+.contato dl > .endereco {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 15px;
+  padding-bottom: 0;
+}
+
+.endereco p { margin: 5px 0; font-size: .85rem; line-height: 1.6; font-weight: 400; color: #4a565e; }
+
+.rodape { background: #f0eee7; border-top: 1px solid #dfdacf; color: #52606a; font-size: .75rem; }
+.rodape > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding-block: 12px; }
+.rodape a { min-height: 29px; gap: 4px; }
+
+@media (max-width: 800px) {
+  .largura { width: calc(100% - 48px); }
+  .apresentacao { gap: 24px; }
+  .acoes { gap: 15px; }
+  .contato { padding: 22px; }
+}
+
+@media (max-width: 680px) {
+  .largura { width: calc(100% - 44px); }
+  .navegacao a { min-height: 43px; }
+  .navegacao div { gap: 18px; }
+  .apresentacao { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 29px 0 26px; }
+  .registro { font-size: .7rem; margin-bottom: 12px; gap: 10px; }
+  .registro::before { width: 30px; }
+  .pagina h1 { font-size: clamp(2.55rem, 9.8vw, 4.1rem); line-height: 1.06; }
+  .pagina h1 em { display: inline; }
+  .tituloProfissional { margin-top: 9px; }
+  .acoes { margin-top: 17px; }
+  .botao { padding-inline: 14px; }
+  .botao, .linkCapa { min-height: 44px; font-size: .85rem; }
+  .retrato { width: calc(100% - 7px); max-width: 435px; height: clamp(250px, 74vw, 360px); aspect-ratio: auto; margin: 0 auto 0 0; }
+  .retrato img { object-position: 50% 71%; }
+  .retrato::before { inset: -7px -7px 8px 8px; }
+  .informacoes { grid-template-columns: minmax(0, 1fr); gap: 30px; padding-block: 36px; }
+  .perfil h2::before { margin-bottom: 15px; }
+  .perfil p { font-size: .98rem; }
+}
+
+@media (max-width: 350px) {
+  .largura { width: calc(100% - 32px); }
+  .contato { padding: 18px 14px; }
+  .contato dl > div { gap: 6px; }
+}

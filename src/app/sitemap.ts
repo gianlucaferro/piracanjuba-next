@@ -3,7 +3,7 @@ import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { BUS_CHECKED_AT } from "@/data/horariosOnibus";
 import { EMPRESAS } from "@/data/empresas";
 import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
-import { previas } from "@/data/previas-zap";
+import { previasDaRotaDinamica } from "@/data/previas-zap";
 import { ABAS_CAMARA, ABAS_PREFEITURA, ROTAS_ESTATICAS } from "@/lib/sitemap-rotas";
 
 const SITE_URL = "https://piracanjuba.ai";
@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const fichasZap = previas.map(({ slug }) => ({ url: `${SITE_URL}/zap-pba/${slug}` }));
+  const fichasZap = previasDaRotaDinamica.map(({ slug }) => ({ url: `${SITE_URL}/zap-pba/${slug}` }));
 
   // Anúncios ativos do classificados (dinâmico)
   const dynamicRoutes: MetadataRoute.Sitemap = [];

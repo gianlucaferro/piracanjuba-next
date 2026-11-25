@@ -332,6 +332,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
+        caminho: "/zap-pba/wennder-trindade-advogado",
+        titulo: "Wennder Trindade, advogado em Piracanjuba",
+        descricao: "Perfil profissional de Wennder Trindade e Silva (OAB/GO 51.422), natural de Piracanjuba. Consulte a localização do escritório e o WhatsApp para atendimento.",
+      },
+      {
         caminho: "/estacionamentoaeroporto",
         titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
