@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDownRight, ArrowUpRight, Clock3, DollarSign, Euro, Minus } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ChartLine as LineChartIcon, Clock3, DollarSign, Euro, Minus } from "lucide-react";
 import {
   isExchangeQuoteDelayed,
   parseExchangeSnapshot,
@@ -175,6 +176,13 @@ export default function CotacoesCambio() {
           <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden />
           Atualização automática a cada minuto
         </p>
+        <Link
+          href="/economia#dolar-30-dias"
+          className="inline-flex items-center gap-1 font-medium text-primary underline underline-offset-4 hover:text-foreground"
+        >
+          <LineChartIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Dólar nos últimos 30 dias
+        </Link>
         {query.isError && (
           <button
             type="button"
