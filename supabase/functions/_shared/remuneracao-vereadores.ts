@@ -10,7 +10,12 @@
 
 type JsonRecord = Record<string, unknown>;
 
-export type VereadorCadastro = { id: string; nome: string };
+export type VereadorCadastro = {
+  id: string;
+  nome: string;
+  inicio_mandato?: string | null;
+  fim_mandato?: string | null;
+};
 
 export type LinhaVereadorFolha = {
   nome: string;
@@ -32,20 +37,38 @@ export type PlanoCompetencia = {
   linhas: LinhaRemuneracaoMensal[];
   /** Vereadores da folha sem correspondência no cadastro (ex.: suplente em exercício). */
   sem_cadastro: string[];
+  /** Vereadores casados cuja linha veio sem bruto legível: não gravados. */
+  sem_bruto: string[];
+  /** Vereadores em mandato na competência que não aparecem na folha mensal. */
+  ausentes: string[];
 };
 
-/** "9.721,92" -> 9721.92; vazio ou inválido -> null. */
+/**
+ * "9.721,92" -> 9721.92; vazio ou inválido -> null. Só aceita número ou texto no
+ * formato brasileiro (milhar com ponto em grupos de 3, decimal com vírgula), para
+ * que "1.2,34" ou um array não virem valor de folha.
+ */
 export function parseValorBRL(value: unknown): number | null {
-  if (value === null || value === undefined) return null;
-  if (typeof value === "number") return Number.isFinite(value) ? value : null;
-  const text = String(value).replace("R$", "").trim();
-  if (!text) return null;
-  const normalized = text.includes(",")
-    ? text.replace(/\./g, "").replace(",", ".")
-    : text;
-  if (!/^-?\d+(\.\d+)?$/.test(normalized)) return null;
-  const parsed = Number(normalized);
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
+  }
+  if (typeof value !== "string") return null;
+  const text = value.replace("R$", "").trim();
+  if (!/^-?(\d{1,3}(\.\d{3})+|\d+)(,\d{1,2})?$/.test(text)) return null;
+  const parsed = Number(text.replace(/\./g, "").replace(",", "."));
   return Number.isFinite(parsed) ? Math.round(parsed * 100) / 100 : null;
+}
+
+/** Vereador em mandato em algum dia da competência (datas AAAA-MM-DD; vazio = aberto). */
+export function emMandatoNaCompetencia(
+  vereador: VereadorCadastro,
+  competencia: string,
+): boolean {
+  const inicioMes = `${competencia}-01`;
+  const fimMes = `${competencia}-31`;
+  const inicio = vereador.inicio_mandato?.slice(0, 10);
+  const fim = vereador.fim_mandato?.slice(0, 10);
+  return (!inicio || inicio <= fimMes) && (!fim || fim >= inicioMes);
 }
 
 const PARTICULAS = new Set(["de", "da", "do", "das", "dos", "e"]);
@@ -133,6 +156,7 @@ export function planejarCompetencia(
   }
   const linhas: LinhaRemuneracaoMensal[] = [];
   const semCadastro: string[] = [];
+  const semBruto: string[] = [];
   const usados = new Map<string, string>();
   for (const linha of folha) {
     const vereadorId = casarVereador(linha.nome, vereadores);
@@ -147,7 +171,12 @@ export function planejarCompetencia(
       );
     }
     usados.set(vereadorId, linha.nome);
-    if (linha.bruto === null || linha.bruto <= 0) continue;
+    if (linha.bruto === null) {
+      semBruto.push(linha.nome);
+      continue;
+    }
+    // Bruto zerado é mês sem pagamento publicado: não grava nem acusa.
+    if (linha.bruto <= 0) continue;
     linhas.push({
       vereador_id: vereadorId,
       competencia,
@@ -158,7 +187,51 @@ export function planejarCompetencia(
       liquido: linha.liquido,
     });
   }
-  return { linhas, sem_cadastro: semCadastro };
+  const ausentes = vereadores
+    .filter((v) => emMandatoNaCompetencia(v, competencia) && !usados.has(v.id))
+    .map((v) => v.nome);
+  return { linhas, sem_cadastro: semCadastro, sem_bruto: semBruto, ausentes };
+}
+
+/** total da resposta do portal: inteiro não negativo ou texto só de dígitos; senão null. */
+export function totalDaFonte(value: unknown): number | null {
+  if (typeof value === "number") {
+    return Number.isSafeInteger(value) && value >= 0 ? value : null;
+  }
+  if (typeof value === "string" && /^\d+$/.test(value.trim())) {
+    const total = Number(value.trim());
+    return Number.isSafeInteger(total) ? total : null;
+  }
+  return null;
+}
+
+function inteiroDoParametro(value: unknown): number | null {
+  if (typeof value === "number") return Number.isInteger(value) ? value : null;
+  if (typeof value === "string" && /^\d{1,4}$/.test(value.trim())) {
+    return Number(value.trim());
+  }
+  return null;
+}
+
+const ausente = (value: unknown) =>
+  value === undefined || value === null || value === "";
+
+/**
+ * Competência pedida ao coletor. Sem ano e sem mes: null (o coletor usa o mês
+ * corrente e revisa os 3 anteriores). Informado um deles, exige os dois, inteiros
+ * ou texto de dígitos ("07" vale), dentro do intervalo; senão erro, nunca o padrão.
+ */
+export function competenciaDosParametros(
+  anoRaw: unknown,
+  mesRaw: unknown,
+): { ano: number; mes: number } | null {
+  if (ausente(anoRaw) && ausente(mesRaw)) return null;
+  const ano = inteiroDoParametro(anoRaw);
+  const mes = inteiroDoParametro(mesRaw);
+  if (ano === null || mes === null || ano < 2000 || ano > 2100 || mes < 1 || mes > 12) {
+    throw new Error("Informe ano e mes juntos, como inteiros válidos");
+  }
+  return { ano, mes };
 }
 
 /** Competência padrão do coletor: o mês corrente em Brasília (UTC-3). */

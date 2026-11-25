@@ -4,8 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { CENTI_BASE_CAMARA, centiCall } from "../_shared/centi-client.ts";
 import { folhaCompetencias } from "../_shared/folha-retroativa.ts";
 import {
+  competenciaDosParametros,
   mesCorrenteBrasilia,
   planejarCompetencia,
+  totalDaFonte,
   vereadoresDaFolhaMensal,
   type LinhaRemuneracaoMensal,
   type VereadorCadastro,
@@ -38,10 +40,13 @@ type ResultadoCompetencia = {
   status: "success" | "partial" | "sem_publicacao" | "error";
   registros_fonte: number | null;
   vereadores_folha: number;
+  planejadas: number;
   gravadas: number;
   novas: number;
   atualizadas: number;
   sem_cadastro: string[];
+  sem_bruto: string[];
+  ausentes: string[];
   linhas?: LinhaRemuneracaoMensal[];
   error?: string;
 };
@@ -73,14 +78,8 @@ async function fetchFolhaCompleta(ano: number, mes: number) {
     if (result.error || result.erro || result.success === false) {
       throw new Error("Folha Câmara: fonte informou erro na consulta");
     }
-    const reported = result.total === null || result.total === undefined ||
-        result.total === ""
-      ? NaN
-      : Number(result.total);
-    if (
-      !Number.isSafeInteger(reported) || reported < 0 ||
-      !Array.isArray(result.dados)
-    ) {
+    const reported = totalDaFonte(result.total);
+    if (reported === null || !Array.isArray(result.dados)) {
       throw new Error("Folha Câmara: resposta sem total ou dados válidos");
     }
     if (total !== null && total !== reported) {
@@ -107,78 +106,64 @@ async function gravarCompetencia(
   competencia: string,
   linhas: LinhaRemuneracaoMensal[],
 ) {
+  // Só para contar novas e atualizadas; a gravação é um upsert único na chave
+  // UNIQUE (vereador_id, competencia): o mês entra inteiro ou não entra.
   const { data: existentes, error } = await sb.from("remuneracao_mensal")
-    .select("id, vereador_id")
+    .select("vereador_id")
     .eq("competencia", competencia);
   if (error) throw new Error(`Leitura de ${competencia}: ${error.message}`);
-  const porVereador = new Map<string, string>();
-  for (const row of existentes || []) {
-    if (porVereador.has(row.vereador_id)) {
-      throw new Error(
-        `remuneracao_mensal tem linha duplicada em ${competencia}; nada gravado`,
-      );
-    }
-    porVereador.set(row.vereador_id, row.id);
-  }
-
-  let novas = 0;
-  let atualizadas = 0;
+  const jaExistiam = new Set(
+    (existentes || []).map((row: { vereador_id: string }) => row.vereador_id),
+  );
   const agora = new Date().toISOString();
-  for (const linha of linhas) {
-    const valores = {
+  const { error: upsertError } = await sb.from("remuneracao_mensal").upsert(
+    linhas.map((linha) => ({
+      vereador_id: linha.vereador_id,
+      competencia,
       subsidio_referencia: linha.subsidio_referencia,
       bruto: linha.bruto,
       liquido: linha.liquido,
       fonte_url: SOURCE_URL,
       updated_at: agora,
-    };
-    const id = porVereador.get(linha.vereador_id);
-    if (id) {
-      const { error: updateError } = await sb.from("remuneracao_mensal")
-        .update(valores).eq("id", id);
-      if (updateError) {
-        throw new Error(`Atualização ${competencia}: ${updateError.message}`);
-      }
-      atualizadas++;
-    } else {
-      const { error: insertError } = await sb.from("remuneracao_mensal")
-        .insert({ vereador_id: linha.vereador_id, competencia, ...valores });
-      if (insertError) {
-        throw new Error(`Inclusão ${competencia}: ${insertError.message}`);
-      }
-      novas++;
-    }
+    })),
+    { onConflict: "vereador_id,competencia" },
+  );
+  if (upsertError) {
+    throw new Error(`Gravação de ${competencia}: ${upsertError.message}`);
   }
-  return { novas, atualizadas };
+  const atualizadas = linhas.filter((l) => jaExistiam.has(l.vereador_id)).length;
+  return { novas: linhas.length - atualizadas, atualizadas };
 }
 
 async function lerParametros(req: Request) {
   const url = new URL(req.url);
   let body: JsonRecord = {};
   if (req.method === "POST") {
-    try {
-      const parsed = await req.json();
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        body = parsed as JsonRecord;
+    const texto = (await req.text()).trim();
+    if (texto) {
+      // Corpo malformado não pode cair no padrão e disparar uma coleta real.
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(texto);
+      } catch {
+        throw new Error("Corpo JSON inválido");
       }
-    } catch {
-      body = {};
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("Corpo JSON deve ser um objeto");
+      }
+      body = parsed as JsonRecord;
     }
   }
   const pick = (key: string) => url.searchParams.get(key) ?? body[key];
-  const anoRaw = pick("ano");
-  const mesRaw = pick("mes");
-  const explicit = anoRaw !== undefined && anoRaw !== null && anoRaw !== "" &&
-    mesRaw !== undefined && mesRaw !== null && mesRaw !== "";
-  if (!explicit && (anoRaw || mesRaw)) {
-    throw new Error("Informe ano e mes juntos");
-  }
-  const padrao = mesCorrenteBrasilia();
-  const ano = explicit ? Number(anoRaw) : padrao.ano;
-  const mes = explicit ? Number(mesRaw) : padrao.mes;
+  const pedida = competenciaDosParametros(pick("ano"), pick("mes"));
+  const { ano, mes } = pedida ?? mesCorrenteBrasilia();
   const dryRaw = pick("dry_run");
+  if (dryRaw !== undefined && dryRaw !== null && dryRaw !== true &&
+    dryRaw !== false && dryRaw !== "true" && dryRaw !== "false") {
+    throw new Error("dry_run deve ser true ou false");
+  }
   const dryRun = dryRaw === true || dryRaw === "true";
-  return { ano, mes, explicit, dryRun };
+  return { ano, mes, explicit: pedida !== null, dryRun };
 }
 
 Deno.serve(async (req) => {
@@ -216,7 +201,7 @@ Deno.serve(async (req) => {
   const resultados: ResultadoCompetencia[] = [];
   try {
     const { data: vereadores, error: vereadoresError } = await sb
-      .from("vereadores").select("id, nome");
+      .from("vereadores").select("id, nome, inicio_mandato, fim_mandato");
     if (vereadoresError) throw new Error(vereadoresError.message);
     const cadastro = (vereadores || []) as VereadorCadastro[];
     if (cadastro.length === 0) throw new Error("Cadastro de vereadores vazio");
@@ -227,10 +212,13 @@ Deno.serve(async (req) => {
         status: "error",
         registros_fonte: null,
         vereadores_folha: 0,
+        planejadas: 0,
         gravadas: 0,
         novas: 0,
         atualizadas: 0,
         sem_cadastro: [],
+        sem_bruto: [],
+        ausentes: [],
       };
       resultados.push(resultado);
       try {
@@ -253,6 +241,9 @@ Deno.serve(async (req) => {
         }
         const plano = planejarCompetencia(periodo.competencia, folha, cadastro);
         resultado.sem_cadastro = plano.sem_cadastro;
+        resultado.sem_bruto = plano.sem_bruto;
+        resultado.ausentes = plano.ausentes;
+        resultado.planejadas = plano.linhas.length;
         if (plano.linhas.length === 0) {
           throw new Error("Nenhum vereador da folha casou com o cadastro");
         }
@@ -266,9 +257,14 @@ Deno.serve(async (req) => {
           );
           resultado.novas = gravacao.novas;
           resultado.atualizadas = gravacao.atualizadas;
+          resultado.gravadas = gravacao.novas + gravacao.atualizadas;
         }
-        resultado.gravadas = plano.linhas.length;
-        resultado.status = plano.sem_cadastro.length > 0 ? "partial" : "success";
+        // Folha incompleta ou com nome fora do cadastro é gravada, mas o mês fica
+        // "partial" com a lista no sync_log, em vez de "success" silencioso.
+        resultado.status = plano.sem_cadastro.length > 0 ||
+            plano.sem_bruto.length > 0 || plano.ausentes.length > 0
+          ? "partial"
+          : "success";
       } catch (error) {
         resultado.status = "error";
         resultado.error = (error as Error).message;

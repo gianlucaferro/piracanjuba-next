@@ -2,16 +2,35 @@
 
 import {
   casarVereador,
+  competenciaDosParametros,
+  emMandatoNaCompetencia,
   mesCorrenteBrasilia,
   parseValorBRL,
   planejarCompetencia,
+  totalDaFonte,
   vereadoresDaFolhaMensal,
 } from "./remuneracao-vereadores.ts";
 
+// Igualdade estrita: NaN, null e undefined não se confundem (JSON.stringify igualaria).
+function iguais(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) {
+    return false;
+  }
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const ka = Object.keys(a as object);
+  const kb = Object.keys(b as object);
+  return ka.length === kb.length &&
+    ka.every((k) =>
+      Object.prototype.hasOwnProperty.call(b, k) &&
+      iguais((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k])
+    );
+}
+
 function equal(actual: unknown, expected: unknown) {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+  if (!iguais(actual, expected)) {
     throw new Error(
-      `Esperava ${JSON.stringify(expected)}, recebeu ${JSON.stringify(actual)}`,
+      `Esperava ${Deno.inspect(expected)}, recebeu ${Deno.inspect(actual)}`,
     );
   }
 }
@@ -60,6 +79,40 @@ Deno.test("valores da folha em reais viram número", () => {
   equal(parseValorBRL(""), null);
   equal(parseValorBRL("abc"), null);
   equal(parseValorBRL(null), null);
+  equal(parseValorBRL("1.2,34"), null);
+  equal(parseValorBRL("9.721,925"), null);
+  equal(parseValorBRL(["9.721,92"]), null);
+  equal(parseValorBRL(Number.NaN), null);
+  equal(parseValorBRL(9721.92), 9721.92);
+});
+
+Deno.test("total da fonte só aceita inteiro não negativo", () => {
+  equal(totalDaFonte(0), 0);
+  equal(totalDaFonte("71"), 71);
+  equal(totalDaFonte(false), null);
+  equal(totalDaFonte(""), null);
+  equal(totalDaFonte(-1), null);
+  equal(totalDaFonte(1.5), null);
+  equal(totalDaFonte(null), null);
+});
+
+Deno.test("período: sem nada usa o padrão; informado, precisa ser válido", () => {
+  equal(competenciaDosParametros(undefined, null), null);
+  equal(competenciaDosParametros("", ""), null);
+  equal(competenciaDosParametros("2026", "07"), { ano: 2026, mes: 7 });
+  equal(competenciaDosParametros(2026, 11), { ano: 2026, mes: 11 });
+  throws(() => competenciaDosParametros(0, undefined), "ano e mes");
+  throws(() => competenciaDosParametros(2026, true), "ano e mes");
+  throws(() => competenciaDosParametros("2026", "13"), "ano e mes");
+  throws(() => competenciaDosParametros("2026", undefined), "ano e mes");
+});
+
+Deno.test("mandato vale para a competência pelas datas do cadastro", () => {
+  const v = { id: "x", nome: "X", inicio_mandato: "2025-01-01", fim_mandato: "2028-12-31" };
+  equal(emMandatoNaCompetencia(v, "2026-11"), true);
+  equal(emMandatoNaCompetencia(v, "2024-12"), false);
+  equal(emMandatoNaCompetencia(v, "2029-01"), false);
+  equal(emMandatoNaCompetencia({ id: "y", nome: "Y" }, "2026-11"), true);
 });
 
 Deno.test("nome civil da folha casa com o nome curto do cadastro", () => {
@@ -130,12 +183,13 @@ Deno.test("registro de outra competência ou linha mensal repetida falham", () =
   );
 });
 
-Deno.test("plano grava subsídio, bruto e líquido e separa quem não está no cadastro", () => {
+Deno.test("plano grava subsídio, bruto e líquido e lista quem ficou de fora", () => {
   const plano = planejarCompetencia("2026-11", [
     { nome: "WENNDER TRINDADE E SILVA", subsidio: 9721.92, bruto: 9721.92, liquido: 7292.91 },
     { nome: "SUPLENTE NOVO", subsidio: 9721.92, bruto: 9721.92, liquido: 7292.91 },
     { nome: "WELTON ETERNO DA SILVA", subsidio: null, bruto: 9721.92, liquido: null },
     { nome: "ADRIANA DIAS PINHEIRO", subsidio: 9721.92, bruto: 0, liquido: 0 },
+    { nome: "MARCO ANTONIO ANTUNES DA CRUZ", subsidio: 9721.92, bruto: null, liquido: null },
   ], cadastro);
   equal(plano.linhas, [
     {
@@ -154,6 +208,25 @@ Deno.test("plano grava subsídio, bruto e líquido e separa quem não está no c
     },
   ]);
   equal(plano.sem_cadastro, ["SUPLENTE NOVO"]);
+  // Bruto ilegível é reportado; bruto zerado (mês sem pagamento) não.
+  equal(plano.sem_bruto, ["MARCO ANTONIO ANTUNES DA CRUZ"]);
+  equal(plano.ausentes, [
+    "Aparecida Cordeiro",
+    "Fernando Silva",
+    "Reginaldo Silva",
+    "Sirley de Fatima",
+  ]);
+});
+
+Deno.test("vereador fora do mandato não conta como ausente da folha", () => {
+  const plano = planejarCompetencia("2026-11", [
+    { nome: "WENNDER TRINDADE E SILVA", subsidio: 9721.92, bruto: 9721.92, liquido: 7292.91 },
+  ], [
+    { id: "wennder", nome: "Wennder Trindade", inicio_mandato: "2025-01-01", fim_mandato: "2028-12-31" },
+    { id: "antigo", nome: "Vereador Antigo", inicio_mandato: "2021-01-01", fim_mandato: "2024-12-31" },
+  ]);
+  equal(plano.ausentes, []);
+  equal(plano.linhas.length, 1);
 });
 
 Deno.test("duas linhas da folha para o mesmo vereador é erro", () => {
