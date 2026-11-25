@@ -6314,17 +6314,18 @@
   },
   {
     "slug": "wennder-trindade-advogado",
-    "nome": "Wennder Trindade Advogado",
+    "nome": "Wennder Trindade",
     "categoria": "Advogados",
     "setor": "Advogados",
     "telefones": [
       "5564992173425"
     ],
-    "endereco": "Av. Padre Marinho - sao vicente, Piracanjuba - GO",
+    "endereco": "Padre Marinho, Piracanjuba, GO",
     "mapa": "https://www.google.com/maps?cid=764553706394390185",
-    "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "Wennder Trindade é advogado em Piracanjuba e atende na Avenida Padre Marinho, no bairro São Vicente. Para conversar com ele sobre o seu caso, consulte um horário de atendimento.",
-    "atividade": "Advocacia",
+    "foto": "/marcas-zap/fotos/wennder-trindade.webp",
+    "fotoAlt": "Retrato de Wennder Trindade, de terno azul e gravata, sentado à mesa.",
+    "resumo": "Natural de Piracanjuba, Wennder Trindade e Silva é advogado inscrito na OAB/GO sob o nº 51.422. Consulte a disponibilidade de atendimento pelo WhatsApp.",
+    "atividade": "Advogado",
     "acao": "Consultar horário com o advogado",
     "mensagem": "Olá, Dr. Wennder! Gostaria de conversar sobre um atendimento. Quais horários estão disponíveis para uma consulta?"
   },

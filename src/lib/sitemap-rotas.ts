@@ -45,6 +45,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/quiropraxia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/estetica", changeFrequency: "monthly", priority: 0.5 },
   { path: "/zap-pba", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/zap-pba/wennder-trindade-advogado", changeFrequency: "monthly", priority: 0.5 },
   { path: "/compra-e-venda", changeFrequency: "daily", priority: 0.9 },
   { path: "/pba-fipe", changeFrequency: "monthly", priority: 0.6 },
   { path: "/anuncie", changeFrequency: "monthly", priority: 0.6 },

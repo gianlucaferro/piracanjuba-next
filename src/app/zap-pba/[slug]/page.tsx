@@ -7,7 +7,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Globe, MapPin, Navigati
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { WHATSAPP_COMERCIAL } from "@/data/paginaEmpresa";
-import { previas, previaPorSlug } from "@/data/previas-zap";
+import { previasDaRotaDinamica, previaPorSlug } from "@/data/previas-zap";
 import { jsonLdFichaZap, metadadosFichaZap } from "@/lib/seo-zap";
 import { formatarTelefoneBr, linkWhatsapp } from "@/lib/whatsapp";
 import { estiloDaCategoria } from "./categorias";
@@ -20,7 +20,7 @@ const titulo = localFont({ src: "./fontes/DMSerifText-Regular.ttf", variable: "-
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return previas.map(({ slug }) => ({ slug }));
+  return previasDaRotaDinamica.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props) {
