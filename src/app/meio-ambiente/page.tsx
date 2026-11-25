@@ -5,6 +5,7 @@ import SubstituicaoPastagemSoja from "@/components/meio-ambiente/SubstituicaoPas
 import IndicadoresAmbientaisPanel from "@/components/meio-ambiente/IndicadoresAmbientaisPanel";
 import AnaliseAmbientalIntegrada from "@/components/meio-ambiente/AnaliseAmbientalIntegrada";
 import QueimadasCard from "@/components/meio-ambiente/QueimadasCard";
+import BiodiversidadePanel from "@/components/meio-ambiente/BiodiversidadePanel";
 import { fetchMapbiomasSerie } from "@/lib/data/meio-ambiente";
 import {
   fetchChuvaUltimosDias,
@@ -12,11 +13,12 @@ import {
   fetchChuvaMediaHistorica,
 } from "@/lib/data/clima";
 import { fetchIndicadores } from "@/lib/data/home";
+import { fetchBiodiversidade } from "@/lib/data/biodiversidade";
 
 export const metadata = pageMetadata({
   title: "Meio Ambiente em Piracanjuba GO — Uso do solo MapBiomas + análise integrada",
   description:
-    "Análise ambiental de Piracanjuba: risco de fogo, pressão agrícola, uso do solo MapBiomas 1985-2024, emissões CO2 da frota e saúde hídrica. Cruzamento de dados oficiais.",
+    "Meio ambiente de Piracanjuba: risco de fogo, uso do solo MapBiomas 1985-2024, espécies registradas no GBIF e no iNaturalist, emissões da frota e saúde hídrica.",
   path: "/meio-ambiente",
 });
 
@@ -66,6 +68,19 @@ const datasets = [
       "cerrado",
     ],
   }),
+  datasetJsonLd({
+    name: "Biodiversidade registrada em Piracanjuba (GBIF e iNaturalist)",
+    description:
+      "Espécies e registros de ocorrência dentro do limite do município de Piracanjuba-GO, agregados do GBIF (região GADM BRA.9.183_2, licenças CC0 e CC BY 4.0) e do iNaturalist (lugar 21162): totais, grandes grupos, espécies com mais registros e espécies ameaçadas ou quase ameaçadas na Lista Vermelha da IUCN.",
+    url: `${SITE_URL}/meio-ambiente`,
+    creator: {
+      type: "Organization",
+      name: "GBIF + iNaturalist",
+      url: "https://www.gbif.org/",
+    },
+    dateModified: today,
+    keywords: ["Piracanjuba", "biodiversidade", "espécies", "GBIF", "iNaturalist", "cerrado", "fauna", "flora"],
+  }),
 ];
 
 export default async function MeioAmbientePage() {
@@ -73,12 +88,13 @@ export default async function MeioAmbientePage() {
   const mesAtual = new Date().getMonth() + 1;
 
   // Fetch tudo em paralelo
-  const [rows, chuva90, chuvaMediaHistMensal, chuvaAnoCorrente, indicadores] = await Promise.all([
+  const [rows, chuva90, chuvaMediaHistMensal, chuvaAnoCorrente, indicadores, biodiversidade] = await Promise.all([
     fetchMapbiomasSerie(),
     fetchChuvaUltimosDias(90),
     fetchChuvaMediaHistorica(2018, 2025),
     fetchChuvaHistoricaMensal(ano),
     fetchIndicadores(),
+    fetchBiodiversidade(),
   ]);
 
   // Total chuva ano corrente YTD
@@ -116,7 +132,7 @@ export default async function MeioAmbientePage() {
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Análise ambiental integrada de Piracanjuba: risco de fogo, pressão agrícola,
-          evolução do uso do solo e emissões.
+          evolução do uso do solo, emissões e as espécies já registradas no município.
         </p>
       </header>
 
@@ -149,6 +165,11 @@ export default async function MeioAmbientePage() {
           <SubstituicaoPastagemSoja rows={rows} />
         </div>
       ) : null}
+
+      {/* Biodiversidade: espécies registradas no GBIF e no iNaturalist, dentro do limite do município. */}
+      <div className="mt-10">
+        <BiodiversidadePanel dados={biodiversidade} />
+      </div>
 
       {/* Painel "Indicadores Ambientais" com 5 fontes oficiais. */}
       <div className="mt-10">

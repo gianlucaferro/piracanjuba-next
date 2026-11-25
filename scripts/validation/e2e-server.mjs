@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import { respostaFixtureBiodiversidade } from "../../tests/fixtures/biodiversidade-fixtures.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const server = createServer((request, response) => {
@@ -12,6 +13,9 @@ const server = createServer((request, response) => {
   response.setHeader("Content-Type", "application/json");
   if (request.method === "OPTIONS") { response.writeHead(204); response.end(); return; }
   if (!["GET", "HEAD"].includes(request.method)) { response.writeHead(405); response.end('{"error":"fixture read-only"}'); return; }
+  // GBIF e iNaturalist da seção de biodiversidade de /meio-ambiente, sem rede.
+  const biodiversidade = respostaFixtureBiodiversidade(url);
+  if (biodiversidade) { response.writeHead(biodiversidade.status); response.end(request.method === "HEAD" ? undefined : JSON.stringify(biodiversidade.body)); return; }
   let data = [];
   if (url.pathname === "/rest/v1/servidores") {
     // A fixture inclui mais de mil registros e órgãos distintos para detectar truncamento e mistura.
