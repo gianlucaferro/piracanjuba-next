@@ -327,6 +327,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
+        caminho: "/estacionamentoaeroporto",
+        titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
+        descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
+      },
+      {
         caminho: "/evadvocacia",
         titulo: "Ellen Vieira Advocacia e Consultoria Jurídica",
         descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito de Família e Sucessões, Penal, Civil, do Consumidor, Previdenciário e Imobiliário, com endereço e contato por WhatsApp.",
