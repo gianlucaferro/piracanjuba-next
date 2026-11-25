@@ -314,7 +314,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/oticas-diego",
         titulo: "Óticas Diego em Piracanjuba",
-        descricao: "Ótica na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, relógios e acessórios. Consulte o horário, o WhatsApp e a rota até a loja.",
+        descricao: "Ótica e perfumaria na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, perfumes árabes, importados e nacionais, relógios Seculus e Mondaine e semijoias com garantia. Consulte o horário, o WhatsApp e a rota até a loja.",
       },
       {
         caminho: "/claro",
