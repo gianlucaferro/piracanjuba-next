@@ -20,14 +20,14 @@ const MAX_FUTURE_QUOTE_MS = 5 * 60_000;
 const MAX_COLLECTION_AGE_MS = 3 * 60_000;
 const MAX_QUOTE_AGE_MS = 15 * 60_000;
 
-function record(value: unknown): Record<string, unknown> {
+export function record(value: unknown): Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error("Resposta de câmbio inválida.");
   }
   return value as Record<string, unknown>;
 }
 
-function numberValue(value: unknown): number {
+export function numberValue(value: unknown): number {
   if (typeof value !== "number" && typeof value !== "string") {
     throw new Error("Valor de câmbio inválido.");
   }
@@ -39,7 +39,7 @@ function numberValue(value: unknown): number {
   return parsed;
 }
 
-function prices(buy: unknown, sell: unknown): { buy: number; sell: number } {
+export function prices(buy: unknown, sell: unknown): { buy: number; sell: number } {
   const parsedBuy = numberValue(buy);
   const parsedSell = numberValue(sell);
   if (parsedBuy <= 0 || parsedSell <= 0 || parsedBuy > parsedSell) {
@@ -53,7 +53,7 @@ function variation(value: unknown): number | null {
   return numberValue(value);
 }
 
-function isoDate(value: unknown): string {
+export function isoDate(value: unknown): string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value)) {
     throw new Error("Horário de câmbio inválido.");
   }

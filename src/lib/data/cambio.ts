@@ -6,7 +6,7 @@ const EXCHANGE_URL = "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-B
 const MAX_RESPONSE_BYTES = 32_768;
 const REQUEST_TIMEOUT_MS = 8_000;
 
-async function readBoundedJson(response: Response): Promise<unknown> {
+export async function readBoundedJson(response: Response): Promise<unknown> {
   const declaredLength = Number(response.headers.get("content-length"));
   if (declaredLength > MAX_RESPONSE_BYTES) {
     await response.body?.cancel();

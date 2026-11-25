@@ -4,6 +4,7 @@ import EmColetaSection from "@/components/EmColetaSection";
 import EconomiaPanel from "@/components/economia/EconomiaPanel";
 import PiracanjubaAgroCard from "@/components/economia/PiracanjubaAgroCard";
 import IndicadoresBCBCard from "@/components/economia/IndicadoresBCBCard";
+import DolarHistoricoCard from "@/components/economia/DolarHistoricoCard";
 import PibHistoricoCard from "@/components/economia/PibHistoricoCard";
 import { fetchIndicadores } from "@/lib/data/home";
 import {
@@ -132,6 +133,11 @@ export default async function EconomiaPage() {
       <section className="mb-6">
         <IndicadoresBCBCard />
       </section>
+
+      {/* Dólar comercial, 30 dias — AwesomeAPI, consultada no servidor no máximo uma vez por hora */}
+      <div className="mb-6">
+        <DolarHistoricoCard />
+      </div>
 
       {/* PIB histórico 2002-2023 + peso do agro — IBGE/SIDRA tabela 5938 */}
       <section className="mb-6">
