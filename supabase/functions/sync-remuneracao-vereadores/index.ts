@@ -1,4 +1,24 @@
+/// <reference lib="deno.ns" />
+// deno-lint-ignore no-import-prefix
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { CENTI_BASE_CAMARA, centiCall } from "../_shared/centi-client.ts";
+import { folhaCompetencias } from "../_shared/folha-retroativa.ts";
+import {
+  mesCorrenteBrasilia,
+  planejarCompetencia,
+  vereadoresDaFolhaMensal,
+  type LinhaRemuneracaoMensal,
+  type VereadorCadastro,
+} from "../_shared/remuneracao-vereadores.ts";
+
+// Remuneração mensal dos vereadores (tabela remuneracao_mensal), lida da folha
+// pública da Câmara no portal NúcleoGov. Até 2026-07 a fonte era o portal Centi
+// antigo, que parou de publicar; o coletor seguiu marcando "success" com zero
+// linhas e o perfil dos vereadores ficou parado em julho de 2026.
+//
+// Sem ano/mes, revisa o mês corrente (Brasília) e os 3 anteriores, como os
+// demais coletores de folha. Com ano e mes, só aquela competência.
+// dry_run=true consulta a fonte e devolve o plano sem gravar nada.
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,246 +26,293 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Câmara de Piracanjuba Centi portal (separate from prefeitura)
-const BASE_URL = "https://camarapiracanjuba.centi.com.br";
-const UA = "piracanjuba.ai/1.0 (transparencia legislativa)";
+const SOURCE_PATH = "/cidadao/transparencia/servidores_cnt";
+const SOURCE_URL = `${CENTI_BASE_CAMARA}${SOURCE_PATH}`;
+const PAGE_SIZE = 100;
+const MAX_PAGES = 30;
 
-function parseBRL(str: string): number | null {
-  if (!str || str.trim() === "") return null;
-  const cleaned = str.replace(/\./g, "").replace(",", ".").trim();
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? null : num;
+type JsonRecord = Record<string, unknown>;
+
+type ResultadoCompetencia = {
+  competencia: string;
+  status: "success" | "partial" | "sem_publicacao" | "error";
+  registros_fonte: number | null;
+  vereadores_folha: number;
+  gravadas: number;
+  novas: number;
+  atualizadas: number;
+  sem_cadastro: string[];
+  linhas?: LinhaRemuneracaoMensal[];
+  error?: string;
+};
+
+function asRecord(value: unknown): JsonRecord {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Folha Câmara: resposta da fonte inválida");
+  }
+  return value as JsonRecord;
 }
 
-// Column mapping (same structure as prefeitura Centi):
-// 0: Mat. | 1: Nome | 2: Data admissão | 3: Decreto | 4: Tipo admissão
-// 5: Estabilidade | 6: Cargo | 7: Função | 8: Carga horária | 9: Lotação
-// 10: Movimentação | 11: Tp. pagto | 12: Salário base | 13: Total proventos | 14: Total desc.
-const COL = { NOME: 1, CARGO: 6, SALARIO_BASE: 12, TOTAL_PROVENTOS: 13, TOTAL_DESCONTOS: 14 };
-
-interface ParsedRow {
-  nome: string;
-  cargo: string | null;
-  subsidio_referencia: number;
-  bruto: number | null;
-  liquido: number | null;
-}
-
-function parseHtml(html: string): ParsedRow[] {
-  const results: ParsedRow[] = [];
-  const tbodyMatch = html.match(/<tbody>([\s\S]*?)<\/tbody>/);
-  if (!tbodyMatch) return results;
-
-  const rows = tbodyMatch[1].split("</tr>").filter(r => r.includes("<td"));
-  for (const row of rows) {
-    const cells: string[] = [];
-    const cellPattern = /<td[^>]*>([\s\S]*?)<\/td>/g;
-    let m;
-    while ((m = cellPattern.exec(row)) !== null) {
-      cells.push(m[1].replace(/<[^>]*>/g, "").trim());
+// Mesmas travas do sync-camara-servidores: total estável entre páginas e
+// coleta completa, senão a competência não é gravada.
+async function fetchFolhaCompleta(ano: number, mes: number) {
+  const rows: JsonRecord[] = [];
+  let total: number | null = null;
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const response = await centiCall(
+      SOURCE_PATH,
+      [{
+        acao: "servidores_cnt/listar",
+        extra: { ano: String(ano), mes: String(mes) },
+        limit: { offset: page * PAGE_SIZE, pageSize: PAGE_SIZE },
+      }],
+      CENTI_BASE_CAMARA,
+      { timeoutMs: 20_000 },
+    );
+    const result = asRecord(Object.values(response)[0]);
+    if (result.error || result.erro || result.success === false) {
+      throw new Error("Folha Câmara: fonte informou erro na consulta");
     }
-    if (cells.length <= COL.CARGO) continue;
+    const reported = result.total === null || result.total === undefined ||
+        result.total === ""
+      ? NaN
+      : Number(result.total);
+    if (
+      !Number.isSafeInteger(reported) || reported < 0 ||
+      !Array.isArray(result.dados)
+    ) {
+      throw new Error("Folha Câmara: resposta sem total ou dados válidos");
+    }
+    if (total !== null && total !== reported) {
+      throw new Error("Folha Câmara: total mudou durante a paginação");
+    }
+    total = reported;
+    for (const value of result.dados) rows.push(asRecord(value));
+    if (rows.length > total) {
+      throw new Error("Folha Câmara: registros excedem o total informado");
+    }
+    if (rows.length === total) return { total, rows };
+    if (result.dados.length < PAGE_SIZE) break;
+  }
+  throw new Error(
+    `Folha Câmara: paginação incompleta ${rows.length}/${total ?? "?"}`,
+  );
+}
 
-    const nome = cells[COL.NOME];
-    const cargo = cells[COL.CARGO] || null;
-    const subsidio = cells.length > COL.SALARIO_BASE ? parseBRL(cells[COL.SALARIO_BASE]) : null;
-    const bruto = cells.length > COL.TOTAL_PROVENTOS ? parseBRL(cells[COL.TOTAL_PROVENTOS]) : null;
-    const descontos = cells.length > COL.TOTAL_DESCONTOS ? parseBRL(cells[COL.TOTAL_DESCONTOS]) : null;
-    const liquido = bruto !== null && descontos !== null ? Math.round((bruto - descontos) * 100) / 100 : null;
+// deno-lint-ignore no-explicit-any
+type SupabaseClient = any;
 
-    // Filter for vereadores only (cargo contains "VEREADOR" or "PRESIDENTE")
-    if (nome && nome.length > 2 && !nome.includes("Nenhum resultado")) {
-      const cargoUpper = (cargo || "").toUpperCase();
-      if (cargoUpper.includes("VEREADOR") || cargoUpper.includes("PRESIDENTE") || cargoUpper.includes("SECRETÁRIO DA MESA")) {
-        results.push({
-          nome,
-          cargo,
-          subsidio_referencia: subsidio || 0,
-          bruto,
-          liquido,
-        });
+async function gravarCompetencia(
+  sb: SupabaseClient,
+  competencia: string,
+  linhas: LinhaRemuneracaoMensal[],
+) {
+  const { data: existentes, error } = await sb.from("remuneracao_mensal")
+    .select("id, vereador_id")
+    .eq("competencia", competencia);
+  if (error) throw new Error(`Leitura de ${competencia}: ${error.message}`);
+  const porVereador = new Map<string, string>();
+  for (const row of existentes || []) {
+    if (porVereador.has(row.vereador_id)) {
+      throw new Error(
+        `remuneracao_mensal tem linha duplicada em ${competencia}; nada gravado`,
+      );
+    }
+    porVereador.set(row.vereador_id, row.id);
+  }
+
+  let novas = 0;
+  let atualizadas = 0;
+  const agora = new Date().toISOString();
+  for (const linha of linhas) {
+    const valores = {
+      subsidio_referencia: linha.subsidio_referencia,
+      bruto: linha.bruto,
+      liquido: linha.liquido,
+      fonte_url: SOURCE_URL,
+      updated_at: agora,
+    };
+    const id = porVereador.get(linha.vereador_id);
+    if (id) {
+      const { error: updateError } = await sb.from("remuneracao_mensal")
+        .update(valores).eq("id", id);
+      if (updateError) {
+        throw new Error(`Atualização ${competencia}: ${updateError.message}`);
       }
+      atualizadas++;
+    } else {
+      const { error: insertError } = await sb.from("remuneracao_mensal")
+        .insert({ vereador_id: linha.vereador_id, competencia, ...valores });
+      if (insertError) {
+        throw new Error(`Inclusão ${competencia}: ${insertError.message}`);
+      }
+      novas++;
     }
   }
-  return results;
+  return { novas, atualizadas };
 }
 
-// Normalize name for matching
-function normalizeName(name: string): string {
-  return name.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ").trim();
+async function lerParametros(req: Request) {
+  const url = new URL(req.url);
+  let body: JsonRecord = {};
+  if (req.method === "POST") {
+    try {
+      const parsed = await req.json();
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        body = parsed as JsonRecord;
+      }
+    } catch {
+      body = {};
+    }
+  }
+  const pick = (key: string) => url.searchParams.get(key) ?? body[key];
+  const anoRaw = pick("ano");
+  const mesRaw = pick("mes");
+  const explicit = anoRaw !== undefined && anoRaw !== null && anoRaw !== "" &&
+    mesRaw !== undefined && mesRaw !== null && mesRaw !== "";
+  if (!explicit && (anoRaw || mesRaw)) {
+    throw new Error("Informe ano e mes juntos");
+  }
+  const padrao = mesCorrenteBrasilia();
+  const ano = explicit ? Number(anoRaw) : padrao.ano;
+  const mes = explicit ? Number(mesRaw) : padrao.mes;
+  const dryRaw = pick("dry_run");
+  const dryRun = dryRaw === true || dryRaw === "true";
+  return { ano, mes, explicit, dryRun };
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
 
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: log } = await sb.from("sync_log")
-    .insert({ tipo: "remuneracao_vereadores", status: "running", detalhes: {} })
-    .select("id").single();
-  const logId = log?.id;
-
-  const errors: string[] = [];
-  let newCount = 0;
-
-  const reqUrl = new URL(req.url);
-  const now = new Date();
-  const defaultMonth = now.getMonth() === 0 ? 12 : now.getMonth();
-  const defaultYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
-  const mes = parseInt(reqUrl.searchParams.get("mes") || String(defaultMonth));
-  const ano = parseInt(reqUrl.searchParams.get("ano") || String(defaultYear));
-  const competencia = `${ano}-${String(mes).padStart(2, "0")}`;
-
+  let params: Awaited<ReturnType<typeof lerParametros>>;
+  let periodos: ReturnType<typeof folhaCompetencias>;
   try {
-    // Fetch vereadores from DB for matching
-    const { data: vereadores } = await sb.from("vereadores").select("id, nome");
-    const vereadorMap = new Map<string, string>();
-    for (const v of vereadores || []) {
-      vereadorMap.set(normalizeName(v.nome), v.id);
-    }
+    params = await lerParametros(req);
+    periodos = folhaCompetencias(params.ano, params.mes, params.explicit);
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ success: false, error: (error as Error).message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
+  }
 
-    // Try multiple orgao IDs on the Câmara Centi portal
-    // "PODER LEGISLATIVO" is typically the first option
-    const ORGAO_IDS = [22, 55, 67, 66, 23, 1, 2, 3];
-    let html = "";
-    let foundOrgao = false;
+  const sb = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  let logId: string | undefined;
+  if (!params.dryRun) {
+    const { data: log } = await sb.from("sync_log")
+      .insert({ tipo: "remuneracao_vereadores", status: "running", detalhes: {} })
+      .select("id").single();
+    logId = log?.id;
+  }
 
-    for (const orgaoId of ORGAO_IDS) {
-      const body = new URLSearchParams({
-        idorgao: String(orgaoId),
-        mes: String(mes),
-        ano: String(ano),
-        nome: "", cargo: "", decreto: "", admissao: "",
-        pagina: "1", itensporpagina: "100",
-      });
+  const resultados: ResultadoCompetencia[] = [];
+  try {
+    const { data: vereadores, error: vereadoresError } = await sb
+      .from("vereadores").select("id, nome");
+    if (vereadoresError) throw new Error(vereadoresError.message);
+    const cadastro = (vereadores || []) as VereadorCadastro[];
+    if (cadastro.length === 0) throw new Error("Cadastro de vereadores vazio");
 
+    for (const periodo of periodos) {
+      const resultado: ResultadoCompetencia = {
+        competencia: periodo.competencia,
+        status: "error",
+        registros_fonte: null,
+        vereadores_folha: 0,
+        gravadas: 0,
+        novas: 0,
+        atualizadas: 0,
+        sem_cadastro: [],
+      };
+      resultados.push(resultado);
       try {
-        const resp = await fetch(`${BASE_URL}/servidor/remuneracao`, {
-          method: "POST",
-          headers: {
-            "User-Agent": UA,
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          body: body.toString(),
-        });
-
-        if (!resp.ok) {
-          console.log(`Orgao ${orgaoId}: HTTP ${resp.status}`);
+        const fonte = await fetchFolhaCompleta(periodo.ano, periodo.mes);
+        resultado.registros_fonte = fonte.total;
+        if (fonte.total === 0) {
+          resultado.status = "sem_publicacao";
           continue;
         }
-
-        const responseHtml = await resp.text();
-        const rows = parseHtml(responseHtml);
-        if (rows.length > 0) {
-          console.log(`Found ${rows.length} vereadores in orgao ${orgaoId}`);
-          html = responseHtml;
-          foundOrgao = true;
-          break;
+        const folha = vereadoresDaFolhaMensal(
+          fonte.rows,
+          periodo.ano,
+          periodo.mes,
+        );
+        resultado.vereadores_folha = folha.length;
+        if (folha.length === 0) {
+          // A Câmara publicou a folha, mas sem vereador na folha MENSAL: é o
+          // tipo de silêncio que deixou o perfil parado em julho. Vira erro.
+          throw new Error("Folha publicada sem vereadores na folha mensal");
         }
-      } catch (e) {
-        console.log(`Orgao ${orgaoId} error: ${e.message}`);
-      }
-    }
-
-    if (!foundOrgao) {
-      // Fallback: try GET request on the page itself
-      const resp = await fetch(`${BASE_URL}/servidor/remuneracao`, {
-        headers: { "User-Agent": UA },
-      });
-      if (resp.ok) html = await resp.text();
-    }
-
-    const parsed = parseHtml(html);
-    console.log(`Vereadores com remuneração em ${competencia}: ${parsed.length}`);
-
-    for (const p of parsed) {
-      // Match to vereador
-      const normalizedName = normalizeName(p.nome);
-      let vereadorId: string | undefined;
-
-      // Try exact match first
-      vereadorId = vereadorMap.get(normalizedName);
-
-      // Try partial match
-      if (!vereadorId) {
-        for (const [key, id] of vereadorMap) {
-          if (normalizedName.includes(key) || key.includes(normalizedName)) {
-            vereadorId = id;
-            break;
-          }
-          // Try matching last names
-          const lastNameScraped = normalizedName.split(" ").pop();
-          const lastNameDb = key.split(" ").pop();
-          if (lastNameScraped && lastNameDb && lastNameScraped === lastNameDb) {
-            // Check first name too
-            const firstScraped = normalizedName.split(" ")[0];
-            const firstDb = key.split(" ")[0];
-            if (firstScraped === firstDb) {
-              vereadorId = id;
-              break;
-            }
-          }
+        const plano = planejarCompetencia(periodo.competencia, folha, cadastro);
+        resultado.sem_cadastro = plano.sem_cadastro;
+        if (plano.linhas.length === 0) {
+          throw new Error("Nenhum vereador da folha casou com o cadastro");
         }
-      }
-
-      if (!vereadorId) {
-        console.log(`Vereador não encontrado: ${p.nome}`);
-        errors.push(`Match not found: ${p.nome}`);
-        continue;
-      }
-
-      if (p.bruto === null) continue;
-
-      const { data: existing } = await sb.from("remuneracao_mensal")
-        .select("id")
-        .eq("vereador_id", vereadorId)
-        .eq("competencia", competencia)
-        .maybeSingle();
-
-      if (!existing) {
-        const { error } = await sb.from("remuneracao_mensal").insert({
-          vereador_id: vereadorId,
-          competencia,
-          subsidio_referencia: p.subsidio_referencia,
-          bruto: p.bruto,
-          liquido: p.liquido,
-          fonte_url: `${BASE_URL}/servidor/remuneracao`,
-        });
-        if (error) errors.push(`Insert rem ${p.nome}: ${error.message}`);
-        else newCount++;
-      } else {
-        // Update existing
-        await sb.from("remuneracao_mensal").update({
-          subsidio_referencia: p.subsidio_referencia,
-          bruto: p.bruto,
-          liquido: p.liquido,
-        }).eq("id", existing.id);
+        if (params.dryRun) {
+          resultado.linhas = plano.linhas;
+        } else {
+          const gravacao = await gravarCompetencia(
+            sb,
+            periodo.competencia,
+            plano.linhas,
+          );
+          resultado.novas = gravacao.novas;
+          resultado.atualizadas = gravacao.atualizadas;
+        }
+        resultado.gravadas = plano.linhas.length;
+        resultado.status = plano.sem_cadastro.length > 0 ? "partial" : "success";
+      } catch (error) {
+        resultado.status = "error";
+        resultado.error = (error as Error).message;
       }
     }
 
-    const result = { competencia, parsed: parsed.length, new: newCount, errors: errors.slice(0, 10) };
+    const erros = resultados.filter((r) => r.status === "error").length;
+    const status = erros === resultados.length
+      ? "error"
+      : erros > 0 || resultados.some((r) => r.status === "partial")
+      ? "partial"
+      : "success";
+    const detalhes = {
+      fonte: SOURCE_URL,
+      dry_run: params.dryRun,
+      competencias: resultados,
+    };
     if (logId) {
       await sb.from("sync_log").update({
-        status: errors.length > 0 ? "partial" : "success",
-        detalhes: result, finished_at: new Date().toISOString(),
-      }).eq("id", logId);
-    }
-
-    return new Response(JSON.stringify({ success: true, ...result }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Erro:", error);
-    if (logId) {
-      await sb.from("sync_log").update({
-        status: "error", detalhes: { error: error.message, errors },
+        status,
+        detalhes,
         finished_at: new Date().toISOString(),
       }).eq("id", logId);
     }
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(
+      JSON.stringify({ success: status !== "error", status, ...detalhes }),
+      {
+        status: status === "error" ? 500 : 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
+  } catch (error) {
+    const message = (error as Error).message;
+    console.error("sync-remuneracao-vereadores:", message);
+    if (logId) {
+      await sb.from("sync_log").update({
+        status: "error",
+        detalhes: { fonte: SOURCE_URL, error: message, competencias: resultados },
+        finished_at: new Date().toISOString(),
+      }).eq("id", logId);
+    }
+    return new Response(JSON.stringify({ success: false, error: message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

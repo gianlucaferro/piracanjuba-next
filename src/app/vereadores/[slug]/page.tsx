@@ -33,9 +33,11 @@ import AtividadesLegislativasPanel from "@/components/camara/AtividadesLegislati
 import {
   SUBSIDIO_NAO_INFORMADO,
   fraseSubsidioParlamentar,
+  periodoComPagamento,
   remuneracoesComPagamento,
   subsidioMaisRecente,
   temSubsidio,
+  valorAlemDoSubsidio,
 } from "../remuneracao";
 import { referenciaParlamentar, tituloPerfilParlamentar, tratamentoParlamentar } from "../tratamento";
 import { ANO_ELEICAO_NOME_URNA, identidadeParlamentar, nomeUrnaDiferente } from "../identidade";
@@ -127,6 +129,9 @@ export default async function VereadorPage({
     subsidio !== null && subsidio.competencia === ultimaRemuneracao?.competencia;
   const mostrarBruto =
     ultimaRemuneracao !== undefined && (!brutoNaMesmaCompetencia || ultimoBruto !== subsidio?.valor);
+  const alemDoSubsidioNoCard = ultimaRemuneracao ? valorAlemDoSubsidio(ultimaRemuneracao) : null;
+  const periodoPago = periodoComPagamento(result.remuneracoes);
+  const temVerbaAlemDoSubsidio = remuneracoes.some((r) => valorAlemDoSubsidio(r) !== null);
   const pessoaPublica = pessoasResumo.find((p) => p.vereador_slug === slug);
   const ultimaAtualizacaoProcessos = pessoaPublica?.ultima_atualizacao ?? null;
   const tratamento = tratamentoParlamentar(slug);
@@ -270,14 +275,18 @@ export default async function VereadorPage({
                 ? "Bruto pago na competência"
                 : `Bruto pago em ${ultimaRemuneracao.competencia}`}
               : {fmtBRL(ultimoBruto)}
+              {alemDoSubsidioNoCard !== null &&
+                ` (${fmtBRL(alemDoSubsidioNoCard)} acima do subsídio)`}
             </p>
           )}
         </div>
         <div className="stat-card">
-          <p className="text-sm uppercase tracking-wider text-muted-foreground">Custo total</p>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Total bruto pago</p>
           <p className="text-xl font-bold text-foreground mt-1">{fmtBRL(custoTotal)}</p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Soma de {remuneracoes.length} competências
+            {periodoPago
+              ? `Soma de ${remuneracoes.length} ${remuneracoes.length === 1 ? "competência publicada" : "competências publicadas"}, de ${periodoPago.inicio} a ${periodoPago.fim}`
+              : "Sem folha publicada"}
           </p>
         </div>
         {/* Card Presença removido — dados estavam equivocados */}
@@ -493,11 +502,18 @@ export default async function VereadorPage({
                 </tr>
               </thead>
               <tbody>
-                {remuneracoes.map((r, i) => (
+                {remuneracoes.map((r, i) => {
+                  const alem = valorAlemDoSubsidio(r);
+                  return (
                   <tr key={i} className="border-b border-border/50 last:border-0">
                     <td className="px-4 py-2 text-foreground">{r.competencia}</td>
                     <td className="px-4 py-2 text-right text-foreground">
                       {fmtBRL(Number(r.bruto))}
+                      {alem !== null && (
+                        <span className="block text-xs text-muted-foreground">
+                          inclui {fmtBRL(alem)} além do subsídio
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-2 text-right text-muted-foreground">
                       {fmtBRL(Number(r.liquido))}
@@ -506,10 +522,17 @@ export default async function VereadorPage({
                       {temSubsidio(r) ? fmtBRL(Number(r.subsidio_referencia)) : "Não informado"}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
+          {temVerbaAlemDoSubsidio && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Quando o bruto passa do subsídio, a folha daquele mês inclui outras verbas,
+              como adicional de férias ou 13º salário. O valor mensal do cargo é o subsídio.
+            </p>
+          )}
         </section>
       )}
 
