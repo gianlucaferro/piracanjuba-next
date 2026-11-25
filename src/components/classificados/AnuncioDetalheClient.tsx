@@ -671,6 +671,15 @@ export default function AnuncioDetalhe({ initialAnuncio }: AnuncioDetalheClientP
               <p className="text-2xl font-bold text-primary mt-1">
                 {formatPreco(item.preco, item.preco_tipo)}
               </p>
+              {item.categoria === "veiculos" && (
+                <Link
+                  href="/pba-fipe"
+                  className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary underline underline-offset-4"
+                >
+                  <Car className="w-3.5 h-3.5" aria-hidden />
+                  Compare com a tabela FIPE
+                </Link>
+              )}
             </div>
             <button
               onClick={toggleFav}
