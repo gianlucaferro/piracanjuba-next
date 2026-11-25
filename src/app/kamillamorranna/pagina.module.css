@@ -1,0 +1,348 @@
+.pagina {
+  --ardosia: #4a5a75;
+  --ardosia-escura: #3a4860;
+  --noite: #1e2636;
+  --marfim: #f6f3ee;
+  --ouro: #c9a96e;
+  --ouro-claro: #e8d7b5;
+  --texto: #263041;
+  --suave: #556073;
+  --linha: #d9d3c8;
+  --serifa: var(--km-serifa), Georgia, serif;
+  /* Barra fixa de WhatsApp no celular (BarraWhatsappEmpresa). */
+  --marca-superficie: #1e2636;
+  --marca-borda: #3a4860;
+  background: var(--marfim);
+  color: var(--texto);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+}
+.pagina h1, .pagina h2, .pagina h3, .pagina p, .pagina dl, .pagina dd, .pagina figure, .pagina blockquote { margin: 0; }
+.pagina :is(a, summary):focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+.pagina section[id] { scroll-margin-top: 5.5rem; }
+.largura { width: min(88%, 1120px); margin-inline: auto; }
+.pagina h2 {
+  font-family: var(--serifa);
+  font-size: clamp(2.3rem, 4vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+/* Capa */
+.capa {
+  color: #fff;
+  background:
+    radial-gradient(120% 90% at 85% 10%, rgb(255 255 255 / .09), transparent 60%),
+    linear-gradient(180deg, var(--ardosia) 0%, var(--ardosia-escura) 100%);
+}
+.linhaGuia {
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid rgb(255 255 255 / .2);
+  color: #e9edf3;
+  font-size: .78rem;
+  font-weight: 600;
+}
+.linhaGuia a, .linhaGuia span { display: inline-flex; align-items: center; gap: 7px; }
+.linhaGuia a { min-height: 44px; }
+.linhaGuia .cidade { margin-right: 4px; padding-right: 12px; border-right: 1px solid rgb(255 255 255 / .3); }
+.dadosCapa { flex-wrap: wrap; justify-content: end; }
+.linhaGuia a:hover, .atalho:hover, .rede:hover, .telefone:hover, .fatos a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.capaGrade {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 5.5rem);
+  padding: clamp(2.2rem, 4vw, 3.6rem) 0 clamp(2.8rem, 5vw, 4.6rem);
+}
+.apresentacao { text-align: center; }
+.marca { width: min(100%, 300px); margin: 0 auto; }
+.marca img, .monograma img { display: block; width: 100%; height: auto; }
+.sobretitulo {
+  margin-top: 1.4rem !important;
+  color: var(--ouro-claro);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.sobretitulo span { display: inline-block; white-space: nowrap; }
+.sobretitulo span[aria-hidden] { margin-inline: .2em; }
+.apresentacao h1 {
+  margin-top: .55rem;
+  font: 500 clamp(2.3rem, 4.2vw, 3.7rem)/1.02 var(--serifa);
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lide {
+  max-width: 47ch;
+  margin: 1rem auto 0 !important;
+  color: #e3e8ef;
+  font-size: clamp(1rem, 1.35vw, 1.1rem);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 24px;
+  margin-top: clamp(1.4rem, 2.2vw, 1.8rem);
+}
+.botao, .botaoClaro, .atalho, .botaoBarra { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; font-weight: 700; }
+.botao, .botaoClaro, .botaoBarra { padding: 11px 22px; border-radius: 999px; font-size: .95rem; transition: background-color .15s, transform .15s; }
+.botao { color: var(--noite); background: var(--ouro-claro); }
+.botao:hover { background: #fff; }
+.botao svg, .botaoClaro svg, .botaoBarra svg { width: 19px; height: 19px; }
+.atalho { color: #fff; font-size: .92rem; }
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.5rem !important;
+  padding: 7px 14px;
+  border: 1px solid rgb(232 215 181 / .45);
+  border-radius: 999px;
+  color: var(--ouro-claro);
+  font-size: .82rem;
+  font-weight: 600;
+}
+.retrato { position: relative; width: min(100%, 420px); justify-self: center; padding: 0 0 26px; }
+.retrato::before {
+  content: "";
+  position: absolute;
+  inset: -12px 12px 38px -12px;
+  border: 1px solid var(--ouro);
+  border-radius: 999px 999px 6px 6px;
+}
+.retrato img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 999px 999px 6px 6px;
+  box-shadow: 0 24px 60px -24px rgb(10 16 28 / .55);
+}
+.retrato figcaption {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  display: grid;
+  gap: 1px;
+  min-width: 72%;
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--noite);
+  text-align: center;
+  white-space: nowrap;
+}
+.retrato strong { font: 600 1.25rem/1.15 var(--serifa); }
+.retrato span { color: var(--ouro-claro); font-size: .76rem; letter-spacing: .03em; }
+
+/* Prisão em flagrante */
+.urgencia { background: var(--noite); color: #fff; padding-block: clamp(3.4rem, 6.5vw, 5.6rem); }
+.urgenciaGrade { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(2.4rem, 6vw, 5.5rem); align-items: start; }
+.rotulo, .rotuloEscuro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px !important;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.rotulo { color: var(--ouro); }
+.urgenciaTexto > p:not(.rotulo) { max-width: 40ch; margin-top: 1.1rem; color: #cfd6e2; font-size: 1.02rem; line-height: 1.7; }
+.botaoClaro { margin-top: 1.8rem; color: var(--noite); background: var(--ouro-claro); }
+.botaoClaro:hover { background: #fff; }
+.passos { margin: 0; padding: 0; list-style: none; counter-reset: passo; display: grid; gap: 14px; }
+.passos li {
+  counter-increment: passo;
+  position: relative;
+  padding: 20px 22px 20px 74px;
+  border: 1px solid rgb(255 255 255 / .1);
+  border-radius: 10px;
+  background: rgb(255 255 255 / .035);
+}
+.passos li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 22px;
+  top: 19px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--ouro);
+  border-radius: 50%;
+  color: var(--ouro-claro);
+  font: 600 1.15rem/1 var(--serifa);
+}
+.passos h3 { font: 600 1.32rem/1.2 var(--serifa); color: #fff; }
+.passos p { margin-top: 6px; color: #c3cbd9; font-size: .95rem; line-height: 1.6; }
+
+/* Áreas de atuação */
+.atuacao { padding-block: clamp(3.6rem, 7vw, 6rem); }
+.cabecalhoSecao { max-width: 640px; margin: 0 auto clamp(2rem, 4vw, 3rem); text-align: center; }
+.cabecalhoSecao > svg { color: var(--ardosia); margin: 0 auto 12px; }
+.cabecalhoSecao h2, .sobre h2, .perguntas h2 { color: var(--ardosia-escura); }
+.cabecalhoSecao p { margin-top: .8rem; color: var(--suave); font-size: 1.02rem; line-height: 1.6; }
+.areas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
+.areas li {
+  padding: 26px 26px 28px;
+  border: 1px solid var(--linha);
+  border-top: 3px solid var(--ouro);
+  border-radius: 4px 4px 10px 10px;
+  background: #fff;
+}
+.areas li > svg { color: var(--ardosia); }
+.areas h3 { margin-top: 14px; color: var(--ardosia-escura); font: 600 clamp(1.4rem, 1.9vw, 1.65rem)/1.18 var(--serifa); }
+.areas p { margin-top: 8px; color: var(--texto); font-size: .97rem; line-height: 1.62; }
+
+/* Tribunal do Júri */
+.juri { background: #fff; padding-block: clamp(3.6rem, 7vw, 6rem); border-block: 1px solid var(--linha); }
+.juriGrade { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2.4rem, 6vw, 5rem); align-items: center; }
+.rotuloEscuro { color: #8a6a32; }
+.juri h2 { color: var(--ardosia-escura); }
+.juriLide { max-width: 44ch; margin-top: 1rem !important; color: var(--suave); font-size: 1.05rem; line-height: 1.65; }
+.juriLista { margin-top: 1.6rem !important; border-top: 1px solid var(--linha); }
+.juriLista > div { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 6px 22px; padding-block: 15px; border-bottom: 1px solid var(--linha); }
+.juriLista dt { color: var(--ardosia-escura); font: 600 1.18rem/1.3 var(--serifa); }
+.juriLista dd { font-size: .95rem; line-height: 1.6; }
+.plenario { position: relative; }
+.plenario img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.plenario figcaption { margin-top: 8px; color: var(--suave); font-size: .76rem; }
+.citacaoCurta {
+  position: absolute;
+  left: clamp(-28px, -2.5vw, -12px);
+  bottom: 44px;
+  max-width: 70%;
+  padding: 16px 22px;
+  border-left: 3px solid var(--ouro);
+  border-radius: 0 8px 8px 0;
+  background: var(--noite);
+  color: #fff;
+  box-shadow: 0 18px 40px -20px rgb(10 16 28 / .6);
+}
+.citacaoCurta p { font: italic 500 clamp(1.3rem, 2vw, 1.6rem)/1.2 var(--serifa); }
+.citacaoCurta cite { display: block; margin-top: 4px; color: var(--ouro-claro); font-size: .78rem; font-style: normal; }
+
+/* Sobre */
+.sobre { padding-block: clamp(3.6rem, 7vw, 6rem); }
+.sobreGrade { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(2.4rem, 6vw, 5rem); align-items: center; }
+.monograma {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #5a6b88, var(--ardosia-escura) 70%);
+  box-shadow: 0 0 0 10px var(--marfim), 0 0 0 11px var(--ouro);
+}
+.monograma img { width: 100%; }
+.citacao { position: relative; margin-top: 1.4rem !important; padding-left: 2.6rem; }
+.citacao svg { position: absolute; left: 0; top: 2px; color: var(--ouro); }
+.citacao p { color: var(--ardosia-escura); font: italic 500 clamp(1.45rem, 2.2vw, 1.85rem)/1.3 var(--serifa); text-wrap: pretty; }
+.sobreTexto { max-width: 62ch; margin-top: 1.2rem !important; font-size: 1rem; line-height: 1.7; }
+.fatos { display: grid; gap: 0; margin-top: 1.5rem !important; border-top: 1px solid var(--linha); }
+.fatos > div { display: grid; grid-template-columns: 150px 1fr; gap: 4px 18px; padding-block: 13px; border-bottom: 1px solid var(--linha); font-size: .95rem; }
+.fatos dt { display: inline-flex; align-items: center; gap: 7px; color: var(--ardosia-escura); font-weight: 700; }
+.fatos dt svg { color: #8a6a32; }
+.fatos dd { line-height: 1.55; }
+.fatos a { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; color: var(--ardosia); font-size: .85rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Perguntas frequentes */
+.perguntas { background: #fff; padding-block: clamp(3.6rem, 7vw, 5.6rem); border-top: 1px solid var(--linha); }
+.perguntas h2 { text-align: center; }
+.listaPerguntas { max-width: 820px; margin: clamp(1.6rem, 3vw, 2.4rem) auto 0; border-top: 1px solid var(--linha); }
+.listaPerguntas details { border-bottom: 1px solid var(--linha); }
+.listaPerguntas summary {
+  position: relative;
+  display: block;
+  min-height: 44px;
+  padding: 18px 44px 18px 0;
+  color: var(--ardosia-escura);
+  font: 600 clamp(1.2rem, 1.7vw, 1.38rem)/1.3 var(--serifa);
+  cursor: pointer;
+  list-style: none;
+}
+.listaPerguntas summary::-webkit-details-marker { display: none; }
+.listaPerguntas summary::after {
+  content: "+";
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  translate: 0 -50%;
+  color: #8a6a32;
+  font: 400 1.7rem/1 var(--font-jakarta), system-ui, sans-serif;
+  transition: rotate .2s;
+}
+.listaPerguntas details[open] summary::after { rotate: 45deg; }
+.listaPerguntas details p { max-width: 68ch; padding: 0 0 20px; font-size: .98rem; line-height: 1.7; }
+
+/* Contato */
+.contato { background: linear-gradient(180deg, var(--ardosia) 0%, var(--ardosia-escura) 100%); color: #fff; }
+.contatoGrade { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2.4rem, 7vw, 6.5rem); padding-block: clamp(3rem, 6vw, 5.2rem); }
+.convite p { max-width: 38ch; margin-top: 1.1rem !important; color: #e3e8ef; font-size: 1.02rem; line-height: 1.65; }
+.dados { display: grid; gap: 22px; align-content: start; }
+.dados h3 { display: flex; align-items: center; gap: 7px; color: var(--ouro-claro); font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.dados h3 svg { width: 17px; height: 17px; }
+.dados p { margin-top: 6px; color: #e3e8ef; font-size: .98rem; line-height: 1.6; }
+.telefone, .rede { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; }
+.telefone { font: 600 clamp(1.8rem, 2.8vw, 2.3rem)/1.1 var(--serifa); letter-spacing: -.01em; }
+.rede { font-size: 1.02rem; font-weight: 600; }
+.registro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding-block: 18px; border-top: 1px solid rgb(255 255 255 / .2); color: #d5dce7; font-size: .8rem; line-height: 1.5; }
+
+/* Barra fixa do celular */
+.botaoBarra { width: 100%; color: var(--noite); background: var(--ouro-claro); }
+
+@media (prefers-reduced-motion: reduce) {
+  .botao, .botaoClaro, .botaoBarra, .listaPerguntas summary::after { transition: none; }
+}
+
+@media (max-width: 900px) {
+  .capaGrade { gap: 2.2rem; }
+  .urgenciaGrade, .juriGrade, .contatoGrade { grid-template-columns: 1fr; }
+  .urgenciaGrade, .juriGrade { gap: 2.2rem; }
+  .contatoGrade { gap: 2rem; }
+  .citacaoCurta { left: 12px; }
+}
+
+@media (max-width: 700px) {
+  .largura { width: 89.5%; }
+  .capaGrade { grid-template-columns: 1fr; gap: 34px; padding: 26px 0 36px; }
+  .marca { width: min(56%, 210px); }
+  .sobretitulo { font-size: .72rem; letter-spacing: .12em; }
+  .retrato { width: min(86%, 360px); }
+  .areas { grid-template-columns: 1fr; gap: 14px; }
+  .areas li { padding: 22px 20px 24px; }
+  .passos li { padding: 18px 18px 18px 64px; }
+  .passos li::before { left: 18px; top: 17px; }
+  .juriLista > div { grid-template-columns: 1fr; }
+  .sobreGrade { grid-template-columns: 1fr; }
+  .monograma { width: min(58%, 220px); margin: 6px auto 0; }
+  .fatos > div { grid-template-columns: 1fr; }
+  .fatos a { margin-left: 0; }
+  .citacaoCurta { position: static; max-width: none; margin-top: 14px; border-radius: 0 8px 8px 0; }
+  /* Espaço para a barra fixa de WhatsApp não cobrir o fim da página. */
+  .contato { padding-bottom: 76px; }
+}
+
+@media (max-width: 520px) {
+  .linhaGuia .cidade { display: none; }
+  .linhaGuia a, .linhaGuia .dadosCapa { flex-wrap: nowrap; white-space: nowrap; }
+}
+
+@media (max-width: 370px) {
+  .linhaGuia { font-size: .72rem; }
+  .botao { padding-inline: 16px; font-size: .88rem; }
+  .atalho { font-size: .84rem; }
+  .retrato figcaption { min-width: 86%; }
+}
