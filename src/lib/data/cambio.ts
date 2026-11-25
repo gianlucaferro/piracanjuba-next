@@ -6,9 +6,9 @@ const EXCHANGE_URL = "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-B
 const MAX_RESPONSE_BYTES = 32_768;
 const REQUEST_TIMEOUT_MS = 8_000;
 
-export async function readBoundedJson(response: Response): Promise<unknown> {
+export async function readBoundedJson(response: Response, maxBytes: number = MAX_RESPONSE_BYTES): Promise<unknown> {
   const declaredLength = Number(response.headers.get("content-length"));
-  if (declaredLength > MAX_RESPONSE_BYTES) {
+  if (declaredLength > maxBytes) {
     await response.body?.cancel();
     throw new Error("Resposta de câmbio excede o limite.");
   }
@@ -22,7 +22,7 @@ export async function readBoundedJson(response: Response): Promise<unknown> {
       const chunk = await reader.read();
       if (chunk.done) break;
       bytes += chunk.value.byteLength;
-      if (bytes > MAX_RESPONSE_BYTES) {
+      if (bytes > maxBytes) {
         await reader.cancel();
         throw new Error("Resposta de câmbio excede o limite.");
       }

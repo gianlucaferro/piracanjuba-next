@@ -282,6 +282,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Postos com bandeira, produtos, endereço e situação regulatória, com dados da ANP.",
       },
       {
+        caminho: "/pba-fipe",
+        titulo: "PBAFipe: tabela FIPE",
+        descricao: "Consulta do preço médio de carros, motos e caminhões na tabela FIPE do mês, por marca, modelo e ano, com código FIPE e mês de referência.",
+      },
+      {
         caminho: "/contatos",
         titulo: "Contatos úteis",
         descricao: "Telefones e WhatsApp de serviços públicos essenciais: polícia, bombeiros, SAMU, Prefeitura e outros.",

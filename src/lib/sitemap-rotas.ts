@@ -46,6 +46,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/estetica", changeFrequency: "monthly", priority: 0.5 },
   { path: "/zap-pba", changeFrequency: "weekly", priority: 0.7 },
   { path: "/compra-e-venda", changeFrequency: "daily", priority: 0.9 },
+  { path: "/pba-fipe", changeFrequency: "monthly", priority: 0.6 },
   { path: "/anuncie", changeFrequency: "monthly", priority: 0.6 },
   { path: "/historia-pba", changeFrequency: "monthly", priority: 0.7 },
   { path: "/nota-pba", changeFrequency: "yearly", priority: 0.8 },

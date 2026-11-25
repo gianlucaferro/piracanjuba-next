@@ -1,7 +1,7 @@
 const target = process.argv[2] ?? "https://piracanjuba.ai";
 const base = new URL(target);
 if (base.protocol !== "https:" && base.hostname !== "127.0.0.1") throw new Error("Destino exige HTTPS.");
-const routes = ["/", "/horarios-onibus", "/plantao-farmacias", "/prefeitura/servidores", "/camara/servidores", "/prefeitura/contratos", "/grupos-economicos", "/acompanhar", "/coleta-lixo", "/contatos", "/saude", "/educacao", "/clima", "/compra-e-venda", "/zap-pba", "/vereadores", "/sitemap.xml", "/robots.txt"];
+const routes = ["/", "/horarios-onibus", "/plantao-farmacias", "/prefeitura/servidores", "/camara/servidores", "/prefeitura/contratos", "/grupos-economicos", "/acompanhar", "/coleta-lixo", "/contatos", "/saude", "/educacao", "/clima", "/compra-e-venda", "/pba-fipe", "/zap-pba", "/vereadores", "/sitemap.xml", "/robots.txt"];
 let failures = 0;
 for (const route of routes) {
   try {
