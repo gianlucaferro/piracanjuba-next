@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
       { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
       { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
       { source: "/zap-pba/kamilla-morranna", destination: "/kamillamorranna", permanent: true },
+      { source: "/zap-pba/viaggi-vistos", destination: "/viaggi-vistos", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
@@ -46,6 +47,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/kamilla-morranna.jpg",
       destination: "/empresas/kamillamorranna/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/viaggi-vistos.jpg",
+      destination: "/empresas/viaggi-vistos/compartilhar.jpg",
     }];
   },
 };
