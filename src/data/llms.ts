@@ -322,6 +322,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",
       },
       {
+        caminho: "/kamillamorranna",
+        titulo: "Kamilla Morranna, advogada criminalista em Piracanjuba",
+        descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
+      },
+      {
         caminho: "/evadvocacia",
         titulo: "Ellen Vieira Advocacia e Consultoria Jurídica",
         descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito de Família e Sucessões, Penal, Civil, do Consumidor, Previdenciário e Imobiliário, com endereço e contato por WhatsApp.",

@@ -144,6 +144,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/ellen-vieira-advocacia", "/evadvocacia"],
     ["/zap-pba/claro", "/claro"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
+    ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
   ]) {
     assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
     assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));

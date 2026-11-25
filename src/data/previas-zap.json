@@ -3415,20 +3415,6 @@
     "mensagem": "Olá, Kamilla! Gostaria de consultar uma avaliação na Florescer Estética. Quais horários estão disponíveis na Clínica Rocaliz?"
   },
   {
-    "slug": "kamilla-morranna",
-    "nome": "Kamilla Morranna",
-    "categoria": "Advogados",
-    "setor": "Advogados",
-    "telefones": [
-      "5564992291703"
-    ],
-    "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "Kamilla Morranna está na seção de advocacia do guia de Piracanjuba. Fale diretamente com ela para consultar o atendimento jurídico e combinar uma conversa.",
-    "atividade": "Advocacia",
-    "acao": "Consultar atendimento jurídico",
-    "mensagem": "Olá, Kamilla! Encontrei seu contato na seção de advocacia do guia de Piracanjuba. Como posso consultar o atendimento e os horários?"
-  },
-  {
     "slug": "kamylla-jullya",
     "nome": "Kamylla Jullya",
     "categoria": "Beleza e Estética",
