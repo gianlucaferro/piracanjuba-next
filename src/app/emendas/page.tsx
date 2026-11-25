@@ -1,6 +1,7 @@
 import { DollarSign } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { fetchEmendas } from "@/lib/data/listings";
+import { fetchPerfisDeputadosFederais } from "@/lib/data/camara-deputados";
 import EmendasClient from "./EmendasClient";
 
 export const metadata = pageMetadata({
@@ -24,6 +25,9 @@ export default async function EmendasPage() {
   const nominais = emendas.filter((e) => !isTransfer(e));
   const totalPagoNominal = nominais.reduce((s, e) => s + Number(e.valor_pago || 0), 0);
   const totalTransfer = emendas.filter(isTransfer).reduce((s, e) => s + Number(e.valor_pago || 0), 0);
+  // Perfis oficiais dos deputados federais autores (API da Câmara, cache de 24 h). Nunca lança:
+  // com a Câmara fora do ar a lista de emendas sai igual, sem foto nem perfil.
+  const camara = await fetchPerfisDeputadosFederais(nominais);
 
   return (
     <>
@@ -47,7 +51,7 @@ export default async function EmendasPage() {
       </section>
 
       <div className="container py-8">
-        <EmendasClient emendas={nominais} />
+        <EmendasClient emendas={nominais} camara={camara} />
       </div>
     </>
   );

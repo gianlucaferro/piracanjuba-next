@@ -5,6 +5,44 @@ import { resolve } from "node:path";
 import { respostaFixtureBiodiversidade } from "../../tests/fixtures/biodiversidade-fixtures.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
+
+// Respostas fixas da API de Dados Abertos da Câmara dos Deputados para /emendas, no formato
+// conferido em 2026-11-25. "INSTAVEL" simula a Câmara fora do ar para um autor.
+const camaraDeputados = [
+  { id: 220565, nome: "Delegada Adriana Accorsi", siglaPartido: "PT", siglaUf: "GO", idLegislatura: 57 },
+  { id: 164359, nome: "Delegado Waldir", siglaPartido: "PSL", siglaUf: "GO", idLegislatura: 56 },
+  { id: 164359, nome: "Delegado Waldir", siglaPartido: "UNIÃO", siglaUf: "GO", idLegislatura: 56 },
+];
+const camaraDetalhes = {
+  220565: { nome: "Delegada Adriana Accorsi", siglaPartido: "PT", idLegislatura: 57, situacao: "Exercício" },
+  164359: { nome: "Delegado Waldir", siglaPartido: "UNIÃO", idLegislatura: 56, situacao: "Fim de Mandato" },
+};
+const semAcento = (texto) => texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+function responderCamara(url, response) {
+  const base = "https://dadosabertos.camara.leg.br/api/v2";
+  const foto = (id) => `https://www.camara.leg.br/internet/deputado/bandep/${id}.jpg`;
+  if (url.pathname === "/camara-api/v2/deputados") {
+    const nome = semAcento(url.searchParams.get("nome") ?? "");
+    if (nome.includes("INSTAVEL")) { response.writeHead(503); response.end('{"erro":"fixture indisponível"}'); return; }
+    const legislaturas = url.searchParams.getAll("idLegislatura").map(Number);
+    const dados = camaraDeputados
+      .filter((d) => semAcento(d.nome).includes(nome) && legislaturas.includes(d.idLegislatura))
+      .map((d) => ({ ...d, uri: `${base}/deputados/${d.id}`, uriPartido: `${base}/partidos/1`, urlFoto: foto(d.id), email: null }));
+    response.end(JSON.stringify({ dados, links: [{ rel: "self", href: `${base}/deputados` }] }));
+    return;
+  }
+  const id = Number(url.pathname.match(/^\/camara-api\/v2\/deputados\/(\d+)$/)?.[1]);
+  const detalhe = camaraDetalhes[id];
+  if (!detalhe) { response.writeHead(404); response.end('{"erro":"não encontrado"}'); return; }
+  response.end(JSON.stringify({
+    dados: {
+      id, uri: `${base}/deputados/${id}`, nomeCivil: "NOME CIVIL FICTÍCIO", cpf: "00000000000",
+      ultimoStatus: { id, nome: detalhe.nome, nomeEleitoral: detalhe.nome, siglaPartido: detalhe.siglaPartido, siglaUf: "GO", idLegislatura: detalhe.idLegislatura, urlFoto: foto(id), situacao: detalhe.situacao, condicaoEleitoral: "Titular", data: "2023-02-01" },
+    },
+    links: [{ rel: "self", href: `${base}/deputados/${id}` }],
+  }));
+}
+
 const server = createServer((request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4319");
   response.setHeader("Access-Control-Allow-Origin", "*");
@@ -16,7 +54,23 @@ const server = createServer((request, response) => {
   // GBIF e iNaturalist da seção de biodiversidade de /meio-ambiente, sem rede.
   const biodiversidade = respostaFixtureBiodiversidade(url);
   if (biodiversidade) { response.writeHead(biodiversidade.status); response.end(request.method === "HEAD" ? undefined : JSON.stringify(biodiversidade.body)); return; }
+  if (url.pathname.startsWith("/camara-api/v2/")) { responderCamara(url, response); return; }
   let data = [];
+  if (url.pathname === "/rest/v1/emendas_parlamentares") {
+    // Autores federais com perfil, sem perfil e com a Câmara instável, mais um estadual e uma transferência.
+    const fonte = "https://portaldatransparencia.gov.br/emendas";
+    data = [
+      { id: "00000000-0000-4000-8000-000000000201", parlamentar_nome: "Adriana Accorsi (PT-GO)", parlamentar_esfera: "federal", valor_empenhado: 200000, valor_pago: 200000, objeto: "Emenda Individual - Assistência Farmacêutica Básica", ano: 2025, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000202", parlamentar_nome: "Adriana Accorsi (PT-GO)", parlamentar_esfera: "federal", valor_empenhado: 100000, valor_pago: 100000, objeto: "Emenda Individual - Equipamentos para CREAS", ano: 2023, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000203", parlamentar_nome: "Delegado Waldir (União-GO)", parlamentar_esfera: "federal", valor_empenhado: 150000, valor_pago: 150000, objeto: "Emenda Individual - Defesa Civil", ano: 2022, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000204", parlamentar_nome: "Fulano Inexistente (PL-GO)", parlamentar_esfera: "federal", valor_empenhado: 50000, valor_pago: 0, objeto: "Emenda Individual - Esporte", ano: 2025, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000205", parlamentar_nome: "Carlos Instavel (PL-GO)", parlamentar_esfera: "federal", valor_empenhado: 70000, valor_pago: 70000, objeto: "Emenda Individual - Cultura", ano: 2025, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000206", parlamentar_nome: "Amauri Ribeiro", parlamentar_esfera: "estadual", valor_empenhado: 90000, valor_pago: 90000, objeto: "Saúde - Custeio", ano: 2025, fonte_url: "https://dadosabertos.go.gov.br/dataset/emendas-parlamentares", atualizado_em: "2026-03-01T05:05:28Z" },
+      { id: "00000000-0000-4000-8000-000000000207", parlamentar_nome: "Governo Federal (FPM)", parlamentar_esfera: "federal", valor_empenhado: 1000000, valor_pago: 1000000, objeto: "Transferência constitucional", ano: 2025, fonte_url: fonte, atualizado_em: "2026-03-01T05:05:28Z" },
+    ];
+    const ano = url.searchParams.get("ano");
+    if (ano?.startsWith("eq.")) data = data.filter((row) => String(row.ano) === ano.slice(3));
+  }
   if (url.pathname === "/rest/v1/servidores") {
     // A fixture inclui mais de mil registros e órgãos distintos para detectar truncamento e mistura.
     const orgao = url.searchParams.get("orgao_tipo")?.replace("eq.", "");
@@ -90,7 +144,7 @@ const server = createServer((request, response) => {
   response.end(request.method === "HEAD" ? undefined : JSON.stringify(request.headers.accept?.includes("application/vnd.pgrst.object+json") ? (data[0] ?? null) : data));
 });
 server.listen(4319, "127.0.0.1", () => {
-  const next = spawn(process.execPath, [resolve(root, "node_modules/next/dist/bin/next"), "dev", "--hostname", "127.0.0.1", "--port", "4318"], { cwd: root, stdio: "inherit", env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:4319", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-test-fixture", NEXT_TELEMETRY_DISABLED: "1", PIRACANJUBA_E2E: "1" } });
+  const next = spawn(process.execPath, [resolve(root, "node_modules/next/dist/bin/next"), "dev", "--hostname", "127.0.0.1", "--port", "4318"], { cwd: root, stdio: "inherit", env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:4319", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-test-fixture", NEXT_TELEMETRY_DISABLED: "1", PIRACANJUBA_E2E: "1", CAMARA_API_BASE_URL: "http://127.0.0.1:4319/camara-api/v2" } });
   const stop = () => { next.kill("SIGTERM"); server.close(); };
   process.on("SIGTERM", stop); process.on("SIGINT", stop);
   next.on("exit", (code) => { server.close(); process.exitCode = code ?? 1; });
