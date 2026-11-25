@@ -34,7 +34,8 @@ const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Sou responsável pela Ó
 const titulo = "Óticas Diego | Ótica e perfumaria em Piracanjuba, GO";
 const descricao = "Ótica e perfumaria no Centro de Piracanjuba: óculos de grau e de sol, perfumes árabes, importados e nacionais, relógios Seculus e Mondaine e semijoias.";
 const compartilhamento = {
-  url: portal + "/empresas/oticas-diego/compartilhar-logo.jpg", width: 1200, height: 630,
+  // A versão na URL força as redes a buscar o cartão novo, que passou a mostrar a fachada.
+  url: portal + "/empresas/oticas-diego/compartilhar-logo.jpg?v=2026-11-25", width: 1200, height: 630,
   alt: "Marca da Óticas Diego e fachada da loja em Piracanjuba",
 };
 const meta = pageMetadata({ title: titulo, description: descricao, path: caminho, image: compartilhamento.url });
@@ -69,13 +70,13 @@ const produtos: Produto[] = [
   },
   {
     nome: "Óculos de sol", Icone: Sun,
-    resumo: "Tem um modelo em mente? Consulte a equipe sobre as cores, os formatos e os valores dos óculos solares antes de ir à loja.",
+    resumo: "Tem um modelo em mente? Consulte a equipe sobre as cores, os formatos e os valores dos óculos solares.",
     link: "Consultar óculos de sol",
     mensagem: "Olá, Óticas Diego! Gostaria de consultar os modelos e as cores de óculos de sol da loja.",
   },
   {
     nome: "Perfumaria", Icone: IconePerfume,
-    resumo: "Consulte as fragrâncias disponíveis e os valores antes de ir à loja.",
+    resumo: "A equipe informa as fragrâncias disponíveis e os valores.",
     itens: [{ texto: "Perfumes árabes" }, { texto: "Perfumes importados" }, { texto: "Perfumes nacionais" }],
     link: "Consultar perfumes",
     mensagem: "Olá, Óticas Diego! Gostaria de consultar os perfumes árabes, importados e nacionais disponíveis na loja.",
@@ -95,21 +96,15 @@ const produtos: Produto[] = [
 const fotosLoja = [
   {
     src: "/empresas/oticas-diego/loja-balcao.jpg", width: 1280, height: 960, classe: s.fotoLarga,
-    sizes: "(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 640px",
-    legenda: "Balcão de atendimento e vitrines",
+    sizes: "(max-width: 760px) 92vw, (max-width: 1320px) 46vw, 620px",
+    legenda: "Balcão de atendimento e vitrine de relógios",
     alt: "Interior da Óticas Diego com balcão branco de atendimento, cadeiras, prateleiras de óculos, vitrine de relógios e painel verde com a marca da loja",
   },
   {
     src: "/empresas/oticas-diego/loja-perfumaria.jpg", width: 960, height: 1280, classe: s.fotoPerfumaria,
-    sizes: "(max-width: 760px) 46vw, 400px",
+    sizes: "(max-width: 760px) 92vw, (max-width: 1320px) 46vw, 620px",
     legenda: "Perfumaria e óculos de sol",
     alt: "Armário iluminado com perfumes, espelho oval e prateleiras de óculos de sol na Óticas Diego",
-  },
-  {
-    src: "/empresas/oticas-diego/loja-relogios.jpg", width: 960, height: 1280, classe: s.fotoRelogios,
-    sizes: "(max-width: 760px) 46vw, 400px",
-    legenda: "Vitrine de relógios e armações",
-    alt: "Vitrine de vidro com relógios e prateleiras com armações de óculos na Óticas Diego",
   },
 ];
 
@@ -118,7 +113,7 @@ const dados = {
   "@graph": [
     {
       "@type": "Optician", "@id": url + "#loja", name: marca, url, description: descricao,
-      logo: portal + logo, image: [portal + fachada, ...fotosLoja.map((f) => portal + f.src)], telephone: "+" + whatsapp,
+      logo: portal + logo, image: fotosLoja.map((f) => portal + f.src), telephone: "+" + whatsapp,
       sameAs: [instagram], hasMap: mapa,
       address: {
         "@type": "PostalAddress", streetAddress: rua + ", Centro", addressLocality: "Piracanjuba",
@@ -143,7 +138,7 @@ export default function OticasDiego() {
             </div>
             <nav className={s.navegacao} aria-label="Navegação da ótica">
               <a href="#produtos">Produtos</a>
-              <a className={s.linkLoja} href="#loja">A loja</a>
+              <a className={s.linkLoja} href="#loja">Fotos</a>
               <a href="#visita">Visite a loja</a>
               <a href={instagram} aria-label="Instagram da Óticas Diego"><InstagramIcon width={20} height={20} /></a>
             </nav>
@@ -156,12 +151,12 @@ export default function OticasDiego() {
                 <a className={s.botao} href={conversa}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
                 <a className={s.rotaCapa} href={mapa}>Como chegar <ArrowUpRight size={17} aria-hidden="true" /></a>
               </div>
-              <p className={s.horarioCapa}><Clock size={16} aria-hidden="true" /> Segunda a sexta, das 8h às 18h. Sábado, das 8h às 12h.</p>
+              <p className={s.horarioCapa}><Clock size={16} aria-hidden="true" /> <span>Segunda a sexta, <span className={s.semQuebra}>das 8h às 18h.</span> Sábado, <span className={s.semQuebra}>das 8h às 12h.</span></span></p>
             </div>
             <figure className={s.imagem}>
               <div className={s.moldura}>
                 <Image src={fachada} width={1448} height={1086} loading="eager" fetchPriority="high" sizes="(max-width: 760px) 92vw, (max-width: 1320px) 50vw, 630px"
-                  alt="Fachada da Óticas Diego, com letreiro verde-água, logo da loja, Instagram, WhatsApp e duas vitrines de vidro iluminadas" />
+                  alt="Fachada da Óticas Diego, com letreiro verde-água, logo da loja, Instagram, WhatsApp, uma vitrine e a porta de entrada de vidro, iluminadas" />
               </div>
               <figcaption><MapPin size={16} aria-hidden="true" />{rua}, Centro</figcaption>
             </figure>
@@ -241,6 +236,7 @@ export default function OticasDiego() {
             </div>
             <div>
               <h3>Contato</h3>
+              <a className={`${s.botao} ${s.botaoEscuro}`} href={conversa}><WhatsAppIcon fill="currentColor" /> Falar pelo WhatsApp</a>
               <a className={s.contato} href={conversa} aria-label={`WhatsApp da loja, ${formatarTelefoneBr(whatsapp)}`}><WhatsAppIcon fill="currentColor" /> {formatarTelefoneBr(whatsapp)}</a>
               <a className={s.contato} href={instagram} aria-label="Instagram da loja, @oticasdiego"><InstagramIcon width={17} height={17} /> @oticasdiego</a>
             </div>
