@@ -1,0 +1,354 @@
+/* Cores da placa do DR Park: verde da fachada e amarelo das setas do logo. */
+.pagina {
+  --verde: #0e4d2b;
+  --verde-escuro: #09341d;
+  --verde-claro: #e4efe4;
+  --amarelo: #ffde00;
+  --amarelo-escuro: #8a6d00;
+  --asfalto: #262b28;
+  --concreto: #f1f3ee;
+  --texto: #1d2a22;
+  --suave: #4c5a51;
+  --linha: #d5dbd2;
+  --letreiro: var(--dp-letreiro), "Arial Narrow", system-ui, sans-serif;
+  /* Barra fixa de WhatsApp no celular (BarraWhatsappEmpresa). */
+  --marca-superficie: #09341d;
+  --marca-borda: #0e4d2b;
+  background: var(--concreto);
+  color: var(--texto);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+}
+.pagina h1, .pagina h2, .pagina h3, .pagina p, .pagina dl, .pagina dd, .pagina figure, .pagina blockquote, .pagina address { margin: 0; }
+.pagina address { font-style: normal; }
+.pagina :is(a, summary):focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+.pagina section[id] { scroll-margin-top: 5.5rem; }
+.largura { width: min(88%, 1140px); margin-inline: auto; }
+.pagina h2 {
+  font-family: var(--letreiro);
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  line-height: 1.08;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+.texto { max-width: 60ch; margin-top: 1rem !important; color: var(--suave); font-size: 1.03rem; line-height: 1.7; text-wrap: pretty; }
+.somenteLeitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Capa */
+.capa {
+  color: #fff;
+  background:
+    linear-gradient(115deg, transparent 62%, rgb(255 255 255 / .04) 62% 74%, transparent 74%),
+    linear-gradient(180deg, var(--verde) 0%, var(--verde-escuro) 100%);
+}
+.linhaGuia {
+  min-height: 46px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  border-bottom: 1px solid rgb(255 255 255 / .18);
+  color: #dfeadf;
+  font-size: .8rem;
+  font-weight: 600;
+}
+.linhaGuia span { display: inline-flex; align-items: center; gap: 7px; }
+.capaGrade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  align-items: center;
+  gap: clamp(2.2rem, 5vw, 4.5rem);
+  padding: clamp(2rem, 4vw, 3.4rem) 0 clamp(3rem, 5.5vw, 4.8rem);
+}
+.logo { display: block; width: clamp(150px, 15vw, 190px); height: auto; }
+.apresentacao h1 {
+  margin-top: 1.5rem;
+  font: 800 clamp(2.1rem, 4.4vw, 3.55rem)/1.02 var(--letreiro);
+  font-stretch: 112%;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lide {
+  max-width: 46ch;
+  margin-top: 1.1rem !important;
+  color: #dfeadf;
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 1.7rem; }
+.botao, .botaoVerde, .atalho, .botaoBarra { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; font-weight: 700; }
+.botao, .botaoVerde, .botaoBarra { padding: 11px 22px; border-radius: 10px; font-size: .97rem; transition: background-color .15s; }
+.botao { color: var(--verde-escuro); background: var(--amarelo); box-shadow: 0 2px 0 #c9ad00; }
+.botao:hover { background: #fff04d; }
+.botao svg, .botaoVerde svg, .botaoBarra svg { width: 19px; height: 19px; }
+.atalho { color: #fff; font-size: .94rem; }
+.atalho:hover, .notas a:hover, .linkVerde:hover, .rede:hover, .telefone:hover, .fotoAeroporto a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.notas { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 1.6rem 0 0; padding: 0; list-style: none; font-size: .86rem; color: #dfeadf; }
+.notas a { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
+.notas svg { color: var(--amarelo); }
+.notas strong { color: #fff; font-size: 1rem; }
+
+.foto { position: relative; padding: 0 0 34px 0; }
+.foto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -28px rgb(0 0 0 / .6);
+}
+/* A placa de preço imita as setas amarelas do logo. */
+.placa {
+  position: absolute;
+  left: clamp(-22px, -2vw, -10px);
+  bottom: 0;
+  display: grid;
+  gap: 2px;
+  padding: 12px 58px 12px 20px;
+  color: var(--verde-escuro);
+  background: var(--amarelo);
+  clip-path: polygon(0 0, calc(100% - 34px) 0, 100% 50%, calc(100% - 34px) 100%, 0 100%);
+}
+.placa span { font-size: .8rem; font-weight: 700; }
+.placa strong { font: 800 clamp(1.7rem, 2.6vw, 2.2rem)/1 var(--letreiro); font-stretch: 120%; letter-spacing: -.01em; }
+
+/* Faixa de destaques: listra amarela como a do letreiro. */
+.faixa {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0 max(6%, calc((100% - 1140px) / 2));
+  list-style: none;
+  background: var(--amarelo);
+  color: var(--verde-escuro);
+}
+.faixa li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 10px 12px;
+  font-size: .92rem;
+  font-weight: 700;
+  text-align: center;
+}
+.faixa li + li { border-left: 1px solid rgb(9 52 29 / .2); }
+.faixa svg { flex: none; }
+
+/* Como funciona: a pista com a faixa tracejada. */
+.pista {
+  position: relative;
+  padding-block: clamp(3.4rem, 6.5vw, 5.4rem);
+  color: #fff;
+  background: var(--asfalto);
+}
+.pistaLide { margin-top: .7rem !important; color: #c9d1cb; font-size: 1.03rem; }
+.passos {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin: clamp(2.2rem, 4vw, 3rem) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+/* Linha central tracejada, que liga os quatro passos. */
+.passos::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 23px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--amarelo) 0 34px, transparent 34px 58px);
+  opacity: .9;
+}
+.passos li { position: relative; counter-increment: passo; padding-top: 70px; }
+.passos li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 50px;
+  padding-right: 12px;
+  color: var(--verde-escuro);
+  background: var(--amarelo);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%);
+  font: 800 1.45rem/1 var(--letreiro);
+  font-stretch: 120%;
+}
+.passos h3 { font: 800 1.2rem/1.2 var(--letreiro); font-stretch: 108%; }
+.passos p { margin-top: 8px !important; color: #c9d1cb; font-size: .95rem; line-height: 1.62; }
+
+/* Preços */
+.precos { padding-block: clamp(3.6rem, 7vw, 5.8rem); }
+.precos h2, .estrutura h2, .unidades h2, .aeroporto h2, .avaliacoes h2, .perguntas h2 { color: var(--verde-escuro); }
+.precosGrade { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(2.4rem, 6vw, 5rem); align-items: start; }
+.tabela { margin-top: 1.6rem !important; max-width: 520px; border-top: 2px solid var(--verde); }
+.tabela > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 2px; border-bottom: 1px solid var(--linha); }
+.tabela dt { font-weight: 600; }
+.tabela dd { color: var(--suave); font-size: .92rem; white-space: nowrap; }
+.tabela strong { color: var(--verde-escuro); font: 800 1.35rem/1 var(--letreiro); font-stretch: 115%; }
+.botaoVerde { margin-top: 1.6rem; color: #fff; background: var(--verde); }
+.botaoVerde:hover { background: var(--verde-escuro); }
+.estimativa {
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--linha);
+  border-left: 6px solid var(--amarelo);
+  border-radius: 4px 12px 12px 4px;
+  background: #fff;
+}
+.estimativa h3 { color: var(--verde-escuro); font: 800 1.15rem/1.25 var(--letreiro); font-stretch: 110%; }
+.estimativa table { width: 100%; margin-top: 1rem; border-collapse: collapse; font-size: .96rem; }
+.estimativa th, .estimativa td { padding: 10px 4px; border-bottom: 1px solid var(--linha); text-align: left; }
+.estimativa thead th { color: var(--suave); font-size: .8rem; font-weight: 700; }
+.estimativa tbody th { font-weight: 600; }
+.estimativa td { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.estimativa thead th:last-child { text-align: right; }
+.estimativa p { margin-top: 1rem !important; color: var(--suave); font-size: .85rem; line-height: 1.55; }
+
+/* Estrutura e serviços */
+.estrutura { padding-block: clamp(3.6rem, 7vw, 5.8rem); background: #fff; border-block: 1px solid var(--linha); }
+.estruturaGrade { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2.4rem, 6vw, 5rem); align-items: start; }
+.fotoPatio { position: sticky; top: 6rem; }
+.fotoPatio img, .fotoAeroporto img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.fotoPatio figcaption, .fotoAeroporto figcaption { margin-top: 8px; color: var(--suave); font-size: .78rem; line-height: 1.5; }
+.fotoAeroporto a { text-decoration: underline; text-underline-offset: 2px; }
+.servicos { display: grid; gap: 0; margin: 1.6rem 0 0; padding: 0; list-style: none; border-top: 1px solid var(--linha); }
+.servicos li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding-block: 18px; border-bottom: 1px solid var(--linha); }
+.servicos li > svg { width: 44px; height: 44px; padding: 9px; border-radius: 10px; color: var(--verde); background: var(--verde-claro); }
+.servicos h3 { color: var(--verde-escuro); font: 800 1.08rem/1.25 var(--letreiro); font-stretch: 108%; }
+.servicos p { margin-top: 4px !important; font-size: .96rem; line-height: 1.6; }
+.linkVerde { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 1rem; color: var(--verde); font-weight: 700; }
+
+/* Unidades */
+.unidades { padding-block: clamp(3.6rem, 7vw, 5.8rem); }
+.unidadesGrade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 3vw, 2rem); margin-top: clamp(1.6rem, 3vw, 2.4rem); }
+.unidade { overflow: hidden; border: 1px solid var(--linha); border-radius: 12px; background: #fff; }
+.unidade img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.unidadeTexto { padding: 20px 22px 18px; border-top: 5px solid var(--amarelo); }
+.unidadeTexto h3 { color: var(--verde-escuro); font: 800 1.45rem/1.1 var(--letreiro); font-stretch: 118%; }
+.unidadeTexto address { margin-top: 10px; font-size: .97rem; line-height: 1.6; }
+.nota { display: flex; align-items: center; gap: 6px; margin-top: 10px !important; color: var(--suave); font-size: .9rem; }
+.nota svg { color: var(--amarelo-escuro); }
+.unidadeTexto .linkVerde { margin-top: 6px; }
+.conferencia { margin-top: 1rem !important; color: var(--suave); font-size: .8rem; }
+
+/* Aeroporto */
+.aeroporto { padding-block: clamp(3.6rem, 7vw, 5.8rem); background: var(--verde-claro); }
+.aeroportoGrade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2.4rem, 6vw, 5rem); align-items: center; }
+
+/* Avaliações */
+.avaliacoes { padding-block: clamp(3.6rem, 7vw, 5.4rem); }
+.depoimentos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 1.8rem); margin: clamp(1.6rem, 3vw, 2.2rem) 0 0; padding: 0; list-style: none; }
+.depoimentos li { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; padding-top: 18px; border-top: 4px solid var(--verde); }
+.depoimentos blockquote p { font-size: 1.12rem; line-height: 1.5; font-weight: 500; text-wrap: pretty; }
+.depoimentos blockquote p::before { content: "“"; }
+.depoimentos blockquote p::after { content: "”"; }
+.autor { color: var(--verde-escuro); font-weight: 700; font-size: .92rem; }
+.autor span { display: block; color: var(--suave); font-weight: 500; font-size: .82rem; }
+
+/* Perguntas frequentes */
+.perguntas { padding-block: clamp(3.6rem, 7vw, 5.4rem); background: #fff; border-top: 1px solid var(--linha); }
+.listaPerguntas { max-width: 860px; margin-top: clamp(1.4rem, 3vw, 2rem); border-top: 2px solid var(--verde); }
+.listaPerguntas details { border-bottom: 1px solid var(--linha); }
+.listaPerguntas summary {
+  position: relative;
+  display: block;
+  min-height: 44px;
+  padding: 18px 44px 18px 0;
+  color: var(--verde-escuro);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+.listaPerguntas summary::-webkit-details-marker { display: none; }
+.listaPerguntas summary::after {
+  content: "+";
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--verde);
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: rotate .2s;
+}
+.listaPerguntas details[open] summary::after { rotate: 45deg; }
+.listaPerguntas details p { max-width: 68ch; padding: 0 0 20px; font-size: .98rem; line-height: 1.7; }
+
+/* Contato */
+.contato { color: #fff; background: linear-gradient(180deg, var(--verde) 0%, var(--verde-escuro) 100%); }
+.contatoGrade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2.4rem, 7vw, 6rem); padding-block: clamp(3rem, 6vw, 5rem); }
+.convite p { max-width: 40ch; margin: 1rem 0 1.6rem !important; color: #dfeadf; font-size: 1.03rem; line-height: 1.65; }
+.dados { display: grid; gap: 24px; align-content: start; }
+.dados h3 { display: flex; align-items: center; gap: 7px; color: var(--amarelo); font-size: .84rem; font-weight: 700; }
+.dados h3 svg { width: 17px; height: 17px; }
+.dados p { margin-top: 6px !important; color: #dfeadf; font-size: .96rem; line-height: 1.55; }
+.dados strong { color: #fff; }
+.telefone, .rede { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; }
+.telefone { font: 800 clamp(1.6rem, 2.6vw, 2.1rem)/1.1 var(--letreiro); font-stretch: 112%; }
+.dados .rede { display: flex; }
+.rede { font-size: .98rem; font-weight: 600; }
+.rede svg { width: 18px; height: 18px; }
+.redes { display: flex; flex-wrap: wrap; gap: 0 24px; }
+.redes .rede { display: inline-flex; }
+.rodape { padding-block: 18px; border-top: 1px solid rgb(255 255 255 / .2); color: #cbdccd; font-size: .82rem; line-height: 1.5; }
+
+/* Barra fixa do celular */
+.botaoBarra { width: 100%; color: var(--verde-escuro); background: var(--amarelo); }
+
+@media (prefers-reduced-motion: reduce) {
+  .botao, .botaoVerde, .botaoBarra, .listaPerguntas summary::after { transition: none; }
+}
+
+@media (max-width: 960px) {
+  .capaGrade, .precosGrade, .estruturaGrade, .aeroportoGrade, .contatoGrade { grid-template-columns: minmax(0, 1fr); }
+  .foto { max-width: 640px; }
+  .fotoPatio { position: static; }
+  .faixa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .faixa li:nth-child(3) { border-left: 0; }
+  .faixa li:nth-child(n + 3) { border-top: 1px solid rgb(9 52 29 / .2); }
+  /* A pista vira vertical: a faixa tracejada desce ao lado dos passos. */
+  .passos { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .passos::before {
+    left: 30px;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    height: auto;
+    background: repeating-linear-gradient(180deg, var(--amarelo) 0 26px, transparent 26px 44px);
+  }
+  .passos li { padding: 4px 0 0 92px; min-height: 56px; }
+  .depoimentos { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .largura { width: 89.5%; }
+  .linhaGuia { justify-content: flex-start; font-size: .76rem; }
+  .capaGrade { padding-top: 22px; }
+  .placa { left: 10px; }
+  .unidadesGrade { grid-template-columns: minmax(0, 1fr); }
+  .faixa { padding-inline: 4%; }
+  .faixa li { justify-content: flex-start; text-align: left; font-size: .86rem; }
+  .tabela dd { white-space: normal; text-align: right; }
+  /* Espaço para a barra fixa de WhatsApp não cobrir o fim da página. */
+  .contato { padding-bottom: 76px; }
+}
+
+@media (max-width: 380px) {
+  .botao { padding-inline: 16px; font-size: .9rem; }
+  .faixa { grid-template-columns: minmax(0, 1fr); }
+  .faixa li + li { border-left: 0; border-top: 1px solid rgb(9 52 29 / .2); }
+}

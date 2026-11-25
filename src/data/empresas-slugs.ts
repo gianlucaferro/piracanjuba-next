@@ -19,6 +19,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "quiropraxia",
   "estetica",
   "kamillamorranna",
+  "estacionamentoaeroporto",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
