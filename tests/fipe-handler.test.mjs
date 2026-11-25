@@ -116,6 +116,30 @@ test("rota recusa parâmetros e caminhos fora do padrão sem consultar a API", a
   assert.equal(calls.length, 0);
 });
 
+test("consultas simultâneas dividem o pedido à API e uma falha não impede a próxima tentativa", async () => {
+  let liberar;
+  const portao = new Promise((resolve) => { liberar = resolve; });
+  let falhar = true;
+  const { get, calls } = await fixture({
+    fetch: async (url, init) => {
+      await portao;
+      if (falhar) return new Response("erro", { status: 500 });
+      return catalogo(url, init);
+    },
+  });
+  const simultaneas = [get(["carros", "59"]), get(["carros", "21"]), get(["carros"])];
+  await new Promise((resolve) => setImmediate(resolve));
+  liberar();
+  const respostas = await Promise.all(simultaneas);
+  assert.deepEqual(respostas.map((response) => response.status), [503, 503, 503]);
+  assert.deepEqual(calls.map((call) => call.url.slice(BASE.length)), ["/cars/brands"]);
+
+  falhar = false;
+  const nova = await get(["carros", "59"]);
+  assert.equal(nova.status, 200);
+  assert.deepEqual(calls.map((call) => call.url.slice(BASE.length)), ["/cars/brands", "/cars/brands", "/cars/brands/59/models"]);
+});
+
 test("limite diário, falha e resposta inválida viram mensagens genéricas, sem dados do fornecedor", async () => {
   const limite = await fixture({ fetch: async () => new Response(`limite ${TOKEN}`, { status: 429 }) });
   const r429 = await limite.get(["carros"]);

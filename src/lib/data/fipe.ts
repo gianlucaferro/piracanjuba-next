@@ -58,13 +58,25 @@ async function buscarFipeV2(caminho: string): Promise<unknown> {
   }
 }
 
+// Consultas simultâneas ao mesmo caminho com o cache vazio dividem um único pedido à API,
+// para não gastar o limite diário em dobro. A entrada sai do mapa ao terminar, inclusive em
+// erro, e a próxima consulta tenta de novo.
+const fipeEmAndamento = new Map<string, Promise<unknown>>();
+function buscarFipeV2Compartilhado(caminho: string): Promise<unknown> {
+  const emAndamento = fipeEmAndamento.get(caminho);
+  if (emAndamento) return emAndamento;
+  const pedido = buscarFipeV2(caminho).finally(() => fipeEmAndamento.delete(caminho));
+  fipeEmAndamento.set(caminho, pedido);
+  return pedido;
+}
+
 async function carregarOpcoes(consulta: ConsultaFipe & { etapa: "marcas" | "modelos" | "anos" }): Promise<RespostaOpcoesFipe> {
-  const opcoes = parseOpcoesFipe(await buscarFipeV2(caminhoFipeV2(consulta)), consulta.etapa);
+  const opcoes = parseOpcoesFipe(await buscarFipeV2Compartilhado(caminhoFipeV2(consulta)), consulta.etapa);
   return { etapa: consulta.etapa, opcoes };
 }
 
 async function carregarPreco(consulta: ConsultaFipe & { etapa: "preco" }): Promise<RespostaPrecoFipe> {
-  return { etapa: "preco", preco: parsePrecoFipe(await buscarFipeV2(caminhoFipeV2(consulta))) };
+  return { etapa: "preco", preco: parsePrecoFipe(await buscarFipeV2Compartilhado(caminhoFipeV2(consulta))) };
 }
 
 // Os argumentos entram na chave do cache. Só respostas válidas são guardadas:
