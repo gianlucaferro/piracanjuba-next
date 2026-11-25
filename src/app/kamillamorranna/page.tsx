@@ -129,7 +129,7 @@ const esquema = {
     {
       "@type": "LegalService", "@id": url + "#escritorio", name: nome, url,
       mainEntityOfPage: { "@id": url + "#pagina" },
-      image: portal + imagens + "/retrato.webp", logo: portal + imagens + "/marca.webp",
+      image: portal + imagens + "/retrato-profissional.webp", logo: portal + imagens + "/marca.webp",
       telephone: "+" + telefone, sameAs: [instagram], employee: { "@id": url + "#kamilla-morranna" },
       areaServed: [
         { "@type": "City", name: "Piracanjuba", containedInPlace: { "@type": "State", name: "Goiás" } },
@@ -150,7 +150,7 @@ const esquema = {
     },
     {
       "@type": "Person", "@id": url + "#kamilla-morranna", name: profissional, alternateName: "Kamilla Morranna",
-      jobTitle: "Advogada criminalista", image: portal + imagens + "/retrato.webp",
+      jobTitle: "Advogada criminalista", image: portal + imagens + "/retrato-profissional.webp",
       worksFor: { "@id": url + "#escritorio" }, sameAs: [instagram],
       knowsAbout: ["Direito Penal", "Processo Penal", "Tribunal do Júri", "Audiência de custódia", "Direito de Família"],
       identifier: { "@type": "PropertyValue", propertyID: "OAB-GO", value: "55.151" },
@@ -195,7 +195,7 @@ export default function KamillaMorranna() {
               <p className={s.selo}><Clock size={16} aria-hidden="true" /> Atendimento criminal 24 horas</p>
             </div>
             <figure className={s.retrato}>
-              <Image src={imagens + "/retrato.webp"} width={720} height={1000} alt="Retrato da advogada Kamilla Morranna"
+              <Image src={imagens + "/retrato-profissional.webp"} width={1060} height={1325} alt="Retrato da advogada Kamilla Morranna, de blazer azul-marinho"
                 loading="eager" fetchPriority="high" sizes="(max-width: 700px) 80vw, (max-width: 1150px) 38vw, 420px" />
               <figcaption><strong>Kamilla Morranna</strong><span>Advogada · {registro}</span></figcaption>
             </figure>
