@@ -111,6 +111,7 @@ export const REDIRECIONAMENTOS_PERMANENTES: Readonly<Record<string, string>> = {
   "/zap-pba/oticas-diego": "/oticas-diego",
   "/oticasdiego": "/oticas-diego",
   "/zap-pba/kamilla-morranna": "/kamillamorranna",
+  "/wennder-trindade-advogado": "/zap-pba/wennder-trindade-advogado",
   "/drpark": "/estacionamentoaeroporto",
   "/transparencia/contratos-camara": "/camara/contratos",
   "/transparencia/licitacoes-camara": "/camara/licitacoes",
