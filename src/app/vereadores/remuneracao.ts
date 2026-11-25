@@ -87,6 +87,26 @@ export function subsidioMaisRecente(linhas: LinhaRemuneracao[]): SubsidioCompete
   };
 }
 
+/**
+ * Quanto o bruto passou do subsídio na competência: outras verbas pagas no mês
+ * (em 2026-07, por exemplo, R$ 3.240,64 sobre R$ 9.721,92, um terço do subsídio).
+ * Null quando a folha não traz o subsídio ou o bruto não passou dele.
+ */
+export function valorAlemDoSubsidio(linha: LinhaRemuneracao): number | null {
+  if (!temSubsidio(linha)) return null;
+  const diferenca = Math.round((num(linha.bruto) - num(linha.subsidio_referencia)) * 100) / 100;
+  return diferenca > 0 ? diferenca : null;
+}
+
+/** Primeira e última competência com pagamento publicado ("2026-02" e "2026-11"). */
+export function periodoComPagamento(
+  linhas: LinhaRemuneracao[],
+): { inicio: string; fim: string } | null {
+  const validas = remuneracoesComPagamento(linhas);
+  if (validas.length === 0) return null;
+  return { inicio: validas[validas.length - 1].competencia, fim: validas[0].competencia };
+}
+
 export function formatarReais(valor: number): string {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
