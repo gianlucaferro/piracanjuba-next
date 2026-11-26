@@ -103,7 +103,7 @@ export default function AsMeninasMultimarcas() {
             <article key={item.foto} className={s.item}>
               <div className={s.itemFoto}><Image src={`${ativos}/${item.foto}`} alt={item.alt} width={item.largura} height={item.altura} sizes="(max-width: 650px) 92vw, (max-width: 1240px) 30vw, 365px" /></div>
               <h3>{item.nome}</h3><p>{item.detalhe}</p>
-              <a className={s.itemLink} aria-label={`Consultar ${item.nome.toLowerCase()} pelo WhatsApp`} href={linkWhatsapp(telefone, `Olá, As Meninas! Vi a ${item.nome.toLowerCase()} no Piracanjuba.ai. Ela está disponível?`)}>Consultar peça <ArrowUpRight size={15} aria-hidden="true" /></a>
+              <a className={s.itemLink} aria-label={`Consultar peça pelo WhatsApp, ${item.nome.toLowerCase()}`} href={linkWhatsapp(telefone, `Olá, As Meninas! Vi a ${item.nome.toLowerCase()} no Piracanjuba.ai. Ela está disponível?`)}>Consultar peça <ArrowUpRight size={15} aria-hidden="true" /></a>
             </article>
           ))}
         </div>
