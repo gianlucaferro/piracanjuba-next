@@ -6,7 +6,7 @@ import ConsultaFipe from "@/components/fipe/ConsultaFipe";
 export const metadata = pageMetadata({
   title: "PBAFipe: consulta da tabela FIPE de carros, motos e caminhões",
   description:
-    "Consulte grátis o preço médio de carros, motos e caminhões na tabela FIPE do mês, por marca, modelo e ano. Referência para comprar e vender veículos em Piracanjuba, Goiás.",
+    "Consulte grátis o preço médio de carros, motos e caminhões na tabela FIPE do mês, pela placa ou por marca, modelo e ano. Referência para comprar e vender veículos em Piracanjuba, Goiás.",
   path: "/pba-fipe",
 });
 
@@ -19,8 +19,8 @@ export default function PbaFipePage() {
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">PBAFipe</h1>
         <p className="mx-auto max-w-md text-base leading-relaxed text-muted-foreground">
-          Consulte o preço médio de carros, motos e caminhões na tabela FIPE do mês, antes de comprar
-          ou vender um veículo em Piracanjuba.
+          Consulte pela placa ou pelo modelo o preço médio de carros, motos e caminhões na tabela FIPE
+          do mês, antes de comprar ou vender um veículo em Piracanjuba.
         </p>
       </header>
 
@@ -74,7 +74,9 @@ export default function PbaFipePage() {
         >
           API FIPE de Deivid Fortuna <ExternalLink className="h-3 w-3" aria-hidden />
         </a>
-        . Os valores são atualizados uma vez por mês, quando a FIPE publica a nova tabela.
+        . Os valores são atualizados uma vez por mês, quando a FIPE publica a nova tabela. Na consulta
+        pela placa, o veículo é identificado pela API Placas, e o Piracanjuba.ai não guarda a placa
+        consultada.
       </p>
     </div>
   );

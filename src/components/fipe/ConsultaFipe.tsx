@@ -1,15 +1,20 @@
 "use client";
 
-import { useId, useMemo, useState, type ReactNode } from "react";
+import { useId, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bike, Car, Loader2, Search, Truck } from "lucide-react";
+import { consultarPlaca, ErroConsultaPlaca } from "@/data/placaFipeApi";
 import {
   caminhoRotaFipe,
+  escolherAnoDaPlaca,
   LISTA_TIPOS_FIPE,
+  normalizarPlaca,
   parseRespostaOpcoesFipe,
   parseRespostaPrecoFipe,
+  PLACA_VALIDA,
   TIPOS_FIPE,
   type ConsultaFipe as Consulta,
+  type FipeDaPlaca,
   type OpcaoFipe,
   type TipoFipe,
 } from "@/lib/fipe";
@@ -100,6 +105,7 @@ function Opcoes({ opcoes }: { opcoes: OpcaoFipe[] }) {
 
 export default function ConsultaFipe() {
   const ids = {
+    placa: useId(),
     marca: useId(),
     filtro: useId(),
     modelo: useId(),
@@ -110,11 +116,21 @@ export default function ConsultaFipe() {
   const [filtro, setFiltro] = useState("");
   const [modelo, setModelo] = useState("");
   const [ano, setAno] = useState("");
+  const [placa, setPlaca] = useState("");
+  const [buscandoPlaca, setBuscandoPlaca] = useState(false);
+  const [avisoPlaca, setAvisoPlaca] = useState<{ texto: string; erro: boolean } | null>(null);
+  // Ano-modelo vindo da placa, aplicado quando a lista de anos do modelo chegar.
+  const [anoDaPlaca, setAnoDaPlaca] = useState<Pick<FipeDaPlaca, "anoModelo" | "combustivel"> | null>(null);
 
   const marcas = useOpcoes({ tipo, etapa: "marcas" }, "marcas");
   const modelos = useOpcoes(marca ? { tipo, etapa: "modelos", marca } : null, "modelos");
   const anos = useOpcoes(marca && modelo ? { tipo, etapa: "anos", marca, modelo } : null, "anos");
-  const consultaPreco: Consulta | null = marca && modelo && ano ? { tipo, etapa: "preco", marca, modelo, ano } : null;
+  const anoSugerido = anoDaPlaca && anos.data
+    ? escolherAnoDaPlaca(anos.data, anoDaPlaca.anoModelo, anoDaPlaca.combustivel)
+    : null;
+  const anoEscolhido = ano || anoSugerido || "";
+  const consultaPreco: Consulta | null =
+    marca && modelo && anoEscolhido ? { tipo, etapa: "preco", marca, modelo, ano: anoEscolhido } : null;
   const preco = useQuery({
     queryKey: ["pba-fipe", consultaPreco && caminhoRotaFipe(consultaPreco)],
     queryFn: async ({ signal }) => parseRespostaPrecoFipe(await buscar(consultaPreco!, signal)),
@@ -140,6 +156,39 @@ export default function ConsultaFipe() {
     setFiltro("");
     setModelo("");
     setAno("");
+    setAnoDaPlaca(null);
+  };
+
+  const buscarPlaca = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!PLACA_VALIDA.test(placa) || buscandoPlaca) return;
+    setBuscandoPlaca(true);
+    setAvisoPlaca(null);
+    try {
+      const veiculo = await consultarPlaca(placa);
+      const encontrado = veiculo.descricao ? `Encontramos: ${veiculo.descricao}.` : "Encontramos o veículo.";
+      if (veiculo.fipe) {
+        setTipo(veiculo.fipe.tipo);
+        setMarca(veiculo.fipe.marca);
+        setFiltro("");
+        setModelo(veiculo.fipe.modelo);
+        setAno("");
+        setAnoDaPlaca({ anoModelo: veiculo.fipe.anoModelo, combustivel: veiculo.fipe.combustivel });
+        setAvisoPlaca({ texto: `${encontrado} Confira se a versão abaixo é a do seu veículo.`, erro: false });
+      } else {
+        setAvisoPlaca({
+          texto: `${encontrado} Não achamos a versão na tabela FIPE: escolha a marca, o modelo e o ano abaixo.`,
+          erro: true,
+        });
+      }
+    } catch (error) {
+      setAvisoPlaca({
+        texto: error instanceof ErroConsultaPlaca ? error.message : "A consulta por placa está indisponível agora. Escolha o veículo abaixo.",
+        erro: true,
+      });
+    } finally {
+      setBuscandoPlaca(false);
+    }
   };
 
   const erro = marcas.error ?? modelos.error ?? anos.error ?? preco.error;
@@ -147,6 +196,51 @@ export default function ConsultaFipe() {
 
   return (
     <div className="space-y-5">
+      <form onSubmit={buscarPlaca} className="space-y-2 rounded-xl border border-border bg-muted/40 p-3 sm:p-4">
+        <label htmlFor={ids.placa} className="block text-sm font-medium text-foreground">
+          Consultar pela placa
+        </label>
+        <div className="flex gap-2">
+          <input
+            id={ids.placa}
+            type="text"
+            inputMode="text"
+            autoCapitalize="characters"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={8}
+            placeholder="ABC1D23"
+            aria-describedby={`${ids.placa}-ajuda`}
+            className={`${classeSelect} flex-1 font-mono uppercase tracking-widest`}
+            value={placa}
+            onChange={(event) => setPlaca(normalizarPlaca(event.target.value))}
+          />
+          <button
+            type="submit"
+            disabled={!PLACA_VALIDA.test(placa) || buscandoPlaca}
+            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {buscandoPlaca ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Search className="h-4 w-4" aria-hidden />}
+            Buscar
+          </button>
+        </div>
+        <p id={`${ids.placa}-ajuda`} className="text-xs text-muted-foreground">
+          Digite a placa (antiga ou Mercosul) para preencher a marca, o modelo e o ano.
+        </p>
+        <div aria-live="polite">
+          {avisoPlaca && (
+            <p
+              role="status"
+              className={`text-sm ${avisoPlaca.erro ? "text-amber-700 dark:text-amber-400" : "text-foreground"}`}
+            >
+              {avisoPlaca.texto}
+            </p>
+          )}
+        </div>
+      </form>
+
+      <p className="text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">ou escolha o veículo</p>
+
       <fieldset>
         <legend className="mb-2 text-sm font-medium text-foreground">Tipo de veículo</legend>
         <div className="grid grid-cols-3 gap-2">
@@ -185,6 +279,7 @@ export default function ConsultaFipe() {
               setFiltro("");
               setModelo("");
               setAno("");
+              setAnoDaPlaca(null);
             }}
           >
             <option value="">{marcas.data ? "Escolha a marca" : "Carregando marcas..."}</option>
@@ -218,6 +313,7 @@ export default function ConsultaFipe() {
             onChange={(event) => {
               setModelo(event.target.value);
               setAno("");
+              setAnoDaPlaca(null);
             }}
           >
             <option value="">
@@ -235,15 +331,25 @@ export default function ConsultaFipe() {
           <select
             id={ids.ano}
             className={classeSelect}
-            value={ano}
+            value={anoEscolhido}
             disabled={!anos.data}
-            onChange={(event) => setAno(event.target.value)}
+            onChange={(event) => {
+              setAno(event.target.value);
+              setAnoDaPlaca(null);
+            }}
           >
             <option value="">{!modelo ? "Escolha o modelo primeiro" : !anos.data ? "Carregando anos..." : "Escolha o ano"}</option>
             {anos.data && <Opcoes opcoes={anos.data} />}
           </select>
         </Campo>
       </div>
+
+      {anoDaPlaca && anos.data && !anoSugerido && (
+        <p role="status" className="text-sm text-amber-700 dark:text-amber-400">
+          O ano-modelo {anoDaPlaca.anoModelo === 32000 ? "zero km" : anoDaPlaca.anoModelo} da placa não aparece na lista deste
+          modelo. Escolha o ano acima.
+        </p>
+      )}
 
       <div aria-live="polite">
         {erro ? (
@@ -296,7 +402,7 @@ export default function ConsultaFipe() {
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Escolha o tipo, a marca, o modelo e o ano para ver o preço médio na tabela FIPE.
+            Digite a placa ou escolha o tipo, a marca, o modelo e o ano para ver o preço médio na tabela FIPE.
           </p>
         )}
       </div>

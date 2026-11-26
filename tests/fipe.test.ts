@@ -3,6 +3,10 @@ import assert from "node:assert/strict";
 import {
   caminhoFipeV2,
   caminhoRotaFipe,
+  escolherAnoDaPlaca,
+  normalizarPlaca,
+  parseRespostaPlaca,
+  PLACA_VALIDA,
   parseConsultaFipe,
   parseOpcoesFipe,
   parsePrecoFipe,
@@ -129,4 +133,48 @@ test("contrato público da rota é validado no navegador", () => {
   assert.throws(() => parseRespostaPrecoFipe({ etapa: "preco", preco: { ...preco, valor: "29180" } }));
   assert.throws(() => parseRespostaPrecoFipe({ etapa: "preco", preco: { ...preco, valor: -1 } }));
   assert.throws(() => parseRespostaPrecoFipe({ etapa: "preco", preco: { ...preco, codigoFipe: "x" } }));
+});
+
+test("placa é normalizada e aceita no padrão antigo e no Mercosul", () => {
+  assert.equal(normalizarPlaca("abc-1d23"), "ABC1D23");
+  assert.equal(normalizarPlaca(" int 8236 x"), "INT8236");
+  assert.ok(PLACA_VALIDA.test("ABC1D23"));
+  assert.ok(PLACA_VALIDA.test("INT8236"));
+  assert.ok(!PLACA_VALIDA.test("AB1C234"));
+  assert.ok(!PLACA_VALIDA.test("ABC123"));
+});
+
+test("resposta da placa traz descrição e códigos FIPE validados", () => {
+  assert.deepEqual(
+    parseRespostaPlaca({
+      veiculo: { marca: "VW", modelo: "CROSSFOX", ano: "2007", ano_modelo: "2007", cor: "Prata" },
+      fipe: { tipo: "carros", marca: "59", modelo: "2368", anoModelo: 2007, codigoFipe: "005225-6", combustivel: "Gasolina" },
+    }),
+    {
+      descricao: "VW CROSSFOX 2007",
+      fipe: { tipo: "carros", marca: "59", modelo: "2368", anoModelo: 2007, combustivel: "Gasolina" },
+    },
+  );
+  assert.deepEqual(parseRespostaPlaca({ veiculo: { marca: "FIAT", modelo: "UNO" } }), { descricao: "FIAT UNO", fipe: null });
+  assert.deepEqual(
+    parseRespostaPlaca({ veiculo: { marca: "VW" }, fipe: { tipo: "barcos", marca: "59", modelo: "2368", anoModelo: 2007 } }),
+    { descricao: "VW", fipe: null },
+  );
+  assert.throws(() => parseRespostaPlaca({ veiculo: {} }));
+  assert.throws(() => parseRespostaPlaca({ not_configured: true }));
+});
+
+test("ano da placa escolhe pelo ano-modelo e desempata pelo combustível", () => {
+  const anos = [
+    { codigo: "2008-5", nome: "2008 Flex" },
+    { codigo: "2007-5", nome: "2007 Flex" },
+    { codigo: "2007-1", nome: "2007 Gasolina" },
+    { codigo: "32000-5", nome: "Zero km Flex" },
+  ];
+  assert.equal(escolherAnoDaPlaca(anos, 2008, "Gasolina"), "2008-5");
+  assert.equal(escolherAnoDaPlaca(anos, 2007, "Gasolina"), "2007-1");
+  assert.equal(escolherAnoDaPlaca(anos, 2007, "Álcool / Gasolina"), "2007-5");
+  assert.equal(escolherAnoDaPlaca(anos, 2007), "2007-5");
+  assert.equal(escolherAnoDaPlaca(anos, 32000), "32000-5");
+  assert.equal(escolherAnoDaPlaca(anos, 1999, "Flex"), null);
 });

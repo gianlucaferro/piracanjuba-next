@@ -284,7 +284,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/pba-fipe",
         titulo: "PBAFipe: tabela FIPE",
-        descricao: "Consulta do preço médio de carros, motos e caminhões na tabela FIPE do mês, por marca, modelo e ano, com código FIPE e mês de referência.",
+        descricao: "Consulta do preço médio de carros, motos e caminhões na tabela FIPE do mês, pela placa ou por marca, modelo e ano, com código FIPE e mês de referência.",
       },
       {
         caminho: "/contatos",

@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { aiGuard, guardBlockedResponse } from "../_shared/ratelimit.ts";
+import { dadosVeiculoDaPlaca, melhorFipeDaPlaca } from "../_shared/placa-veiculo.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,82 +38,52 @@ Deno.serve(async (req) => {
     const guard = await aiGuard(sb, req, "consulta-placa");
     if (!guard.allowed) return guardBlockedResponse(guard);
 
-    let vehicleData: Record<string, string | number | null> = {};
-    let found = false;
-
-    // 1) Try apiplacas.com.br (paid, with key)
+    // API Placas (apiplacas.com.br), paga, no sistema antigo: wdapi2.com.br/consulta/<placa>/<token>.
     const apiKey = Deno.env.get("PLACA_API_KEY");
-    if (apiKey) {
-      try {
-        const res = await fetch(`https://api.apiplacas.com.br/consulta/${placaNorm}`, {
-          headers: { "Authorization": `Bearer ${apiKey}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          vehicleData = {
-            marca: data.marca || data.brand || null,
-            modelo: data.modelo || data.model || null,
-            ano: data.ano || data.year || null,
-            ano_modelo: data.ano_modelo || data.model_year || null,
-            cor: data.cor || data.color || null,
-            combustivel: data.combustivel || data.fuel || null,
-            tipo_veiculo: data.tipo || data.vehicle_type || null,
-            potencia: data.potencia || data.power || null,
-            cilindradas: data.cilindradas || data.displacement || null,
-          };
-          found = true;
-        } else {
-          const status = res.status;
-          console.warn(`apiplacas returned ${status}`);
-        }
-      } catch (e) {
-        console.warn("apiplacas fetch failed:", (e as Error).message);
-      }
-    }
-
-    // 2) Fallback: Placa.com API (free, public)
-    if (!found) {
-      try {
-        const res = await fetch(`https://wdapi2.com.br/consulta/${placaNorm}/${apiKey || ""}`, {
-          headers: { "Accept": "application/json" },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && !data.error && data.MARCA) {
-            vehicleData = {
-              marca: data.MARCA || null,
-              modelo: data.MODELO || null,
-              ano: data.ano || null,
-              ano_modelo: data.anoModelo || null,
-              cor: data.cor || null,
-              combustivel: data.combustivel || null,
-              tipo_veiculo: data.segmento || null,
-            };
-            found = true;
-          }
-        }
-      } catch (e) {
-        console.warn("wdapi2 failed:", (e as Error).message);
-      }
-    }
-
-    if (!found) {
+    if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "Veículo não encontrado. Preencha manualmente." }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ not_configured: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Filter out null values (NEVER include placa in response)
-    const filtered: Record<string, string | number> = {};
-    for (const [k, v] of Object.entries(vehicleData)) {
-      if (v !== null && v !== undefined && v !== "") {
-        filtered[k] = v;
+    let resposta: unknown = null;
+    let semResultado = false;
+    try {
+      const res = await fetch(`https://wdapi2.com.br/consulta/${placaNorm}/${apiKey}`, {
+        headers: { "Accept": "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (res.ok) {
+        resposta = await res.json();
+        semResultado = true;
+      } else {
+        // 401 = placa inválida, 406 = sem resultados, 402 e 429 = token ou limite do plano.
+        // O corpo não vai para o log.
+        semResultado = res.status === 401 || res.status === 406;
+        console.warn(`wdapi2 returned ${res.status}`);
+        await res.body?.cancel();
       }
+    } catch (e) {
+      console.warn("wdapi2 failed:", (e as Error).name);
     }
 
+    const veiculo = resposta ? dadosVeiculoDaPlaca(resposta) : {};
+    if (!veiculo.marca && !veiculo.modelo) {
+      return semResultado
+        ? new Response(
+          JSON.stringify({ error: "Veículo não encontrado. Preencha manualmente." }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        )
+        : new Response(
+          JSON.stringify({ error: "Consulta por placa indisponível no momento." }),
+          { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "600" } }
+        );
+    }
+    const fipe = melhorFipeDaPlaca(resposta);
+
     return new Response(
-      JSON.stringify({ veiculo: filtered }),
+      JSON.stringify(fipe ? { veiculo, fipe } : { veiculo }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e: any) {
