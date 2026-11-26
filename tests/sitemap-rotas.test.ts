@@ -12,6 +12,7 @@ import {
   ROTAS_ESTATICAS,
   ROTAS_FORA_DO_SITEMAP,
 } from "../src/lib/sitemap-rotas.ts";
+import { SLUGS_FICHAS_REBAIXADAS, SLUGS_PAGINAS_EMPRESARIAIS } from "../src/data/empresas-slugs.ts";
 
 const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 const APP = join(RAIZ, "src", "app");
@@ -113,9 +114,18 @@ test("as oito páginas que faltavam no sitemap (IDX-04 e KW-08) estão nele", ()
 // Onda 2 (IDX-03 e CONT-03, 2026-11-19): seis páginas /transparencia/* foram levadas para a aba
 // equivalente da Câmara e respondem 308. As duas sem aba equivalente ficam e entram no sitemap.
 
-/** Rota que responde 200: página estática de src/app ou aba conhecida da Prefeitura ou da Câmara. */
+const SLUGS_FICHAS_ZAP = new Set<string>(
+  (JSON.parse(readFileSync(join(RAIZ, "src/data/previas-zap.json"), "utf8")) as { slug: string }[]).map(({ slug }) => slug),
+);
+
+/**
+ * Rota que responde 200: página estática de src/app, ficha do catálogo do guia em
+ * /zap-pba/<slug> ou aba conhecida da Prefeitura ou da Câmara.
+ */
 function rotaExiste(rota: string): boolean {
   if (PAGINAS.has(rota)) return true;
+  const ficha = rota.match(/^\/zap-pba\/([a-z0-9-]+)$/);
+  if (ficha) return SLUGS_FICHAS_ZAP.has(ficha[1]);
   const aba = rota.match(/^\/(camara|prefeitura)\/([a-z0-9-]+)$/);
   if (!aba) return false;
   const abas: readonly string[] = aba[1] === "camara" ? ABAS_CAMARA : ABAS_PREFEITURA;
@@ -158,7 +168,6 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/oticas-diego", "/oticas-diego"],
     ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
     ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
-    ["/zap-pba/master-tech-auto-center", "/master-tech-auto-center"],
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],
     ["/zap-pba/smart-especializada", "/smart-especializada"],
     ["/zap-pba/as-meninas-multimarcas", "/as-meninas-multimarcas"],
@@ -168,6 +177,34 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     assert.ok(NO_SITEMAP.has(destino));
     assert.ok(Object.values(vinculos).includes(destino));
     assert.ok(!Object.values(vinculos).includes(origem));
+  }
+});
+
+test("empresa que recusou a landing volta à ficha neutra do guia, sem página nem marca", async () => {
+  // Procedimento em docs/empresa-recusou-landing.md (decisão do operador de 2026-11-26).
+  const fichas: { slug: string; logo?: string; cor?: string }[] = JSON.parse(readFileSync(join(RAIZ, "src/data/previas-zap.json"), "utf8"));
+  const vinculos: Record<string, string> = JSON.parse(readFileSync(join(RAIZ, "src/data/zap-pba-paginas.json"), "utf8"));
+  const rewrites = await nextConfig.rewrites?.();
+  const listaRewrites = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
+  assert.ok(SLUGS_FICHAS_REBAIXADAS.includes("master-tech-auto-center"));
+  for (const slug of SLUGS_FICHAS_REBAIXADAS) {
+    const curta = `/${slug}`;
+    const ficha = `/zap-pba/${slug}`;
+    // A URL curta serve a ficha por rewrite, nunca por 308: o 308 antigo ficha -> curta pode
+    // estar guardado no navegador, e o novo formaria um laço.
+    assert.ok(listaRewrites.some(({ source, destination }) => source === curta && destination === ficha), `${curta} deve servir a ficha por rewrite`);
+    assert.ok(!(curta in REDIRECIONAMENTOS_PERMANENTES), `${curta} não pode redirecionar`);
+    assert.ok(!PAGINAS.has(curta), `${curta} ainda tem page.tsx`);
+    assert.ok(!SLUGS_PAGINAS_EMPRESARIAIS.includes(slug), `${slug} ainda está entre as páginas de empresa`);
+    assert.ok(!NO_SITEMAP.has(curta), `${curta} ainda está no sitemap`);
+    assert.ok(!existsSync(join(RAIZ, "public", "empresas", slug)), `public/empresas/${slug} ainda existe`);
+    const registro = fichas.find((item) => item.slug === slug);
+    assert.ok(registro, `${slug} saiu do catálogo do guia`);
+    assert.equal(registro.logo, undefined, `${slug} não pode levar logo`);
+    assert.equal(registro.cor, undefined, `${slug} não pode levar a cor da marca`);
+    assert.ok(Object.values(vinculos).includes(ficha), `o guia não aponta para ${ficha}`);
+    assert.ok(!Object.values(vinculos).includes(curta), `o guia ainda aponta para ${curta}`);
+    assert.ok(existsSync(join(RAIZ, "public", "marcas-zap", "compartilhar", `${slug}.jpg`)), `falta o cartão de ${slug}`);
   }
 });
 

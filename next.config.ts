@@ -26,8 +26,9 @@ const nextConfig: NextConfig = {
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
       { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
       { source: "/b10", destination: "/b10-auto-center", permanent: true },
-      { source: "/zap-pba/master-tech-auto-center", destination: "/master-tech-auto-center", permanent: true },
-      { source: "/mastertech", destination: "/master-tech-auto-center", permanent: true },
+      // A Master Tech recusou a landing (2026-11-26): o atalho volta à ficha neutra do guia; a
+      // URL curta serve a ficha por rewrite (abaixo). Procedimento em docs/empresa-recusou-landing.md.
+      { source: "/mastertech", destination: "/zap-pba/master-tech-auto-center", permanent: true },
       { source: "/zap-pba/smart-especializada", destination: "/smart-especializada", permanent: true },
       { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
       { source: "/hotelviasul", destination: "/hotel", permanent: true },
@@ -45,6 +46,11 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [{
+      // Ficha rebaixada servida na URL curta (200, canonical em /zap-pba/<slug>), sem 308:
+      // quem guardou no navegador o 308 antigo /zap-pba/<slug> -> /<slug> não cai em laço.
+      source: "/master-tech-auto-center",
+      destination: "/zap-pba/master-tech-auto-center",
+    }, {
       source: "/marcas-zap/compartilhar/ellen-vieira-advocacia.jpg",
       destination: "/empresas/evadvocacia/compartilhar.jpg",
     }, {
@@ -62,9 +68,6 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
       destination: "/empresas/box-87-auto-center/compartilhar.jpg",
-    }, {
-      source: "/marcas-zap/compartilhar/master-tech-auto-center.jpg",
-      destination: "/empresas/master-tech-auto-center/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/viaggi-vistos.jpg",
       destination: "/empresas/viaggi-vistos/compartilhar.jpg",
