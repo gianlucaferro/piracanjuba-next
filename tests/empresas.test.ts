@@ -151,6 +151,8 @@ test("endereço digitado com maiúscula, acento ou hífen redireciona para a pá
   assert.equal(caminhoCanonicoEmpresa("/as-meninas-multimarcas"), null);
   assert.equal(caminhoCanonicoEmpresa("/Hotel"), "/hotel");
   assert.equal(caminhoCanonicoEmpresa("/hotel"), null);
+  assert.equal(caminhoCanonicoEmpresa("/ViaggiVistos"), "/viaggi-vistos");
+  assert.equal(caminhoCanonicoEmpresa("/viaggi-vistos"), null);
   assert.equal(caminhoCanonicoEmpresa("/evadvocacia"), null);
   // Já certo, outra seção, dois níveis ou codificação inválida: sem redirecionar.
   assert.equal(caminhoCanonicoEmpresa("/apareca"), null);

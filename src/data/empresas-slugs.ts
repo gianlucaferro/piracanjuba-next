@@ -27,6 +27,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "smart-especializada",
   "as-meninas-multimarcas",
   "hotel",
+  "viaggi-vistos",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
