@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -121,6 +121,18 @@ function rotaExiste(rota: string): boolean {
   const abas: readonly string[] = aba[1] === "camara" ? ABAS_CAMARA : ABAS_PREFEITURA;
   return abas.includes(aba[2]);
 }
+
+// Rewrite de imagem antiga (cartão de compartilhamento de prévia que virou página própria):
+// o destino precisa existir em public/, senão o cartão que circula no WhatsApp quebra em silêncio.
+test("todo rewrite para um arquivo aponta para um arquivo que existe em public", async () => {
+  const rewrites = await nextConfig.rewrites?.();
+  const lista = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
+  const deArquivo = lista.filter(({ destination }) => /\.[a-z0-9]+$/i.test(destination));
+  assert.ok(deArquivo.length > 0);
+  for (const { source, destination } of deArquivo) {
+    assert.ok(existsSync(join(RAIZ, "public", destination)), `${source} reescreve para ${destination}, que não existe em public`);
+  }
+});
 
 test("os redirects permanentes de next.config.ts são os de REDIRECIONAMENTOS_PERMANENTES", async () => {
   const redirects = (await nextConfig.redirects?.()) ?? [];

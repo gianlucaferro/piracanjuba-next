@@ -15,7 +15,8 @@ import s from "./pagina.module.css";
 const tipografia = Saira({
   subsets: ["latin"],
   axes: ["wdth"],
-  style: ["normal", "italic"],
+  // Só a face normal: o itálico dobrava o preload (cerca de 215 KB). O h1 usa o oblíquo sintetizado.
+  style: ["normal"],
   display: "swap",
   variable: "--box-fonte",
 });
@@ -47,29 +48,29 @@ const servicosCarros = [
   "Manutenção preventiva e corretiva",
   "Suspensão e troca da correia dentada",
   "Troca da junta de válvula e descarbonização da EGR",
-  "Sistema de arrefecimento, como a válvula termostática",
+  "Válvula termostática do sistema de arrefecimento",
   "Lavagem do motor",
-  "Faróis e lâmpadas de LED",
+  "Kits de lâmpadas LED para faróis",
   "Módulo para rebater os retrovisores e subir os vidros pelo alarme",
+  "Revisão elétrica em caminhão com plataforma de guincho",
 ];
 
 const servicosAgro = [
   "Parte elétrica de tratores e implementos",
   "Kits de iluminação para trator e graneleiro",
   "Manutenção de máquinas agrícolas",
-  "Revisão elétrica em veículos de trabalho, como plataforma de guincho",
 ];
 
 const fotos = [
   { src: "/teste-bateria.webp", largura: 720, altura: 540, legenda: "Teste de densidade da bateria", alt: "Densímetro medindo a carga de uma bateria automotiva na oficina" },
   { src: "/eletrica-trator.webp", largura: 504, altura: 378, legenda: "Revisão na parte elétrica de um trator", alt: "Chicote elétrico e motor de partida de um trator em manutenção" },
-  { src: "/oficina-entrada.webp", largura: 680, altura: 470, legenda: "A entrada da oficina, na Rua João Modesto", alt: "Fachada de metal do Box 87 com o letreiro laranja e cinza e o galpão da oficina aberto" },
+  { src: "/oficina-entrada.webp", largura: 634, altura: 462, legenda: "A entrada da oficina, na Rua João Modesto", alt: "Fachada de metal do Box 87 com o letreiro laranja e cinza e o galpão da oficina aberto" },
 ];
 
 const perguntas = [
   {
     pergunta: "O Box 87 atende máquinas agrícolas?",
-    resposta: "Sim. Além de carros e caminhonetes, a oficina cuida da parte elétrica e da manutenção de máquinas agrícolas, como tratores e implementos, e instala kits de iluminação. Para outra máquina, mande o modelo pelo WhatsApp e confirme o atendimento.",
+    resposta: "Sim. Além de carros, a oficina cuida da parte elétrica e da manutenção de máquinas agrícolas, como tratores e implementos, e instala kits de iluminação. Para outra máquina, mande o modelo pelo WhatsApp e confirme o atendimento.",
   },
   {
     pergunta: "Qual é o horário de funcionamento?",
@@ -85,12 +86,12 @@ const perguntas = [
   },
   {
     pergunta: "Vocês instalam iluminação de LED e acessórios?",
-    resposta: "Sim. A oficina troca faróis e lâmpadas por LED e instala acessórios como o módulo que rebate os retrovisores e sobe os vidros pelo alarme.",
+    resposta: "Sim. A oficina instala kits de lâmpadas LED nos faróis e acessórios como o módulo que rebate os retrovisores e sobe os vidros pelo alarme.",
   },
 ];
 
 const titulo = "Box 87 Auto Center em Piracanjuba | Elétrica e máquinas agrícolas";
-const descricao = "Auto center na Rua João Modesto, 12, em Piracanjuba (GO). Elétrica e manutenção de carros, caminhonetes e máquinas agrícolas. Horário e WhatsApp.";
+const descricao = "Auto center na Rua João Modesto, 12, em Piracanjuba (GO). Elétrica e manutenção de carros e máquinas agrícolas. Horário e WhatsApp para agendar.";
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
   alt: "Logo do Box 87 Auto Center e a fachada da oficina em Piracanjuba ao entardecer",
@@ -112,7 +113,7 @@ const esquema = {
       mainEntity: { "@id": url + "#oficina" }, breadcrumb: { "@id": url + "#navegacao" },
     },
     {
-      "@type": "AutoRepair", "@id": url + "#oficina", name: nome, alternateName: "BOX 87", url,
+      "@type": "AutoRepair", "@id": url + "#oficina", name: nome, alternateName: ["BOX 87", "Box 87 Auto Elétrica", "BOX 87 Auto Elétrica e Acessórios"], url,
       mainEntityOfPage: { "@id": url + "#pagina" },
       description: "Auto center e auto elétrica com manutenção e parte elétrica de máquinas agrícolas em Piracanjuba (GO).",
       image: portal + imagens + "/fachada-entardecer.webp", logo: portal + imagens + "/box87-logo.svg",
@@ -168,7 +169,7 @@ export default function Box87AutoCenter() {
               <Image src={imagens + "/box87-logo.svg"} width={1459} height={510} alt="BOX 87 Auto Center e Manutenção em Máquinas Agrícolas"
                 className={s.logo} loading="eager" unoptimized />
               <h1>Auto center e elétrica de máquinas agrícolas em Piracanjuba</h1>
-              <p className={s.lide}>O Box 87 cuida da parte elétrica e da manutenção de carros, caminhonetes, tratores e implementos, na {endereco}. Conte pelo WhatsApp o modelo e o que está acontecendo e combine o melhor horário para levar.</p>
+              <p className={s.lide}>O Box 87 cuida da parte elétrica e da manutenção de carros, tratores e implementos, na {endereco}. Conte pelo WhatsApp o modelo e o que está acontecendo e combine o melhor horário para levar.</p>
               <div className={s.acoes}>
                 <a id={ID_BOTAO_TOPO} href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Agendar pelo WhatsApp</a>
                 <a href={mapa} className={s.atalho}><Navigation size={16} aria-hidden="true" /> Como chegar</a>
@@ -200,7 +201,7 @@ export default function Box87AutoCenter() {
                   alt="Carro de capô aberto com faróis de LED acesos e a placa decorativa do Box 87"
                   sizes="(max-width: 900px) 89vw, 540px" />
               </div>
-              <h3 id="titulo-carros"><Car size={26} strokeWidth={1.8} aria-hidden="true" /> Carros e caminhonetes</h3>
+              <h3 id="titulo-carros"><Car size={26} strokeWidth={1.8} aria-hidden="true" /> Carros e outros veículos</h3>
               <ul className={s.lista}>
                 {servicosCarros.map((servico) => <li key={servico}>{servico}</li>)}
               </ul>
@@ -226,11 +227,13 @@ export default function Box87AutoCenter() {
         <div className={s.largura}>
           <h2 id="titulo-oficina">Na oficina</h2>
           <ul className={s.galeria}>
-            {fotos.map((foto) => (
+            {fotos.map((foto, i) => (
               <li key={foto.src}>
                 <figure>
                   <Image src={imagens + foto.src} width={foto.largura} height={foto.altura} alt={foto.alt}
-                    sizes="(max-width: 700px) 89vw, (max-width: 1150px) 30vw, 360px" />
+                    sizes={i === fotos.length - 1
+                      ? "(max-width: 900px) 89vw, (max-width: 1150px) 30vw, 360px"
+                      : "(max-width: 700px) 89vw, (max-width: 900px) 44vw, (max-width: 1150px) 30vw, 360px"} />
                   <figcaption>{foto.legenda}</figcaption>
                 </figure>
               </li>
