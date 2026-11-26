@@ -17,14 +17,17 @@ import {
   Route,
 } from "lucide-react";
 import {
+  areBusFaresCurrent,
   BUS_CONNECTION_NOTES,
   BUS_DESTINATIONS,
+  BUS_FARES_CHECKED_AT,
   BUS_LAST_REVIEW,
   BUS_OPERATORS,
   getBrazilDate,
   getBusArrivals,
   getBusCoverage,
   getBusDepartures,
+  getBusFareSummary,
   getBusPageUrl,
   getBusSearchUrl,
   getInitialBusDate,
@@ -34,6 +37,7 @@ import {
   type BusArrival,
   type BusDeparture,
   type BusDirection,
+  type BusFare,
 } from "@/data/horariosOnibus";
 import { BUS_REGULAR_CHECKED_AT } from "@/data/horariosOnibusQuadro";
 
@@ -60,6 +64,50 @@ function addDays(date: string, days: number) {
   return new Date(Date.parse(`${date}T12:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
 }
 
+const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+function formatFare(fare: Pick<BusFare, "min" | "max">) {
+  return fare.max && fare.max !== fare.min ? `${currency.format(fare.min)} a ${currency.format(fare.max)}` : currency.format(fare.min);
+}
+
+function FareLine({ fares }: { fares?: BusFare[] }) {
+  if (!fares?.length) return null;
+  return (
+    <p className="text-sm text-foreground">
+      <span className="text-muted-foreground">Passagem: </span>
+      {fares.map((fare, index) => (
+        <span key={fare.serviceClass}>
+          {index > 0 && <span className="text-muted-foreground"> · </span>}
+          {fares.length > 1 && <>{fare.serviceClass} </>}
+          <strong className="font-semibold tabular-nums">{formatFare(fare)}</strong>
+        </span>
+      ))}
+      <span className="block text-xs text-muted-foreground">Valor anunciado na ClickBus em {BUS_FARES_CHECKED_AT}. Pode mudar com a data e a lotação.</span>
+    </p>
+  );
+}
+
+function FareSummary() {
+  const rows = getBusFareSummary();
+  const place = (id: string) => BUS_DESTINATIONS.find((item) => item.id === id)?.name ?? id;
+  return (
+    <section aria-labelledby="bus-fares-heading" className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <h2 id="bus-fares-heading" className="text-base font-semibold text-foreground">Valor das passagens</h2>
+      <dl className="mt-3 divide-y divide-border text-sm">
+        {rows.map((row) => (
+          <div key={`${row.direction}-${row.placeId}`} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2 first:pt-0 last:pb-0">
+            <dt className="text-foreground">{row.direction === "saida" ? `Piracanjuba a ${place(row.placeId)}` : `${place(row.placeId)} a Piracanjuba`}</dt>
+            <dd className="font-semibold tabular-nums text-foreground">{formatFare(row)}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+        Valores anunciados na ClickBus em {BUS_FARES_CHECKED_AT}, para viagens até 2026-12-23, do convencional mais barato ao leito. As empresas têm liberdade de preço: o valor muda com a empresa, a classe, a data e a lotação, e o canal de venda pode somar taxas na compra.
+      </p>
+    </section>
+  );
+}
+
 function formatPhone(number: string) {
   if (number.startsWith("0800")) {
     return number.replace(/^(0800)(\d{3})(\d{4})$/, "$1 $2 $3");
@@ -70,9 +118,11 @@ function formatPhone(number: string) {
 function DepartureCard({
   departure,
   now,
+  showFares,
 }: {
   departure: BusDeparture;
   now: Date;
+  showFares: boolean;
 }) {
   const destination = BUS_DESTINATIONS.find((item) => item.id === departure.destinationId);
   const operator = BUS_OPERATORS.find((item) => item.id === departure.operatorId);
@@ -153,6 +203,8 @@ function DepartureCard({
             </span>
           ))}
         </div>
+
+        {showFares && <FareLine fares={departure.fares} />}
 
         <div className="flex items-start gap-2 rounded-lg bg-background p-3 text-sm">
           <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
@@ -254,7 +306,7 @@ function DepartureCard({
   );
 }
 
-function ArrivalCard({ arrival, now }: { arrival: BusArrival; now: Date }) {
+function ArrivalCard({ arrival, now, showFares }: { arrival: BusArrival; now: Date; showFares: boolean }) {
   const origin = BUS_DESTINATIONS.find((item) => item.id === arrival.originId);
   const operator = BUS_OPERATORS.find((item) => item.id === arrival.operatorId);
   const isPast = isBusArrivalPast(arrival, now);
@@ -313,6 +365,8 @@ function ArrivalCard({ arrival, now }: { arrival: BusArrival; now: Date }) {
             </span>
           ))}
         </div>
+
+        {showFares && <FareLine fares={arrival.fares} />}
 
         {regular.exception && (
           <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
@@ -447,6 +501,7 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
   const departures = getBusDepartures(selectedDate, destinationId, operatorId);
   const arrivals = getBusArrivals(selectedDate, destinationId, operatorId);
   const isArrival = direction === "chegada";
+  const showFares = areBusFaresCurrent(now);
   const resultCount = isArrival ? arrivals.length : departures.length;
   const connectionNote = destinationId !== "all" ? BUS_CONNECTION_NOTES[destinationId] : undefined;
   const allOperatorsDepartures = getBusDepartures(selectedDate, destinationId);
@@ -547,9 +602,9 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
             )}
 
             {isArrival && arrivals.length > 0 ? (
-              <div className="space-y-4">{arrivals.map((arrival) => <ArrivalCard key={arrival.id} arrival={arrival} now={now} />)}</div>
+              <div className="space-y-4">{arrivals.map((arrival) => <ArrivalCard key={arrival.id} arrival={arrival} now={now} showFares={showFares} />)}</div>
             ) : !isArrival && departures.length > 0 ? (
-              <div className="space-y-4">{departures.map((departure) => <DepartureCard key={departure.id} departure={departure} now={now} />)}</div>
+              <div className="space-y-4">{departures.map((departure) => <DepartureCard key={departure.id} departure={departure} now={now} showFares={showFares} />)}</div>
             ) : connectionNote && validDate && !archived ? (
               <div className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-center sm:py-10">
                 <Route className="mx-auto mb-3 h-8 w-8 text-muted-foreground" aria-hidden="true" />
@@ -570,6 +625,8 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
               </div>
             )}
           </section>
+
+          {showFares && <FareSummary />}
 
           <ExternalSearch date={selectedDate} destinationId={destinationId} direction={direction} />
 
