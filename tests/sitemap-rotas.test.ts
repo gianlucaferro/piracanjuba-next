@@ -159,6 +159,8 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
     ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
     ["/zap-pba/master-tech-auto-center", "/master-tech-auto-center"],
+    ["/zap-pba/smart-especializada", "/smart-especializada"],
+    ["/zap-pba/as-meninas-multimarcas", "/as-meninas-multimarcas"],
   ]) {
     assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
     assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));

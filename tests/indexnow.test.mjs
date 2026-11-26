@@ -131,6 +131,28 @@ test("arquivo de dados conhecido leva a página dele; *Api.ts não", () => {
   assert.deepEqual([...dirs].sort(), ["horarios-onibus", "plantao-farmacias"]);
 });
 
+test("mídia com slug de rota estática, estilos e links do guia levam às respectivas URLs", () => {
+  const rotas = buildRouteTable([
+    "src/app/smart-especializada/page.tsx",
+    "src/app/as-meninas-multimarcas/page.tsx",
+    "src/app/oticas-diego/page.tsx",
+    "src/app/[empresa]/page.tsx",
+    "src/app/claro/page.tsx",
+    "src/app/zap-pba/page.tsx",
+  ]);
+  const sitemap = rotas.map(({ dir }) => entry("/" + dir));
+  function urls(arquivo) {
+    return urlsForRouteDirs(sitemap, changedRouteDirs([arquivo], rotas), rotas);
+  }
+  assert.deepEqual(urls("public/empresas/smart-especializada/fachada.webp"), [SITE + "/smart-especializada"]);
+  assert.deepEqual(urls("public/empresas/as-meninas-multimarcas/galeria/vitrine.webp"), [SITE + "/as-meninas-multimarcas"]);
+  assert.deepEqual(urls("public/empresas/oticas-diego/fachada.webp"), [SITE + "/oticas-diego"]);
+  assert.deepEqual(urls("src/app/as-meninas-multimarcas/pagina.module.css"), [SITE + "/as-meninas-multimarcas"]);
+  assert.deepEqual(urls("src/data/zap-pba-paginas.json"), [SITE + "/zap-pba"]);
+  assert.deepEqual(urls("public/empresas/claro-piracanjuba/compartilhar.jpg"), []);
+  assert.deepEqual(urls("public/empresas/[empresa]/logo.webp"), []);
+});
+
 test("telefones.ts leva as três páginas que mostram os telefones", () => {
   const routes = buildRouteTable([
     "src/app/contatos/page.tsx",

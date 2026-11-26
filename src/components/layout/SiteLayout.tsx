@@ -18,7 +18,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <div className="min-h-screen min-h-[100dvh] flex flex-col bg-background overflow-x-hidden w-full max-w-[100vw]">
         <header className="sticky top-0 z-50 border-b bg-card">
           <div className="container flex items-center justify-between h-14">
-            <Link href="/" className="flex items-center gap-2" aria-label="Início">
+            <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Início do Piracanjuba.ai">
               <Image
                 src="/icon-192.png"
                 alt="Piracanjuba.ai"
@@ -27,7 +27,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 className="rounded-lg object-contain"
                 priority
               />
-              <span className="font-bold text-lg text-foreground">
+              <span className="font-bold text-lg text-foreground max-[420px]:sr-only">
                 Piracanjuba<span className="text-[#25D366]">.ai</span>
               </span>
             </Link>

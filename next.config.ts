@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
       { source: "/b10", destination: "/b10-auto-center", permanent: true },
       { source: "/zap-pba/master-tech-auto-center", destination: "/master-tech-auto-center", permanent: true },
       { source: "/mastertech", destination: "/master-tech-auto-center", permanent: true },
+      { source: "/zap-pba/smart-especializada", destination: "/smart-especializada", permanent: true },
+      { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
       { source: "/hotelviasul", destination: "/hotel", permanent: true },
       { source: "/hotel-via-sul", destination: "/hotel", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
@@ -62,6 +64,12 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/master-tech-auto-center.jpg",
       destination: "/empresas/master-tech-auto-center/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/smart-especializada.jpg",
+      destination: "/empresas/smart-especializada/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/as-meninas-multimarcas.jpg",
+      destination: "/empresas/as-meninas-multimarcas/compartilhar.jpg",
     }];
   },
 };
