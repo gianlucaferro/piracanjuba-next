@@ -169,11 +169,10 @@ export default function CotacoesCambio() {
           )}
           <Link
             href="/economia#dolar-30-dias"
-            aria-label="Dólar nos últimos 30 dias"
             className="inline-flex items-center gap-1 font-medium text-primary underline underline-offset-4 hover:text-foreground"
           >
             <LineChartIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Dólar em 30 dias
+            Dólar nos últimos 30 dias
           </Link>
           <a
             href="https://docs.awesomeapi.com.br/api-de-moedas"
