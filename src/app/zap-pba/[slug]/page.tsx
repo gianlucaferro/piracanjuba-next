@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Globe, MapPin, Navigation, Phone } from "lucide-react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
+import { SLUGS_FICHAS_REBAIXADAS } from "@/data/empresas-slugs";
 import { WHATSAPP_COMERCIAL } from "@/data/paginaEmpresa";
 import { previasDaRotaDinamica, previaPorSlug } from "@/data/previas-zap";
 import { jsonLdFichaZap, metadadosFichaZap } from "@/lib/seo-zap";
@@ -23,10 +24,21 @@ export function generateStaticParams() {
   return previasDaRotaDinamica.map(({ slug }) => ({ slug }));
 }
 
+/**
+ * Empresa que recusou a landing (docs/empresa-recusou-landing.md): o WhatsApp aparece só como
+ * número, sem link para a conversa. O atalho de um toque é exclusivo das páginas contratadas.
+ * O guia Zap PBA (/zap-pba) continua com o WhatsApp clicável para todas as empresas.
+ */
+function semCliqueNoWhatsapp(slug: string) {
+  return SLUGS_FICHAS_REBAIXADAS.includes(slug);
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const ficha = previaPorSlug.get(slug);
-  return ficha ? metadadosFichaZap(ficha) : {};
+  if (!ficha) return {};
+  // Sem isso, o Safari do iPhone transforma o número em link de ligação sozinho.
+  return semCliqueNoWhatsapp(slug) ? { ...metadadosFichaZap(ficha), formatDetection: { telephone: false } } : metadadosFichaZap(ficha);
 }
 
 function palavras(texto: string) {
@@ -50,6 +62,7 @@ export default async function PreviaEmpresa({ params }: Props) {
   const textoDaFicha = palavras([atividade, resumo, detalhe].filter(Boolean).join(". "));
   const ofertas = ficha.oferta?.filter((item) => !textoDaFicha.includes(palavras(item)));
   const temOfertas = Boolean(ofertas?.length);
+  const semClique = semCliqueNoWhatsapp(slug);
 
   return (
     <article className={[css.pagina, titulo.variable].join(" ")} data-composicao={composicao} style={estilo}>
@@ -71,9 +84,13 @@ export default async function PreviaEmpresa({ params }: Props) {
             <h1 className={nome.length > 34 ? css.nomeLongo : undefined}>{nome}</h1>
             <p className={css.resumo}>{resumo}</p>
             <div className={css.acoes}>
-              <a className={css.botao} href={contato}>
-                <WhatsAppIcon fill="currentColor" />{ficha.acao ?? (ficha.contatoRede ? "WhatsApp da rede" : "Falar no WhatsApp")}
-              </a>
+              {semClique ? (
+                <p className={css.atalho}><Phone size={16} aria-hidden="true" />WhatsApp {formatarTelefoneBr(telefones[0])}</p>
+              ) : (
+                <a className={css.botao} href={contato}>
+                  <WhatsAppIcon fill="currentColor" />{ficha.acao ?? (ficha.contatoRede ? "WhatsApp da rede" : "Falar no WhatsApp")}
+                </a>
+              )}
               {ficha.mapa ? (
                 <a className={css.atalho} href={ficha.mapa}><Navigation size={16} aria-hidden="true" />Como chegar</a>
               ) : (redes || telefones.length > 1 || ficha.endereco) && (
@@ -122,7 +139,9 @@ export default async function PreviaEmpresa({ params }: Props) {
           <dl className={css.grade}>
             <div className={css.item}>
               <dt><Phone size={18} aria-hidden="true" />{ficha.contatoRede ? "WhatsApp da rede" : "WhatsApp"}</dt>
-              <dd>{telefones.map((numero) => (
+              <dd>{telefones.map((numero) => semClique ? (
+                <p key={numero}>{formatarTelefoneBr(numero)}</p>
+              ) : (
                 <a key={numero} href={linkWhatsapp(numero)}>{formatarTelefoneBr(numero)}<ArrowUpRight size={15} aria-hidden="true" /></a>
               ))}</dd>
             </div>
@@ -147,7 +166,7 @@ export default async function PreviaEmpresa({ params }: Props) {
         <aside className={css.proprietario} aria-labelledby="titulo-proprietario">
           <div>
             <h2 id="titulo-proprietario">Esta empresa é sua?</h2>
-            <p>O Piracanjuba.ai criou esta prévia. Converse com a equipe do portal para usar suas fotos, destacar o que você oferece e conhecer as condições.</p>
+            <p>O Piracanjuba.ai criou esta prévia. Converse com a equipe do portal para usar suas fotos, destacar o que você oferece e conhecer as condições.{semClique && " Na página contratada, o cliente chega ao seu WhatsApp com um toque."}</p>
           </div>
           <a href={personalizar}>Quero personalizar a página<ArrowUpRight size={17} aria-hidden="true" /></a>
         </aside>

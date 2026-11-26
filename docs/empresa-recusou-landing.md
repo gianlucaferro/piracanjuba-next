@@ -28,7 +28,13 @@ Decisão do operador em 2026-11-26. Quando uma empresa não contratar a landing 
    - só dados públicos do negócio: nome, categoria, setor, telefone comercial, oferta, endereço, mapa, Instagram, site, resumo factual, atividade, `acao` e `mensagem`;
    - nada de celular pessoal nem nome do dono, salvo se o próprio negócio publicar.
 3. Apague o logo em `public/marcas-zap/logos/` se nenhuma outra ficha o usar.
-4. Acrescente o slug a `SLUGS_FICHAS_REBAIXADAS` e tire-o de `SLUGS_PAGINAS_EMPRESARIAIS`, ambos em `src/data/empresas-slugs.ts`. Assim o middleware leva as outras grafias (`/MasterTechAutoCenter`) à ficha.
+4. Acrescente o slug a `SLUGS_FICHAS_REBAIXADAS` e tire-o de `SLUGS_PAGINAS_EMPRESARIAIS`, ambos em `src/data/empresas-slugs.ts`. Assim o middleware leva as outras grafias (`/MasterTechAutoCenter`) à ficha, e a ficha passa a mostrar o **WhatsApp só como número, sem link**, como se vê no item abaixo.
+   - **WhatsApp sem clique** (decisão do operador em 2026-11-26: "deixe apenas o número visível, mas sem opção de clicar para ir direto. Essa vai ser uma funcionalidade exclusiva de quem pagou pela landing page"). Para os slugs de `SLUGS_FICHAS_REBAIXADAS`, `src/app/zap-pba/[slug]/page.tsx` faz o seguinte, sem passo manual:
+     - tira o botão de WhatsApp do topo e mostra "WhatsApp (DD) XXXXX-XXXX" como texto;
+     - mostra o número da seção de contatos sem link;
+     - liga `formatDetection: { telephone: false }`, para o iPhone não transformar o número em link.
+
+     Continuam clicáveis "Como chegar", Instagram, site, "Quero personalizar a página" e "Solicitar ajuste ou remoção". O guia `/zap-pba`, a lista, **não muda**: lá o WhatsApp de todas as empresas continua clicável.
 5. URL curta e atalhos:
    - a URL curta (`/<slug>`) **serve a ficha por rewrite** em `rewrites` do `next.config.ts`, com 200 e canonical em `/zap-pba/<slug>`. Não use 308: o 308 antigo `/zap-pba/<slug>` para `/<slug>`, do tempo da landing, pode estar guardado no navegador, e o novo formaria um laço (apontado pelo CodeRabbit no PR #102);
    - os atalhos (ex.: `/mastertech`) passam a fazer 308 para `/zap-pba/<slug>`, em `redirects` do `next.config.ts` e em `REDIRECIONAMENTOS_PERMANENTES` de `src/lib/sitemap-rotas.ts`;

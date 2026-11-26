@@ -52,5 +52,17 @@ test("ficha rebaixada (empresa que recusou a landing) responde na URL curta sem 
   await expect(page.getByRole("heading", { level: 1, name: "Master Tech Auto Center" })).toBeVisible();
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai" + ficha);
   await expect(page.locator('img[src*="/empresas/master-tech-auto-center/"], img[src*="/marcas-zap/logos/"]')).toHaveCount(0);
+  // WhatsApp só como número: o atalho de um toque é exclusivo das páginas contratadas.
+  await expect(page.locator('a[href*="wa.me/5564993450101"], a[href^="tel:"]')).toHaveCount(0);
+  await expect(page.getByText("WhatsApp (64) 99345-0101", { exact: true })).toBeVisible();
+  await expect(page.locator("#contatos ~ dl")).toContainText("(64) 99345-0101");
+  await expect(page.locator('meta[name="format-detection"]')).toHaveAttribute("content", /telephone=no/);
+  await expect(page.getByRole("link", { name: /Quero personalizar a página/ })).toHaveAttribute("href", /wa\.me\//);
   await page.screenshot({ path: `artifacts/master-tech-ficha-${testInfo.project.name}.png`, fullPage: true });
+});
+
+test("ficha comum do guia continua com o WhatsApp clicável", async ({ page }) => {
+  await page.goto("/zap-pba/maxwel-cabeleireiro");
+  await expect(page.locator('a[href*="wa.me/"]').first()).toBeVisible();
+  await expect(page.locator('meta[name="format-detection"]')).toHaveCount(0);
 });
