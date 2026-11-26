@@ -149,9 +149,9 @@ export default function Superfrio() {
         <section id="atendimento" className={s.contato} aria-labelledby="sf-contato">
           <h2 id="sf-contato">Fale com a Superfrio</h2>
           <p>A equipe atende a cidade e a zona rural de Piracanjuba, incluindo Passa Quatro e Trevo Floresta. Para agendar, envie sua localização e o modelo do aparelho.</p>
-          <a className={s.botao} href={contato}><WhatsAppIcon className={s.whatsapp} fill="currentColor" /> {formatarTelefoneBr(telefone)}</a>
-          <a className={s.canal} href={"tel:+" + alternativo}><Phone size={16} aria-hidden="true" /> {formatarTelefoneBr(alternativo)}</a>
-          <a className={s.canal} href={instagram}><InstagramIcon width={16} height={16} aria-hidden="true" /> @superfrio_ar2</a>
+          <a className={s.botao} href={contato}><WhatsAppIcon className={s.whatsapp} fill="currentColor" /> {formatarTelefoneBr(telefone)}<span className="sr-only">, WhatsApp da Superfrio</span></a>
+          <a className={s.canal} href={"tel:+" + alternativo}><Phone size={16} aria-hidden="true" /> {formatarTelefoneBr(alternativo)}<span className="sr-only">, ligação para a Superfrio</span></a>
+          <a className={s.canal} href={instagram}><InstagramIcon width={16} height={16} aria-hidden="true" /> @superfrio_ar2<span className="sr-only">, Instagram da Superfrio</span></a>
         </section>
       </div>
       <nav aria-label="Guia de empresas" className={`${s.largura} ${s.guia}`}><Link href="/zap-pba"><ArrowLeft size={15} aria-hidden="true" /> Guia Zap PBA</Link><a href={correcao}>Solicitar correção ou retirada da ficha</a></nav>
