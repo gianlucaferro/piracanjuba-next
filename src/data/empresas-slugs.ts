@@ -25,6 +25,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "box-87-auto-center",
   "smart-especializada",
   "as-meninas-multimarcas",
+  "superfrio-ar-condicionado",
   "hotel",
   "viaggi-vistos",
 ];

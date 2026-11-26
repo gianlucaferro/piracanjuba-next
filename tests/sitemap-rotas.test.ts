@@ -171,6 +171,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],
     ["/zap-pba/smart-especializada", "/smart-especializada"],
     ["/zap-pba/as-meninas-multimarcas", "/as-meninas-multimarcas"],
+    ["/zap-pba/superfrio-ar-condicionado", "/superfrio-ar-condicionado"],
   ]) {
     assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
     assert.ok(!fichas.some(({ slug }) => `/zap-pba/${slug}` === origem));

@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
       { source: "/mastertech", destination: "/zap-pba/master-tech-auto-center", permanent: true },
       { source: "/zap-pba/smart-especializada", destination: "/smart-especializada", permanent: true },
       { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
+      { source: "/zap-pba/superfrio-ar-condicionado", destination: "/superfrio-ar-condicionado", permanent: true },
       { source: "/hotelviasul", destination: "/hotel", permanent: true },
       { source: "/hotel-via-sul", destination: "/hotel", permanent: true },
       { source: "/zap-pba/viaggi-vistos", destination: "/viaggi-vistos", permanent: true },
@@ -77,6 +78,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/as-meninas-multimarcas.jpg",
       destination: "/empresas/as-meninas-multimarcas/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/superfrio-ar-condicionado.jpg",
+      destination: "/empresas/superfrio-ar-condicionado/compartilhar.jpg",
     }];
   },
 };

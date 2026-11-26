@@ -357,6 +357,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Loja de celulares e assistência técnica em Piracanjuba. Smartphones novos e seminovos, acessórios e conserto de celular no Setor Central. Consulte modelos, disponibilidade e orçamento pelo WhatsApp.",
       },
       {
+        caminho: "/superfrio-ar-condicionado",
+        titulo: "Superfrio, instalação e manutenção de ar-condicionado em Piracanjuba",
+        descricao: "Instalação, limpeza, manutenção preventiva e reparos de ar-condicionado em Piracanjuba. Fale com a Superfrio pelo WhatsApp para consultar o atendimento e pedir orçamento.",
+      },
+      {
         caminho: "/as-meninas-multimarcas",
         titulo: "As Meninas Multimarcas, calçados femininos em Piracanjuba",
         descricao: "Loja de calçados femininos e acessórios no Centro de Piracanjuba. Consulte modelos e numeração pelo WhatsApp e encontre o endereço e o Instagram da loja.",

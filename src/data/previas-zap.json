@@ -5682,30 +5682,6 @@
     "mensagem": "Olá, Summer Beach Arena! Quero reservar uma quadra para jogar com meu grupo. Quais horários e valores estão disponíveis?"
   },
   {
-    "slug": "superfrio-ar-condicionado",
-    "nome": "Superfrio Ar Condicionado",
-    "categoria": "Serviços Especializados",
-    "setor": "Serviços Especializados",
-    "telefones": [
-      "5564992666414"
-    ],
-    "oferta": [
-      "Instalação de ar-condicionado",
-      "Higienização",
-      "Manutenção preventiva",
-      "Reparos"
-    ],
-    "instagram": "https://www.instagram.com/superfrio_ar2/",
-    "site": "https://superfrioar.com.br/",
-    "logo": "/marcas-zap/logos/f558784e32044f99.webp",
-    "cor": "#19344f",
-    "resumo": "A Superfrio atende Piracanjuba e região com instalação de ar-condicionado, higienização, manutenção preventiva e reparos. Ao pedir orçamento, informe seu bairro e se o aparelho já está instalado.",
-    "atividade": "Climatização de ambientes",
-    "acao": "Pedir orçamento de climatização",
-    "mensagem": "Olá, Superfrio! Preciso de um orçamento para ar-condicionado. Vou informar meu bairro e o serviço de que preciso.",
-    "foto": "/marcas-zap/setores/ar-condicionado-de-parede.webp"
-  },
-  {
     "slug": "supermercado-brotas-smart",
     "nome": "Supermercado Brotas Smart",
     "categoria": "Supermercados",
