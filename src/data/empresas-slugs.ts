@@ -24,6 +24,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "b10-auto-center",
   "box-87-auto-center",
   "master-tech-auto-center",
+  "hotel",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];

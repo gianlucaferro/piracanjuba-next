@@ -352,6 +352,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Oficina mecânica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Diagnóstico com scanner, motor e injeção eletrônica, câmbio manual e automático, embreagem, suspensão, freios, alinhamento 3D, troca de óleo, escapamento e revitalização de faróis. Horário, WhatsApp e rota até a oficina.",
       },
       {
+        caminho: "/hotel",
+        titulo: "Hotel Via Sul, hotel em Piracanjuba no Centro",
+        descricao: "Hotel no Centro de Piracanjuba, na Rua Vereador Hugo Vargas Batista Machado, a cerca de 150 metros da Rodoviária, 250 metros da Prefeitura e 270 metros da Câmara. Check-in a partir das 14h, check-out até as 12h, recepção 24 horas, Wi-Fi e estacionamento gratuitos, café da manhã, fotos dos quartos e reserva pelo WhatsApp.",
+      },
+      {
         caminho: "/estacionamentoaeroporto",
         titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
