@@ -1,0 +1,98 @@
+.pagina {
+  --ouro: #ffcf25;
+  --tinta: #141410;
+  --marca-superficie: #0b0b0a;
+  --marca-borda: #44433b;
+  color: var(--tinta); background: #fff; line-height: 1.55;
+}
+.pagina *, .pagina *::before, .pagina *::after { box-sizing: border-box; }
+.pagina :is(h1,h2,h3,p) { margin: 0; }
+.pagina h1,.pagina h2,.pagina h3 { color: inherit; font-family: inherit; }
+.pagina h2 { font-size: clamp(2.15rem, 4.6vw, 4.2rem); font-weight: 750; line-height: 1.03; letter-spacing: -.065em; }
+.pagina h3 { font-weight: 750; letter-spacing: -.04em; }
+.pagina a { text-decoration: none; }
+.pagina a:focus-visible { outline: 3px solid #ab7200; outline-offset: 4px; }
+.pagina section[id] { scroll-margin-top: 5rem; }
+.largura,.vitrineGrade { width: min(90%, 1176px); margin: 0 auto; }
+.escuro { color: #fff; background: #070706; }
+.cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 86px; border-bottom: 1px solid #333229; }
+.logo { width: 116px; height: auto; }
+.cabecalho nav { display: flex; gap: clamp(1rem,3vw,2.8rem); }
+.cabecalho a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; gap: .5rem; font-size: .88rem; font-weight: 650; color: #eee; }
+.cabecalho a:hover,.secundario:hover { color: var(--ouro); }
+.rede { border: 1px solid #525147; border-radius: 100px; padding: 0 .95rem; }
+.hero { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; min-height: clamp(470px,39vw,575px); }
+.produto { position: absolute; right: 0; z-index: -1; width: min(70%,790px); height: 100%; object-fit: contain; object-position: center right; mix-blend-mode: lighten; }
+.heroTexto { width: 56%; padding: 3.8rem 0; }
+.local { display: flex; align-items: center; gap: .5rem; color: #d7d7ce; font-size: .83rem; font-weight: 650; }
+.local svg { color: var(--ouro); }
+.pagina h1 { margin: 1.2rem 0; font-size: clamp(3rem,5.4vw,5.45rem); font-weight: 780; line-height: .99; letter-spacing: -.075em; }
+.pagina h1 em { color: var(--ouro); font-style: normal; }
+.chamada { max-width: 32rem; color: #d4d3cb; font-size: clamp(1rem,1.4vw,1.16rem); }
+.acoes { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.3rem; margin-top: 1.8rem; }
+.primario,.secundario,.linkEscuro,.barraBotao { display: inline-flex; justify-content: center; align-items: center; gap: .55rem; min-height: 46px; font-size: .91rem; font-weight: 750; }
+.primario,.barraBotao { padding: .68rem 1.15rem; background: var(--ouro); color: #111; border-radius: 7px; }
+.primario:hover,.barraBotao:hover { background: #ffe16d; }
+.primario svg,.barraBotao svg { width: 19px; height: 19px; flex: none; }
+.secundario { color: #fff; }
+.assistencia,.visita { padding: clamp(3.5rem,6vw,6rem) 0; }
+.sobrelinha { font-size: .75rem; font-weight: 800; color: #675323; text-transform: uppercase; letter-spacing: .11em; }
+.sobrelinha + h2 { margin-top: .68rem; }
+.secaoTopo { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: end; }
+.secaoTopo > p { color: #4c4b45; max-width: 28rem; }
+.reparos { display: grid; grid-template-columns: repeat(3,1fr); gap: 2.5rem; margin: 2.4rem 0 1.1rem; }
+.reparos > div { border-top: 1px solid #d3d2c8; padding-top: 1.35rem; }
+.icone { background: #fff3bc; color: #3e340a; width: 46px; aspect-ratio: 1; border-radius: 12px; display: grid; place-items: center; }
+.reparos h3 { font-size: 1.32rem; margin: .8rem 0 .35rem; }
+.reparos p,.vitrineTexto p:not(.sobrelinha),.dados p { color: #53534d; }
+.linkEscuro,.dados a { color: var(--tinta); text-decoration: underline!important; text-decoration-color: #b38c08!important; text-underline-offset: .28em; }
+.vitrine { background: #151510; color: #faf9f2; padding: clamp(2.3rem,4.5vw,4rem) 0; }
+.vitrineGrade,.visitaGrade { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(2rem,5.5vw,5rem); }
+.vitrineGrade > img,.visitaGrade > img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.vitrineTexto .sobrelinha { color: var(--ouro); }
+.vitrineTexto h2 { margin-bottom: 1.1rem; }
+.vitrineTexto p:not(.sobrelinha) { color: #d5d4ca; margin: .7rem 0; }
+.vitrineTexto .primario { margin-top: .8rem; }
+.visita { background: #f5f4ee; }
+.visitaGrade { margin-top: 2rem; }
+.visitaGrade > img { max-height: 370px; object-fit: cover; }
+.dados > div { display: flex; gap: 1rem; padding: 1rem 0; border-top: 1px solid #d1d0c6; }
+.dados > div > svg { flex: none; width: 21px; height: 21px; margin-top: .25rem; }
+.dados h3 { font-size: 1.11rem; margin-bottom: .2rem; }
+.dados a,.rodape a { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem 0; }
+.rodape { margin-top: clamp(2rem,4vw,4rem); padding-top: .8rem; border-top: 1px solid #cccbc1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem 1.3rem; color: #4d4d44; font-size: .83rem; }
+.rodape a:hover { text-decoration: underline; }
+.barraBotao { display: flex; width: 100%; }
+@media(max-width: 800px) {
+  .cabecalho { min-height: 70px; }
+  .logo { width: 100px; }
+  .reparos { gap: 1.15rem; }
+  .heroTexto { width: 58%; }
+  .acoes { gap: .3rem .9rem; }
+  .hero { min-height: 435px; }
+}
+@media(max-width: 680px) {
+  .cabecalho { gap: .5rem; }
+  .cabecalho nav { margin-left: auto; gap: .8rem; }
+  .cabecalho nav a:first-child,.cabecalho nav a:last-child,.rede span { display: none; }
+  .cabecalho .rede { width: 44px; padding: 0; }
+  .hero { flex-direction: column; align-items: stretch; min-height: auto; }
+  .heroTexto { width: 100%; padding: 2.3rem 0 .7rem; }
+  .pagina h1 { font-size: clamp(2.85rem,11.3vw,4.4rem); margin: .85rem 0; }
+  .produto { position: static; order: 2; width: 100%; height: clamp(190px,53vw,285px); object-fit: cover; object-position: center 50%; }
+  .chamada { max-width: 33rem; }
+  .acoes { margin-top: 1.18rem; }
+  .secaoTopo,.reparos,.vitrineGrade,.visitaGrade { grid-template-columns: 1fr; gap: 1.25rem; }
+  .reparos { margin-top: 1.55rem; }
+  .reparos > div { display: grid; grid-template-columns: 44px 1fr; gap: .25rem .9rem; align-items: start; }
+  .icone { grid-row: span 2; width: 42px; }
+  .reparos h3 { margin: 0; }
+  .reparos p { grid-column: 2; }
+  .vitrineTexto { grid-row: 1; }
+  .visitaGrade { margin-top: 1.3rem; }
+}
+@media(max-width: 360px) {
+  .pagina h1 { font-size: 2.45rem; }
+  .cabecalho nav a { font-size: .76rem; }
+  .primario,.secundario { font-size: .84rem; }
+}

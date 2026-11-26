@@ -147,6 +147,10 @@ test("endereço digitado com maiúscula, acento ou hífen redireciona para a pá
   assert.equal(caminhoCanonicoEmpresa("/b10-auto-center"), null);
   assert.equal(caminhoCanonicoEmpresa("/MasterTechAutoCenter"), "/master-tech-auto-center");
   assert.equal(caminhoCanonicoEmpresa("/master-tech-auto-center"), null);
+  assert.equal(caminhoCanonicoEmpresa("/SmartEspecializada"), "/smart-especializada");
+  assert.equal(caminhoCanonicoEmpresa("/smart-especializada"), null);
+  assert.equal(caminhoCanonicoEmpresa("/AsMeninasMultimarcas"), "/as-meninas-multimarcas");
+  assert.equal(caminhoCanonicoEmpresa("/as-meninas-multimarcas"), null);
   assert.equal(caminhoCanonicoEmpresa("/Hotel"), "/hotel");
   assert.equal(caminhoCanonicoEmpresa("/hotel"), null);
   assert.equal(caminhoCanonicoEmpresa("/evadvocacia"), null);

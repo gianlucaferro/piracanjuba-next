@@ -20,6 +20,7 @@ export const BUILD_STAMP_MIN_REPEAT = 10;
 
 const PAGE_FILE = /^page\.(tsx|ts|jsx|js|mdx)$/;
 const APP_DIR = "src/app/";
+const COMPANY_MEDIA_FILE = /^public\/empresas\/([a-z0-9-]+)\//;
 
 // Arquivos cujo conteúdo é o conteúdo publicado de páginas que a subida de pasta
 // (routeDirForChangedFile) não alcança: mudou o arquivo, a página mudou. O valor é
@@ -41,6 +42,7 @@ export const DATA_FILE_ROUTES = Object.freeze({
   "src/data/paginaEmpresa.ts": ["anuncie"],
   "src/data/empresas.ts": ["[empresa]"],
   "src/data/empresas-slugs.ts": ["[empresa]"],
+  "src/data/zap-pba-paginas.json": ["zap-pba"],
   "src/data/hotel-via-sul.ts": ["hotel", "zap-pba"],
   "src/data/telefones.ts": ["contatos", "seguranca", "beneficios-sociais"],
   "src/app/vereadores/tratamento.ts": ["vereadores/[slug]"],
@@ -149,6 +151,8 @@ export function resolveRoute(pathname, routes) {
 // globals.css, sitemap e robots valem para o site inteiro. Componentes de
 // src/components e libs de src/lib não disparam envio (ver README.md).
 export function routeDirForChangedFile(file, routeDirs) {
+  const mediaSlug = file.match(COMPANY_MEDIA_FILE)?.[1];
+  if (mediaSlug) return routeDirs.has(mediaSlug) ? mediaSlug : null;
   if (!file.startsWith(APP_DIR)) return null;
   const parts = file.slice(APP_DIR.length).split("/");
   const base = parts.pop();

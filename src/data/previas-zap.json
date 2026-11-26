@@ -604,29 +604,6 @@
     "mensagem": "Olá, Almeida & Silva! Gostaria de conversar sobre um serviço contábil. Posso contar se minha dúvida é sobre minha empresa, atividade rural ou declaração pessoal?"
   },
   {
-    "slug": "as-meninas-multimarcas",
-    "nome": "As Meninas Multimarcas",
-    "categoria": "Moda e Vestuário",
-    "setor": "Moda e Vestuário",
-    "telefones": [
-      "5564992176440"
-    ],
-    "oferta": [
-      "Calçados femininos",
-      "Acessórios"
-    ],
-    "endereco": "Rua Doutor Rui Brasil Cavalcante, 135, Centro, Piracanjuba - GO, 75640-122",
-    "mapa": "https://www.google.com/maps/place/As+Meninas+-+Loja+de+Cal%C3%A7ados+e+Acess%C3%B3rios+Femininos/data=!4m7!3m6!1s0x935f436d6f602e87:0x5f704eeea0ab2a25!8m2!3d-17.3051383!4d-49.0239433!16s%2Fg%2F11z92g_wh4!19sChIJhy5gb21DX5MRJSqroO5OcF8?authuser=0&hl=pt-BR&g_ep=EgoyMDI2MTExMC4wIJJjKgBIAVAD&rclk=1",
-    "instagram": "https://www.instagram.com/asmeninasmultimarcas/",
-    "logo": "/marcas-zap/logos/asmeninasmultimarcas.webp",
-    "cor": "#4f2719",
-    "foto": "/marcas-zap/setores/calcados.webp",
-    "resumo": "No Centro de Piracanjuba, a loja As Meninas Multimarcas vende calçados femininos e acessórios. Antes de visitar, consulte os modelos disponíveis na sua numeração.",
-    "atividade": "Calçados e acessórios femininos",
-    "acao": "Consultar modelos e numeração",
-    "mensagem": "Oi, As Meninas! Gostaria de conhecer os calçados disponíveis no meu número. Posso contar a numeração e o estilo que procuro?"
-  },
-  {
     "slug": "atelie-zig-zag",
     "nome": "Ateliê Zig Zag",
     "categoria": "Artesanato",
@@ -5507,30 +5484,6 @@
     "atividade": "Fisioterapia",
     "acao": "Consultar horários de fisioterapia",
     "mensagem": "Olá, Simone! Gostaria de marcar meu primeiro atendimento de fisioterapia. Quais horários estão disponíveis?"
-  },
-  {
-    "slug": "smart-especializada",
-    "nome": "Smart Especializada",
-    "categoria": "Tecnologia",
-    "setor": "Tecnologia",
-    "telefones": [
-      "5564993421774"
-    ],
-    "oferta": [
-      "Smartphones novos e seminovos",
-      "Capas, películas e carregadores",
-      "Troca de tela, bateria e conector de carga"
-    ],
-    "endereco": "R. Dr. Ruy Brasil Cavalcante, Quadra 24 Lote 11-A Nº 240 - Setor Central, Piracanjuba - GO, 75640-122",
-    "mapa": "https://www.google.com/maps?cid=11080508567231164470",
-    "logo": "/marcas-zap/logos/2afb548b0e0c34b7.webp",
-    "cor": "#4f4219",
-    "foto": "/marcas-zap/setores/celulares.webp",
-    "resumo": "Na Smart Especializada, em Piracanjuba, você encontra smartphones novos e seminovos, capas, películas e carregadores. A loja também faz reparos em celulares.",
-    "atividade": "Celulares e assistência técnica",
-    "detalhe": "Para consultar um reparo, informe o modelo do aparelho e o que aconteceu. A assistência faz troca de tela, bateria e conector de carga.",
-    "acao": "Consultar conserto de celular",
-    "mensagem": "Olá, Smart! Gostaria de consultar um conserto. Quais informações do meu celular vocês precisam para avaliar o orçamento?"
   },
   {
     "slug": "sorveteria-new-raffas",
