@@ -132,6 +132,27 @@
 .atalho { color: var(--tinta); }
 .atalho:hover, .topo a:hover, .rodape a:hover, .item a:hover { text-decoration: underline; text-underline-offset: .2em; }
 
+/* Faixa do proprietário, logo abaixo da barra do topo: discreta, sem cara de anúncio. */
+.faixaDono {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 16px;
+  margin-top: 14px;
+  padding: 6px 14px;
+  border: 1px solid color-mix(in srgb, var(--tinta) 22%, transparent);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--tinta) 6%, transparent);
+  color: var(--texto);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+.faixaDono p { margin: 0; padding-block: 4px; }
+.faixaDono a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--tinta); font-weight: 750; white-space: nowrap; }
+.faixaDono a:hover { text-decoration: underline; text-underline-offset: .2em; }
+
 .moldura, .painelMarca {
   position: relative;
   isolation: isolate;
