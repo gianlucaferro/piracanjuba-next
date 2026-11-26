@@ -26,6 +26,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "master-tech-auto-center",
   "smart-especializada",
   "as-meninas-multimarcas",
+  "superfrio-ar-condicionado",
   "hotel",
   "viaggi-vistos",
 ];
