@@ -156,8 +156,38 @@
   padding-block: clamp(44px, 6vw, 78px);
 }
 
-.perfil, .contato { scroll-margin-top: 78px; }
+.areas, .perfil, .contato { scroll-margin-top: 78px; }
 .pagina h2 { margin: 0; font-size: clamp(2rem, 3.25vw, 3rem); line-height: 1.08; letter-spacing: -.035em; }
+
+.areas {
+  padding-block: clamp(36px, 5vw, 64px);
+  border-bottom: 1px solid #dfdacf;
+  background: #fffcf7;
+}
+
+.listaAreas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 26px 34px;
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+}
+
+.listaAreas li { border-top: 1px solid #bba786; padding-top: 15px; }
+.listaAreas h3 {
+  margin: 0;
+  font-family: var(--wennder-serifa), Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.listaAreas p {
+  margin: 8px 0 0;
+  color: #41505a;
+  line-height: 1.65;
+  font-size: .94rem;
+}
 
 .perfil h2::before {
   display: block;

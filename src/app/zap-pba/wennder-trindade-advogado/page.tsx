@@ -23,8 +23,35 @@ const celular = ficha.telefones[0];
 const whatsapp = linkWhatsapp(celular, ficha.mensagem);
 const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, "Olá! Gostaria de solicitar um ajuste ou a remoção da página " + url);
 const cna = "https://cna.oab.org.br/";
-const titulo = "Wennder Trindade | Advogado em Piracanjuba (GO)";
-const descricao = "Conheça Wennder Trindade e Silva, advogado em Piracanjuba, OAB/GO 51.422. Consulte o registro profissional e os contatos do escritório para agendar um horário.";
+const titulo = "Advogado em Piracanjuba (GO) | Wennder Trindade";
+const descricao = "Wennder Trindade, advogado em Piracanjuba, GO, OAB/GO 51.422. Divórcio, pensão, herança, cobranças e defesa criminal. Consulte horários pelo WhatsApp.";
+
+const areas = [
+  {
+    nome: "Direito de família",
+    descricao: "Divórcio consensual, guarda, convivência com os filhos e pensão alimentícia. Se já houver um acordo ou decisão judicial, tenha uma cópia para a primeira conversa.",
+  },
+  {
+    nome: "Sucessões e partilha",
+    descricao: "Arrolamento de bens e partilha de herança. Uma relação dos bens deixados e dos documentos já disponíveis ajuda a preparar a consulta.",
+  },
+  {
+    nome: "Direito do consumidor",
+    descricao: "Cobranças bancárias, empréstimos consignados e problemas com serviços de telefonia. Separe as faturas, os extratos e os protocolos relacionados à cobrança.",
+  },
+  {
+    nome: "Direito civil e cobranças",
+    descricao: "Cobrança de dívidas e execução de títulos. Contratos, recibos e comprovantes ajudam a esclarecer o valor combinado, o vencimento e o que já foi pago.",
+  },
+  {
+    nome: "Direito criminal",
+    descricao: "Defesa em ações penais e pedidos de habeas corpus. Ao consultar o escritório, informe se recebeu uma intimação ou se há audiência marcada.",
+  },
+  {
+    nome: "Direito administrativo",
+    descricao: "Diferenças de remuneração de servidores públicos, incluindo o piso salarial do magistério. Tenha em mãos os contracheques do período sobre o qual deseja conversar.",
+  },
+];
 
 export const metadata = pageMetadata({
   title: titulo, description: descricao, path: caminho,
@@ -43,11 +70,13 @@ const esquema = {
     {
       "@type": "Person", "@id": url + "#advogado", name: nomeCompleto, alternateName: ficha.nome,
       jobTitle: "Advogado", image: SITE_URL + ficha.foto,
+      knowsAbout: areas.map((area) => area.nome),
       identifier: { "@type": "PropertyValue", propertyID: "OAB/GO", value: registro },
       birthPlace: { "@type": "City", name: "Piracanjuba" }, workLocation: { "@id": url + "#escritorio" },
     },
     {
       "@type": "LegalService", "@id": url + "#escritorio", name: ficha.nome, url,
+      areaServed: { "@type": "City", name: "Piracanjuba", address: { "@type": "PostalAddress", addressRegion: "GO", addressCountry: "BR" } },
       telephone: "+" + fixo, hasMap: ficha.mapa, employee: { "@id": url + "#advogado" },
       address: { "@type": "PostalAddress", addressLocality: "Piracanjuba", addressRegion: "GO", addressCountry: "BR" },
       contactPoint: { "@type": "ContactPoint", contactType: "Agendamento", telephone: "+" + celular, url: linkWhatsapp(celular) },
@@ -67,7 +96,7 @@ export default function WennderTrindade() {
         <div className={s.largura}>
           <nav className={s.navegacao} aria-label="Navegação do perfil">
             <Link href="/zap-pba" prefetch={false}><ArrowLeft size={15} aria-hidden="true" /> Guia Zap PBA</Link>
-            <div><a href="#perfil">Perfil</a><a href="#contato">Contato</a></div>
+            <div><a href="#areas">Áreas</a><a href="#perfil">Perfil</a><a href="#contato">Contato</a></div>
           </nav>
           <div className={s.apresentacao}>
             <div className={s.identidade}>
@@ -86,6 +115,20 @@ export default function WennderTrindade() {
           </div>
         </div>
       </header>
+
+      <section className={s.areas} id="areas" aria-labelledby="titulo-areas">
+        <div className={s.largura}>
+          <h2 id="titulo-areas">Áreas de atuação</h2>
+          <ul className={s.listaAreas}>
+            {areas.map((area) => (
+              <li key={area.nome}>
+                <h3>{area.nome}</h3>
+                <p>{area.descricao}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       <div className={s.largura + " " + s.informacoes}>
         <section className={s.perfil} id="perfil" aria-labelledby="titulo-perfil">
