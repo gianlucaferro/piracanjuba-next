@@ -23,6 +23,8 @@ const url = site + caminho;
 const ativos = "/empresas/as-meninas-multimarcas";
 const instagram = "https://www.instagram.com/asmeninasmultimarcasloja/";
 const mapa = "https://www.google.com/maps?cid=6877083417799502373";
+const coordenadas = { latitude: -17.3051383, longitude: -49.0239433 };
+const rota = `https://www.google.com/maps/dir/?api=1&destination=${coordenadas.latitude},${coordenadas.longitude}`;
 const telefone = "5564992176440";
 const rua = "Rua Dr. Ruy Brasil Cavalcante, 135";
 const conversa = linkWhatsapp(telefone, "Olá, As Meninas! Vi a loja no Piracanjuba.ai e gostaria de consultar os modelos e as numerações disponíveis.");
@@ -39,10 +41,31 @@ export const metadata: Metadata = {
   twitter: { ...meta.twitter, card: "summary_large_image", images: [fotoSocial] },
 };
 
-const acessorios = [
-  { nome: "Bolsa listrada", detalhe: "Listras em rosa e cru, alças longas e formato de sacola.", foto: "bolsa-listrada.webp", alt: "Bolsa de listras rosa e cru com a inscrição Sole Gelato Bacio", largura: 1056, altura: 1030 },
-  { nome: "Bolsa de corrente", detalhe: "Acabamento dourado, costura em losangos e alça de corrente.", foto: "bolsa-dourada.webp", alt: "Bolsa dourada com costura em losangos e alça de corrente", largura: 960, altura: 968 },
-  { nome: "Carteira com zíper", detalhe: "Modelo metalizado da Orcade com textura em matelassê.", foto: "carteira-dourada.webp", alt: "Detalhe da carteira dourada Orcade com fecho de zíper e textura em matelassê", largura: 1168, altura: 589 },
+const categorias = [
+  {
+    nome: "Tênis casuais",
+    foto: "modelos-tenis.webp",
+    alt: "Par de tênis creme com cadarço",
+    detalhe: "Consulte as numerações e as cores disponíveis.",
+    acao: "Consultar tênis",
+    mensagem: "Olá, As Meninas! Vi a loja no Piracanjuba.ai. Quais tênis casuais vocês têm na minha numeração?",
+  },
+  {
+    nome: "Bolsas",
+    foto: "modelos-bolsas.webp",
+    alt: "Bolsa marrom de ombro com duas alças",
+    detalhe: "Pergunte sobre tamanhos, cores e tipos de alça.",
+    acao: "Consultar bolsas",
+    mensagem: "Olá, As Meninas! Vi a loja no Piracanjuba.ai. Gostaria de conhecer os modelos de bolsas disponíveis.",
+  },
+  {
+    nome: "Carteiras",
+    foto: "modelos-carteiras.webp",
+    alt: "Carteira rosada com fecho de zíper",
+    detalhe: "Compare as opções de tamanho, fecho e divisórias.",
+    acao: "Consultar carteiras",
+    mensagem: "Olá, As Meninas! Vi a loja no Piracanjuba.ai. Quais modelos de carteiras estão disponíveis?",
+  },
 ];
 
 const dados = {
@@ -51,9 +74,9 @@ const dados = {
     {
       "@type": "ShoeStore", "@id": url + "#loja", name: nome, alternateName: "As Meninas Outlet", url,
       description: descricao, telephone: "+" + telefone, sameAs: [instagram], hasMap: mapa,
-      logo: `${site}${ativos}/logo.webp`, image: [`${site}${ativos}/tenis-arezzo.webp`, `${site}${ativos}/bolsa-listrada.webp`],
+      logo: `${site}${ativos}/logo.webp`, image: `${site}${ativos}/proprietaria.webp`,
       address: { "@type": "PostalAddress", streetAddress: rua, addressLocality: "Piracanjuba", addressRegion: "GO", postalCode: "75640-122", addressCountry: "BR" },
-      geo: { "@type": "GeoCoordinates", latitude: -17.3051383, longitude: -49.0239433 },
+      geo: { "@type": "GeoCoordinates", ...coordenadas },
       openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     },
     breadcrumbJsonLd([{ name: "Início", path: "/" }, { name: "Zap PBA", path: "/zap-pba" }, { name: nome, path: caminho }]),
@@ -68,7 +91,7 @@ export default function AsMeninasMultimarcas() {
         <div className={`${s.largura} ${s.cabecalhoInterno}`}>
           <Image src={`${ativos}/logo.webp`} alt="As Meninas, calçados e acessórios" width={100} height={100} className={s.logo} />
           <nav aria-label="Navegação da loja" className={s.nav}>
-            <a href="#acessorios">Bolsas e acessórios</a>
+            <a href="#acessorios">Vitrine</a>
             <a href="#visite">Visite a loja</a>
             <a href={instagram} className={s.rede}><InstagramIcon width={16} height={16} aria-hidden="true" /> Instagram</a>
           </nav>
@@ -83,27 +106,39 @@ export default function AsMeninasMultimarcas() {
             <p className={s.abertura}>Na <strong>As Meninas Multimarcas</strong>, você encontra tênis, bolsas e carteiras. Fale com a loja para consultar modelos, cores e numerações.</p>
             <div className={s.acoes}>
               <a className={s.botao} href={conversa}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> Consultar pelo WhatsApp</a>
-              <a className={s.textoLink} href="#visite">Como chegar <ArrowRight size={16} aria-hidden="true" /></a>
+              <a className={s.textoLink} href={rota}>Como chegar <ArrowRight size={16} aria-hidden="true" /></a>
             </div>
           </div>
-          <figure className={s.destaque}>
-            <div className={s.vitrine}><Image src={`${ativos}/tenis-arezzo.webp`} alt="Tênis Arezzo em tom creme, com cadarço e detalhe preto no solado, visto de lado e de cima" width={1080} height={900} sizes="(max-width: 760px) 92vw, (max-width: 1240px) 46vw, 555px" preload /></div>
-            <figcaption><span>Tênis Arezzo</span><a href="https://www.instagram.com/p/Df4sXU9RlGi/">Ver no Instagram <ArrowUpRight size={14} aria-hidden="true" /></a></figcaption>
+          <figure className={s.retrato}>
+            <Image
+              src={`${ativos}/proprietaria.webp`}
+              alt="Sabrina Carvalho sorrindo, de blazer amarelo"
+              width={1088}
+              height={1446}
+              sizes="(max-width: 355px) 90vw, (max-width: 760px) 320px, (max-width: 845px) 42vw, 360px"
+              preload
+            />
+            <figcaption><strong>Sabrina Carvalho</strong> - Proprietária da As Meninas Multimarcas</figcaption>
           </figure>
         </div>
       </section>
 
       <section id="acessorios" aria-labelledby="meninas-acessorios" className={`${s.largura} ${s.colecao}`}>
         <div className={s.colecaoTopo}>
-          <h2 id="meninas-acessorios">Bolsas e <em>acessórios.</em></h2>
-          <p>Conheça algumas peças apresentadas pela loja. Consulte a disponibilidade do modelo que você gostou.</p>
+          <h2 id="meninas-acessorios">Calçados e <em>acessórios.</em></h2>
+          <p>Escolha uma categoria para conversar com a loja pelo WhatsApp.</p>
         </div>
         <div className={s.grade}>
-          {acessorios.map((item) => (
-            <article key={item.foto} className={s.item}>
-              <div className={s.itemFoto}><Image src={`${ativos}/${item.foto}`} alt={item.alt} width={item.largura} height={item.altura} sizes="(max-width: 650px) 92vw, (max-width: 1240px) 30vw, 365px" /></div>
-              <h3>{item.nome}</h3><p>{item.detalhe}</p>
-              <a className={s.itemLink} aria-label={`Consultar peça pelo WhatsApp, ${item.nome.toLowerCase()}`} href={linkWhatsapp(telefone, `Olá, As Meninas! Vi a ${item.nome.toLowerCase()} no Piracanjuba.ai. Ela está disponível?`)}>Consultar peça <ArrowUpRight size={15} aria-hidden="true" /></a>
+          {categorias.map((categoria) => (
+            <article key={categoria.foto} className={s.item}>
+              <div className={s.itemFoto}>
+                <Image src={`${ativos}/${categoria.foto}`} alt={categoria.alt} width={724} height={724} sizes="(max-width: 650px) 90vw, (max-width: 1280px) 29vw, 365px" />
+              </div>
+              <h3>{categoria.nome}</h3>
+              <p>{categoria.detalhe}</p>
+              <a className={s.itemLink} href={linkWhatsapp(telefone, categoria.mensagem)} aria-label={`${categoria.acao} pelo WhatsApp`}>
+                {categoria.acao} <ArrowUpRight size={15} aria-hidden="true" />
+              </a>
             </article>
           ))}
         </div>
@@ -114,7 +149,7 @@ export default function AsMeninasMultimarcas() {
           <div className={s.visitaTitulo}>
             <h2 id="meninas-visita">Visite a <em>As Meninas.</em></h2>
             <p>Experimente os calçados e veja os acessórios na loja do Centro de Piracanjuba.</p>
-            <a className={s.botaoClaro} href={mapa}><MapPin size={18} aria-hidden="true" /> Abrir rota no mapa</a>
+            <a className={s.botaoClaro} href={mapa}><MapPin size={18} aria-hidden="true" /> Ver loja no mapa</a>
           </div>
           <div className={s.dados}>
             <h3><MapPin size={17} aria-hidden="true" /> Endereço</h3>

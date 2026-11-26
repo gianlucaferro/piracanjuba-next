@@ -20,7 +20,7 @@
 .pagina :where(section[id]) { scroll-margin-top: 4.5rem; }
 .largura { width: min(90%, 1152px); margin-inline: auto; }
 .cabecalho { background: #fff; border-bottom: 1px solid #eadadd; }
-.cabecalhoInterno, .nav, .acoes, .guia, .destaque figcaption { display: flex; align-items: center; }
+.cabecalhoInterno, .nav, .acoes, .guia { display: flex; align-items: center; }
 .cabecalhoInterno { min-height: 96px; justify-content: space-between; gap: 20px; }
 .logo { display: block; flex: none; width: 91px; height: 91px; object-fit: contain; }
 .nav { gap: clamp(18px, 3vw, 42px); color: var(--ameixa); font-size: 0.87rem; font-weight: 650; }
@@ -28,7 +28,7 @@
 .pagina a:hover { text-decoration: underline; text-underline-offset: 0.22em; }
 .nav .rede { min-height: 38px; border: 1px solid #d9bfc5; padding: 6px 15px; border-radius: 100px; }
 .capa { background: linear-gradient(112deg, #fff9f6 2%, #fbedea 54%, #f5dedf 100%); }
-.hero { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(32px, 5.3vw, 86px); padding-block: clamp(40px, 6vw, 86px); }
+.hero { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(32px, 5.3vw, 86px); padding-block: clamp(32px, 4.5vw, 64px); }
 .apresentacao { min-width: 0; }
 .local { display: inline-flex; align-items: center; gap: 6px; color: var(--vinho); font-weight: 700; font-size: 0.79rem; }
 .pagina h1, .pagina h2, .pagina h3 { font-family: var(--serif); font-weight: 400; line-height: 1.02; }
@@ -39,25 +39,32 @@
 .abertura, .colecaoTopo p { max-width: 49ch; color: var(--suave); font-size: clamp(0.99rem, 1.25vw, 1.12rem); line-height: 1.7; }
 .abertura strong { color: var(--texto); }
 .acoes { flex-wrap: wrap; gap: 10px 24px; margin-top: 27px; }
-.botao, .botaoClaro, .textoLink, .itemLink, .destaque figcaption a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.botao, .botaoClaro, .textoLink, .itemLink { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .botao, .botaoClaro { min-height: 47px; padding: 10px 21px; border-radius: 100px; font-size: 0.87rem; font-weight: 750; text-align: center; }
 .botao { color: white; background: var(--vinho); }
 .pagina a.botao:hover { background: var(--ameixa); text-decoration: none; }
 .textoLink, .itemLink { min-height: 44px; font-size: 0.85rem; font-weight: 750; color: var(--vinho); }
-.destaque { position: relative; padding-top: 8px; }
-.vitrine { position: relative; overflow: hidden; z-index: 0; background: #f2f2f2; border-radius: 43% 43% 2px 2px; aspect-ratio: 1.2; }
-.vitrine img { width: 100%; height: 100%; object-fit: cover; }
-.destaque::before { position: absolute; content: ""; top: 0; bottom: 38px; left: -6px; right: 6px; border: 1px solid #be965a; border-radius: 43% 43% 1px 1px; pointer-events: none; }
-.destaque figcaption { justify-content: space-between; gap: 12px; color: var(--ameixa); font-size: 0.78rem; min-height: 40px; }
-.destaque figcaption > span { font-weight: 700; }
-.destaque figcaption a { min-height: 39px; gap: 3px; }
+.retrato {
+  width: min(100%, 360px);
+  min-width: 0;
+  justify-self: center;
+}
+.retrato img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  outline: 1px solid #be965a;
+  outline-offset: 4px;
+}
+.retrato figcaption { padding-top: 14px; color: var(--ameixa); font-size: 0.85rem; text-align: center; }
 .colecao { padding-block: clamp(54px, 7vw, 96px); }
 .colecaoTopo { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: clamp(24px, 3.7vw, 45px); }
 .pagina h2 { font-size: clamp(2.6rem, 4.2vw, 4.2rem); color: var(--ameixa); }
 .colecaoTopo p { max-width: 36ch; font-size: 0.94rem; }
 .grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.25vw, 31px); }
-.itemFoto { aspect-ratio: 1.2; overflow: hidden; background: #f5ece7; border-radius: 3px; }
-.itemFoto img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 65%; }
+.itemFoto { aspect-ratio: 1; overflow: hidden; background: #f5ece7; border-radius: 3px; }
+.itemFoto img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .item h3 { margin-top: 18px; color: var(--ameixa); font-size: clamp(1.55rem, 2.3vw, 2.15rem); letter-spacing: -0.035em; }
 .item p { margin: 8px 0 4px; color: var(--suave); font-size: 0.91rem; line-height: 1.6; }
 .itemLink { gap: 4px; justify-content: flex-start; }
@@ -89,13 +96,12 @@
   .hero { grid-template-columns: 1fr; gap: 28px; padding-block: 36px 21px; }
   .pagina h1 { max-width: 100%; font-size: clamp(2.7rem, 8.4vw, 4rem); margin: 12px 0 17px; }
   .acoes { margin-top: 17px; }
-  .destaque { width: min(100%, 570px); justify-self: center; }
+  .retrato { max-width: 320px; }
   .colecaoTopo { align-items: flex-start; flex-direction: column; gap: 12px; }
   .colecaoTopo p { max-width: 48ch; }
 }
 @media (max-width: 650px) {
   .grade { grid-template-columns: 1fr; gap: 30px; }
-  .itemFoto { aspect-ratio: 1.6; }
   .item h3 { margin-top: 13px; }
   .visitaGrid { grid-template-columns: 1fr; gap: 26px; }
   .visitaTitulo, .canais { grid-column: auto; grid-row: auto; }
