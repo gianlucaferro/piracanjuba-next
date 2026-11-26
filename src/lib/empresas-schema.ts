@@ -17,7 +17,7 @@ export function imagemPrincipal(empresa: Empresa): string {
   if (fotoVitrine) return fotoVitrine.src;
   const midia = empresa.midiaTopo;
   if (midia?.tipo === "foto" && midia.imagem.geradaPorIA !== true) return midia.imagem.src;
-  if (!midia && empresa.foto) return empresa.foto.src;
+  if (!midia && empresa.foto && empresa.foto.geradaPorIA !== true) return empresa.foto.src;
   return empresa.seo.imagem.src;
 }
 

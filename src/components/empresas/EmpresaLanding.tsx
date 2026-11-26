@@ -262,7 +262,7 @@ function MidiaTopo({ empresa }: { empresa: Empresa }) {
             height={imagem.altura}
             loading="eager"
             fetchPriority="high"
-            sizes="(min-width: 768px) 416px, 80vw"
+            sizes="(min-width: 1152px) 416px, (min-width: 768px) 36vw, 80vw"
             className="absolute inset-0 size-full object-cover"
           />
         </div>

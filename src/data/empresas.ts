@@ -281,7 +281,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
         geradaPorIA: true,
         autorizacaoIA: AUTORIZACAO_IA_VITORINO,
       },
-      legenda: "Decant de 10 ml da loja, imagem ilustrativa",
+      legenda: "Decant de 10 ml da loja, imagem criada com IA",
     },
     destaques: [
       { titulo: "Decants de 5 ml e 10 ml", icone: "frasco", fonte: "faq-home.ts do site da loja" },

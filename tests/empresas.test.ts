@@ -64,6 +64,8 @@ const CHAVES_INTERNAS = new Set([
   "desenho",
   "icone",
   "autorizacao",
+  "autorizacaoIA",
+  "moldura",
 ]);
 
 /** Caminho de arquivo em public (por exemplo "/empresas/x/og.jpg"), que não é texto. */
@@ -313,15 +315,28 @@ test("toda imagem da ficha existe em public com as dimensões declaradas", () =>
 // Imagem de IA no topo ou na vitrine só com ordem do operador registrada (com
 // data) e com aviso visível na página; sem isso, vale a regra da imagem real.
 const DATA_ISO = /\b\d{4}-\d{2}-\d{2}\b/;
-const AVISO_IA = /\bIA\b|ilustrativa/i;
+// "IA" em maiúsculas (sem a flag i, para não casar o verbo "ia") ou
+// "inteligência artificial"; "ilustrativa" sozinha não diz que é IA.
+const AVISO_IA = /\bIA\b|intelig[eê]ncia artificial/;
 
 function iaAutorizada(imagem: { geradaPorIA?: boolean; autorizacaoIA?: string }): boolean {
   return imagem.geradaPorIA === true && DATA_ISO.test(imagem.autorizacaoIA ?? "");
 }
 
+test("aviso de IA exige a menção explícita", () => {
+  assert.match("Decant de 10 ml da loja, imagem criada com IA", AVISO_IA);
+  assert.match("Imagens criadas com inteligência artificial", AVISO_IA);
+  assert.doesNotMatch("Decant de 10 ml da loja, imagem ilustrativa", AVISO_IA);
+  assert.doesNotMatch("quem ia à loja", AVISO_IA);
+  assert.equal(iaAutorizada({ geradaPorIA: true, autorizacaoIA: "pedido do operador" }), false);
+  assert.equal(iaAutorizada({ geradaPorIA: true, autorizacaoIA: "Operador em 2026-11-26" }), true);
+});
+
 test("topo, vitrine e compartilhamento: imagem real ou IA autorizada e avisada, com procedência e sem pessoa reconhecível sem autorização", () => {
   for (const empresa of empresas) {
-    const midia = empresa.midiaTopo;
+    // Mídia efetiva do topo: a ficha antiga com "foto" também passa pela regra.
+    const midia =
+      empresa.midiaTopo ?? (empresa.foto ? { tipo: "foto" as const, imagem: empresa.foto, legenda: undefined } : undefined);
     if (midia && midia.tipo !== "ilustracao") {
       if (midia.imagem.geradaPorIA === true) {
         assert.ok(iaAutorizada(midia.imagem), `${empresa.slug}: topo com imagem de IA sem autorização datada`);

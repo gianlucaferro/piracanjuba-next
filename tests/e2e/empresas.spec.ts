@@ -4,7 +4,7 @@ const EMPRESAS = [
   {
     slug: "vitorinoperfumes",
     nome: "Vitorino Perfumes",
-    titulo: "Decants de perfume em Piracanjuba",
+    titulo: "Loja de perfumes importados e decants em Piracanjuba",
     rotulo: "Falar com a Isabella",
     whatsapp: "https://wa.me/5564992472510?text=",
   },
