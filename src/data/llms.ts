@@ -334,7 +334,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/zap-pba/wennder-trindade-advogado",
         titulo: "Wennder Trindade, advogado em Piracanjuba",
-        descricao: "Perfil profissional de Wennder Trindade e Silva (OAB/GO 51.422), natural de Piracanjuba. Consulte a localização do escritório e o WhatsApp para atendimento.",
+        descricao: "Wennder Trindade e Silva, advogado em Piracanjuba (OAB/GO 51.422). Áreas de atuação em direito de família, sucessões e partilha, consumidor, direito civil e cobranças, criminal e administrativo. Inclui WhatsApp para agendamento e localização.",
       },
       {
         caminho: "/estacionamentoaeroporto",
