@@ -56,7 +56,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
               <Link
                 href={CONVITE_RODAPE_EMPRESA.href}
                 prefetch={false}
-                className="inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-center text-sm font-semibold leading-snug text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:shrink-0"
+                className="botao-pulsante inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-center text-sm font-semibold leading-snug text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:shrink-0"
               >
                 {CONVITE_RODAPE_EMPRESA.acao}
                 <ArrowRight size={16} aria-hidden="true" className="shrink-0" />

@@ -5,7 +5,7 @@ export const PRECO_PAGINA_EMPRESA = 600;
 export const PRECO_PAGINA_EMPRESA_TEXTO = `R$ ${PRECO_PAGINA_EMPRESA}`;
 
 export const CONVITE_RODAPE_EMPRESA = {
-  pergunta: "Quer ter uma página exclusiva da sua empresa no Piracanjuba.ai?",
+  pergunta: "Quer ter uma página exclusiva da sua empresa no Piracanjuba.ai também?",
   acao: "Quero uma página para minha empresa",
   href: "/anuncie",
 } as const;

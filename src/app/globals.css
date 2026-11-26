@@ -305,3 +305,22 @@
     scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Botão do convite do rodapé ("Quero uma página para minha empresa"): anel que
+   pulsa para chamar a atenção, pedido do operador em 2026-11-25. Anima só o
+   box-shadow, sem mexer no layout; para no hover e no foco do teclado, e o
+   bloco de prefers-reduced-motion acima desliga a animação. */
+@keyframes pulso-convite {
+  0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.6); }
+  70% { box-shadow: 0 0 0 14px hsl(var(--primary) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+}
+
+.botao-pulsante {
+  animation: pulso-convite 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.botao-pulsante:hover,
+.botao-pulsante:focus-visible {
+  animation: none;
+}
