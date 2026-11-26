@@ -24,8 +24,13 @@ export type ImagemEmpresa = {
   alt: string;
   /** Procedência do arquivo. Interno: não aparece na página. */
   origem?: string;
-  /** true quando a imagem foi gerada por IA; o teste barra esse tipo no topo e na vitrine. */
+  /**
+   * true quando a imagem foi gerada por IA. No topo e na vitrine, o teste só
+   * aceita esse tipo com "autorizacaoIA" e com o aviso visível na página.
+   */
   geradaPorIA?: boolean;
+  /** Ordem do operador, com data (YYYY-MM-DD), que libera imagem de IA nesta ficha. Interno. */
+  autorizacaoIA?: string;
 };
 
 export type BlocoTexto = { titulo: string; texto: string };
@@ -71,7 +76,13 @@ export type ItemGaleria = ImagemEmpresa & {
  * marca (reserva para empresa sem imagem).
  */
 export type MidiaTopo =
-  | { tipo: "recorte" | "foto"; imagem: ImagemEmpresa; legenda?: string }
+  | {
+      tipo: "recorte" | "foto";
+      imagem: ImagemEmpresa;
+      legenda?: string;
+      /** Só para "foto": "arco" recorta a foto na moldura em arco da marca (retrato 4:5). */
+      moldura?: "arco";
+    }
   /** Ilustração feita em código, sem imagem gerada nem marca de terceiros. */
   | { tipo: "ilustracao"; desenho: "presenca-digital" };
 
@@ -227,15 +238,29 @@ export type Empresa = {
 
 const NOTA_GOOGLE_VITORINO = "https://share.google/kLy9hbsZOfuyezMWU";
 
+// Imagens dos decants geradas por IA, com as fotos reais da loja como
+// referência (IMG_0539 e IMG_0550, recebidas em 2026-08-26, em
+// vitorino-carrosseis/assets/decant/). Etiqueta, tampa e vidro conferidos
+// contra as fotos. Prompts, referências e custo em
+// ~/dev/claude-code/output/vitorino-decants-ia-20261126/.
+const ORIGEM_IA_VITORINO =
+  "Gerada em 2026-11-26 com openai/gpt-image-2.6-sunburst (OpenRouter), a partir da foto real do frasco da loja como referência; etiqueta conferida contra a foto.";
+const AUTORIZACAO_IA_VITORINO =
+  'Operador em 2026-11-26: "Melhore a imagem do decant atual na hero" e "utilize o gpt image mais recente no openrouter para gerar imagens melhroes".';
+
 export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
   vitorinoperfumes: {
     slug: "vitorinoperfumes",
     nome: "Vitorino Perfumes",
     categoria: "Perfumaria",
-    titulo: "Decants de perfume em Piracanjuba",
+    // H1 e título com os termos medidos no DataForSEO em 2026-11-26 (Brasil,
+    // buscas por mês): "perfumes importados" 60.500, "perfumes árabes" 60.500,
+    // "perfumaria" 49.500, "perfumes de nicho" 14.800, "loja de perfumes" 8.100,
+    // "loja de perfumes importados" 5.400 e "loja de decants" 390.
+    titulo: "Loja de perfumes importados e decants em Piracanjuba",
     tituloDestaque: "em Piracanjuba",
     chamada:
-      "Decants de perfumes importados em 5 ml e 10 ml: árabes, de grife e de nicho, preparados a partir de frascos originais. Conheça a fragrância com calma, na sua pele, antes de decidir pelo frasco inteiro.",
+      "Perfumes árabes, de nicho e de grife em decants de 5 ml e 10 ml, preparados a partir de frascos originais. Conheça a fragrância com calma, na sua pele, antes de decidir pelo frasco inteiro.",
     rotuloWhatsapp: "Falar com a Isabella",
     logo: {
       src: "/empresas/vitorinoperfumes/logo.png",
@@ -245,17 +270,18 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       origem: "Logotipo oficial completo (raster), recortado do arquivo da marca; sem redesenho.",
     },
     midiaTopo: {
-      tipo: "recorte",
+      tipo: "foto",
+      moldura: "arco",
       imagem: {
-        src: "/empresas/vitorinoperfumes/decant-10ml.webp",
-        largura: 141,
-        altura: 960,
-        alt: "Decant de 10 ml da Vitorino Perfumes: frasco de vidro com perfume dourado claro, tampa dourada e etiqueta vitorinoperfumes",
-        origem:
-          "Foto real da loja recebida em 2026-08-26 (IMG_0539), recorte com alfa em vitorino-carrosseis/assets/decant/decant-10ml-recorte.png; derivado WebP de 2026-11-17.",
-        geradaPorIA: false,
+        src: "/empresas/vitorinoperfumes/decant-10ml-topo.webp",
+        largura: 1152,
+        altura: 1536,
+        alt: "Decant de 10 ml da Vitorino Perfumes, com perfume dourado claro, tampa dourada e etiqueta Vitorinoperfumes, sobre um pedestal de travertino à luz da tarde",
+        origem: ORIGEM_IA_VITORINO,
+        geradaPorIA: true,
+        autorizacaoIA: AUTORIZACAO_IA_VITORINO,
       },
-      legenda: "Decant de 10 ml da loja, foto real",
+      legenda: "Decant de 10 ml da loja, imagem ilustrativa",
     },
     destaques: [
       { titulo: "Decants de 5 ml e 10 ml", icone: "frasco", fonte: "faq-home.ts do site da loja" },
@@ -269,39 +295,38 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       },
     ],
     galeria: {
-      rotulo: "Fotos reais",
+      rotulo: "Os frascos",
       titulo: "O decant da Vitorino",
-      // As fotos dos dois frascos não estão em escala entre si (a altura relativa
-      // não foi medida), e o texto avisa. A foto da mão saiu em 2026-11-17: o
-      // frasco aparecia vazio e a autoria do arquivo não estava confirmada.
+      // As duas imagens não estão em escala entre si (a altura relativa dos
+      // frascos não foi medida), e o texto avisa, junto com o aviso de IA.
       texto:
-        "Frascos de vidro com borrifador, tampa dourada e a etiqueta da loja, prontos para a bolsa, a nécessaire e a mala de viagem. As fotos estão fora de escala.",
+        "Frascos de vidro com borrifador, tampa dourada e a etiqueta da loja, prontos para a bolsa, a nécessaire e a mala de viagem. Imagens ilustrativas criadas com IA a partir das fotos reais dos frascos da loja, fora de escala.",
       itens: [
         {
-          src: "/empresas/vitorinoperfumes/decant-5ml.webp",
-          largura: 134,
-          altura: 720,
-          alt: "Decant de 5 ml da Vitorino Perfumes, frasco de vidro com perfume âmbar, tampa dourada e etiqueta vitorinoperfumes",
+          src: "/empresas/vitorinoperfumes/decant-5ml-vitrine.webp",
+          largura: 1200,
+          altura: 900,
+          alt: "Decant de 5 ml da Vitorino Perfumes, com perfume âmbar, tampa dourada e etiqueta Vitorinoperfumes, sobre pedra travertino em fundo marfim",
           legenda: "Decant de 5 ml",
           texto: "Para conhecer uma fragrância nova.",
-          tipo: "recorte",
+          tipo: "foto",
           pessoaIdentificavel: false,
-          origem:
-            "Foto real da loja recebida em 2026-08-26 (IMG_0550), recorte com alfa em vitorino-carrosseis/assets/decant/decant-05ml-recorte.png; derivado WebP de 2026-11-17.",
-          geradaPorIA: false,
+          origem: ORIGEM_IA_VITORINO,
+          geradaPorIA: true,
+          autorizacaoIA: AUTORIZACAO_IA_VITORINO,
         },
         {
-          src: "/empresas/vitorinoperfumes/decant-10ml.webp",
-          largura: 141,
-          altura: 960,
-          alt: "Decant de 10 ml da Vitorino Perfumes, frasco de vidro com perfume dourado claro, tampa dourada e etiqueta vitorinoperfumes",
+          src: "/empresas/vitorinoperfumes/decant-10ml-vitrine.webp",
+          largura: 1200,
+          altura: 900,
+          alt: "Decant de 10 ml da Vitorino Perfumes, com perfume dourado claro, tampa dourada e etiqueta Vitorinoperfumes, sobre pedra travertino em fundo marfim",
           legenda: "Decant de 10 ml",
           texto: "Para o perfume que já conquistou você.",
-          tipo: "recorte",
+          tipo: "foto",
           pessoaIdentificavel: false,
-          origem:
-            "Foto real da loja recebida em 2026-08-26 (IMG_0539), o mesmo recorte do topo.",
-          geradaPorIA: false,
+          origem: ORIGEM_IA_VITORINO,
+          geradaPorIA: true,
+          autorizacaoIA: AUTORIZACAO_IA_VITORINO,
         },
       ],
     },
@@ -309,11 +334,11 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     sobreDestaque:
       "Quem atende é a Isabella Vitorino, que cuida da curadoria e ajuda você a escolher pelo seu gosto e pela ocasião.",
     sobre: [
-      "A Vitorino Perfumes é uma perfumaria da cidade de Piracanjuba, em Goiás, especializada em decants: porções de perfume transferidas do frasco original para um frasco menor, de 5 ml ou 10 ml. O líquido é o mesmo do frasco grande; o que muda é a quantidade. Na Vitorino, os decants são preparados a partir de frascos originais das fragrâncias do catálogo.",
+      "A Vitorino Perfumes é uma loja de perfumes da cidade de Piracanjuba, em Goiás, especializada em decants de perfumes importados: porções de perfume transferidas do frasco original para um frasco menor, de 5 ml ou 10 ml. O líquido é o mesmo do frasco grande; o que muda é a quantidade. Na Vitorino, os decants são preparados a partir de frascos originais das fragrâncias do catálogo.",
       "Com um decant você conhece uma fragrância com calma, por vários dias e em momentos diferentes, acompanha como ela evolui na sua pele e pode variar de perfume conforme a ocasião e o humor. O frasco pequeno também cabe na bolsa, na nécessaire e na mala de viagem.",
       "Conte do que você gosta e para quando é o perfume, e a Isabella sugere opções dentro do seu estilo. Em Piracanjuba, dá para sentir as fragrâncias pessoalmente com hora marcada e retirar o pedido na cidade. Para o resto do Brasil, a loja envia.",
     ],
-    tituloOferta: "O que você encontra no catálogo",
+    tituloOferta: "Perfumes árabes, de nicho e importados de grife",
     textoOferta:
       "O catálogo completo, com as notas olfativas dos perfumes, fica no site da loja. A disponibilidade e os valores atualizados são confirmados pelo WhatsApp.",
     linkOferta: { rotulo: "Ver o catálogo completo", url: "https://www.vitorinoperfumes.com/catalogo" },
@@ -323,17 +348,17 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
       {
         titulo: "Perfumes árabes",
         texto:
-          "Cerca de metade do catálogo, com casas como Lattafa, Al Wataniah, Armaf, Maison Alhambra e Afnan, conhecidas por fragrâncias marcantes.",
-      },
-      {
-        titulo: "Perfumes de grife",
-        texto:
-          "Fragrâncias de casas como Chanel, Dior, Yves Saint Laurent, Giorgio Armani, Carolina Herrera e Lancôme.",
+          "Cerca de metade do catálogo, com casas como Lattafa, Al Wataniah, Armaf, Maison Alhambra e Afnan, conhecidas por fragrâncias marcantes, muitas com notas de oud, âmbar, baunilha e especiarias.",
       },
       {
         titulo: "Perfumes de nicho",
         texto:
-          "Criações de casas como Tom Ford, Creed, Xerjoff e Acqua di Parma, para quem gosta de descobrir algo fora do comum.",
+          "Criações de casas como Tom Ford, Creed, Xerjoff e Acqua di Parma, para quem gosta de descobrir algo fora do comum. Em decant, dá para conhecer um perfume de nicho sem levar o frasco inteiro.",
+      },
+      {
+        titulo: "Perfumes importados de grife",
+        texto:
+          "Fragrâncias de casas como Chanel, Dior, Yves Saint Laurent, Giorgio Armani, Carolina Herrera e Lancôme, entre os perfumes importados mais conhecidos.",
       },
       {
         titulo: "Body splash e cremes",
@@ -406,6 +431,16 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
           "Sim. Na Vitorino Perfumes, os decants são preparados a partir de frascos originais das fragrâncias do catálogo. Se quiser saber mais sobre um perfume específico, a Isabella responde pelo WhatsApp.",
       },
       {
+        pergunta: "Onde comprar perfumes árabes e de nicho em Piracanjuba?",
+        resposta:
+          "Na Vitorino Perfumes, loja de decants de Piracanjuba (GO). O catálogo tem perfumes árabes, de nicho e importados de grife em decants de 5 ml e 10 ml. O atendimento é pelo WhatsApp, com hora marcada para sentir as fragrâncias na cidade, retirada em Piracanjuba ou envio para todo o Brasil.",
+      },
+      {
+        pergunta: "O que é um perfume de nicho?",
+        resposta:
+          "É o perfume criado por casas dedicadas à perfumaria, com distribuição mais seletiva e composições que fogem do comum. Como esses perfumes são mais difíceis de encontrar para testar, o decant de 5 ml ou 10 ml é um jeito prático de conhecer a fragrância na sua pele.",
+      },
+      {
         pergunta: "Qual a diferença entre decant, amostra e miniatura?",
         resposta:
           "O decant é uma porção do frasco original, em tamanhos como 5 ml e 10 ml. A amostra costuma ser um frasquinho de 1 a 2 ml distribuído pela própria marca, e a miniatura é um frasco pequeno oficial, com a embalagem da marca.",
@@ -448,9 +483,9 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
         "Conte para a Isabella do que você gosta e receba sugestões com os valores atualizados de 5 ml e 10 ml.",
     },
     seo: {
-      titulo: "Decants de perfume em Piracanjuba: Vitorino Perfumes",
+      titulo: "Loja de perfumes e decants em Piracanjuba: Vitorino Perfumes",
       descricao:
-        "Decants de perfumes importados em 5 ml e 10 ml: árabes, de grife e de nicho. Hora marcada e retirada em Piracanjuba (GO) e envio para todo o Brasil.",
+        "Perfumes árabes, de nicho e importados de grife em decants de 5 ml e 10 ml. Hora marcada e retirada em Piracanjuba (GO) e envio para todo o Brasil.",
       imagem: {
         src: "/empresas/vitorinoperfumes/og.jpg",
         largura: 1200,
@@ -495,7 +530,7 @@ export const EMPRESAS: Record<SlugEmpresa, Empresa> = {
     },
     motivo: "arco",
     fontes: "vitorino",
-    conferidoEm: "2026-11-17",
+    conferidoEm: "2026-11-26",
   },
 
   apareca: {
