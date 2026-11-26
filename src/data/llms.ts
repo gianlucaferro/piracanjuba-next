@@ -329,7 +329,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/viaggi-vistos",
         titulo: "Visto americano em Piracanjuba e região | Viaggi Vistos",
-        descricao: "Assessoria da Viaggi Vistos para visto americano em Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas e cidades vizinhas: DS-160, taxa, agendamento, CASV e entrevista em Brasília, renovação e Antecipa 45, com atendimento online e contato por WhatsApp.",
+        descricao: "Assessoria da Viaggi Vistos para visto americano em Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas e cidades vizinhas: DS-160, taxa, agendamento, CASV e entrevista no posto escolhido (o recomendado é Brasília, o mais próximo), renovação e Antecipa 45, com atendimento online e contato por WhatsApp.",
       },
       {
         caminho: "/kamillamorranna",

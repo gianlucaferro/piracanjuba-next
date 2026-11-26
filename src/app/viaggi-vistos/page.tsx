@@ -154,7 +154,7 @@ const perguntas = [
   },
   {
     pergunta: "Dá para renovar o visto americano sem entrevista?",
-    resposta: "Em muitos casos, sim. Os critérios são cumulativos: visto anterior emitido no Brasil, com validade total, quando o solicitante tinha 18 anos ou mais, vencido há no máximo 12 meses, da mesma categoria e sem dano, e nenhuma negativa de visto americano não superada. Mesmo com a isenção, o passaporte e os documentos são entregues no CASV, pessoalmente ou por um representante. A Viaggi faz a triagem preliminar; quem decide a isenção é o consulado.",
+    resposta: "Sim, para quem cumpre todos os critérios, que são cumulativos: visto anterior emitido no Brasil, com validade total, quando o solicitante tinha 18 anos ou mais, vencido há no máximo 12 meses, da mesma categoria e sem dano, e nenhuma negativa de visto americano não superada. O passaporte e os documentos são entregues no CASV ou, em Recife e Porto Alegre, no próprio consulado ou no CED, pessoalmente ou por um representante. Para quem cumpre os critérios, a isenção é a regra, mas não é garantia: numa parcela pequena dos casos o consulado convoca para entrevista, e isso só se sabe depois da entrega dos documentos. A Viaggi faz a triagem preliminar; quem decide a isenção é o consulado.",
   },
   {
     pergunta: "Uma assessoria garante a aprovação de visto americano?",
