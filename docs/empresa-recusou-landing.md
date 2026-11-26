@@ -28,8 +28,11 @@ Decisão do operador em 2026-11-26. Quando uma empresa não contratar a landing 
    - só dados públicos do negócio: nome, categoria, setor, telefone comercial, oferta, endereço, mapa, Instagram, site, resumo factual, atividade, `acao` e `mensagem`;
    - nada de celular pessoal nem nome do dono, salvo se o próprio negócio publicar.
 3. Apague o logo em `public/marcas-zap/logos/` se nenhuma outra ficha o usar.
-4. Acrescente o slug a `SLUGS_FICHAS_REBAIXADAS` e tire-o de `SLUGS_PAGINAS_EMPRESARIAIS`, ambos em `src/data/empresas-slugs.ts`. Assim o middleware leva qualquer grafia (`/MasterTechAutoCenter`) à ficha.
-5. Inverta os 308: a URL curta e os atalhos passam a apontar para `/zap-pba/<slug>`, em `redirects` do `next.config.ts` e em `REDIRECIONAMENTOS_PERMANENTES` de `src/lib/sitemap-rotas.ts`. Tire a rota curta de `ROTAS_ESTATICAS`.
+4. Acrescente o slug a `SLUGS_FICHAS_REBAIXADAS` e tire-o de `SLUGS_PAGINAS_EMPRESARIAIS`, ambos em `src/data/empresas-slugs.ts`. Assim o middleware leva as outras grafias (`/MasterTechAutoCenter`) à ficha.
+5. URL curta e atalhos:
+   - a URL curta (`/<slug>`) **serve a ficha por rewrite** em `rewrites` do `next.config.ts`, com 200 e canonical em `/zap-pba/<slug>`. Não use 308: o 308 antigo `/zap-pba/<slug>` para `/<slug>`, do tempo da landing, pode estar guardado no navegador, e o novo formaria um laço (apontado pelo CodeRabbit no PR #102);
+   - os atalhos (ex.: `/mastertech`) passam a fazer 308 para `/zap-pba/<slug>`, em `redirects` do `next.config.ts` e em `REDIRECIONAMENTOS_PERMANENTES` de `src/lib/sitemap-rotas.ts`;
+   - tire a URL curta de `REDIRECIONAMENTOS_PERMANENTES` e de `ROTAS_ESTATICAS`.
 6. Aponte `src/data/zap-pba-paginas.json` de volta para `/zap-pba/<slug>`.
 7. Tire a entrada da página própria de `src/data/llms.ts`.
 8. Cartão de compartilhamento:
@@ -37,7 +40,8 @@ Decisão do operador em 2026-11-26. Quando uma empresa não contratar a landing 
    - recoloque em `public/marcas-zap/compartilhar/<slug>.jpg` o cartão genérico, **sem logo**: fundo azul-marinho, nome, atividade e a foto do setor, no padrão das fichas sem logo. O cartão anterior à página própria pode ter logo e cor da marca; confira antes de reusar.
 9. Ajuste os testes que citam o slug. O teste "empresa que recusou a landing volta à ficha neutra" de `tests/sitemap-rotas.test.ts` confere o estado de toda ficha rebaixada.
 10. Depois do deploy, confira:
-    - a URL curta e os atalhos com 308 para a ficha;
+    - a URL curta com 200 e canonical na ficha;
+    - os atalhos e as outras grafias com 308 para a ficha;
     - a ficha com 200 e sem logo;
     - o cartão sem logo;
     - o sitemap;

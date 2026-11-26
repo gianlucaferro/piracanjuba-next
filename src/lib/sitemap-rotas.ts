@@ -124,7 +124,6 @@ export const REDIRECIONAMENTOS_PERMANENTES: Readonly<Record<string, string>> = {
   "/drpark": "/estacionamentoaeroporto",
   "/zap-pba/b10-auto-center": "/b10-auto-center",
   "/b10": "/b10-auto-center",
-  "/master-tech-auto-center": "/zap-pba/master-tech-auto-center",
   "/mastertech": "/zap-pba/master-tech-auto-center",
   "/zap-pba/smart-especializada": "/smart-especializada",
   "/zap-pba/as-meninas-multimarcas": "/as-meninas-multimarcas",

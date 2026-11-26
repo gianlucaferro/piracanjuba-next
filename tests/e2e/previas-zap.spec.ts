@@ -33,3 +33,24 @@ test("a prévia encaminha o visitante à empresa e o proprietário ao portal", a
   expect(suporte.searchParams.get("text")).toContain("um ajuste ou a remoção");
   expect(oferta.href).not.toBe(suporte.href);
 });
+
+test("ficha rebaixada (empresa que recusou a landing) responde na URL curta sem laço e sem marca", async ({ page, request }, testInfo) => {
+  // Master Tech, 2026-11-26: a URL curta serve a ficha por rewrite (200, canonical na ficha);
+  // atalho e outras grafias fazem 308 para a ficha. Procedimento em docs/empresa-recusou-landing.md.
+  const ficha = "/zap-pba/master-tech-auto-center";
+  const curta = await request.get("/master-tech-auto-center", { maxRedirects: 0 });
+  expect(curta.status()).toBe(200);
+  for (const atalho of ["/mastertech", "/MasterTechAutoCenter"]) {
+    const resposta = await request.get(atalho, { maxRedirects: 0 });
+    expect(resposta.status(), atalho).toBe(308);
+    expect(new URL(resposta.headers()["location"], "http://x").pathname, atalho).toBe(ficha);
+  }
+  const fichaDireta = await request.get(ficha, { maxRedirects: 0 });
+  expect(fichaDireta.status()).toBe(200);
+
+  await page.goto("/master-tech-auto-center");
+  await expect(page.getByRole("heading", { level: 1, name: "Master Tech Auto Center" })).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai" + ficha);
+  await expect(page.locator('img[src*="/empresas/master-tech-auto-center/"], img[src*="/marcas-zap/logos/"]')).toHaveCount(0);
+  await page.screenshot({ path: `artifacts/master-tech-ficha-${testInfo.project.name}.png`, fullPage: true });
+});

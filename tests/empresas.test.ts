@@ -145,9 +145,10 @@ test("endereço digitado com maiúscula, acento ou hífen redireciona para a pá
   assert.equal(caminhoCanonicoEmpresa("/estacionamentoaeroporto"), null);
   assert.equal(caminhoCanonicoEmpresa("/B10AutoCenter"), "/b10-auto-center");
   assert.equal(caminhoCanonicoEmpresa("/b10-auto-center"), null);
-  // A Master Tech recusou a landing (2026-11-26): as grafias vão para a ficha do guia.
+  // A Master Tech recusou a landing (2026-11-26): as grafias vão para a ficha do guia; a URL
+  // curta exata fica com o rewrite do next.config.ts (sem 308, para não criar laço).
   assert.equal(caminhoCanonicoEmpresa("/MasterTechAutoCenter"), "/zap-pba/master-tech-auto-center");
-  assert.equal(caminhoCanonicoEmpresa("/master-tech-auto-center"), "/zap-pba/master-tech-auto-center");
+  assert.equal(caminhoCanonicoEmpresa("/master-tech-auto-center"), null);
   assert.equal(caminhoCanonicoEmpresa("/zap-pba/master-tech-auto-center"), null);
   assert.equal(caminhoCanonicoEmpresa("/SmartEspecializada"), "/smart-especializada");
   assert.equal(caminhoCanonicoEmpresa("/smart-especializada"), null);

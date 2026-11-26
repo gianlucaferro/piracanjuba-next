@@ -30,9 +30,10 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
 ];
 
 // Empresas que recusaram a landing de demonstração: a página de marca saiu do ar e ficou
-// só a ficha neutra do guia em /zap-pba/<slug>. Qualquer grafia do slug na raiz
-// (/MasterTechAutoCenter, /master-tech-auto-center) redireciona para a ficha.
-// Procedimento em docs/empresa-recusou-landing.md.
+// só a ficha neutra do guia em /zap-pba/<slug>. A URL curta exata (/master-tech-auto-center)
+// serve a ficha por rewrite no next.config.ts, sem 308, para não criar laço com o 308 antigo
+// /zap-pba/<slug> -> /<slug> guardado no navegador. As outras grafias (/MasterTechAutoCenter)
+// redirecionam para a ficha. Procedimento em docs/empresa-recusou-landing.md.
 export const SLUGS_FICHAS_REBAIXADAS: readonly string[] = [
   "master-tech-auto-center", // recusou em 2026-11-26
 ];
@@ -68,7 +69,7 @@ export function caminhoCanonicoEmpresa(caminho: string): string | null {
   const partes = caminho.split("/").filter(Boolean);
   if (partes.length !== 1) return null;
   const [segmento] = partes;
-  if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento)) return null;
+  if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento) || SLUGS_FICHAS_REBAIXADAS.includes(segmento)) return null;
   const normalizado = normalizarSegmento(segmento);
   if (!normalizado) return null;
   if (normalizado === "claropiracanjuba") return "/claro";

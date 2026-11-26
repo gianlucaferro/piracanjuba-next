@@ -180,15 +180,20 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
   }
 });
 
-test("empresa que recusou a landing volta à ficha neutra do guia, sem página nem marca", () => {
+test("empresa que recusou a landing volta à ficha neutra do guia, sem página nem marca", async () => {
   // Procedimento em docs/empresa-recusou-landing.md (decisão do operador de 2026-11-26).
   const fichas: { slug: string; logo?: string; cor?: string }[] = JSON.parse(readFileSync(join(RAIZ, "src/data/previas-zap.json"), "utf8"));
   const vinculos: Record<string, string> = JSON.parse(readFileSync(join(RAIZ, "src/data/zap-pba-paginas.json"), "utf8"));
+  const rewrites = await nextConfig.rewrites?.();
+  const listaRewrites = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
   assert.ok(SLUGS_FICHAS_REBAIXADAS.includes("master-tech-auto-center"));
   for (const slug of SLUGS_FICHAS_REBAIXADAS) {
     const curta = `/${slug}`;
     const ficha = `/zap-pba/${slug}`;
-    assert.equal(REDIRECIONAMENTOS_PERMANENTES[curta], ficha, `${curta} deve ir para a ficha`);
+    // A URL curta serve a ficha por rewrite, nunca por 308: o 308 antigo ficha -> curta pode
+    // estar guardado no navegador, e o novo formaria um laço.
+    assert.ok(listaRewrites.some(({ source, destination }) => source === curta && destination === ficha), `${curta} deve servir a ficha por rewrite`);
+    assert.ok(!(curta in REDIRECIONAMENTOS_PERMANENTES), `${curta} não pode redirecionar`);
     assert.ok(!PAGINAS.has(curta), `${curta} ainda tem page.tsx`);
     assert.ok(!SLUGS_PAGINAS_EMPRESARIAIS.includes(slug), `${slug} ainda está entre as páginas de empresa`);
     assert.ok(!NO_SITEMAP.has(curta), `${curta} ainda está no sitemap`);
