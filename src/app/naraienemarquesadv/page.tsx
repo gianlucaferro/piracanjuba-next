@@ -130,7 +130,7 @@ export default function NaraieneMarques() {
           </figure>
           <div>
             <h2 id="titulo-perfil">Advocacia e docência</h2>
-            <p><strong>{nomeCompleto}</strong> é advogada inscrita na OAB Goiás sob o número {registro} e professora do curso de Direito da Faculdade de Piracanjuba.</p>
+            <p><strong>{nomeCompleto}</strong> leciona no curso de Direito da Faculdade de Piracanjuba. Sua trajetória jurídica inclui a atuação na Justiça Eleitoral e a análise de contratações públicas.</p>
             <p>Na Semana Acadêmica da faculdade, falou sobre a participação das mulheres na política e a violência política de gênero. São temas que aproximam a sala de aula de sua experiência no direito eleitoral.</p>
             <div className={s.links}>
               <a href="https://faculdadefap.edu.br/docentes">Corpo docente da FAP <ArrowUpRight size={15} aria-hidden="true" /></a>
