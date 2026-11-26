@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
       { source: "/b10", destination: "/b10-auto-center", permanent: true },
       { source: "/zap-pba/master-tech-auto-center", destination: "/master-tech-auto-center", permanent: true },
       { source: "/mastertech", destination: "/master-tech-auto-center", permanent: true },
+      { source: "/hotelviasul", destination: "/hotel", permanent: true },
+      { source: "/hotel-via-sul", destination: "/hotel", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },

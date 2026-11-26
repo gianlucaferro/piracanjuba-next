@@ -168,6 +168,13 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
   }
 });
 
+test("a página do Hotel Via Sul fica em /hotel, com os atalhos em 308", () => {
+  assert.ok(PAGINAS.has("/hotel"));
+  assert.ok(NO_SITEMAP.has("/hotel"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/hotelviasul"], "/hotel");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/hotel-via-sul"], "/hotel");
+});
+
 test("nada redirecionado fica no sitemap nem nas exclusões", () => {
   for (const origem of Object.keys(REDIRECIONAMENTOS_PERMANENTES)) {
     assert.ok(!NO_SITEMAP.has(origem), `${origem} redireciona e não pode estar no sitemap`);
