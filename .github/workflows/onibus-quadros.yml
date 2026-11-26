@@ -1,0 +1,21 @@
+name: Quadros de ônibus
+# Toda segunda-feira confere se a AGR publicou quadro de horários novo para as linhas que
+# passam por Piracanjuba. Falha (e avisa por e-mail do GitHub) quando um quadro muda.
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/onibus/conferir-quadros-agr.mjs

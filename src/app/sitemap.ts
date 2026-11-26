@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
-import { BUS_CHECKED_AT } from "@/data/horariosOnibus";
+import { BUS_LAST_REVIEW } from "@/data/horariosOnibus";
 import { EMPRESAS } from "@/data/empresas";
 import { SLUGS_EMPRESAS } from "@/data/empresas-slugs";
 import { previasDaRotaDinamica } from "@/data/previas-zap";
@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // build, e o Google tende a ignorar o lastmod do site inteiro quando ele não é preciso).
   const staticRoutes: MetadataRoute.Sitemap = ROTAS_ESTATICAS.map((rota) => ({
     url: `${SITE_URL}${rota.path}`,
-    ...(rota.path === "/horarios-onibus" && BUS_CHECKED_AT ? { lastModified: new Date(BUS_CHECKED_AT) } : {}),
+    ...(rota.path === "/horarios-onibus" && BUS_LAST_REVIEW ? { lastModified: new Date(BUS_LAST_REVIEW) } : {}),
     changeFrequency: rota.changeFrequency,
     priority: rota.priority,
   }));

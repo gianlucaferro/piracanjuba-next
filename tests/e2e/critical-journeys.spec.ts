@@ -54,12 +54,50 @@ for (const [orgao, marker, count] of [["prefeitura", "PREF", 1002], ["camara", "
   });
 }
 
-test("ônibus exige consulta para a data escolhida e preserva a data no canal externo", async ({ page }) => {
+test("ônibus mostra o quadro regular da data escolhida e preserva a data no canal externo", async ({ page }, testInfo) => {
   await page.goto("/horarios-onibus");
+  // 2028-12-24 é domingo: Real Expresso pela BR-153 às 15:50 para Goiânia.
   await page.locator("#bus-date").fill("2028-12-24");
-  await expect(page.getByText(/Ainda não.*horários|Nenhum horário|Sem horários|não há.*conferid/i).first()).toBeVisible();
-  const external = page.locator('a[href*="clickbus.com.br"][href*="departureDate=2028-12-24"]').first();
+  await expect(page.getByRole("heading", { name: "Horários para 2028-12-24" })).toBeVisible();
+  await expect(page.getByText(/horários previstos/).first()).toBeVisible();
+  await expect(page.getByText("Horários regulares de", { exact: false })).toBeVisible();
+  const realGoiania = page.locator("article").filter({ hasText: "Real Expresso" }).filter({ hasText: "Goiânia, GO" });
+  await expect(realGoiania.locator('time[datetime="2028-12-24T15:50:00-03:00"]')).toBeVisible();
+  await expect(realGoiania.getByText("Quadro AGR · previsão")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: `artifacts/onibus-saida-${testInfo.project.name}.png`, fullPage: true });
+  await page.locator("#bus-destination").selectOption("uberlandia");
+  await expect(page.getByRole("heading", { name: "Sem linha direta: troca de ônibus em Goiânia" })).toBeVisible();
+  await page.getByRole("button", { name: "Ver horários para Goiânia" }).click();
+  await expect(page.locator("#bus-destination")).toHaveValue("goiania");
+  const external = page.locator('a[href*="clickbus.com.br/onibus/piracanjuba-go/goiania-go"][href*="departureDate=2028-12-24"]').first();
   await expect(external).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("Application error");
+});
+
+test("ônibus chegando em Piracanjuba mostra a saída na origem e a chegada prevista", async ({ page }, testInfo) => {
+  // 2028-12-27 é quarta-feira: a Real vem pela GO-020 e chega às 15:30 vinda de Caldas Novas.
+  await page.goto("/horarios-onibus?sentido=chegada&data=2028-12-27&destino=caldas-novas");
+  await expect(page.getByRole("button", { name: "Chegando em Piracanjuba" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Origem", { exact: true })).toHaveValue("caldas-novas");
+  await expect(page.getByText("6 horários previstos")).toBeVisible();
+  const real = page.locator("article").filter({ hasText: "Real Expresso" });
+  await expect(real.locator('time[datetime="2028-12-27T14:30:00-03:00"]')).toBeVisible();
+  await expect(real.locator('time[datetime="2028-12-27T15:30:00-03:00"]')).toBeVisible();
+  await expect(real).toContainText("Piracanjuba, GO");
+  await expect(page.locator('a[href="https://www.clickbus.com.br/onibus/caldas-novas-go/piracanjuba-go?departureDate=2028-12-27"]').first()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: `artifacts/onibus-chegada-${testInfo.project.name}.png`, fullPage: true });
+  await page.getByRole("button", { name: "Saindo de Piracanjuba" }).click();
+  await expect(page.getByLabel("Destino", { exact: true })).toHaveValue("caldas-novas");
+  await expect(page.locator("article").filter({ hasText: "Real Expresso" }).locator('time[datetime="2028-12-27T12:10:00-03:00"]')).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("Application error");
+});
+
+test("ônibus em data anterior ao quadro mostra o arquivo sem inventar horários", async ({ page }) => {
+  await page.goto("/horarios-onibus?data=2026-10-15");
+  await expect(page.getByText("Ainda não conferimos os horários para esta data")).toBeVisible();
+  await expect(page.getByText("Consulta arquivada", { exact: true })).toBeVisible();
   await expect(page.locator("body")).not.toContainText("Application error");
 });
 
