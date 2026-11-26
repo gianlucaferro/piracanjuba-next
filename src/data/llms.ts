@@ -364,7 +364,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/as-meninas-multimarcas",
         titulo: "As Meninas Multimarcas, calçados femininos em Piracanjuba",
-        descricao: "Loja de calçados femininos e acessórios no Centro de Piracanjuba. Consulte modelos e numeração pelo WhatsApp e encontre o endereço e o Instagram da loja.",
+        descricao: "Tênis femininos, bolsas e carteiras na Rua Dr. Ruy Brasil Cavalcante, 135, Centro de Piracanjuba, GO. Consulte a numeração pelo WhatsApp (64) 99217-6440. A loja abre de segunda a sexta, das 9h às 18h, e aos sábados, das 9h às 13h. Fecha aos domingos.",
       },
       {
         caminho: "/hotel",

@@ -20,6 +20,9 @@ const nome = "As Meninas Multimarcas";
 const caminho = "/as-meninas-multimarcas";
 const site = "https://piracanjuba.ai";
 const url = site + caminho;
+const idLoja = url + "#loja";
+const idPagina = url + "#pagina";
+const idNavegacao = url + "#navegacao";
 const ativos = "/empresas/as-meninas-multimarcas";
 const instagram = "https://www.instagram.com/asmeninasmultimarcasloja/";
 const mapa = "https://www.google.com/maps?cid=6877083417799502373";
@@ -30,13 +33,19 @@ const rua = "Rua Dr. Ruy Brasil Cavalcante, 135";
 const conversa = linkWhatsapp(telefone, "Olá, As Meninas! Vi a loja no Piracanjuba.ai e gostaria de consultar os modelos e as numerações disponíveis.");
 const correcao = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá! Sou responsável pela As Meninas Multimarcas e gostaria de solicitar uma correção ou a retirada da ficha ${url}`);
 
-const titulo = "Loja de calçados em Piracanjuba | As Meninas Multimarcas";
-const descricao = "Calçados e acessórios femininos em Piracanjuba, na As Meninas Multimarcas. Consulte tênis, bolsas, carteiras e numeração pelo WhatsApp ou visite a loja no Centro.";
+const titulo = "Calçados femininos em Piracanjuba | As Meninas Multimarcas";
+const descricao = "Conheça a As Meninas Multimarcas, loja de calçados femininos no Centro de Piracanjuba. Consulte tênis, bolsas e carteiras pelo WhatsApp e veja como chegar.";
 const fotoSocial = { url: `${site}${ativos}/compartilhar.jpg`, width: 1200, height: 630, alt: "As Meninas Multimarcas, calçados e acessórios em Piracanjuba" };
 const meta = pageMetadata({ title: titulo, description: descricao, path: caminho, image: fotoSocial.url, imageAlt: fotoSocial.alt });
 export const metadata: Metadata = {
   ...meta,
   title: { absolute: titulo },
+  other: {
+    "geo.region": "BR-GO",
+    "geo.placename": "Piracanjuba, Goiás",
+    "geo.position": `${coordenadas.latitude};${coordenadas.longitude}`,
+    ICBM: `${coordenadas.latitude}, ${coordenadas.longitude}`,
+  },
   openGraph: { ...meta.openGraph, images: [fotoSocial] },
   twitter: { ...meta.twitter, card: "summary_large_image", images: [fotoSocial] },
 };
@@ -46,7 +55,7 @@ const categorias = [
     nome: "Tênis casuais",
     foto: "modelos-tenis.webp",
     alt: "Par de tênis creme com cadarço",
-    detalhe: "Consulte as numerações e as cores disponíveis.",
+    detalhe: "Pergunte quais modelos de tênis feminino a loja tem na sua numeração.",
     acao: "Consultar tênis",
     mensagem: "Olá, As Meninas! Vi a loja no Piracanjuba.ai. Quais tênis casuais vocês têm na minha numeração?",
   },
@@ -72,14 +81,26 @@ const dados = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "ShoeStore", "@id": url + "#loja", name: nome, alternateName: "As Meninas Outlet", url,
+      "@type": "WebPage", "@id": idPagina, url, name: titulo, description: descricao, inLanguage: "pt-BR",
+      isPartOf: { "@id": site + "/#website" }, mainEntity: { "@id": idLoja }, breadcrumb: { "@id": idNavegacao },
+    },
+    {
+      "@type": "ShoeStore", "@id": idLoja, mainEntityOfPage: { "@id": idPagina }, name: nome, alternateName: "As Meninas Outlet", url,
       description: descricao, telephone: "+" + telefone, sameAs: [instagram], hasMap: mapa,
       logo: `${site}${ativos}/logo.webp`, image: `${site}${ativos}/proprietaria.webp`,
       address: { "@type": "PostalAddress", streetAddress: rua, addressLocality: "Piracanjuba", addressRegion: "GO", postalCode: "75640-122", addressCountry: "BR" },
       geo: { "@type": "GeoCoordinates", ...coordenadas },
       openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
+      openingHoursSpecification: [
+        { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:00", closes: "18:00" },
+        { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "13:00" },
+        { "@type": "OpeningHoursSpecification", dayOfWeek: "Sunday", opens: "00:00", closes: "00:00" },
+      ],
     },
-    breadcrumbJsonLd([{ name: "Início", path: "/" }, { name: "Zap PBA", path: "/zap-pba" }, { name: nome, path: caminho }]),
+    {
+      ...breadcrumbJsonLd([{ name: "Início", path: "/" }, { name: "Zap PBA", path: "/zap-pba" }, { name: nome, path: caminho }]),
+      "@id": idNavegacao,
+    },
   ],
 };
 
@@ -116,7 +137,8 @@ export default function AsMeninasMultimarcas() {
               width={1088}
               height={1446}
               sizes="(max-width: 355px) 90vw, (max-width: 760px) 320px, (max-width: 845px) 42vw, 360px"
-              preload
+              loading="eager"
+              fetchPriority="high"
             />
             <figcaption><strong>Sabrina Carvalho</strong> - Proprietária da As Meninas Multimarcas</figcaption>
           </figure>
@@ -152,13 +174,14 @@ export default function AsMeninasMultimarcas() {
             <a className={s.botaoClaro} href={mapa}><MapPin size={18} aria-hidden="true" /> Ver loja no mapa</a>
           </div>
           <div className={s.dados}>
-            <h3><MapPin size={17} aria-hidden="true" /> Endereço</h3>
+            <h3><MapPin size={17} aria-hidden="true" /> Onde fica a As Meninas Multimarcas?</h3>
             <address>{rua}<br />Centro, Piracanjuba, GO<br />CEP 75640-122</address>
-            <h3><Clock3 size={17} aria-hidden="true" /> Horário da loja</h3>
-            <dl><div><dt>Segunda a sexta</dt><dd>9h às 18h</dd></div><div><dt>Sábado</dt><dd>9h às 13h</dd></div><div><dt>Domingo</dt><dd>Fechado</dd></div></dl>
+            <h3><Clock3 size={17} aria-hidden="true" /> A loja abre aos sábados?</h3>
+            <p>Sim, aos sábados a loja abre das 9h às 13h. De segunda a sexta, funciona das 9h às 18h. Aos domingos, fica fechada.</p>
           </div>
           <div className={s.canais}>
-            <h3>Fale com a loja</h3>
+            <h3>Como consultar minha numeração?</h3>
+            <p>Envie sua numeração pelo WhatsApp da loja para saber quais modelos e cores estão disponíveis.</p>
             <a href={conversa}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> {formatarTelefoneBr(telefone)}</a>
             <a href={instagram}><InstagramIcon width={17} height={17} aria-hidden="true" /> @asmeninasmultimarcasloja</a>
           </div>
