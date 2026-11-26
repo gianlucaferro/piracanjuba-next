@@ -24,6 +24,8 @@ const nextConfig: NextConfig = {
       { source: "/box87", destination: "/box-87-auto-center", permanent: true },
       { source: "/wennder-trindade-advogado", destination: "/zap-pba/wennder-trindade-advogado", permanent: true },
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
+      { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
+      { source: "/b10", destination: "/b10-auto-center", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },

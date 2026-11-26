@@ -352,6 +352,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
       },
       {
+        caminho: "/b10-auto-center",
+        titulo: "B10 Auto Center, oficina mecânica e auto peças em Piracanjuba",
+        descricao: "Oficina mecânica e balcão de auto peças na Rua Prof. Percival Rebelo, no Centro de Piracanjuba. Injeção eletrônica, suspensão, troca de óleo, troca de óleo do câmbio automático (oficina associada da rede Câmbio Automático do Brasil) e engates. Horário de segunda a sexta, das 7h às 18h, WhatsApp de agendamento e de peças e rota até a loja.",
+      },
+      {
         caminho: "/evadvocacia",
         titulo: "Ellen Vieira Advocacia e Consultoria Jurídica",
         descricao: "Escritório de Ellen Vieira (OAB-GO 42.685) em Piracanjuba. Atuação em Direito de Família e Sucessões, Penal, Civil, do Consumidor, Previdenciário e Imobiliário, com endereço e contato por WhatsApp.",
