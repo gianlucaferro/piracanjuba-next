@@ -357,6 +357,16 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Oficina mecânica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Diagnóstico com scanner, motor e injeção eletrônica, câmbio manual e automático, embreagem, suspensão, freios, alinhamento 3D, troca de óleo, escapamento e revitalização de faróis. Horário, WhatsApp e rota até a oficina.",
       },
       {
+        caminho: "/smart-especializada",
+        titulo: "Smart Especializada, loja de celular em Piracanjuba",
+        descricao: "Loja de celulares e assistência técnica em Piracanjuba. Smartphones novos e seminovos, acessórios e conserto de celular no Setor Central. Consulte modelos, disponibilidade e orçamento pelo WhatsApp.",
+      },
+      {
+        caminho: "/as-meninas-multimarcas",
+        titulo: "As Meninas Multimarcas, calçados femininos em Piracanjuba",
+        descricao: "Loja de calçados femininos e acessórios no Centro de Piracanjuba. Consulte modelos e numeração pelo WhatsApp e encontre o endereço e o Instagram da loja.",
+      },
+      {
         caminho: "/hotel",
         titulo: "Hotel Via Sul, hotel em Piracanjuba no Centro",
         descricao: "Hotel no Centro de Piracanjuba, na Rua Vereador Hugo Vargas Batista Machado, a cerca de 150 metros da Rodoviária, 250 metros da Prefeitura e 270 metros da Câmara. Check-in a partir das 14h, check-out até as 12h, recepção 24 horas, Wi-Fi e estacionamento gratuitos, café da manhã, fotos dos quartos e reserva pelo WhatsApp.",
