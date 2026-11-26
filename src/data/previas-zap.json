@@ -4079,6 +4079,28 @@
     "mensagem": "Olá, Máster Frio! Gostaria de consultar o ar-condicionado de um veículo ou máquina agrícola. Como passo o modelo e explico o problema para saber sobre o atendimento?"
   },
   {
+    "slug": "master-tech-auto-center",
+    "nome": "Master Tech Auto Center",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "telefones": [
+      "5564993450101"
+    ],
+    "oferta": [
+      "Diagnóstico automotivo",
+      "Mecânica de veículos"
+    ],
+    "endereco": "R. Lindolfo França, 490 - Centro, Piracanjuba - GO, 75640-126",
+    "mapa": "https://www.google.com/maps?cid=3287953821947155830",
+    "instagram": "https://www.instagram.com/mastertech.autocenter/",
+    "site": "https://mastertechautocent.wixsite.com/website",
+    "foto": "/marcas-zap/setores/oficina.webp",
+    "resumo": "A Master Tech Auto Center fica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Para consultar uma falha no veículo, conte à equipe o que percebeu e em que situação ela aparece.",
+    "atividade": "Oficina mecânica",
+    "acao": "Consultar diagnóstico do veículo",
+    "mensagem": "Olá, Master Tech! Gostaria de consultar um diagnóstico para meu veículo. Como envio o modelo e o relato da falha para combinar um atendimento?"
+  },
+  {
     "slug": "maxwel-cabeleireiro",
     "nome": "Maxwel Cabeleireiro",
     "categoria": "Beleza e Estética",

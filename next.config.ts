@@ -26,8 +26,10 @@ const nextConfig: NextConfig = {
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
       { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
       { source: "/b10", destination: "/b10-auto-center", permanent: true },
-      { source: "/zap-pba/master-tech-auto-center", destination: "/master-tech-auto-center", permanent: true },
-      { source: "/mastertech", destination: "/master-tech-auto-center", permanent: true },
+      // A Master Tech recusou a landing (2026-11-26): a URL curta e o atalho voltam à ficha
+      // neutra do guia. Procedimento em docs/empresa-recusou-landing.md.
+      { source: "/master-tech-auto-center", destination: "/zap-pba/master-tech-auto-center", permanent: true },
+      { source: "/mastertech", destination: "/zap-pba/master-tech-auto-center", permanent: true },
       { source: "/zap-pba/smart-especializada", destination: "/smart-especializada", permanent: true },
       { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
       { source: "/hotelviasul", destination: "/hotel", permanent: true },
@@ -62,9 +64,6 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
       destination: "/empresas/box-87-auto-center/compartilhar.jpg",
-    }, {
-      source: "/marcas-zap/compartilhar/master-tech-auto-center.jpg",
-      destination: "/empresas/master-tech-auto-center/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/viaggi-vistos.jpg",
       destination: "/empresas/viaggi-vistos/compartilhar.jpg",
