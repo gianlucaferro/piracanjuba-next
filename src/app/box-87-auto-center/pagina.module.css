@@ -213,6 +213,8 @@
 .listaPerguntas summary::-webkit-details-marker { display: none; }
 .listaPerguntas summary::after {
   content: "+";
+  /* Texto alternativo vazio: o "+" não entra no nome que o leitor de tela anuncia. */
+  content: "+" / "";
   position: absolute;
   right: 8px;
   top: 50%;
