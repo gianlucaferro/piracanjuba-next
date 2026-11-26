@@ -332,6 +332,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
+        caminho: "/box-87-auto-center",
+        titulo: "Box 87 Auto Center em Piracanjuba",
+        descricao: "Auto center e auto elétrica na Rua João Modesto, 12, Setor Norte. Elétrica e manutenção de carros e caminhonetes, parte elétrica e iluminação de tratores e implementos, horário e WhatsApp para agendar.",
+      },
+      {
         caminho: "/naraienemarquesadv",
         titulo: "Naraiene Marques Advocacia",
         descricao: "Perfil da advogada Naraiene Cristina Marques (OAB/GO 51.371), com informações sobre sua atuação em Goiás e contato pelo Instagram profissional.",
