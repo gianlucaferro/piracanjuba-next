@@ -169,3 +169,10 @@ test("as páginas /transparencia/* que ficaram têm destino definido", () => {
   assert.ok(!NO_SITEMAP.has("/transparencia/processos-publicos"), "/transparencia/processos-publicos não entra no sitemap sem decisão do operador");
   assert.ok("/transparencia/processos-publicos" in ROTAS_FORA_DO_SITEMAP);
 });
+
+test("B10 Auto Center: canônica no sitemap e endereços curtos com 308", () => {
+  assert.ok(PAGINAS.has("/b10-auto-center"));
+  assert.ok(NO_SITEMAP.has("/b10-auto-center"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/zap-pba/b10-auto-center"], "/b10-auto-center");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/b10"], "/b10-auto-center");
+});

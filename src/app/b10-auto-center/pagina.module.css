@@ -1,0 +1,415 @@
+/* Cores tiradas do logo do B10 (anel verde, anel amarelo, "B" vermelho, "10" preto, disco creme). */
+.pagina {
+  --verde: #095146;
+  --verde-fundo: #063a32;
+  --amarelo: #e5ae21;
+  --vermelho: #b40115;
+  --preto: #0e0e0e;
+  --creme: #fdf8ee;
+  --areia: #f4ecdb;
+  --suave: #4c524c;
+  --linha: #dfd4bd;
+  /* Barra fixa de WhatsApp no celular (BarraWhatsappEmpresa). */
+  --marca-superficie: #063a32;
+  --marca-borda: #0d5a4c;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  color: var(--preto);
+  background: var(--creme);
+  font-family: var(--font-jakarta), Arial, sans-serif;
+}
+
+.pagina :where(h1, h2, h3, p, ul, figure, dl, dd, address) { margin: 0; }
+.pagina :where(h1, h2, h3, summary) {
+  font-family: var(--b10-letreiro), "Arial Narrow", sans-serif;
+  font-style: italic;
+}
+.pagina h2 {
+  font-size: clamp(2.5rem, 5vw, 4.3rem);
+  font-weight: 850;
+  line-height: .95;
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.pagina a { text-decoration: none; }
+.pagina :is(a, summary):focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+.pagina section[id] { scroll-margin-top: 5.5rem; }
+.largura { width: min(100% - clamp(2rem, 8vw, 7rem), 78rem); margin-inline: auto; }
+
+/* Botões: amarelo do letreiro com texto preto, o par de maior contraste da marca. */
+.botao, .botaoContorno, .botaoBarra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 50px;
+  padding: .7rem 1.45rem;
+  border-radius: 999px;
+  font-size: .97rem;
+  font-weight: 800;
+  transition: background-color .15s, color .15s;
+}
+.botao, .botaoBarra { color: var(--preto); background: var(--amarelo); }
+.botao:hover { background: #f3c64c; }
+.botao svg, .botaoBarra svg { width: 20px; height: 20px; }
+.botaoContorno { color: var(--creme); box-shadow: inset 0 0 0 2px #fdf8ee99; }
+.botaoContorno:hover { box-shadow: inset 0 0 0 2px var(--creme); }
+
+/* Abertura: o letreiro verde da fachada. */
+.capa { color: var(--creme); background: var(--verde-fundo); }
+.navegacao {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: clamp(1.1rem, 2.4vw, 2.4rem);
+  min-height: 4.4rem;
+  border-bottom: 1px solid #fdf8ee26;
+}
+.navegacao a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--creme);
+  font-size: .9rem;
+  font-weight: 650;
+}
+.navegacao a:last-child { justify-content: center; min-width: 44px; }
+.navegacao a:hover { color: var(--amarelo); }
+.abertura {
+  display: grid;
+  grid-template-columns: .95fr 1.05fr;
+  align-items: center;
+  gap: clamp(2.2rem, 5vw, 5.5rem);
+  padding-block: clamp(2.4rem, 5vw, 4.6rem) clamp(2.8rem, 5.5vw, 5rem);
+}
+.chamada { min-width: 0; }
+/* Logo e nome lado a lado, como a placa redonda ao lado do letreiro na fachada. */
+.identidade {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1rem, 2.2vw, 1.9rem);
+}
+.logo {
+  display: block;
+  width: clamp(5.25rem, 9.5vw, 9.25rem);
+  height: auto;
+  border-radius: 50%;
+  /* O anel externo do logo tem o verde da marca: o contorno creme o separa do fundo. */
+  box-shadow: 0 0 0 3px #fdf8ee30, 0 18px 34px -18px #000;
+}
+.chamada h1 {
+  font-size: clamp(3.4rem, 7.2vw, 6.6rem);
+  font-weight: 900;
+  line-height: .86;
+  letter-spacing: -.02em;
+}
+.chamada h1 span {
+  display: block;
+  max-width: 24ch;
+  margin-top: .5em;
+  text-wrap: balance;
+  color: var(--amarelo);
+  font-size: clamp(1.55rem, 2.7vw, 2.45rem);
+  font-weight: 750;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+.lide {
+  max-width: 40ch;
+  margin-block: clamp(1.2rem, 2vw, 1.7rem) 1.8rem !important;
+  color: #e3ece6;
+  font-size: clamp(1rem, 1.25vw, 1.14rem);
+  line-height: 1.65;
+}
+.acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
+.horarioCapa {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.4rem !important;
+  color: #cfe0d8;
+  font-size: .9rem;
+  font-weight: 600;
+}
+.horarioCapa svg { flex: none; color: var(--amarelo); }
+.fachada { min-width: 0; }
+.fachada img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #fdf8ee2e, 0 32px 60px -32px #000;
+}
+.fachada figcaption {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .85rem;
+  color: #cfe0d8;
+  font-size: .86rem;
+}
+.fachada figcaption svg { flex: none; color: var(--amarelo); }
+
+/* Faixa zebrada amarela e preta do meio-fio, entre a fachada e a calçada da página. */
+.meioFio {
+  height: 16px;
+  background: repeating-linear-gradient(-45deg, var(--amarelo) 0 16px, var(--preto) 16px 32px);
+}
+
+/* Serviços: linhas de ordem de serviço, com a marcação de cada item. */
+.servicos { padding-block: clamp(3.6rem, 7vw, 6.4rem); }
+.servicosGrade {
+  display: grid;
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.62fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.servicosIntro { position: sticky; top: 6rem; }
+.servicosIntro h2 { color: var(--verde); }
+.servicosIntro p { max-width: 30ch; margin-top: 1.1rem; color: var(--suave); font-size: 1rem; line-height: 1.65; }
+.ordem { padding: 0; list-style: none; border-top: 3px solid var(--preto); }
+.ordem li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+  gap: .4rem 1.2rem;
+  align-items: start;
+  padding-block: 1.45rem;
+  border-bottom: 1px solid var(--linha);
+}
+.marcador {
+  position: relative;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: .35rem;
+  border: 2px solid var(--preto);
+  border-radius: 3px;
+}
+/* Item feito: o visto vermelho do "B". */
+.marcador::after {
+  content: "";
+  position: absolute;
+  left: .32rem;
+  top: -.28rem;
+  width: .42rem;
+  height: .95rem;
+  border: solid var(--vermelho);
+  border-width: 0 .2rem .2rem 0;
+  rotate: 40deg;
+}
+/* Serviço a confirmar: caixa tracejada e sem o visto. */
+.aConfirmar .marcador { border-style: dashed; border-color: var(--suave); }
+.aConfirmar .marcador::after { content: none; }
+.ordem h3 {
+  font-size: clamp(1.6rem, 2.4vw, 2.05rem);
+  font-weight: 850;
+  line-height: 1.02;
+}
+.aConfirmar h3 { color: var(--suave); }
+.etiqueta {
+  display: inline-block;
+  margin-left: .6rem;
+  padding: .15rem .55rem;
+  border: 1.5px solid var(--vermelho);
+  border-radius: 999px;
+  color: var(--vermelho);
+  font: 700 .72rem/1.3 var(--font-jakarta), Arial, sans-serif;
+  vertical-align: .35em;
+}
+.ordem p { max-width: 60ch; margin-top: .45rem; color: var(--suave); font-size: .98rem; line-height: 1.62; }
+.agendarServico {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 44px;
+  margin-top: .1rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  color: var(--verde);
+  box-shadow: inset 0 0 0 1.5px var(--verde);
+  font-size: .88rem;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: background-color .15s, color .15s;
+}
+.agendarServico svg { width: 17px; height: 17px; }
+.agendarServico:hover { color: var(--creme); background: var(--verde); }
+
+/* Auto peças: faixa preta, como o "10" do logo. */
+.pecas { color: var(--creme); background: var(--preto); }
+.pecasGrade {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding-block: clamp(3.4rem, 6.5vw, 5.8rem);
+}
+.balcao img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 36rem;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.pecasTexto h2 { color: var(--creme); }
+.pecasTexto p:not(.numeroPecas) { max-width: 38ch; margin-block: 1.2rem 1.9rem; color: #d8d3c7; font-size: 1.04rem; line-height: 1.68; }
+.numeroPecas { margin-top: 1.1rem !important; color: #b9b3a6; font-size: .92rem; }
+.numeroPecas a { color: var(--amarelo); font-weight: 750; text-decoration: underline; text-underline-offset: .22em; }
+
+/* Galeria */
+.galeria { padding-block: clamp(3.6rem, 7vw, 6.2rem); }
+.galeria h2 { color: var(--verde); }
+.fotos {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2rem 1.25rem;
+  margin-top: clamp(1.8rem, 3.5vw, 2.8rem);
+}
+.fotoOficina, .fotoAerea { grid-column: span 8; }
+.fotoSala, .fotoCertificado { grid-column: span 4; }
+.recorte { overflow: hidden; border-radius: 6px; background: var(--areia); }
+.fotoOficina .recorte, .fotoAerea .recorte { aspect-ratio: 16 / 9; }
+.fotoSala .recorte, .fotoCertificado .recorte { aspect-ratio: 8 / 9; }
+.recorte img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fotos figcaption { margin-top: .7rem; color: var(--suave); font-size: .88rem; line-height: 1.45; }
+
+/* Antes de ir */
+.praticos { padding-block: clamp(3.2rem, 6vw, 5rem); background: var(--areia); }
+.praticos h2 { color: var(--verde); }
+.listaPraticos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.8rem clamp(1.4rem, 3vw, 2.6rem);
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+}
+.listaPraticos div { padding-top: 1rem; border-top: 2px solid var(--preto); }
+.listaPraticos dt { display: flex; align-items: center; gap: .5rem; font-size: 1rem; font-weight: 800; }
+.listaPraticos dt svg { flex: none; color: var(--vermelho); }
+.listaPraticos dd { margin-top: .5rem; color: var(--suave); font-size: .95rem; line-height: 1.6; }
+
+/* Perguntas frequentes */
+.perguntas { padding-block: clamp(3.6rem, 7vw, 6rem); }
+.perguntas h2 { color: var(--verde); }
+.listaPerguntas { max-width: 54rem; margin-top: clamp(1.5rem, 3vw, 2.3rem); border-top: 3px solid var(--preto); }
+.listaPerguntas details { border-bottom: 1px solid var(--linha); }
+.listaPerguntas summary {
+  position: relative;
+  display: block;
+  min-height: 44px;
+  padding: 1.2rem 3rem 1.2rem 0;
+  cursor: pointer;
+  font-size: clamp(1.3rem, 1.9vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.15;
+  list-style: none;
+}
+.listaPerguntas summary::-webkit-details-marker { display: none; }
+.listaPerguntas summary::after {
+  content: "+";
+  position: absolute;
+  right: .3rem;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--vermelho);
+  font: 400 1.9rem/1 var(--font-jakarta), Arial, sans-serif;
+  transition: rotate .15s;
+}
+.listaPerguntas details[open] summary::after { rotate: 45deg; }
+.listaPerguntas details p { max-width: 66ch; padding-bottom: 1.3rem; color: var(--suave); font-size: 1rem; line-height: 1.7; }
+
+/* Contato */
+.contato { padding-block: clamp(3.6rem, 7vw, 5.8rem) 2.4rem; color: var(--creme); background: var(--verde-fundo); }
+.contato h2 { max-width: 16ch; }
+.detalhes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem clamp(1.6rem, 4vw, 4rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.detalhes h3 {
+  margin-bottom: .9rem;
+  color: var(--amarelo);
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+.detalhes address { color: #e3ece6; font-style: normal; font-size: 1rem; line-height: 1.65; }
+.rota {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  min-height: 44px;
+  margin-top: .5rem;
+  color: var(--creme);
+  font-weight: 750;
+  text-decoration: underline !important;
+  text-decoration-color: var(--amarelo) !important;
+  text-underline-offset: .25em;
+}
+.horario div, .contatos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  min-height: 44px;
+  border-bottom: 1px solid #fdf8ee24;
+}
+.horario dt, .contatos span { color: #cfe0d8; font-size: .93rem; }
+.horario dd { font-weight: 750; }
+.contatos { padding: 0; list-style: none; }
+.contatos a { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; color: var(--creme); font-weight: 750; white-space: nowrap; }
+.contatos a svg { flex: none; width: 17px; height: 17px; color: var(--amarelo); }
+.contatos a:hover { color: var(--amarelo); }
+.guia {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .4rem 1.5rem;
+  margin-top: clamp(2.6rem, 5vw, 3.8rem);
+  padding-top: 1rem;
+  border-top: 1px solid #fdf8ee26;
+}
+.guia a { display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; color: #cfe0d8; font-size: .88rem; }
+.guia a:hover { color: var(--creme); text-decoration: underline; text-underline-offset: .2em; }
+
+.botaoBarra { width: 100%; }
+.semQuebra { white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .botao, .botaoContorno, .botaoBarra, .agendarServico, .listaPerguntas summary::after { transition: none; }
+}
+
+@media (max-width: 1060px) {
+  .listaPraticos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .abertura, .pecasGrade, .servicosGrade { grid-template-columns: minmax(0, 1fr); }
+  .servicosIntro { position: static; }
+  .servicosIntro p { max-width: 46ch; }
+  .balcao { max-width: 30rem; }
+  .detalhes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .detalhes > div:last-child { grid-column: 1 / -1; max-width: 30rem; }
+}
+
+@media (max-width: 760px) {
+  .largura { width: min(100% - 2rem, 78rem); }
+  .navegacao { justify-content: space-between; gap: .9rem; }
+  .linkFotos { display: none !important; }
+  .abertura { padding-top: 1.8rem; }
+  .fotos { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
+  .fotoOficina, .fotoAerea, .fotoSala, .fotoCertificado { grid-column: auto; }
+  .fotoSala .recorte, .fotoCertificado .recorte { aspect-ratio: 4 / 5; }
+  .balcao img { aspect-ratio: 4 / 3; max-height: none; }
+  .ordem li { grid-template-columns: 1.6rem minmax(0, 1fr); }
+  .agendarServico { grid-column: 2; justify-self: start; }
+  .detalhes { grid-template-columns: minmax(0, 1fr); }
+  .detalhes > div:last-child { max-width: none; }
+}
+
+@media (max-width: 520px) {
+  .listaPraticos { grid-template-columns: minmax(0, 1fr); }
+  .acoes a { flex: 1 1 100%; }
+  .etiqueta { margin: .45rem 0 0; display: table; vertical-align: baseline; }
+}
