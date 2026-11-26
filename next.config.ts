@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
       { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
       { source: "/b10", destination: "/b10-auto-center", permanent: true },
+      { source: "/zap-pba/master-tech-auto-center", destination: "/master-tech-auto-center", permanent: true },
+      { source: "/mastertech", destination: "/master-tech-auto-center", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
@@ -55,6 +57,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
       destination: "/empresas/box-87-auto-center/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/master-tech-auto-center.jpg",
+      destination: "/empresas/master-tech-auto-center/compartilhar.jpg",
     }];
   },
 };

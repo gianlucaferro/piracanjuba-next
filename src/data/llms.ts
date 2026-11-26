@@ -347,6 +347,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Wennder Trindade e Silva, advogado em Piracanjuba (OAB/GO 51.422). Áreas de atuação em direito de família, sucessões e partilha, consumidor, direito civil e cobranças, criminal e administrativo. Inclui WhatsApp para agendamento e localização.",
       },
       {
+        caminho: "/master-tech-auto-center",
+        titulo: "Master Tech Auto Center, oficina mecânica em Piracanjuba",
+        descricao: "Oficina mecânica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Diagnóstico com scanner, motor e injeção eletrônica, câmbio manual e automático, embreagem, suspensão, freios, alinhamento 3D, troca de óleo, escapamento e revitalização de faróis. Horário, WhatsApp e rota até a oficina.",
+      },
+      {
         caminho: "/estacionamentoaeroporto",
         titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
