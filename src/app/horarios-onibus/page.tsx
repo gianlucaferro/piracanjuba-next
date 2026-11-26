@@ -9,7 +9,7 @@ export const revalidate = 300;
 export const metadata = pageMetadata({
   title: "Horários de ônibus de Piracanjuba GO",
   description:
-    "Horários de ônibus de Piracanjuba para Goiânia e Caldas Novas, e de lá para Piracanjuba, pelos quadros oficiais da AGR, com embarque, conexões para Uberlândia e Araguari e contatos das empresas.",
+    "Horários e valor das passagens de ônibus de Piracanjuba para Goiânia e Caldas Novas, e de lá para Piracanjuba, pelos quadros oficiais da AGR, com embarque e conexões para Uberlândia e Araguari.",
   path: "/horarios-onibus",
 });
 

@@ -6,8 +6,10 @@ import {
   BUS_OPERATORS,
   BUS_SNAPSHOT_DATE,
   getBrazilDate,
+  areBusFaresCurrent,
   getBusArrivals,
   getBusDepartures,
+  getBusFareSummary,
   getBusCoverage,
   getBusPageUrl,
   getBusSearchUrl,
@@ -463,4 +465,46 @@ test("próximas partidas usam o quadro de hoje e de amanhã sem horários passad
     const late = getUpcomingBusDepartures(new Date("2026-11-26T23:00:00Z"), 2);
     assert.deepEqual(late.map((item) => `${item.date} ${item.departure}`), ["2026-11-27 08:00", "2026-11-27 08:15"]);
   });
+});
+
+test("valores das passagens acompanham cada partida e chegada do quadro", () => {
+  const fares = (list: { operatorId: string; departure: string; fares?: { serviceClass: string; min: number; max?: number }[] }[]) =>
+    list.map((item) => `${item.departure} ${item.operatorId} ${(item.fares ?? []).map((fare) => `${fare.serviceClass}:${fare.min}${fare.max ? `-${fare.max}` : ""}`).join(",")}`);
+  // Valores da ClickBus em 2026-11-26.
+  assert.deepEqual(fares(getBusDepartures("2026-11-28", "goiania")), [
+    "08:00 marly Convencional:47.99,Leito:60",
+    "11:00 marly Convencional:47.99,Leito:60",
+    "13:15 uniao Convencional:40.86",
+    "13:30 marly Convencional:47.99,Leito:60",
+    "15:50 real Convencional:41.83",
+    "19:30 marly Convencional:47.99,Leito:60",
+  ]);
+  assert.deepEqual(fares(getBusDepartures("2026-12-07", "caldas-novas")).filter((item) => item.includes("real")), ["12:15 real Convencional:30.99-40.99"]);
+  assert.deepEqual(fares(getBusArrivals("2026-12-02", "caldas-novas")), [
+    "07:00 marly Convencional:45,Leito:50",
+    "10:00 marly Convencional:45,Leito:50",
+    "12:00 uniao Convencional:32.7",
+    "12:30 marly Convencional:45,Leito:50",
+    "14:30 real Convencional:30.99",
+    "18:30 marly Convencional:45,Leito:50",
+  ]);
+  for (const date of ["2026-11-28", "2026-12-02"]) {
+    for (const item of [...getRegularBusDepartures(date), ...getBusArrivals(date)]) assert.ok(item.fares?.length, `${date} ${item.id} sem valor`);
+  }
+});
+
+test("resumo traz a faixa de valores de cada trajeto nos dois sentidos", () => {
+  assert.deepEqual(getBusFareSummary().map((row) => `${row.direction} ${row.placeId} ${row.min}-${row.max}`), [
+    "saida caldas-novas 30.18-50",
+    "saida goiania 40.86-60",
+    "chegada caldas-novas 30.99-50",
+    "chegada goiania 40.99-60",
+  ]);
+});
+
+test("valores somem da página depois de 120 dias sem conferência", () => {
+  assert.equal(areBusFaresCurrent(new Date("2026-11-26T15:00:00Z")), true);
+  assert.equal(areBusFaresCurrent(new Date("2027-03-26T15:00:00Z")), true);
+  assert.equal(areBusFaresCurrent(new Date("2027-03-27T15:00:00Z")), false);
+  assert.equal(areBusFaresCurrent(new Date("2026-11-25T15:00:00Z")), false, "data anterior à conferência");
 });

@@ -94,6 +94,31 @@ test("ônibus chegando em Piracanjuba mostra a saída na origem e a chegada prev
   await expect(page.locator("body")).not.toContainText("Application error");
 });
 
+test("ônibus mostra o valor das passagens nos cartões e no resumo", async ({ page }, testInfo) => {
+  await page.clock.setFixedTime(new Date("2026-11-27T12:00:00-03:00"));
+  await page.goto("/horarios-onibus?data=2026-11-28&destino=goiania");
+  const marly = page.locator("article").filter({ hasText: "Expresso Marly" }).filter({ has: page.locator('time[datetime="2026-11-28T08:00:00-03:00"]') });
+  await expect(marly).toContainText(/Convencional\s*R\$\s*47,99/);
+  await expect(marly).toContainText(/Leito\s*R\$\s*60,00/);
+  const resumo = page.getByRole("region", { name: "Valor das passagens" });
+  await expect(resumo).toContainText(/Piracanjuba a Goiânia\s*R\$\s*40,86 a R\$\s*60,00/);
+  await expect(resumo).toContainText(/Caldas Novas a Piracanjuba\s*R\$\s*30,99 a R\$\s*50,00/);
+  await page.getByRole("button", { name: "Chegando em Piracanjuba" }).click();
+  await page.locator("#bus-destination").selectOption("caldas-novas");
+  await expect(page.locator("article").filter({ hasText: "Expresso União" })).toContainText(/R\$\s*32,70/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: `artifacts/onibus-precos-${testInfo.project.name}.png`, fullPage: true });
+});
+
+test("ônibus esconde valores com mais de 120 dias sem conferência", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2027-06-01T12:00:00-03:00"));
+  await page.goto("/horarios-onibus?data=2027-06-02&destino=goiania");
+  await expect(page.getByRole("heading", { name: "Horários para 2027-06-02" })).toBeVisible();
+  await expect(page.locator("article").first()).toBeVisible();
+  await expect(page.getByRole("region", { name: "Valor das passagens" })).toHaveCount(0);
+  await expect(page.locator("article").first()).not.toContainText("Passagem:");
+});
+
 test("ônibus em data anterior ao quadro mostra o arquivo sem inventar horários", async ({ page }) => {
   await page.goto("/horarios-onibus?data=2026-10-15");
   await expect(page.getByText("Ainda não conferimos os horários para esta data")).toBeVisible();

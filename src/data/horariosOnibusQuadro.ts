@@ -306,3 +306,63 @@ export const BUS_CONNECTION_NOTES: Record<string, { via: string; text: string; c
     checkedAt: "2026-11-26",
   },
 };
+
+// Valor das passagens. As linhas da AGR são autorizadas com liberdade de preço (Resolução
+// do Conselho Regulador 155/2026), então não há tarifa oficial por linha: o coeficiente
+// tarifário da Resolução 961/2026 só referencia eventual controle extraordinário. Os valores
+// abaixo são os anunciados na ClickBus em 2026-11-26, para viagens de 2026-11-26 a 2026-12-23,
+// por classe e sentido. Marly e União não variaram entre as datas; a Real Expresso variou
+// pela BR-153 (valor maior no sábado 2026-11-28 que na segunda 2026-12-07), por isso a faixa.
+// Reconferir na ClickBus e atualizar a data; depois de BUS_FARES_MAX_AGE_DAYS sem conferência,
+// a página deixa de mostrar os valores.
+
+export type BusFare = { serviceClass: string; min: number; max?: number };
+export type BusServiceFares = { fromPiracanjuba: BusFare[]; toPiracanjuba: BusFare[] };
+
+export const BUS_FARES_CHECKED_AT = "2026-11-26";
+export const BUS_FARES_MAX_AGE_DAYS = 120;
+
+const MARLY_GOIANIA: BusServiceFares = {
+  // Piracanjuba a Goiânia e, no outro sentido do mesmo ônibus, Caldas Novas a Piracanjuba.
+  fromPiracanjuba: [{ serviceClass: "Convencional", min: 47.99 }, { serviceClass: "Leito", min: 60 }],
+  toPiracanjuba: [{ serviceClass: "Convencional", min: 45 }, { serviceClass: "Leito", min: 50 }],
+};
+const MARLY_CALDAS: BusServiceFares = {
+  // Piracanjuba a Caldas Novas e Goiânia a Piracanjuba.
+  fromPiracanjuba: [{ serviceClass: "Convencional", min: 43 }, { serviceClass: "Leito", min: 50 }],
+  toPiracanjuba: [{ serviceClass: "Convencional", min: 47.99 }, { serviceClass: "Leito", min: 60 }],
+};
+
+/** Valores por serviço do quadro (BUS_REGULAR_SERVICES[].id). */
+export function getBusServiceFares(serviceId: string): BusServiceFares | null {
+  if (serviceId.startsWith("marly-goiania-")) return MARLY_GOIANIA;
+  if (serviceId.startsWith("marly-caldas-novas-")) return MARLY_CALDAS;
+  return BUS_OTHER_FARES[serviceId] ?? null;
+}
+
+const BUS_OTHER_FARES: Record<string, BusServiceFares> = {
+  "uniao-goiania-1315": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 40.86 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 32.7 }],
+  },
+  "uniao-caldas-novas-0915": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 30.18 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 47.02 }],
+  },
+  "real-goiania-br153-1550": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 41.83 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 30.99 }],
+  },
+  "real-goiania-go020-1535": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 40.99 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 30.99 }],
+  },
+  "real-caldas-novas-br153-1215": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 30.99, max: 40.99 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 41.83, max: 51.83 }],
+  },
+  "real-caldas-novas-go020-1210": {
+    fromPiracanjuba: [{ serviceClass: "Convencional", min: 30.99 }],
+    toPiracanjuba: [{ serviceClass: "Convencional", min: 40.99 }],
+  },
+};

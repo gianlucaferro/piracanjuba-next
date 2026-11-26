@@ -1,7 +1,7 @@
 import storedDepartures from "./horariosOnibus-registros.json" with { type: "json" };
-import { BUS_CONNECTION_NOTES, BUS_REGULAR_CHECKED_AT, BUS_REGULAR_EXCEPTIONS, BUS_REGULAR_SERVICES, BUS_REGULAR_VALID_FROM, type BusRegularService } from "./horariosOnibusQuadro.ts";
+import { BUS_CONNECTION_NOTES, BUS_FARES_CHECKED_AT, BUS_FARES_MAX_AGE_DAYS, BUS_REGULAR_CHECKED_AT, BUS_REGULAR_EXCEPTIONS, BUS_REGULAR_SERVICES, BUS_REGULAR_VALID_FROM, getBusServiceFares, type BusFare, type BusRegularService } from "./horariosOnibusQuadro.ts";
 
-export { BUS_CONNECTION_NOTES };
+export { BUS_CONNECTION_NOTES, BUS_FARES_CHECKED_AT, type BusFare };
 
 export type BusSource = { name: string; url: string };
 export type BusDestination = {
@@ -45,6 +45,8 @@ export type BusDeparture = {
     /** Fonte da exceção datada, quando o horário do dia difere do quadro. */
     exception?: BusSource;
   };
+  /** Valor anunciado na venda, por classe (só nas partidas do quadro regular). */
+  fares?: BusFare[];
 };
 
 /** Sentido da consulta: saindo de Piracanjuba ou chegando a ela. */
@@ -65,6 +67,7 @@ export type BusArrival = {
   sources: BusSource[];
   checkedAt: string;
   regular: NonNullable<BusDeparture["regular"]>;
+  fares?: BusFare[];
 };
 
 export const BUS_CHECKED_AT = storedDepartures.reduce((latest, item) => item.checkedAt > latest ? item.checkedAt : latest, "");
@@ -174,7 +177,40 @@ export function getRegularBusDepartures(date: string): BusDeparture[] {
     sources: [...(exception ? [exception.source] : []), { name: service.document.name, url: service.document.url }, ...service.observedOn],
     checkedAt: BUS_REGULAR_CHECKED_AT,
     regular: regularInfo(service, exception),
+    ...faresOf(service.id, "fromPiracanjuba"),
   }));
+}
+
+function faresOf(serviceId: string, direction: "fromPiracanjuba" | "toPiracanjuba"): { fares?: BusFare[] } {
+  const fares = getBusServiceFares(serviceId)?.[direction];
+  return fares?.length ? { fares } : {};
+}
+
+/** Os valores só aparecem enquanto a última conferência tiver até BUS_FARES_MAX_AGE_DAYS. */
+export function areBusFaresCurrent(now: Date): boolean {
+  const ageDays = (Date.parse(`${getBrazilDate(now)}T12:00:00Z`) - Date.parse(`${BUS_FARES_CHECKED_AT}T12:00:00Z`)) / 86_400_000;
+  return ageDays >= 0 && ageDays <= BUS_FARES_MAX_AGE_DAYS;
+}
+
+export type BusFareSummary = { direction: BusDirection; placeId: string; min: number; max: number };
+
+/** Faixa de valores por trajeto (de Piracanjuba ao destino e da origem a Piracanjuba). */
+export function getBusFareSummary(): BusFareSummary[] {
+  const summary = new Map<string, BusFareSummary>();
+  for (const service of BUS_REGULAR_SERVICES) {
+    const fares = getBusServiceFares(service.id);
+    if (!fares) continue;
+    for (const [direction, placeId, list] of [["saida", service.destinationId, fares.fromPiracanjuba], ["chegada", service.originId, fares.toPiracanjuba]] as const) {
+      for (const fare of list) {
+        const key = `${direction}|${placeId}`;
+        const current = summary.get(key) ?? { direction, placeId, min: Infinity, max: -Infinity };
+        current.min = Math.min(current.min, fare.min);
+        current.max = Math.max(current.max, fare.max ?? fare.min);
+        summary.set(key, current);
+      }
+    }
+  }
+  return [...summary.values()].sort((a, b) => (a.direction === b.direction ? 0 : a.direction === "saida" ? -1 : 1) || a.placeId.localeCompare(b.placeId));
 }
 
 /**
@@ -200,6 +236,7 @@ export function getBusArrivals(date: string, originId = "all", operatorId = "all
         sources: [...(exception ? [exception.source] : []), { name: service.document.name, url: service.document.url }],
         checkedAt: BUS_REGULAR_CHECKED_AT,
         regular: regularInfo(service, exception),
+        ...faresOf(service.id, "toPiracanjuba"),
       };
     })
     .sort((a, b) => a.arrival.localeCompare(b.arrival) || a.originId.localeCompare(b.originId) || a.operatorId.localeCompare(b.operatorId));
