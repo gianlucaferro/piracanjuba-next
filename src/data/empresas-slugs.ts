@@ -19,6 +19,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "quiropraxia",
   "estetica",
   "kamillamorranna",
+  "naraienemarquesadv",
   "estacionamentoaeroporto",
 ];
 
