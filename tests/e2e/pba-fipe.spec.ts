@@ -79,6 +79,78 @@ test("PBAFipe consulta marca, modelo filtrado e ano até mostrar o preço", asyn
   expect(errors).toEqual([]);
 });
 
+const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "*" };
+
+async function mockPlaca(page: Page, resposta: Resposta) {
+  const corpos: unknown[] = [];
+  await page.route("**/functions/v1/consulta-placa", async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS });
+    expect(route.request().method()).toBe("POST");
+    corpos.push(route.request().postDataJSON());
+    await route.fulfill({ status: resposta.status ?? 200, headers: CORS, json: resposta.body });
+  });
+  return corpos;
+}
+
+test("consulta pela placa preenche marca, modelo e ano e mostra o preço", async ({ page }, testInfo) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const urls: string[] = [];
+  page.on("request", (request) => urls.push(request.url()));
+  const pedidosFipe = await mockFipe(page);
+  const corpos = await mockPlaca(page, {
+    body: {
+      veiculo: { marca: "VW", modelo: "GOL", ano: "2012", ano_modelo: "2013", cor: "Prata" },
+      fipe: { tipo: "carros", marca: "59", modelo: "6280", anoModelo: 2013, codigoFipe: "005345-7", combustivel: "Gasolina" },
+    },
+  });
+  await page.goto("/pba-fipe");
+
+  const placa = page.getByLabel("Consultar pela placa", { exact: true });
+  const buscar = page.getByRole("button", { name: "Buscar", exact: true });
+  await placa.fill("abc-1d2");
+  await expect(buscar).toBeDisabled();
+  await placa.fill("abc-1d23");
+  await expect(placa).toHaveValue("ABC1D23");
+  await buscar.click();
+
+  await expect(page.getByText("Encontramos: VW GOL 2013. Confira se a versão abaixo é a do seu veículo.")).toBeVisible();
+  await expect(page.getByLabel("Marca", { exact: true })).toHaveValue("59");
+  await expect(page.getByLabel("Modelo", { exact: true })).toHaveValue("6280");
+  await expect(page.getByLabel("Ano e combustível", { exact: true })).toHaveValue("2013-5");
+  const resultado = page.getByRole("region", { name: "Resultado da consulta FIPE" });
+  await expect(resultado).toContainText(/R\$\s*29\.180,00/);
+
+  expect(corpos).toEqual([{ placa: "ABC1D23" }]);
+  expect(pedidosFipe).toContain("/api/fipe/carros/59/6280/2013-5");
+  // A placa só vai no corpo do POST, nunca em URL.
+  expect(urls.filter((url) => url.toUpperCase().includes("ABC1D23"))).toEqual([]);
+  expect(page.url()).not.toContain("ABC1D23");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: `artifacts/pba-fipe-placa-${testInfo.project.name}.png`, fullPage: true });
+  expect(errors).toEqual([]);
+});
+
+test("placa não encontrada avisa e deixa a escolha manual livre", async ({ page }) => {
+  await mockFipe(page);
+  await mockPlaca(page, { status: 404, body: { error: "Veículo não encontrado. Preencha manualmente." } });
+  await page.goto("/pba-fipe");
+  await page.getByLabel("Consultar pela placa", { exact: true }).fill("INT8236");
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(page.getByText("Não encontramos essa placa. Confira a placa ou escolha o veículo abaixo.")).toBeVisible();
+  await expect(page.getByLabel("Marca", { exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Marca", { exact: true })).toHaveValue("");
+});
+
+test("limite de consultas por placa mostra o aviso", async ({ page }) => {
+  await mockFipe(page);
+  await mockPlaca(page, { status: 429, body: { error: "Muitas requisições.", error_code: "rate_limit" } });
+  await page.goto("/pba-fipe");
+  await page.getByLabel("Consultar pela placa", { exact: true }).fill("INT8236");
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(page.getByText("Muitas consultas por placa em pouco tempo. Aguarde um pouco ou escolha o veículo abaixo.")).toBeVisible();
+});
+
 test("trocar o tipo de veículo limpa a consulta e carrega as marcas do tipo", async ({ page }) => {
   const pedidos = await mockFipe(page);
   await page.goto("/pba-fipe");

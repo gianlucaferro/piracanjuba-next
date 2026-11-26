@@ -196,3 +196,76 @@ export function parseRespostaPrecoFipe(valor: unknown): PrecoFipe {
     mesReferencia: texto(preco.mesReferencia),
   };
 }
+
+// Consulta pela placa: a Edge Function consulta-placa identifica o veículo na API Placas e
+// devolve os códigos da tabela FIPE; o preço do mês continua vindo da rota /api/fipe.
+
+/** Placa no padrão antigo (ABC1234) ou Mercosul (ABC1D23). */
+export const PLACA_VALIDA = /^[A-Z]{3}\d[A-Z0-9]\d{2}$/;
+
+/** "abc-1d23" vira "ABC1D23"; o resto é descartado e o tamanho fica em 7. */
+export function normalizarPlaca(texto: string): string {
+  return texto.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+}
+
+export type FipeDaPlaca = {
+  tipo: TipoFipe;
+  marca: string;
+  modelo: string;
+  anoModelo: number;
+  combustivel?: string;
+};
+
+export type VeiculoDaPlaca = {
+  /** Marca, modelo e ano como a API Placas descreve, para conferência. */
+  descricao: string | null;
+  fipe: FipeDaPlaca | null;
+};
+
+function textoCurto(valor: unknown): string | null {
+  if (typeof valor !== "string" && typeof valor !== "number") return null;
+  const limpo = String(valor).replace(/\s+/g, " ").trim();
+  return limpo && limpo.length <= 80 ? limpo : null;
+}
+
+/** Valida a resposta da Edge Function consulta-placa (no navegador). */
+export function parseRespostaPlaca(valor: unknown): VeiculoDaPlaca {
+  const dado = registro(valor);
+  const veiculo = registro(dado.veiculo);
+  const partes = [veiculo.marca, veiculo.modelo, veiculo.ano_modelo ?? veiculo.ano].map(textoCurto).filter(Boolean);
+  const descricao = partes.length > 0 ? partes.join(" ") : null;
+  let fipe: FipeDaPlaca | null = null;
+  if (dado.fipe !== undefined) {
+    const bruto = registro(dado.fipe);
+    const tipo = typeof bruto.tipo === "string" ? bruto.tipo : "";
+    const anoModelo = bruto.anoModelo;
+    if (
+      eTipoFipe(tipo)
+      && typeof bruto.marca === "string" && CODIGO_NUMERICO.test(bruto.marca)
+      && typeof bruto.modelo === "string" && CODIGO_NUMERICO.test(bruto.modelo)
+      && typeof anoModelo === "number" && Number.isInteger(anoModelo)
+      && (anoModelo === 32000 || (anoModelo >= 1900 && anoModelo <= 2100))
+    ) {
+      const combustivel = textoCurto(bruto.combustivel);
+      fipe = { tipo, marca: bruto.marca, modelo: bruto.modelo, anoModelo, ...(combustivel ? { combustivel } : {}) };
+    }
+  }
+  if (!descricao && !fipe) throw new Error("Resposta da consulta por placa inválida.");
+  return { descricao, fipe };
+}
+
+function semAcento(texto: string): string {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+/**
+ * Código do ano na lista do modelo para o ano-modelo da placa. A lista da API FIPE v2 pode
+ * trazer outro combustível que o da placa (ex.: "Flex" contra "Gasolina"), então o ano decide
+ * e o combustível só desempata.
+ */
+export function escolherAnoDaPlaca(opcoes: readonly OpcaoFipe[], anoModelo: number, combustivel?: string): string | null {
+  const doAno = opcoes.filter((opcao) => opcao.codigo.startsWith(`${anoModelo}-`));
+  if (doAno.length <= 1) return doAno[0]?.codigo ?? null;
+  const palavra = combustivel ? semAcento(combustivel).split(/[^a-z]+/).find(Boolean) : undefined;
+  return (palavra && doAno.find((opcao) => semAcento(opcao.nome).includes(palavra))?.codigo) || doAno[0].codigo;
+}
