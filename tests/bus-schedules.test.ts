@@ -6,17 +6,22 @@ import {
   BUS_OPERATORS,
   BUS_SNAPSHOT_DATE,
   getBrazilDate,
+  getBusArrivals,
   getBusDepartures,
   getBusCoverage,
   getBusPageUrl,
   getBusSearchUrl,
+  getBusWeekday,
+  getRegularBusDepartures,
   getUpcomingBusDepartures,
   getInitialBusDate,
+  BUS_CONNECTION_NOTES,
   isBusDate,
   isBusDeparturePast,
 } from "../src/data/horariosOnibus.ts";
 import type { BusDeparture } from "../src/data/horariosOnibus.ts";
 import { validateBusDepartures, mergeBusDepartures } from "../src/data/busScheduleValidation.ts";
+import { BUS_REGULAR_SERVICES, BUS_REGULAR_VALID_FROM } from "../src/data/horariosOnibusQuadro.ts";
 
 function departure(overrides: Partial<BusDeparture> = {}): BusDeparture {
   return {
@@ -99,8 +104,8 @@ test("cobertura informa somente a data e o destino selecionados", () => {
     departure({ id: "caldas", destinationId: "caldas-novas", checkedAt: "2026-09-09" }),
     departure({ id: "other-date", date: "2026-09-11" }),
   ], () => {
-    assert.deepEqual(getBusCoverage("2026-09-10", "goiania"), { count: 1, lastCheckedAt: "2026-09-08", dates: ["2026-09-10", "2026-09-11"], status: "available" });
-    assert.deepEqual(getBusCoverage("2026-09-12", "caldas-novas"), { count: 0, lastCheckedAt: null, dates: ["2026-09-10"], status: "unverified" });
+    assert.deepEqual(getBusCoverage("2026-09-10", "goiania"), { count: 1, regular: 0, lastCheckedAt: "2026-09-08", dates: ["2026-09-10", "2026-09-11"], status: "available" });
+    assert.deepEqual(getBusCoverage("2026-09-12", "caldas-novas"), { count: 0, regular: 0, lastCheckedAt: null, dates: ["2026-09-10"], status: "unverified" });
   });
 });
 
@@ -341,4 +346,121 @@ test("consulta de Araguari preserva Menegon como ponto específico de desembarqu
       assert.equal(new URL(source.url).pathname, "/onibus/piracanjuba-go/araguari-menegon-mg", trip.id);
     }
   }
+});
+
+// Quadro regular (AGR e ANTT), conferido em 2026-11-26.
+
+test("quadro regular cobre qualquer data a partir da conferência, conforme o dia da semana", () => {
+  assert.deepEqual(getRegularBusDepartures("2026-11-25"), [], "antes do início do quadro");
+  assert.equal(BUS_REGULAR_VALID_FROM, "2026-11-26");
+  // 2026-11-26 é quinta-feira; 2026-12-02 é quarta; 2026-12-01 é terça.
+  assert.equal(getBusWeekday("2026-11-26"), 4);
+  assert.equal(getBusWeekday("2026-12-02"), 3);
+  const thursday = getBusDepartures("2026-11-26");
+  const wednesday = getBusDepartures("2026-12-02");
+  const byDestination = (list: BusDeparture[], destination: string) => list.filter((item) => item.destinationId === destination).map((item) => `${item.departure} ${item.operatorId}`);
+  // 2026-12-03 é quinta-feira sem exceção; 2026-11-26 tem a exceção da União (14:00).
+  const thursdayRegular = getBusDepartures("2026-12-03");
+  assert.deepEqual(byDestination(thursdayRegular, "goiania"), ["08:00 marly", "11:00 marly", "13:15 uniao", "13:30 marly", "15:50 real", "19:30 marly"]);
+  assert.deepEqual(byDestination(thursday, "goiania"), ["08:00 marly", "11:00 marly", "13:30 marly", "14:00 uniao", "15:50 real", "19:30 marly"]);
+  assert.deepEqual(byDestination(thursday, "caldas-novas"), ["08:15 marly", "09:15 uniao", "12:15 real", "13:00 marly", "16:00 marly", "19:00 marly"]);
+  assert.deepEqual(byDestination(wednesday, "goiania"), ["08:00 marly", "11:00 marly", "13:15 uniao", "13:30 marly", "15:35 real", "19:30 marly"]);
+  assert.deepEqual(byDestination(wednesday, "caldas-novas"), ["08:15 marly", "09:15 uniao", "12:10 real", "13:00 marly", "16:00 marly", "19:00 marly"]);
+  // Uberlândia e Araguari: sem linha direta à venda, só a orientação de conexão.
+  assert.deepEqual(byDestination(thursday, "uberlandia"), []);
+  assert.deepEqual(byDestination(thursday, "araguari"), []);
+  assert.equal(BUS_CONNECTION_NOTES.uberlandia.via, "Goiânia");
+  assert.equal(BUS_CONNECTION_NOTES.araguari.via, "Caldas Novas");
+  assert.equal(getBusCoverage("2026-11-26", "goiania").status, "regular");
+});
+
+test("partidas do quadro batem com as consultas de 2026-09-10 e 2026-11-04", () => {
+  // As consultas datadas foram a base da previsão de passagem por Piracanjuba: no mesmo dia
+  // da semana, o quadro deve repetir horário, chegada e empresa de cada registro conferido.
+  for (const date of ["2026-09-10", "2026-11-04"]) {
+    const weekday = getBusWeekday(date);
+    const stored = BUS_DEPARTURES.filter((item) => item.date === date && ["goiania", "caldas-novas"].includes(item.destinationId));
+    const regular = BUS_REGULAR_SERVICES.filter((service) => service.weekdays.includes(weekday) && ["goiania", "caldas-novas"].includes(service.destinationId));
+    for (const service of regular) {
+      const match = stored.find((item) => item.destinationId === service.destinationId && item.operatorId === service.operatorId && item.departure === service.departure);
+      assert.ok(match, `${date} ${service.id} sem consulta correspondente`);
+      assert.equal(match.arrival, service.arrival, `${date} ${service.id} chegada`);
+    }
+  }
+});
+
+test("consulta datada tem prioridade sobre o quadro no mesmo destino", () => {
+  const confirmed = departure({ id: "datada", date: "2026-11-27", departure: "13:20", checkedAt: "2026-11-26" });
+  withDepartures([confirmed], () => {
+    const goiania = getBusDepartures("2026-11-27", "goiania");
+    assert.deepEqual(goiania.map((item) => item.id), ["datada"]);
+    const caldas = getBusDepartures("2026-11-27", "caldas-novas");
+    assert.ok(caldas.length > 0 && caldas.every((item) => item.regular), "outro destino continua no quadro");
+    assert.equal(getBusCoverage("2026-11-27", "all").status, "available");
+  });
+});
+
+test("serviços do quadro são consistentes e citam documento oficial e consulta de venda", () => {
+  const ids = new Set<string>();
+  for (const service of BUS_REGULAR_SERVICES) {
+    assert.ok(!ids.has(service.id), `ID repetido: ${service.id}`);
+    ids.add(service.id);
+    assert.ok(BUS_DESTINATIONS.some((item) => item.id === service.destinationId), service.id);
+    assert.ok(BUS_OPERATORS.some((item) => item.id === service.operatorId), service.id);
+    assert.ok(service.originDeparture < service.departure && service.departure < service.arrival, `${service.id}: ordem dos horários`);
+    assert.ok(service.weekdays.length > 0 && service.weekdays.every((day) => Number.isInteger(day) && day >= 0 && day <= 6), service.id);
+    const documentHost = new URL(service.document.url).hostname;
+    assert.ok(service.authority === "AGR" ? documentHost === "goias.gov.br" : documentHost === "quadros-horarios.antt.gov.br", `${service.id}: documento ${documentHost}`);
+    assert.ok(service.observedOn.length > 0, `${service.id}: sem consulta de venda`);
+    for (const source of service.observedOn) assert.match(source.url, /^https:\/\/www\.clickbus\.com\.br\/onibus\/piracanjuba-go\//);
+  }
+  for (const date of ["2026-11-26", "2026-12-02", "2027-03-14"]) {
+    const list = getRegularBusDepartures(date);
+    assert.equal(new Set(list.map((item) => item.id)).size, list.length, date);
+    for (const item of list) assert.ok(item.durationMinutes > 0 && item.regular && item.sources[0].url.startsWith("https://"), item.id);
+  }
+});
+
+test("exceção datada troca o horário só naquela data e cita a venda consultada", () => {
+  const exception = getBusDepartures("2026-11-27", "goiania", "uniao")[0];
+  assert.equal(exception.departure, "14:00");
+  assert.equal(exception.arrival, "15:45");
+  assert.equal(exception.regular?.originDeparture, "12:45");
+  assert.match(exception.regular?.exception?.url ?? "", /departureDate=2026-11-27$/);
+  assert.equal(exception.sources[0].url, exception.regular?.exception?.url);
+  const normal = getBusDepartures("2026-11-28", "goiania", "uniao")[0];
+  assert.equal(normal.departure, "13:15");
+  assert.equal(normal.regular?.exception, undefined);
+});
+
+test("chegadas a Piracanjuba usam os mesmos ônibus vistos da origem", () => {
+  const arrivalsFrom = (date: string, origin: string) => getBusArrivals(date, origin).map((item) => `${item.departure}->${item.arrival} ${item.operatorId}`);
+  // Conferido na ClickBus em 2026-11-26 para 2026-11-28 (sábado) e 2026-12-02 (quarta).
+  assert.deepEqual(arrivalsFrom("2026-11-28", "goiania"), ["06:45->08:15 marly", "07:30->09:15 uniao", "10:30->12:10 real", "11:30->13:00 marly", "14:30->16:00 marly", "17:30->19:00 marly"]);
+  assert.deepEqual(arrivalsFrom("2026-12-02", "goiania"), ["06:45->08:15 marly", "07:30->09:15 uniao", "10:30->12:05 real", "11:30->13:00 marly", "14:30->16:00 marly", "17:30->19:00 marly"]);
+  assert.deepEqual(arrivalsFrom("2026-11-28", "caldas-novas"), ["07:00->08:00 marly", "10:00->11:00 marly", "12:00->13:15 uniao", "12:30->13:30 marly", "14:30->15:45 real", "18:30->19:30 marly"]);
+  assert.deepEqual(arrivalsFrom("2026-12-02", "caldas-novas"), ["07:00->08:00 marly", "10:00->11:00 marly", "12:00->13:15 uniao", "12:30->13:30 marly", "14:30->15:30 real", "18:30->19:30 marly"]);
+  assert.deepEqual(arrivalsFrom("2026-11-27", "caldas-novas").filter((item) => item.endsWith("uniao")), ["12:45->14:00 uniao"]);
+  assert.deepEqual(getBusArrivals("2026-11-28", "uberlandia"), []);
+  assert.deepEqual(getBusArrivals("2026-11-25", "goiania"), [], "antes do início do quadro");
+  assert.equal(getBusArrivals("2026-11-28").length, 12);
+  for (const item of getBusArrivals("2026-11-28")) assert.ok(item.durationMinutes > 0, item.id);
+});
+
+test("links de busca e da página respeitam o sentido da viagem", () => {
+  assert.equal(getBusSearchUrl("goiania", "2026-11-28", "clickbus", "chegada"), "https://www.clickbus.com.br/onibus/goiania-go/piracanjuba-go?departureDate=2026-11-28");
+  assert.equal(getBusSearchUrl("goiania", "2026-11-28", "mobifacil", "chegada"), "https://www.mobifacil.com.br/passagem-de-onibus/goiania-go/piracanjuba-go?date=28-11-2026");
+  assert.equal(getBusSearchUrl("goiania", "2026-11-28"), "https://www.clickbus.com.br/onibus/piracanjuba-go/goiania-go?departureDate=2026-11-28");
+  assert.equal(getBusPageUrl("2026-11-28", "caldas-novas", "all", "chegada"), "/horarios-onibus?sentido=chegada&data=2026-11-28&destino=caldas-novas");
+});
+
+test("próximas partidas usam o quadro de hoje e de amanhã sem horários passados", () => {
+  withDepartures([], () => {
+    // 2026-11-26 às 12:00 em Brasília: a próxima é a Real das 12:15 para Caldas Novas; a
+    // União para Goiânia sai às 14:00 nesta data, pela exceção.
+    const upcoming = getUpcomingBusDepartures(new Date("2026-11-26T15:00:00Z"), 4);
+    assert.deepEqual(upcoming.map((item) => `${item.date} ${item.departure} ${item.destinationId}`), ["2026-11-26 12:15 caldas-novas", "2026-11-26 13:00 caldas-novas", "2026-11-26 13:30 goiania", "2026-11-26 14:00 goiania"]);
+    const late = getUpcomingBusDepartures(new Date("2026-11-26T23:00:00Z"), 2);
+    assert.deepEqual(late.map((item) => `${item.date} ${item.departure}`), ["2026-11-27 08:00", "2026-11-27 08:15"]);
+  });
 });

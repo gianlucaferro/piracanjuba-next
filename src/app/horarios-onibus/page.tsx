@@ -9,7 +9,7 @@ export const revalidate = 300;
 export const metadata = pageMetadata({
   title: "Horários de ônibus de Piracanjuba GO",
   description:
-    "Consulte horários de ônibus saindo de Piracanjuba por destino e data, com fontes da consulta, pontos de embarque e contatos das transportadoras.",
+    "Horários de ônibus de Piracanjuba para Goiânia e Caldas Novas, e de lá para Piracanjuba, pelos quadros oficiais da AGR, com embarque, conexões para Uberlândia e Araguari e contatos das empresas.",
   path: "/horarios-onibus",
 });
 
@@ -24,6 +24,7 @@ export default async function HorariosOnibusPage({ searchParams }: { searchParam
   const initialDate = typeof query.data === "string" && isBusDate(query.data) ? query.data : undefined;
   const initialDestinationId = typeof query.destino === "string" && BUS_DESTINATIONS.some((item) => item.id === query.destino) ? query.destino : "all";
   const initialOperatorId = typeof query.empresa === "string" && BUS_OPERATORS.some((item) => item.id === query.empresa) ? query.empresa : "all";
+  const initialDirection = query.sentido === "chegada" ? "chegada" as const : "saida" as const;
 
   return (
     <>
@@ -58,13 +59,13 @@ export default async function HorariosOnibusPage({ searchParams }: { searchParam
               </h1>
               <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 Encontre uma saída para o seu destino. Escolha a data e confira
-                os horários consultados, o embarque e os canais das empresas.
+                os horários previstos pelos quadros oficiais, o embarque e os canais das empresas.
               </p>
             </div>
           </div>
         </header>
 
-        <HorariosOnibusClient key={`${initialDate}-${initialDestinationId}-${initialOperatorId}`} serverNow={serverNow} initialDate={initialDate} initialDestinationId={initialDestinationId} initialOperatorId={initialOperatorId} />
+        <HorariosOnibusClient key={`${initialDate}-${initialDestinationId}-${initialOperatorId}-${initialDirection}`} serverNow={serverNow} initialDate={initialDate} initialDestinationId={initialDestinationId} initialOperatorId={initialOperatorId} initialDirection={initialDirection} />
       </div>
     </>
   );

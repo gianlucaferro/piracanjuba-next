@@ -17,19 +17,25 @@ import {
   Route,
 } from "lucide-react";
 import {
-  BUS_CHECKED_AT,
+  BUS_CONNECTION_NOTES,
   BUS_DESTINATIONS,
+  BUS_LAST_REVIEW,
   BUS_OPERATORS,
   getBrazilDate,
+  getBusArrivals,
   getBusCoverage,
   getBusDepartures,
   getBusPageUrl,
   getBusSearchUrl,
   getInitialBusDate,
   isBusDate,
+  isBusArrivalPast,
   isBusDeparturePast,
+  type BusArrival,
   type BusDeparture,
+  type BusDirection,
 } from "@/data/horariosOnibus";
+import { BUS_REGULAR_CHECKED_AT } from "@/data/horariosOnibusQuadro";
 
 const controlClassName =
   "h-12 w-full min-w-0 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -42,6 +48,16 @@ function formatDuration(minutes: number) {
   return [hours > 0 ? `${hours}h` : "", rest > 0 ? `${rest}min` : ""]
     .filter(Boolean)
     .join(" ");
+}
+
+const weekdayFormatter = new Intl.DateTimeFormat("pt-BR", { weekday: "long", timeZone: "UTC" });
+
+function weekdayName(date: string) {
+  return weekdayFormatter.format(new Date(`${date}T12:00:00Z`));
+}
+
+function addDays(date: string, days: number) {
+  return new Date(Date.parse(`${date}T12:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
 }
 
 function formatPhone(number: string) {
@@ -63,6 +79,7 @@ function DepartureCard({
   const isPast = isBusDeparturePast(departure, now);
   const isArchived = departure.date < getBrazilDate(now);
   const searchUrl = getBusSearchUrl(departure.destinationId, departure.date);
+  const regular = departure.regular;
 
   return (
     <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -72,16 +89,23 @@ function DepartureCard({
             <BusFront className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             {operator?.name ?? departure.operatorId}
           </div>
-          {isPast && (
-            <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-              {isArchived ? "Consulta arquivada" : "Horário já passado"}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {regular && (
+              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                Quadro {regular.authority} · previsão
+              </span>
+            )}
+            {isPast && (
+              <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                {isArchived ? "Consulta arquivada" : "Horário já passado"}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-x-3 sm:gap-x-6">
           <div className="min-w-0">
-            <p className="mb-1 text-xs text-muted-foreground">Saída</p>
+            <p className="mb-1 text-xs text-muted-foreground">{regular ? "Passagem prevista" : "Saída"}</p>
             <time
               dateTime={`${departure.date}T${departure.departure}:00-03:00`}
               className="text-3xl font-bold tracking-tight text-foreground tabular-nums"
@@ -109,6 +133,12 @@ function DepartureCard({
             <p className="mt-1 text-xs text-muted-foreground tabular-nums">{departure.arrivalDate}</p>
           </div>
         </div>
+
+        {regular?.exception && (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+            Horário diferente do quadro nesta data, conforme a venda consultada.
+          </p>
+        )}
 
         {!!departure.connections?.length && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
@@ -148,7 +178,11 @@ function DepartureCard({
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            Consultado em <time dateTime={departure.checkedAt} className="tabular-nums">{departure.checkedAt}</time>
+            {regular ? (
+              <>Linha {regular.line}, sai de {regular.origin} às <span className="tabular-nums">{regular.originDeparture}</span>. Quadro conferido em <time dateTime={departure.checkedAt} className="tabular-nums">{departure.checkedAt}</time></>
+            ) : (
+              <>Consultado em <time dateTime={departure.checkedAt} className="tabular-nums">{departure.checkedAt}</time></>
+            )}
           </p>
           {searchUrl && !isPast && (
             <a href={searchUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} bg-primary text-primary-foreground hover:bg-primary/90`}>
@@ -167,8 +201,14 @@ function DepartureCard({
         </summary>
         <div className="space-y-4 px-4 pb-5 pt-1 sm:px-5">
           <ol className="space-y-3 border-l border-border pl-4 text-sm">
+            {regular && (
+              <li className="flex flex-wrap justify-between gap-2 text-muted-foreground">
+                <span>Partida de {regular.origin} (início da linha)</span>
+                <span className="tabular-nums">{regular.originDeparture}</span>
+              </li>
+            )}
             <li className="relative flex flex-wrap justify-between gap-2 before:absolute before:-left-[21px] before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary">
-              <span className="text-foreground">Embarque em Piracanjuba</span>
+              <span className="text-foreground">{regular ? "Passagem prevista em Piracanjuba" : "Embarque em Piracanjuba"}</span>
               <span className="font-medium tabular-nums">{departure.departure}</span>
             </li>
             {departure.stops.map((stop, index) => (
@@ -189,10 +229,15 @@ function DepartureCard({
             </div>
           ))}
           {departure.stops.length === 0 && !departure.connections?.length && (
-            <p className="text-xs leading-relaxed text-muted-foreground">As paradas intermediárias não foram registradas nesta consulta.</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">As paradas intermediárias não foram registradas {regular ? "no quadro" : "nesta consulta"}.</p>
+          )}
+          {regular && (
+            <p className="rounded-lg bg-muted p-3 text-xs leading-relaxed text-muted-foreground">
+              Horário regular da linha {regular.line} ({regular.lineName}), autorizado pela {regular.authority} em {regular.authorizedOn}. O quadro oficial informa a partida em {regular.origin}; a passagem por Piracanjuba e a chegada são previsões medidas em consultas anteriores aos canais de venda. Chegue com antecedência e confirme com a empresa.
+            </p>
           )}
           <div className="space-y-2 border-t border-border pt-3">
-            <p className="text-xs font-semibold text-foreground">Fontes da consulta para {departure.date}</p>
+            <p className="text-xs font-semibold text-foreground">{regular ? "Fontes do quadro e consultas que confirmaram o horário" : `Fontes da consulta para ${departure.date}`}</p>
             <div className="flex flex-wrap gap-2">
               {departure.sources.map((source) => (
                 <a key={`${source.name}-${source.url}`} href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -201,7 +246,7 @@ function DepartureCard({
                 </a>
               ))}
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground">Os horários e a disponibilidade podem mudar depois da consulta. O link abre a busca no canal de venda.</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{regular ? "O quadro pode mudar por decisão do órgão regulador, e a venda pode não ter lugar disponível. O link de compra abre a busca no canal de venda." : "Os horários e a disponibilidade podem mudar depois da consulta. O link abre a busca no canal de venda."}</p>
           </div>
         </div>
       </details>
@@ -209,7 +254,98 @@ function DepartureCard({
   );
 }
 
-function ExternalSearch({ date, destinationId }: { date: string; destinationId: string }) {
+function ArrivalCard({ arrival, now }: { arrival: BusArrival; now: Date }) {
+  const origin = BUS_DESTINATIONS.find((item) => item.id === arrival.originId);
+  const operator = BUS_OPERATORS.find((item) => item.id === arrival.operatorId);
+  const isPast = isBusArrivalPast(arrival, now);
+  const searchUrl = getBusSearchUrl(arrival.originId, arrival.date, "clickbus", "chegada");
+  const regular = arrival.regular;
+
+  return (
+    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <div className="space-y-4 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <BusFront className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            {operator?.name ?? arrival.operatorId}
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              Quadro {regular.authority} · previsão
+            </span>
+            {isPast && (
+              <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                {arrival.date < getBrazilDate(now) ? "Consulta arquivada" : "Já saiu da origem"}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-x-3 sm:gap-x-6">
+          <div className="min-w-0">
+            <p className="mb-1 text-xs text-muted-foreground">Saída</p>
+            <time dateTime={`${arrival.date}T${arrival.departure}:00-03:00`} className="text-3xl font-bold tracking-tight text-foreground tabular-nums">
+              {arrival.departure}
+            </time>
+            <h3 className="mt-1 text-sm font-semibold text-foreground">
+              {origin ? `${origin.name}, ${origin.state}` : arrival.originId}
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground tabular-nums">{arrival.date}</p>
+          </div>
+          <div className="flex flex-col items-center gap-1.5 pt-7 text-muted-foreground">
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            <span className="whitespace-nowrap text-xs">{formatDuration(arrival.durationMinutes)}</span>
+          </div>
+          <div className="min-w-0 text-right">
+            <p className="mb-1 text-xs text-muted-foreground">Chegada prevista</p>
+            <time dateTime={`${arrival.date}T${arrival.arrival}:00-03:00`} className="text-3xl font-bold tracking-tight text-foreground tabular-nums">
+              {arrival.arrival}
+            </time>
+            <p className="mt-1 text-sm font-medium text-foreground">Piracanjuba, GO</p>
+            <p className="mt-1 text-xs text-muted-foreground tabular-nums">{arrival.date}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {arrival.serviceClasses.map((serviceClass) => (
+            <span key={serviceClass} className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">
+              {serviceClass}
+            </span>
+          ))}
+        </div>
+
+        {regular.exception && (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+            Horário diferente do quadro nesta data, conforme a venda consultada.
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">
+            Linha {regular.line} ({regular.lineName}). Quadro {regular.authority} autorizado em {regular.authorizedOn}, conferido em <time dateTime={arrival.checkedAt} className="tabular-nums">{arrival.checkedAt}</time>.
+          </p>
+          {searchUrl && !isPast && (
+            <a href={searchUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              Conferir na ClickBus
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">, {origin?.name} a Piracanjuba, {arrival.date}, abre em nova aba</span>
+            </a>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {arrival.sources.map((source) => (
+            <a key={`${source.name}-${source.url}`} href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              {source.name}<ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="sr-only">, abre em nova aba</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ExternalSearch({ date, destinationId, direction }: { date: string; destinationId: string; direction: BusDirection }) {
   const destinations = BUS_DESTINATIONS.filter((item) => destinationId === "all" || item.id === destinationId);
   if (!isBusDate(date)) return null;
 
@@ -217,18 +353,19 @@ function ExternalSearch({ date, destinationId }: { date: string; destinationId: 
     <section aria-labelledby="bus-search-heading" className="rounded-xl border border-border bg-card p-4 sm:p-5">
       <h2 id="bus-search-heading" className="text-base font-semibold text-foreground">Conferir nos canais de consulta</h2>
       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-        As buscas abaixo saem de Piracanjuba e levam a data {date}. Confirme o ponto de embarque e a empresa nos detalhes da viagem.
+        {direction === "chegada" ? "As buscas abaixo chegam a Piracanjuba" : "As buscas abaixo saem de Piracanjuba"} e levam a data {date}. Confirme o ponto de embarque e a empresa nos detalhes da viagem.
       </p>
       <div className="mt-4 divide-y divide-border">
         {destinations.map((destination) => {
-          const clickbusUrl = getBusSearchUrl(destination.id, date);
-          const mobifacilUrl = getBusSearchUrl(destination.id, date, "mobifacil");
+          const clickbusUrl = getBusSearchUrl(destination.id, date, "clickbus", direction);
+          const mobifacilUrl = getBusSearchUrl(destination.id, date, "mobifacil", direction);
+          const route = direction === "chegada" ? `${destination.name} a Piracanjuba` : `Piracanjuba a ${destination.name}`;
           return (
             <div key={destination.id} className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0 last:pb-0">
               <p className="text-sm font-semibold text-foreground">{destination.name}, {destination.state}</p>
               <div className="flex flex-wrap gap-2">
-                {clickbusUrl && <a href={clickbusUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} bg-primary/5 text-primary hover:bg-primary/10`}>ClickBus<ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">: Piracanjuba a {destination.name} em {date}, nova aba</span></a>}
-                {mobifacilUrl && <a href={mobifacilUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} border border-border text-foreground hover:bg-muted`}>Mobifácil<ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">: Piracanjuba a {destination.name} em {date}, nova aba</span></a>}
+                {clickbusUrl && <a href={clickbusUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} bg-primary/5 text-primary hover:bg-primary/10`}>ClickBus<ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">: {route} em {date}, nova aba</span></a>}
+                {mobifacilUrl && <a href={mobifacilUrl} target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} border border-border text-foreground hover:bg-muted`}>Mobifácil<ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">: {route} em {date}, nova aba</span></a>}
               </div>
             </div>
           );
@@ -282,13 +419,14 @@ const subscribeHydration = () => () => {};
 const hydratedSnapshot = () => true;
 const serverHydratedSnapshot = () => false;
 
-export default function HorariosOnibusClient({ serverNow, initialDate, initialDestinationId = "all", initialOperatorId = "all" }: { serverNow: string; initialDate?: string; initialDestinationId?: string; initialOperatorId?: string }) {
+export default function HorariosOnibusClient({ serverNow, initialDate, initialDestinationId = "all", initialOperatorId = "all", initialDirection = "saida" }: { serverNow: string; initialDate?: string; initialDestinationId?: string; initialOperatorId?: string; initialDirection?: BusDirection }) {
   const hydrated = useSyncExternalStore(subscribeHydration, hydratedSnapshot, serverHydratedSnapshot);
   const [now, setNow] = useState(() => new Date(serverNow));
   const [dateInput, setDateInput] = useState(() => initialDate ?? getInitialBusDate(new Date(serverNow)));
   const [dateWasSelected, setDateWasSelected] = useState(!!initialDate);
   const [destinationId, setDestinationId] = useState(initialDestinationId);
   const [operatorId, setOperatorId] = useState(initialOperatorId);
+  const [direction, setDirection] = useState<BusDirection>(initialDirection);
   const [shareStatus, setShareStatus] = useState("");
 
   useEffect(() => {
@@ -307,10 +445,21 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
   const validDate = isBusDate(selectedDate);
   const archived = validDate && selectedDate < getBrazilDate(now);
   const departures = getBusDepartures(selectedDate, destinationId, operatorId);
+  const arrivals = getBusArrivals(selectedDate, destinationId, operatorId);
+  const isArrival = direction === "chegada";
+  const resultCount = isArrival ? arrivals.length : departures.length;
+  const connectionNote = destinationId !== "all" ? BUS_CONNECTION_NOTES[destinationId] : undefined;
   const allOperatorsDepartures = getBusDepartures(selectedDate, destinationId);
-  const hasOtherOperators = departures.length === 0 && allOperatorsDepartures.length > 0;
+  const hasOtherOperators = resultCount === 0 && (isArrival ? getBusArrivals(selectedDate, destinationId).length > 0 : allOperatorsDepartures.length > 0);
   const coverage = getBusCoverage(selectedDate, destinationId);
-  const nextConfirmedDate = coverage.dates.find((date) => date >= getBrazilDate(now) && getBusDepartures(date, destinationId, operatorId).some((trip) => !isBusDeparturePast(trip, now)));
+  const today = getBrazilDate(now);
+  const hasUpcoming = (date: string) => isArrival
+    ? getBusArrivals(date, destinationId, operatorId).some((trip) => !isBusArrivalPast(trip, now))
+    : getBusDepartures(date, destinationId, operatorId).some((trip) => !isBusDeparturePast(trip, now));
+  const selectedHasUpcoming = hasUpcoming(selectedDate);
+  // Próxima data, a partir de hoje, com viagem ainda por vir para os filtros escolhidos.
+  const nextDateWithDepartures = Array.from({ length: 8 }, (_, index) => addDays(today, index)).find(hasUpcoming);
+  const nextConfirmedDate = !selectedHasUpcoming && nextDateWithDepartures !== selectedDate ? nextDateWithDepartures : undefined;
 
   function selectDate(date: string) {
     setDateInput(date);
@@ -323,18 +472,36 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
       <div className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4 text-sm">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
         <p className="leading-relaxed text-foreground">
-          {coverage.count > 0 ? <>Horários consultados para <strong className="font-semibold">{selectedDate}</strong>. Última conferência desta seleção: <strong className="font-semibold">{coverage.lastCheckedAt}</strong>.</> : <>Escolha uma data para consultar as viagens disponíveis. Última conferência registrada: <strong className="font-semibold">{BUS_CHECKED_AT}</strong>.</>}
-          {" "}Cada horário vale somente para a data indicada. A seleção é parcial e pode mudar; confirme com a empresa antes de sair.
+          {(isArrival ? arrivals.length > 0 : coverage.status === "regular") ? (
+            <>Horários regulares de <strong className="font-semibold">{selectedDate}</strong> ({weekdayName(selectedDate)}), pelos quadros oficiais da AGR (Agência Goiana de Regulação), conferidos em <strong className="font-semibold">{BUS_REGULAR_CHECKED_AT}</strong>. A passagem por Piracanjuba é uma previsão: chegue com antecedência e confirme com a empresa.</>
+          ) : coverage.count > 0 ? (
+            <>Horários consultados para <strong className="font-semibold">{selectedDate}</strong>. Última conferência desta seleção: <strong className="font-semibold">{coverage.lastCheckedAt}</strong>. Cada horário vale somente para a data indicada; confirme com a empresa antes de sair.</>
+          ) : (
+            <>Escolha uma data para consultar as viagens. Última conferência registrada: <strong className="font-semibold">{BUS_LAST_REVIEW}</strong>. Confirme com a empresa antes de sair.</>
+          )}
         </p>
       </div>
 
       <section aria-labelledby="bus-filters-heading" className="rounded-xl border border-border bg-card p-4 sm:p-5">
-        <h2 id="bus-filters-heading" className="mb-4 flex items-center gap-2 text-base font-semibold text-foreground"><CalendarSearch className="h-5 w-5 text-primary" aria-hidden="true" /> Planeje sua saída</h2>
+        <h2 id="bus-filters-heading" className="mb-4 flex items-center gap-2 text-base font-semibold text-foreground"><CalendarSearch className="h-5 w-5 text-primary" aria-hidden="true" /> Planeje sua viagem</h2>
+        <div role="group" aria-label="Sentido da viagem" className="mb-4 grid grid-cols-2 gap-2">
+          {([["saida", "Saindo de Piracanjuba"], ["chegada", "Chegando em Piracanjuba"]] as const).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={direction === value}
+              onClick={() => { setDirection(value); setShareStatus(""); }}
+              className={`min-h-11 rounded-lg border px-3 text-sm font-medium transition-colors ${direction === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:bg-muted"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <label htmlFor="bus-destination" className="block text-sm font-medium text-foreground">Destino</label>
+            <label htmlFor="bus-destination" className="block text-sm font-medium text-foreground">{isArrival ? "Origem" : "Destino"}</label>
             <select id="bus-destination" value={destinationId} onChange={(event) => setDestinationId(event.target.value)} className={controlClassName}>
-              <option value="all">Todos os destinos</option>
+              <option value="all">{isArrival ? "Todas as origens" : "Todos os destinos"}</option>
               {BUS_DESTINATIONS.map((destination) => <option key={destination.id} value={destination.id}>{destination.name}, {destination.state}</option>)}
             </select>
           </div>
@@ -354,11 +521,11 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
         <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-4">
           {nextConfirmedDate && nextConfirmedDate !== selectedDate && <button type="button" onClick={() => selectDate(nextConfirmedDate)} className={`${externalLinkClassName} bg-primary/5 text-primary hover:bg-primary/10`}>Ver horários de {nextConfirmedDate}<ArrowRight className="h-4 w-4" aria-hidden="true" /></button>}
           <button type="button" disabled={!validDate} onClick={async () => {
-            try { await navigator.clipboard.writeText(new URL(getBusPageUrl(selectedDate, destinationId, operatorId), window.location.origin).href); setShareStatus("Link da consulta copiado."); }
+            try { await navigator.clipboard.writeText(new URL(getBusPageUrl(selectedDate, destinationId, operatorId, direction), window.location.origin).href); setShareStatus("Link da consulta copiado."); }
             catch { setShareStatus("Não foi possível copiar. Use o link da consulta abaixo."); }
           }} className={`${externalLinkClassName} border border-border text-foreground hover:bg-muted disabled:opacity-50`}><Link2 className="h-4 w-4" aria-hidden="true" /> Copiar consulta</button>
           <span role="status" className="text-xs text-muted-foreground">{shareStatus}</span>
-          {shareStatus.startsWith("Não") && <a href={getBusPageUrl(selectedDate, destinationId, operatorId)} className="text-sm font-medium text-primary underline">Abrir link da consulta</a>}
+          {shareStatus.startsWith("Não") && <a href={getBusPageUrl(selectedDate, destinationId, operatorId, direction)} className="text-sm font-medium text-primary underline">Abrir link da consulta</a>}
         </div>
         {coverage.dates.length > 0 && <details className="mt-3 text-sm"><summary className="min-h-10 cursor-pointer py-2 text-muted-foreground">Datas com consultas registradas</summary><div className="mt-2 flex flex-wrap gap-2">{coverage.dates.map((date) => <button key={date} type="button" onClick={() => selectDate(date)} className="min-h-10 rounded-lg border border-border px-3 text-sm hover:bg-muted">{date}{date < getBrazilDate(now) ? " (arquivo)" : ""}</button>)}</div></details>}
       </section>
@@ -367,8 +534,8 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
         <div className="min-w-0 space-y-5">
           <section aria-labelledby="bus-results-heading" className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2" aria-live="polite" aria-atomic="true">
-              <h2 id="bus-results-heading" className="flex items-center gap-2 text-lg font-semibold text-foreground"><CalendarDays className="h-5 w-5 text-primary" aria-hidden="true" /> {validDate ? `Consulta para ${selectedDate}` : "Selecione a data da viagem"}</h2>
-              {validDate && <span className="text-xs text-muted-foreground">{departures.length} {departures.length === 1 ? "opção consultada" : "opções consultadas"}</span>}
+              <h2 id="bus-results-heading" className="flex items-center gap-2 text-lg font-semibold text-foreground"><CalendarDays className="h-5 w-5 text-primary" aria-hidden="true" /> {validDate ? `Horários para ${selectedDate}` : "Selecione a data da viagem"}</h2>
+              {validDate && <span className="text-xs text-muted-foreground">{resultCount} {isArrival || coverage.status === "regular" ? (resultCount === 1 ? "horário previsto" : "horários previstos") : (resultCount === 1 ? "opção consultada" : "opções consultadas")}</span>}
             </div>
 
             {archived && (
@@ -379,8 +546,17 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
               </div>
             )}
 
-            {departures.length > 0 ? (
+            {isArrival && arrivals.length > 0 ? (
+              <div className="space-y-4">{arrivals.map((arrival) => <ArrivalCard key={arrival.id} arrival={arrival} now={now} />)}</div>
+            ) : !isArrival && departures.length > 0 ? (
               <div className="space-y-4">{departures.map((departure) => <DepartureCard key={departure.id} departure={departure} now={now} />)}</div>
+            ) : connectionNote && validDate && !archived ? (
+              <div className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-center sm:py-10">
+                <Route className="mx-auto mb-3 h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                <h3 className="text-base font-semibold text-foreground">Sem linha direta: troca de ônibus em {connectionNote.via}</h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{connectionNote.text} Conferido em {connectionNote.checkedAt}.</p>
+                <button type="button" onClick={() => setDestinationId(connectionNote.via === "Goiânia" ? "goiania" : "caldas-novas")} className={`${externalLinkClassName} mt-4 bg-primary/5 text-primary hover:bg-primary/10`}>Ver horários {isArrival ? "vindos de" : "para"} {connectionNote.via}</button>
+              </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-center sm:py-10">
                 <CalendarSearch className="mx-auto mb-3 h-8 w-8 text-muted-foreground" aria-hidden="true" />
@@ -395,7 +571,7 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
             )}
           </section>
 
-          <ExternalSearch date={selectedDate} destinationId={destinationId} />
+          <ExternalSearch date={selectedDate} destinationId={destinationId} direction={direction} />
 
           <section aria-labelledby="bus-before-travel-heading" className="rounded-xl border border-border bg-card p-4 sm:p-5">
             <h2 id="bus-before-travel-heading" className="text-base font-semibold text-foreground">Antes de viajar</h2>
@@ -405,7 +581,7 @@ export default function HorariosOnibusClient({ serverNow, initialDate, initialDe
               <li>Os horários apresentados seguem o horário de Brasília. A chegada é prevista.</li>
             </ul>
             <div className="mt-4 border-t border-border pt-4">
-              <p className="text-sm leading-relaxed text-muted-foreground">Para verificar linhas e empresas autorizadas, consulte a ANTT nas viagens entre estados e a AGR nas viagens dentro de Goiás. Os quadros das linhas podem informar a partida em outra cidade, não a passagem por Piracanjuba.</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">Para verificar linhas e empresas autorizadas, consulte a ANTT nas viagens entre estados e a AGR nas viagens dentro de Goiás. Os quadros oficiais informam a partida na cidade de origem da linha. A passagem por Piracanjuba mostrada aqui é uma previsão, medida em consultas aos canais de venda.</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <a href="https://quadros-horarios.antt.gov.br/" target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} text-primary hover:bg-primary/5`}>Consultar ANTT<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only">, abre em nova aba</span></a>
                 <a href="https://goias.gov.br/agr/quadro-de-horarios/" target="_blank" rel="noopener noreferrer" className={`${externalLinkClassName} text-primary hover:bg-primary/5`}>Consultar AGR Goiás<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only">, abre em nova aba</span></a>
