@@ -282,6 +282,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Postos com bandeira, produtos, endereço e situação regulatória, com dados da ANP.",
       },
       {
+        caminho: "/pba-fipe",
+        titulo: "PBAFipe: tabela FIPE",
+        descricao: "Consulta do preço médio de carros, motos e caminhões na tabela FIPE do mês, por marca, modelo e ano, com código FIPE e mês de referência.",
+      },
+      {
         caminho: "/contatos",
         titulo: "Contatos úteis",
         descricao: "Telefones e WhatsApp de serviços públicos essenciais: polícia, bombeiros, SAMU, Prefeitura e outros.",
@@ -314,7 +319,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/oticas-diego",
         titulo: "Óticas Diego em Piracanjuba",
-        descricao: "Ótica na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, relógios e acessórios. Consulte o horário, o WhatsApp e a rota até a loja.",
+        descricao: "Ótica e perfumaria na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, perfumes árabes, importados e nacionais, relógios Seculus e Mondaine e semijoias com garantia. Consulte o horário, o WhatsApp e a rota até a loja.",
       },
       {
         caminho: "/claro",
@@ -330,6 +335,41 @@ export const SECOES_LLMS: SecaoLlms[] = [
         caminho: "/kamillamorranna",
         titulo: "Kamilla Morranna, advogada criminalista em Piracanjuba",
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
+      },
+      {
+        caminho: "/box-87-auto-center",
+        titulo: "Box 87 Auto Center em Piracanjuba",
+        descricao: "Auto center e auto elétrica na Rua João Modesto, 12, Setor Norte. Elétrica e manutenção de carros, parte elétrica e iluminação de tratores e implementos, horário e WhatsApp para agendar.",
+      },
+      {
+        caminho: "/naraienemarquesadv",
+        titulo: "Naraiene Marques Advocacia",
+        descricao: "Perfil da advogada Naraiene Cristina Marques (OAB/GO 51.371), com informações sobre sua atuação em Goiás e contato pelo Instagram profissional.",
+      },
+      {
+        caminho: "/zap-pba/wennder-trindade-advogado",
+        titulo: "Wennder Trindade, advogado em Piracanjuba",
+        descricao: "Wennder Trindade e Silva, advogado em Piracanjuba (OAB/GO 51.422). Áreas de atuação em direito de família, sucessões e partilha, consumidor, direito civil e cobranças, criminal e administrativo. Inclui WhatsApp para agendamento e localização.",
+      },
+      {
+        caminho: "/master-tech-auto-center",
+        titulo: "Master Tech Auto Center, oficina mecânica em Piracanjuba",
+        descricao: "Oficina mecânica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Diagnóstico com scanner, motor e injeção eletrônica, câmbio manual e automático, embreagem, suspensão, freios, alinhamento 3D, troca de óleo, escapamento e revitalização de faróis. Horário, WhatsApp e rota até a oficina.",
+      },
+      {
+        caminho: "/hotel",
+        titulo: "Hotel Via Sul, hotel em Piracanjuba no Centro",
+        descricao: "Hotel no Centro de Piracanjuba, na Rua Vereador Hugo Vargas Batista Machado, a cerca de 150 metros da Rodoviária, 250 metros da Prefeitura e 270 metros da Câmara. Check-in a partir das 14h, check-out até as 12h, recepção 24 horas, Wi-Fi e estacionamento gratuitos, café da manhã, fotos dos quartos e reserva pelo WhatsApp.",
+      },
+      {
+        caminho: "/estacionamentoaeroporto",
+        titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
+        descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
+      },
+      {
+        caminho: "/b10-auto-center",
+        titulo: "B10 Auto Center, oficina mecânica e auto peças em Piracanjuba",
+        descricao: "Oficina mecânica e balcão de auto peças na Rua Prof. Percival Rebelo, no Centro de Piracanjuba. Injeção eletrônica, suspensão, troca de óleo, troca de óleo do câmbio automático (oficina associada da rede Câmbio Automático do Brasil) e engates. Horário de segunda a sexta, das 7h às 18h, WhatsApp de agendamento e de peças e rota até a loja.",
       },
       {
         caminho: "/evadvocacia",

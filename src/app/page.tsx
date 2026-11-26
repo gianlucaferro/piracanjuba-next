@@ -23,6 +23,7 @@ import {
   Trophy,
   Network,
   BusFront,
+  Car,
   Users,
   ClipboardList,
   ScrollText,
@@ -37,6 +38,7 @@ import {
 } from "@/lib/data/home";
 import { AnuncioBannerDestaque, AnuncioBannerPadrao } from "@/components/AnuncioBanner";
 import NaMidiaFaixa from "@/components/home/NaMidiaFaixa";
+import CotacoesCambio from "@/components/home/CotacoesCambio";
 import DengueAlert from "@/components/DengueAlert";
 import PlantaoFarmaciasHome from "@/components/PlantaoFarmaciasHome";
 import ClimaHeroBadge from "@/components/clima/ClimaHeroBadge";
@@ -155,6 +157,8 @@ export default async function HomePage() {
       </section>
 
       <div className="container py-8 space-y-10">
+        <CotacoesCambio />
+
         {/* Na mídia: logos dos principais veículos que citaram o projeto
             (no lugar do bloco "Hoje em Piracanjuba", decisão do operador de 2026-11-17) */}
         <NaMidiaFaixa />
@@ -243,6 +247,16 @@ export default async function HomePage() {
               <p className="text-sm text-muted-foreground">Anuncie grátis: imóveis, veículos e mais</p>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-[#25D366] transition-colors" />
+          </Link>
+          <Link href="/pba-fipe" className="stat-card card-hover flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <Car className="w-5 h-5 text-primary" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Consultar tabela FIPE</p>
+              <p className="text-sm text-muted-foreground">Preço médio de carros, motos e caminhões</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" aria-hidden />
           </Link>
           <Link href="/prefeitura/servidores" className="stat-card card-hover flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">

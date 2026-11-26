@@ -998,22 +998,6 @@
     "mensagem": "Oi, Marquim! Gostaria de saber quais opções o boteco tem hoje e até que horas vocês atendem."
   },
   {
-    "slug": "box-87-auto-center",
-    "nome": "Box 87 Auto Center",
-    "categoria": "Automotivo",
-    "setor": "Automotivo",
-    "telefones": [
-      "5564992387080"
-    ],
-    "endereco": "R. João Modesto - Norte, Piracanjuba - GO",
-    "mapa": "https://www.google.com/maps?cid=1025576862067934971",
-    "foto": "/marcas-zap/setores/oficina.webp",
-    "resumo": "O Box 87 Auto Center fica na Rua João Modesto, em Piracanjuba. Pelo WhatsApp, você pode explicar o que o veículo precisa e consultar o atendimento antes de ir até lá.",
-    "atividade": "Centro automotivo",
-    "acao": "Consultar atendimento no Box 87",
-    "mensagem": "Olá, Box 87! Quero saber se vocês atendem o meu veículo. Posso informar o modelo, o ano e o serviço que procuro antes de ir à Rua João Modesto?"
-  },
-  {
     "slug": "bruna-talarico-massagem",
     "nome": "Bruna Talarico Massagem",
     "categoria": "Beleza e Estética",
@@ -4118,30 +4102,6 @@
     "mensagem": "Olá, Máster Frio! Gostaria de consultar o ar-condicionado de um veículo ou máquina agrícola. Como passo o modelo e explico o problema para saber sobre o atendimento?"
   },
   {
-    "slug": "master-tech-auto-center",
-    "nome": "Master Tech Auto Center",
-    "categoria": "Automotivo",
-    "setor": "Automotivo",
-    "telefones": [
-      "5564993450101"
-    ],
-    "oferta": [
-      "Diagnóstico automotivo",
-      "Mecânica de veículos"
-    ],
-    "endereco": "R. Lindolfo França, 490 - Centro, Piracanjuba - GO, 75640-126",
-    "mapa": "https://www.google.com/maps?cid=3287953821947155830",
-    "instagram": "https://www.instagram.com/mastertech.autocenter/",
-    "site": "https://mastertechautocent.wixsite.com/website",
-    "logo": "/marcas-zap/logos/e6cd95b55ffe1544.webp",
-    "cor": "#4f3419",
-    "foto": "/marcas-zap/setores/oficina.webp",
-    "resumo": "A Master Tech Auto Center fica na Rua Lindolfo França, 490, no Centro de Piracanjuba. Para consultar uma falha no veículo, conte à equipe o que percebeu e em que situação ela aparece.",
-    "atividade": "Oficina mecânica",
-    "acao": "Consultar diagnóstico do veículo",
-    "mensagem": "Olá, Master Tech! Gostaria de consultar um diagnóstico para meu veículo. Como envio o modelo e o relato da falha para combinar um atendimento?"
-  },
-  {
     "slug": "maxwel-cabeleireiro",
     "nome": "Maxwel Cabeleireiro",
     "categoria": "Beleza e Estética",
@@ -6295,17 +6255,18 @@
   },
   {
     "slug": "wennder-trindade-advogado",
-    "nome": "Wennder Trindade Advogado",
+    "nome": "Wennder Trindade",
     "categoria": "Advogados",
     "setor": "Advogados",
     "telefones": [
       "5564992173425"
     ],
-    "endereco": "Av. Padre Marinho - sao vicente, Piracanjuba - GO",
+    "endereco": "Padre Marinho, Piracanjuba, GO",
     "mapa": "https://www.google.com/maps?cid=764553706394390185",
-    "foto": "/marcas-zap/setores/direito.webp",
-    "resumo": "Wennder Trindade é advogado em Piracanjuba e atende na Avenida Padre Marinho, no bairro São Vicente. Para conversar com ele sobre o seu caso, consulte um horário de atendimento.",
-    "atividade": "Advocacia",
+    "foto": "/marcas-zap/fotos/wennder-trindade.webp",
+    "fotoAlt": "Retrato de Wennder Trindade, de terno azul e gravata, sentado à mesa.",
+    "resumo": "Natural de Piracanjuba, Wennder Trindade e Silva é advogado inscrito na OAB/GO sob o nº 51.422. Consulte a disponibilidade de atendimento pelo WhatsApp.",
+    "atividade": "Advogado",
     "acao": "Consultar horário com o advogado",
     "mensagem": "Olá, Dr. Wennder! Gostaria de conversar sobre um atendimento. Quais horários estão disponíveis para uma consulta?"
   },

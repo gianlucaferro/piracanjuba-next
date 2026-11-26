@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -122,6 +122,18 @@ function rotaExiste(rota: string): boolean {
   return abas.includes(aba[2]);
 }
 
+// Rewrite de imagem antiga (cartão de compartilhamento de prévia que virou página própria):
+// o destino precisa existir em public/, senão o cartão que circula no WhatsApp quebra em silêncio.
+test("todo rewrite para um arquivo aponta para um arquivo que existe em public", async () => {
+  const rewrites = await nextConfig.rewrites?.();
+  const lista = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
+  const deArquivo = lista.filter(({ destination }) => /\.[a-z0-9]+$/i.test(destination));
+  assert.ok(deArquivo.length > 0);
+  for (const { source, destination } of deArquivo) {
+    assert.ok(existsSync(join(RAIZ, "public", destination)), `${source} reescreve para ${destination}, que não existe em public`);
+  }
+});
+
 test("os redirects permanentes de next.config.ts são os de REDIRECIONAMENTOS_PERMANENTES", async () => {
   const redirects = (await nextConfig.redirects?.()) ?? [];
   const permanentes = Object.fromEntries(redirects.filter((r) => r.permanent === true).map((r) => [r.source, r.destination]));
@@ -145,6 +157,8 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/claro", "/claro"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
     ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
+    ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
+    ["/zap-pba/master-tech-auto-center", "/master-tech-auto-center"],
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],
   ]) {
     assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
@@ -153,6 +167,13 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     assert.ok(Object.values(vinculos).includes(destino));
     assert.ok(!Object.values(vinculos).includes(origem));
   }
+});
+
+test("a página do Hotel Via Sul fica em /hotel, com os atalhos em 308", () => {
+  assert.ok(PAGINAS.has("/hotel"));
+  assert.ok(NO_SITEMAP.has("/hotel"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/hotelviasul"], "/hotel");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/hotel-via-sul"], "/hotel");
 });
 
 test("nada redirecionado fica no sitemap nem nas exclusões", () => {
@@ -169,4 +190,11 @@ test("as páginas /transparencia/* que ficaram têm destino definido", () => {
   // Processos judiciais de pessoas nomeadas: alcance pendente de decisão do operador (2026-11-19).
   assert.ok(!NO_SITEMAP.has("/transparencia/processos-publicos"), "/transparencia/processos-publicos não entra no sitemap sem decisão do operador");
   assert.ok("/transparencia/processos-publicos" in ROTAS_FORA_DO_SITEMAP);
+});
+
+test("B10 Auto Center: canônica no sitemap e endereços curtos com 308", () => {
+  assert.ok(PAGINAS.has("/b10-auto-center"));
+  assert.ok(NO_SITEMAP.has("/b10-auto-center"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/zap-pba/b10-auto-center"], "/b10-auto-center");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/b10"], "/b10-auto-center");
 });

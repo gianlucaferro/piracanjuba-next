@@ -5,8 +5,10 @@ import {
   descreverSubsidio,
   remuneracoesComPagamento,
   resumirSubsidio,
+  periodoComPagamento,
   subsidioMaisRecente,
   temSubsidio,
+  valorAlemDoSubsidio,
   type LinhaRemuneracao,
 } from "../src/app/vereadores/remuneracao.ts";
 import { perfilDe, tratamentoParlamentar, urlBiografiaCamara } from "../src/app/vereadores/tratamento.ts";
@@ -115,4 +117,17 @@ test("biografia oficial usa o slug da Câmara, que difere do interno em 7 veread
   assert.equal(urlBiografiaCamara("slug-novo"), null);
   assert.equal(urlBiografiaCamara("constructor"), null);
   assert.equal(urlBiografiaCamara(null), null);
+});
+
+test("bruto acima do subsídio mostra só a diferença, nunca outro subsídio", () => {
+  // 2026-07: subsídio de R$ 9.721,92 e bruto de R$ 12.962,56 na folha oficial.
+  assert.equal(valorAlemDoSubsidio(linha("2026-07", 12962.56, 9642.38, 9721.92)), 3240.64);
+  assert.equal(valorAlemDoSubsidio(linha("2026-08", 9721.92, 7292.91, 9721.92)), null);
+  assert.equal(valorAlemDoSubsidio(linha("2026-08", 9721.92, 7292.91, 0)), null);
+  assert.equal(valorAlemDoSubsidio(linha("2026-08", "9721.92", "7292.91", "9721.92")), null);
+});
+
+test("total bruto informa de qual competência a qual competência foi somado", () => {
+  assert.deepEqual(periodoComPagamento(folha), { inicio: "2026-02", fim: "2026-07" });
+  assert.equal(periodoComPagamento([linha("2025-01", null, null, 9357)]), null);
 });

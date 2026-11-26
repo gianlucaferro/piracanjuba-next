@@ -1,7 +1,9 @@
 .pagina {
   --verde: #123e35;
   --pinho: #174539;
+  --letreiro: #0a6f6b;
   --menta: #a9e9c9;
+  --madeira: #8b613f;
   --papel: #fbfaf4;
   --linha: #d3d4c5;
   display: block;
@@ -23,11 +25,12 @@
 .pagina section[id] { scroll-margin-top: 6rem; }
 .largura { width: min(100% - clamp(2.5rem, 9vw, 8rem), 78rem); margin-inline: auto; }
 
+/* Abertura: o degradê termina no verde-água do letreiro da fachada. */
 .capa {
   --direcao-degrade: 115deg;
   color: #fffdf6;
   background-color: var(--verde);
-  background-image: linear-gradient(var(--direcao-degrade), #102f2a 0%, #15463e 40%, #185557 69%, #236960 100%);
+  background-image: linear-gradient(var(--direcao-degrade), #0e2f2b 0%, #134640 42%, #0f5b57 70%, #0a6c68 100%);
 }
 .barra, .marca, .navegacao, .cabecalho, .guia { display: flex; align-items: center; }
 .barra {
@@ -37,7 +40,13 @@
   border-bottom: 1px solid #ffffff36;
 }
 .marca { gap: .8rem; }
-.marca img { flex: none; width: 4.25rem; height: auto; border-radius: .25rem; }
+.marca img {
+  flex: none;
+  width: 4.25rem;
+  height: auto;
+  border-radius: .7rem;
+  box-shadow: 0 0 0 1px #ffffff59, 0 12px 24px -14px #000000b3;
+}
 .navegacao { gap: clamp(1.35rem, 2.6vw, 2.6rem); }
 .navegacao a {
   display: inline-flex;
@@ -60,7 +69,7 @@
 .chamada h1 { font-size: clamp(3rem, 6.4vw, 6.65rem); line-height: 1.03; }
 .chamada h1 span { display: block; margin-top: .5em; color: var(--menta); font-size: clamp(1.45rem, 2.5vw, 2.55rem); line-height: 1.15; letter-spacing: -.023em; }
 .chamada p {
-  max-width: 37ch;
+  max-width: 38ch;
   margin-block: clamp(1.3rem, 2vw, 2rem) 1.85rem;
   color: #edf5ec;
   font-size: clamp(1rem, 1.23vw, 1.18rem);
@@ -85,13 +94,30 @@
 .botao:hover { background: #d1f3d9; }
 .pagina .botao:focus-visible { outline-color: white; }
 .botao svg { width: 1.24rem; height: 1.24rem; }
+.botaoEscuro { margin-bottom: .45rem; background: var(--verde); color: #fffdf6; }
+.botaoEscuro:hover { background: var(--letreiro); }
+.pagina .botaoEscuro:focus-visible { outline-color: var(--verde); }
+.semQuebra { white-space: nowrap; }
+.chamada .horarioCapa {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  max-width: none;
+  margin: 1.6rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid #ffffff26;
+  color: #d3e7df;
+  font-size: .88rem;
+  line-height: 1.5;
+}
+.horarioCapa svg { flex: none; color: var(--menta); }
 .imagem { width: min(100%, 680px); min-width: 0; }
 .moldura {
   padding: clamp(5px, .65vw, 9px);
   border: 1px solid #c2baa2;
   border-radius: 4px;
   background: linear-gradient(145deg, #faf7ec, #e6e0ce 70%, #f4f0e4);
-  box-shadow: 0 14px 28px -16px #062420cc, 0 2px 5px #06242040;
+  box-shadow: 0 22px 40px -22px #031a17f2, 0 2px 5px #06242040;
 }
 .moldura img {
   display: block;
@@ -101,8 +127,9 @@
 }
 .imagem figcaption { display: flex; justify-content: flex-end; align-items: center; gap: .45rem; margin-top: .65rem; color: #e1efde; font-size: .82rem; }
 
+/* Catálogo: uma linha por categoria, como uma vitrine organizada. */
 .catalogo { padding-block: clamp(3.5rem, 6.5vw, 6.25rem); }
-.cabecalho { justify-content: space-between; gap: 1rem; margin-bottom: clamp(1.6rem, 3.2vw, 3rem); }
+.cabecalho { justify-content: space-between; gap: 1rem; margin-bottom: clamp(1.6rem, 3.2vw, 2.6rem); }
 .pagina h2 { font-size: clamp(2.45rem, 4.2vw, 4.75rem); line-height: 1.06; }
 .rede, .consulta, .rota, .contato {
   display: inline-flex;
@@ -114,35 +141,109 @@
   font-weight: 700;
 }
 .rede { white-space: nowrap; }
-.produtos {
+.produtos { padding: 0; list-style: none; border-bottom: 1px solid var(--linha); }
+.produtos > li {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 0;
+  grid-template-columns: minmax(15rem, 25rem) minmax(0, 1fr);
+  gap: 1rem clamp(2rem, 5vw, 5rem);
+  padding-block: clamp(1.6rem, 2.6vw, 2.2rem);
   border-top: 1px solid var(--linha);
-  list-style: none;
 }
-.produtos li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-  margin-top: 1.65rem;
-  padding-inline: clamp(1rem, 2.45vw, 2.5rem);
-  border-left: 1px solid var(--linha);
+.nomeProduto { display: flex; align-items: center; align-self: start; gap: 1rem; min-width: 0; }
+.selo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: #e1eee8;
+  color: var(--letreiro);
 }
-.produtos li:first-child { padding-left: 0; border-left: 0; }
-.produtos li:last-child { padding-right: 0; }
-.iconeProduto { color: #34765d; margin-bottom: 1.35rem; }
-.produtos h3 { font-size: clamp(1.7rem, 2.45vw, 2.75rem); line-height: 1.12; }
-.produtos p {
-  max-width: 40ch;
-  margin-block: .85rem 1rem;
+.produtos h3 { font-size: clamp(1.7rem, 2.35vw, 2.45rem); line-height: 1.1; text-wrap: balance; }
+.detalheProduto { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding-top: .35rem; }
+.detalheProduto > p {
+  max-width: 56ch;
   color: #46584b;
-  font-size: .97rem;
+  font-size: .99rem;
   line-height: 1.68;
 }
-.consulta { margin-top: auto; font-size: .87rem; text-underline-offset: .25em; }
+.itens {
+  display: grid;
+  gap: .6rem;
+  margin-top: 1rem;
+  padding: 0;
+  list-style: none;
+}
+.itens li {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .3rem .6rem;
+  padding-left: 1.15rem;
+  color: var(--verde);
+  font-size: .98rem;
+  line-height: 1.5;
+}
+.itens li::before {
+  content: "";
+  position: absolute;
+  top: .62em;
+  left: 0;
+  width: .42rem;
+  height: .42rem;
+  border-radius: 50%;
+  background: var(--madeira);
+}
+.itens strong { font-weight: 700; }
+.detalheItem { flex-basis: 100%; color: #46584b; }
+.etiquetas { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  padding: .16rem .7rem;
+  border: 1px solid #dcc6ae;
+  border-radius: 2rem;
+  background: #fbf3e9;
+  color: #6b4a2f;
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.consulta { margin-top: .9rem; font-size: .87rem; text-underline-offset: .25em; }
 .pagina :where(.consulta, .rede, .rota, .contato, .guia a):hover { text-decoration: underline; text-underline-offset: .25em; }
+
+/* Galeria: fundo escuro para as fotos da loja, como vitrine à noite. */
+.galeria {
+  padding-block: clamp(3.5rem, 6.5vw, 6rem);
+  color: #f2f7f2;
+  background: #0f3632;
+}
+.cabecalhoGaleria {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 3rem;
+  margin-bottom: clamp(1.6rem, 3vw, 2.6rem);
+}
+.cabecalhoGaleria p { max-width: 36ch; color: #c9ddd5; font-size: .98rem; line-height: 1.65; }
+.fotos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(.75rem, 1.5vw, 1.35rem);
+}
+.fotos figure { min-width: 0; }
+.recorte {
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px #ffffff1f;
+}
+.recorte img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+/* A foto vertical da perfumaria entra em 4:3; o recorte alto mostra o armário de perfumes e deixa a poltrona quase fora. */
+.fotoPerfumaria img { object-position: 50% 30%; }
+.fotos figcaption { margin-top: .65rem; color: #c9ddd5; font-size: .84rem; text-wrap: balance; }
 
 .visita { padding-block: clamp(3.2rem, 5.5vw, 5.5rem) .6rem; background: #e5eee4; }
 .detalhes { display: grid; grid-template-columns: 1fr 1fr .75fr; gap: clamp(1.5rem, 4vw, 4rem); margin-block: 2rem; }
@@ -159,31 +260,32 @@
 .guia a { min-height: 44px; display: inline-flex; align-items: center; gap: .4rem; color: #345646; font-size: .78rem; }
 .guia a:last-child { text-align: right; }
 
+@media (max-width: 960px) {
+  .produtos > li { grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr); }
+  .cabecalhoGaleria { flex-direction: column; align-items: flex-start; }
+}
+
 @media (max-width: 760px) {
   .capa { --direcao-degrade: 157deg; }
   .largura { width: calc(100% - clamp(2.25rem, 8vw, 3.75rem)); }
   .barra { min-height: 4.25rem; }
   .marca { gap: .5rem; }
-  .marca img { width: 3.5rem; }
+  .marca img { width: 3.5rem; border-radius: .6rem; }
   .navegacao { gap: 1rem; }
   .navegacao a { font-size: .81rem; }
+  .navegacao .linkLoja { display: none; }
   .abertura { grid-template-columns: 1fr; gap: 1.9rem; padding-block: 2.7rem 1rem; }
   .chamada { padding-bottom: 0; }
   .chamada h1 { font-size: clamp(3rem, 10.7vw, 5.2rem); }
   .chamada p { max-width: 45ch; margin-block: 1.15rem 1.35rem; }
+  .chamada .horarioCapa { margin-top: 1.1rem; }
   .imagem figcaption { justify-content: flex-start; }
   .cabecalho { align-items: flex-start; flex-direction: column; gap: .2rem; margin-bottom: .8rem; }
-  .produtos { grid-template-columns: 1fr; border-top: 0; }
-  .produtos li, .produtos li:first-child {
-    position: relative;
-    display: block;
-    margin-top: 0;
-    padding: 1.6rem 0 1.15rem 3.1rem;
-    border-left: 0;
-    border-top: 1px solid var(--linha);
-  }
-  .iconeProduto { position: absolute; top: 1.65rem; left: 0; margin: 0; width: 1.75rem; height: 1.75rem; }
-  .produtos p { max-width: 52ch; margin: .5rem 0 .1rem; }
+  .produtos > li { grid-template-columns: 1fr; gap: .9rem; padding-block: 1.5rem 1.2rem; }
+  .selo { width: 2.9rem; height: 2.9rem; }
+  .selo svg { width: 1.45rem; height: 1.45rem; }
+  .detalheProduto { padding-top: 0; }
+  .fotos { grid-template-columns: 1fr; }
   .detalhes { grid-template-columns: 1fr; gap: .8rem; margin-block: 1.4rem; }
   .detalhes dl { max-width: 23rem; }
   .guia { flex-wrap: wrap; justify-content: flex-start; column-gap: 1.5rem; row-gap: 0; }
@@ -192,9 +294,8 @@
 @media (max-width: 420px) {
   .navegacao a[href="#produtos"] { display: none; }
   .navegacao { gap: .5rem; }
-  .produtos li, .produtos li:first-child { padding-left: 2.65rem; }
 }
 
 @media (forced-colors: active) {
-  .botao { border: 1px solid ButtonText; }
+  .botao, .etiqueta { border: 1px solid ButtonText; }
 }

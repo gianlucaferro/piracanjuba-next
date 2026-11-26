@@ -2,6 +2,8 @@ import { pageMetadata } from "@/lib/seo";
 import { fetchZapEstabelecimentos } from "@/lib/data/listings";
 import { SLUGS_PAGINAS_EMPRESARIAIS } from "@/data/empresas-slugs";
 import { CLINICA_ESSENCIA } from "@/data/clinica-essencia";
+import { HOTEL_VIA_SUL } from "@/data/hotel-via-sul";
+import { NARAIENE_MARQUES } from "@/data/naraiene-marques";
 import { PACIFICO_SIQUEIRA } from "@/data/pacifico-siqueira";
 import { previas } from "@/data/previas-zap";
 import vinculos from "@/data/zap-pba-paginas.json";
@@ -25,6 +27,8 @@ const paginasAtivas = new Set([
 // Um negócio pode ter dois cadastros aprovados com nomes diferentes.
 const paginaPorCadastro = new Map(Object.entries(vinculos).filter(([, pagina]) => paginasAtivas.has(pagina)));
 const fichasEditoriais = [
+  { nome: HOTEL_VIA_SUL.nome, telefone: HOTEL_VIA_SUL.whatsapp, path: HOTEL_VIA_SUL.path, categoria: "Hospedagem e Turismo" },
+  { nome: NARAIENE_MARQUES.nome, telefone: NARAIENE_MARQUES.telefone, path: NARAIENE_MARQUES.path, categoria: "Advogados" },
   { nome: PACIFICO_SIQUEIRA.nome, telefone: PACIFICO_SIQUEIRA.telefone, path: PACIFICO_SIQUEIRA.path, categoria: "Advogados" },
   { nome: "Essência Estética e Spa | Laurieni Costa", telefone: CLINICA_ESSENCIA.telefoneEsteticaSpa, path: CLINICA_ESSENCIA.path, categoria: "Beleza e Estética" },
 ];
