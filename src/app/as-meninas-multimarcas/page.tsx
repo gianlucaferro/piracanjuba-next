@@ -137,8 +137,7 @@ export default function AsMeninasMultimarcas() {
               width={1088}
               height={1446}
               sizes="(max-width: 355px) 90vw, (max-width: 760px) 320px, (max-width: 845px) 42vw, 360px"
-              loading="eager"
-              fetchPriority="high"
+              preload
             />
             <figcaption><strong>Sabrina Carvalho</strong> - Proprietária da As Meninas Multimarcas</figcaption>
           </figure>
