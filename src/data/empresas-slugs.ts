@@ -21,6 +21,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "kamillamorranna",
   "naraienemarquesadv",
   "estacionamentoaeroporto",
+  "master-tech-auto-center",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
