@@ -35,6 +35,8 @@ Decisão do operador em 2026-11-26. Quando uma empresa não contratar a landing 
      - liga `formatDetection: { telephone: false }`, para o iPhone não transformar o número em link.
 
      Continuam clicáveis "Como chegar", Instagram, site, "Quero personalizar a página" e "Solicitar ajuste ou remoção". O guia `/zap-pba`, a lista, **não muda**: lá o WhatsApp de todas as empresas continua clicável.
+
+     A ficha rebaixada também mostra no topo a faixa do proprietário, que vale para toda ficha do guia (ver [as prévias do Zap PBA](previas-zap.md)). Nada a fazer por empresa.
 5. URL curta e atalhos:
    - a URL curta (`/<slug>`) **serve a ficha por rewrite** em `rewrites` do `next.config.ts`, com 200 e canonical em `/zap-pba/<slug>`. Não use 308: o 308 antigo `/zap-pba/<slug>` para `/<slug>`, do tempo da landing, pode estar guardado no navegador, e o novo formaria um laço (apontado pelo CodeRabbit no PR #102);
    - os atalhos (ex.: `/mastertech`) passam a fazer 308 para `/zap-pba/<slug>`, em `redirects` do `next.config.ts` e em `REDIRECIONAMENTOS_PERMANENTES` de `src/lib/sitemap-rotas.ts`;

@@ -66,3 +66,23 @@ test("ficha comum do guia continua com o WhatsApp clicável", async ({ page }) =
   await expect(page.locator('a[href*="wa.me/"]').first()).toBeVisible();
   await expect(page.locator('meta[name="format-detection"]')).toHaveCount(0);
 });
+
+test("ficha tem no topo a faixa do proprietário com o WhatsApp do Gianluca", async ({ page }) => {
+  for (const [slug, nome] of [["maxwel-cabeleireiro", "Maxwel Cabeleireiro"], ["master-tech-auto-center", "Master Tech Auto Center"]]) {
+    await page.goto(`/zap-pba/${slug}`);
+    const faixa = page.getByRole("complementary", { name: "Para o proprietário" });
+    await expect(faixa).toContainText("É proprietário desta empresa e quer deixar esta página mais profissional e completa, com cara de site?");
+    await expect(faixa).toHaveAttribute("data-nosnippet", "");
+    const link = faixa.getByRole("link", { name: /Clique aqui/ });
+    const href = await link.getAttribute("href");
+    expect(href).toContain("https://wa.me/5564992375458?text=");
+    expect(decodeURIComponent(href!.split("text=")[1])).toBe(`Olá, Gianluca. Vim pelo Piracanjuba.ai, minha empresa é ${nome}.`);
+    // A faixa fica antes do nome da empresa.
+    const ordem = await page.evaluate(() => {
+      const faixaEl = document.querySelector('[aria-label="Para o proprietário"]');
+      const h1 = document.querySelector("h1");
+      return Boolean(faixaEl && h1 && faixaEl.compareDocumentPosition(h1) & Node.DOCUMENT_POSITION_FOLLOWING);
+    });
+    expect(ordem, slug).toBe(true);
+  }
+});

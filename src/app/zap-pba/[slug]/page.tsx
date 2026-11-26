@@ -56,6 +56,9 @@ export default async function PreviaEmpresa({ params }: Props) {
   const urlPublica = "https://piracanjuba.ai/zap-pba/" + slug;
   const personalizar = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de saber como personalizar esta página: ${urlPublica}`);
   const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de solicitar um ajuste ou a remoção desta prévia: ${urlPublica}`);
+  // Faixa do proprietário no topo (decisão do operador em 2026-11-26), em toda ficha do guia:
+  // as fichas são as páginas de quem não contratou a landing.
+  const falarComGianluca = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, Gianluca. Vim pelo Piracanjuba.ai, minha empresa é ${nome}.`);
   const estilo = { "--tinta": ficha.cor ?? cor } as CSSProperties;
   const redes = ficha.instagram || ficha.site || ficha.facebook;
   const local = ficha.endereco || ficha.mapa;
@@ -72,6 +75,14 @@ export default async function PreviaEmpresa({ params }: Props) {
           <Link href="/zap-pba" prefetch={false}><ArrowLeft size={16} aria-hidden="true" />Guia Zap PBA</Link>
           <span><MapPin size={15} aria-hidden="true" />{ficha.atendimentoRemoto ? "Atendimento online" : "Piracanjuba, GO"}</span>
         </div>
+
+        {/* data-nosnippet: a frase de venda não entra na descrição da empresa no Google. */}
+        <aside className={css.faixaDono} aria-label="Para o proprietário" data-nosnippet="">
+          <p>É proprietário desta empresa e quer deixar esta página mais profissional e completa, com cara de site?</p>
+          <a href={falarComGianluca} aria-label={`Clique aqui para falar com o Gianluca no WhatsApp sobre a página de ${nome}`}>
+            Clique aqui<ArrowUpRight size={15} aria-hidden="true" />
+          </a>
+        </aside>
 
         <header className={css.capa}>
           <div className={css.texto}>
