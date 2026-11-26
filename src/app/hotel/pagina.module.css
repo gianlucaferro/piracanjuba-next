@@ -24,6 +24,8 @@
 .pagina ul { padding: 0; list-style: none; }
 .pagina :is(a, summary):focus-visible { outline: 3px solid var(--turquesa); outline-offset: 4px; }
 .pagina section[id] { scroll-margin-top: 5.5rem; }
+/* Nas seções claras o turquesa não chega a 3:1: o foco usa o azul-marinho. */
+.pagina :is(.resposta, .comodidades, .fotos, .perfis, .guia, .perguntas) :is(a, summary):focus-visible { outline-color: var(--marinho); }
 .largura { width: min(88%, 1120px); margin-inline: auto; }
 .pagina h2 {
   font-family: var(--titulo);
@@ -184,10 +186,11 @@
 .cabecalhoAvaliacoes p { color: #c9d3ea; }
 .cabecalhoAvaliacoes strong { color: #fff; }
 .listaAvaliacoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2.4vw, 1.6rem); margin-top: clamp(1.6rem, 3vw, 2.2rem) !important; }
-.listaAvaliacoes blockquote { height: 100%; padding: 1.4rem 1.4rem 1.2rem; border-radius: 14px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .12); }
+.listaAvaliacoes figure { height: 100%; padding: 1.4rem 1.4rem 1.2rem; border-radius: 14px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .12); }
+.listaAvaliacoes blockquote { margin: 0; }
 .listaAvaliacoes p { font-size: 1.02rem; line-height: 1.6; }
-.listaAvaliacoes footer { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 1rem; color: var(--turquesa); font-size: .9rem; font-weight: 700; }
-.listaAvaliacoes footer span { color: #aebadb; font-weight: 500; }
+.listaAvaliacoes figcaption { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 1rem; color: var(--turquesa); font-size: .9rem; font-weight: 700; }
+.listaAvaliacoes figcaption span { color: #aebadb; font-weight: 500; }
 .linkFonte { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-top: 1.4rem; color: #fff; font-weight: 600; }
 
 /* Guia do hóspede */
@@ -275,6 +278,7 @@
   .acoes { flex-direction: column; align-items: stretch; }
   .atalho { justify-content: flex-start; }
   .listaComodidades { grid-template-columns: 1fr 1fr; }
+  .listaComodidades li:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .galeria { grid-template-columns: 1fr; }
   .horarios { padding: 12px 12px; }
   .horarios div + div { padding-left: 10px; }

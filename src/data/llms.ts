@@ -354,7 +354,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/hotel",
         titulo: "Hotel Via Sul, hotel em Piracanjuba no Centro",
-        descricao: "Hotel no Centro de Piracanjuba, na Rua Vereador Hugo Vargas Batista Machado, a cerca de 150 metros da Rodoviária e 250 metros da Prefeitura e da Câmara. Check-in a partir das 14h, check-out até as 12h, recepção 24 horas, Wi-Fi e estacionamento gratuitos, café da manhã, fotos dos quartos e reserva pelo WhatsApp.",
+        descricao: "Hotel no Centro de Piracanjuba, na Rua Vereador Hugo Vargas Batista Machado, a cerca de 150 metros da Rodoviária, 250 metros da Prefeitura e 270 metros da Câmara. Check-in a partir das 14h, check-out até as 12h, recepção 24 horas, Wi-Fi e estacionamento gratuitos, café da manhã, fotos dos quartos e reserva pelo WhatsApp.",
       },
       {
         caminho: "/estacionamentoaeroporto",

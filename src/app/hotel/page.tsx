@@ -36,17 +36,17 @@ const comodidades = [
 
 const fotos = [
   { src: "/quarto.webp", largura: 610, altura: 500, legenda: "Quarto com mesa de trabalho, TV e banheiro", alt: "Quarto do Hotel Via Sul com cama arrumada e toalhas, mesa de trabalho preta, TV na parede, frigobar e a porta do banheiro" },
-  { src: "/cama-toalhas.webp", largura: 690, altura: 500, legenda: "Cama arrumada com toalhas para a chegada", alt: "Cama de casal com cabeceira de madeira, travesseiros brancos e toalhas dobradas sobre a manta" },
+  { src: "/cama-toalhas.webp", largura: 600, altura: 470, legenda: "Cama arrumada com toalhas para a chegada", alt: "Cama de casal com cabeceira de madeira, travesseiros brancos e toalhas dobradas sobre a manta" },
   { src: "/salao-cafe.webp", largura: 1080, altura: 1350, legenda: "Salão do café da manhã", alt: "Salão do café da manhã com mesas de madeira, cadeiras pretas e parede de vidro" },
-  { src: "/cafe-da-manha.webp", largura: 640, altura: 800, legenda: "Pão de queijo, pão, bolo, frutas e suco", alt: "Prato com pão de queijo, pão e bolo, melancia em fatias e um copo de suco de laranja" },
-  { src: "/sala-estar.webp", largura: 1080, altura: 840, legenda: "Sala de estar perto da recepção", alt: "Sofá com almofadas azuis, cômoda de madeira e plantas na sala de estar do hotel" },
-  { src: "/recepcao-janela.webp", largura: 1080, altura: 1080, legenda: "Recepção com vista para a rua", alt: "Recepção do hotel com poltrona, planta e parede de vidro com o logotipo do Via Sul voltada para a rua" },
+  { src: "/cafe-da-manha.webp", largura: 640, altura: 800, legenda: "Pão de queijo, pão com queijo e frios, bolo, melancia e suco", alt: "Dois pratos, um com pão de queijo, pão com queijo e frios e bolo, outro com fatias de melancia, e um copo de suco" },
+  { src: "/sala-estar.webp", largura: 1080, altura: 640, legenda: "Sala de estar do hotel", alt: "Sofá marrom com manta xadrez azul-marinho, almofadas turquesa e cinza, criado-mudo de madeira e plantas" },
+  { src: "/recepcao-janela.webp", largura: 1080, altura: 1080, legenda: "Recepção com vista para a rua", alt: "Recepção do hotel com poltrona, planta em vaso e parede de vidro voltada para a rua, com o letreiro do Via Sul Hotel do lado de fora" },
 ];
 
 const perfis = [
   {
     titulo: "Viagem a trabalho",
-    texto: "Para técnicos, vendedores e quem atende o agronegócio da região: Wi-Fi gratuito, café da manhã e a Prefeitura, a Câmara e o comércio do centro a poucos minutos a pé.",
+    texto: "Para técnicos, vendedores e quem atende o agronegócio da região: Wi-Fi gratuito, café da manhã e a Prefeitura e a Câmara a poucos minutos a pé.",
   },
   {
     titulo: "Família, festas e eventos",
@@ -59,23 +59,23 @@ const perfis = [
 ];
 
 const avaliacoes = [
-  { autor: "Luan Henrique", texto: "Ótimo hotel, muito bem organizado, limpo, cafe da manha nota 10 e os recepcionistas sempre muito receptivos e atenciosos." },
-  { autor: "Rogerio Souza", contexto: "Viagem a negócios", texto: "Minha estadia foi excelente, atendimento fantástico, equipe de profissionais que estão de parabéns, pessoas educadas que deixam a gente bem à vontade." },
-  { autor: "Wesley Garcia", contexto: "Férias em casal", texto: "Foi ótimo passar uma diária neste hotel, quarto e banheiro tudo limpinho e higienizado, atendimento excelente." },
+  { autor: "Luan H.", texto: "Ótimo hotel, muito bem organizado, limpo, cafe da manha nota 10 e os recepcionistas sempre muito receptivos e atenciosos." },
+  { autor: "Rogerio S.", contexto: "Viagem a negócios", texto: "Minha estadia foi excelente, atendimento fantástico, equipe de profissionais que estão de parabéns, pessoas educadas que deixam a gente bem à vontade (...)" },
+  { autor: "Wesley G.", contexto: "Férias em casal", texto: "Foi ótimo passar uma diária neste hotel, quarto e banheiro tudo limpinho e higienizado, atendimento excelente (...)" },
 ];
 
 const guia = [
   { href: "/horarios-onibus", icone: Bus, titulo: "Horários de ônibus", texto: "Linhas que saem da Rodoviária de Piracanjuba." },
   { href: "/clima", icone: CloudSun, titulo: "Clima em Piracanjuba", texto: "Previsão para planejar a chegada e a volta." },
   { href: "/plantao-farmacias", icone: Pill, titulo: "Farmácia de plantão", texto: "Qual farmácia está aberta hoje à noite." },
-  { href: "/postos-combustivel", icone: Fuel, titulo: "Postos de combustível", texto: "Preços e endereços para abastecer na cidade." },
+  { href: "/postos-combustivel", icone: Fuel, titulo: "Postos de combustível", texto: "Endereços, bandeiras e produtos de cada posto, com dados da ANP." },
   { href: "/historia-pba", icone: Landmark, titulo: "História de Piracanjuba", texto: "Origem do nome, fé, festas e o que visitar." },
 ];
 
 const perguntas = [
   {
-    pergunta: "Qual hotel fica no centro de Piracanjuba?",
-    resposta: `O Hotel Via Sul fica no Centro de Piracanjuba, na ${H.endereco}. A Rodoviária está a cerca de 150 metros, e a Prefeitura e a Câmara Municipal, na Praça Wilson Eloy Pimenta, a cerca de 250 metros.`,
+    pergunta: "O Hotel Via Sul fica no centro de Piracanjuba?",
+    resposta: `Sim. O Hotel Via Sul fica no Centro de Piracanjuba, na ${H.endereco}. A Rodoviária está a cerca de 150 metros a pé; a Prefeitura, a cerca de 250 metros, e a Câmara Municipal, a cerca de 270 metros, as duas na Praça Wilson Eloy Pimenta.`,
   },
   {
     pergunta: "Quais são os horários de check-in e check-out?",
@@ -87,7 +87,7 @@ const perguntas = [
   },
   {
     pergunta: "Como reservar o Hotel Via Sul?",
-    resposta: `Mande pelo WhatsApp ${formatarTelefoneBr(H.whatsapp)} as datas de entrada e saída e o número de hóspedes. A recepção confirma a disponibilidade, os valores e as condições. Também dá para ligar no ${formatarTelefoneBr(H.telefoneFixo)} ou escrever para ${H.email}.`,
+    resposta: `Mande pelo WhatsApp ${formatarTelefoneBr(H.whatsapp)} as datas de entrada e saída e o número de hóspedes. A recepção confirma a disponibilidade, os valores e as condições. Também dá para escrever para ${H.email}.`,
   },
   {
     pergunta: "Qual é a nota do Hotel Via Sul no Google?",
@@ -96,7 +96,7 @@ const perguntas = [
 ];
 
 const titulo = "Hotel em Piracanjuba no Centro | Hotel Via Sul";
-const descricao = "Hotel Via Sul, hotel em Piracanjuba no Centro, a cerca de 150 m da Rodoviária. Café da manhã, Wi-Fi e estacionamento gratuitos, recepção 24h e WhatsApp.";
+const descricao = "Hotel Via Sul, hotel em Piracanjuba no Centro, a cerca de 150 m da Rodoviária. Wi-Fi e estacionamento gratuitos, café da manhã, recepção 24h e WhatsApp.";
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
   alt: "Logotipo do Hotel Via Sul e a recepção do hotel em Piracanjuba",
@@ -137,7 +137,6 @@ const esquema = {
         { "@type": "LocationFeatureSpecification", name: "Wi-Fi gratuito", value: true },
         { "@type": "LocationFeatureSpecification", name: "Estacionamento gratuito", value: true },
         { "@type": "LocationFeatureSpecification", name: "Recepção 24 horas", value: true },
-        { "@type": "LocationFeatureSpecification", name: "Ar-condicionado", value: true },
       ],
       areaServed: { "@type": "City", name: "Piracanjuba", containedInPlace: { "@type": "State", name: "Goiás" } },
     },
@@ -170,7 +169,7 @@ export default function HotelViaSul() {
               <Image src={imagens + "/via-sul-logo-branco.svg"} width={683} height={163} alt="Via Sul Hotel"
                 className={s.logo} loading="eager" unoptimized />
               <h1>Hotel em Piracanjuba, no centro da cidade</h1>
-              <p className={s.lide}>O Hotel Via Sul fica no Centro de Piracanjuba, a cerca de 150 metros da Rodoviária e a cerca de 250 metros da Prefeitura e da Câmara. Recepção 24 horas, Wi-Fi e estacionamento gratuitos, e reserva direto com o hotel pelo WhatsApp.</p>
+              <p className={s.lide}>O Hotel Via Sul fica no Centro de Piracanjuba, a cerca de 150 metros da Rodoviária, 250 metros da Prefeitura e 270 metros da Câmara. Recepção 24 horas, Wi-Fi e estacionamento gratuitos, e reserva direto com o hotel pelo WhatsApp.</p>
               <div className={s.acoes}>
                 <a id={ID_BOTAO_TOPO} href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Reservar pelo WhatsApp</a>
                 <a href={H.mapa} className={s.atalho}><Navigation size={16} aria-hidden="true" /> Como chegar</a>
@@ -198,13 +197,13 @@ export default function HotelViaSul() {
         <div className={s.largura}>
           <div className={s.respostaGrade}>
             <div>
-              <h2 id="titulo-resposta">Qual hotel fica no centro de Piracanjuba?</h2>
-              <p>O Hotel Via Sul está na {H.endereco}, no Centro. Quem chega de ônibus desce na Rodoviária e caminha cerca de 150 metros até a recepção. A Prefeitura e a Câmara Municipal, na Praça Wilson Eloy Pimenta, ficam a cerca de 250 metros, e o comércio do centro está no caminho.</p>
+              <h2 id="titulo-resposta">Um hotel no centro de Piracanjuba</h2>
+              <p>O Hotel Via Sul está na {H.endereco}, no Centro. Quem chega de ônibus desce na Rodoviária e caminha cerca de 150 metros até a recepção. A Prefeitura e a Câmara Municipal, na Praça Wilson Eloy Pimenta, ficam a cerca de 250 e 270 metros.</p>
             </div>
             <ul className={s.distancias} aria-label="Distâncias a pé a partir do hotel">
-              <li><strong>150 m</strong><span>Rodoviária de Piracanjuba</span></li>
-              <li><strong>250 m</strong><span>Prefeitura, na Praça Wilson Eloy Pimenta</span></li>
-              <li><strong>270 m</strong><span>Câmara Municipal, na mesma praça</span></li>
+              <li><strong>150 m</strong>{" "}<span>Rodoviária de Piracanjuba</span></li>
+              <li><strong>250 m</strong>{" "}<span>Prefeitura, na Praça Wilson Eloy Pimenta</span></li>
+              <li><strong>270 m</strong>{" "}<span>Câmara Municipal, na mesma praça</span></li>
             </ul>
           </div>
         </div>
@@ -262,15 +261,15 @@ export default function HotelViaSul() {
         <div className={s.largura}>
           <div className={s.cabecalhoAvaliacoes}>
             <h2 id="titulo-avaliacoes">O que dizem os hóspedes</h2>
-            <p><strong>{H.avaliacoesGoogle.nota} de 5</strong> no Google, com {H.avaliacoesGoogle.total} avaliações, em {H.avaliacoesGoogle.conferidoEm}.</p>
+            <p><strong>{H.avaliacoesGoogle.nota} de 5</strong> no Google, com {H.avaliacoesGoogle.total} avaliações, em {H.avaliacoesGoogle.conferidoEm}. Abaixo, trechos selecionados de avaliações de 5 estrelas.</p>
           </div>
           <ul className={s.listaAvaliacoes}>
             {avaliacoes.map(({ autor, contexto, texto }) => (
               <li key={autor}>
-                <blockquote>
-                  <p>{texto}</p>
-                  <footer>{autor}{contexto ? <span>{contexto}</span> : null}</footer>
-                </blockquote>
+                <figure>
+                  <blockquote><p>{texto}</p></blockquote>
+                  <figcaption>{autor}{" "}<span>{contexto ? contexto + ", " : ""}avaliação no Google</span></figcaption>
+                </figure>
               </li>
             ))}
           </ul>
@@ -287,7 +286,7 @@ export default function HotelViaSul() {
               <li key={href}>
                 <Link href={href}>
                   <Icone size={20} strokeWidth={1.7} aria-hidden="true" />
-                  <span><strong>{item}</strong>{texto}</span>
+                  <span><strong>{item}</strong>{" "}{texto}</span>
                 </Link>
               </li>
             ))}
