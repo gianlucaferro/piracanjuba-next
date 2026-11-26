@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
       { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
       { source: "/hotelviasul", destination: "/hotel", permanent: true },
       { source: "/hotel-via-sul", destination: "/hotel", permanent: true },
+      { source: "/zap-pba/viaggi-vistos", destination: "/viaggi-vistos", permanent: true },
       // 308: páginas /transparencia/* da Câmara levadas para a aba equivalente (Onda 2, IDX-03,
       // 2026-11-19). Mesma lista de REDIRECIONAMENTOS_PERMANENTES em src/lib/sitemap-rotas.ts.
       { source: "/transparencia/contratos-camara", destination: "/camara/contratos", permanent: true },
@@ -64,6 +65,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/master-tech-auto-center.jpg",
       destination: "/empresas/master-tech-auto-center/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/viaggi-vistos.jpg",
+      destination: "/empresas/viaggi-vistos/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/smart-especializada.jpg",
       destination: "/empresas/smart-especializada/compartilhar.jpg",

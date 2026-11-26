@@ -6072,25 +6072,6 @@
     "mensagem": "Olá, Univesty! Quero um orçamento para personalizar peças de roupa. Posso enviar a quantidade e a arte que tenho em mente?"
   },
   {
-    "slug": "viaggi-vistos",
-    "nome": "Viaggi Vistos",
-    "categoria": "Assessoria de vistos",
-    "setor": "Serviços Especializados",
-    "telefones": [
-      "5564992610775"
-    ],
-    "instagram": "https://www.instagram.com/viaggivistos/",
-    "site": "https://www.viaggivistos.com.br/",
-    "logo": "/marcas-zap/logos/c4fff670abcad5c4.webp",
-    "cor": "#19344f",
-    "foto": "/marcas-zap/fotos/gianluca-ferro-viaggi.webp",
-    "fotoAlt": "Gianluca Ferro, fundador da Viaggi Vistos",
-    "resumo": "A Viaggi Vistos é uma agência privada de Piracanjuba que orienta quem vai solicitar ou renovar o visto americano. A equipe auxilia no preenchimento do formulário DS-160 e orienta sobre a entrevista.",
-    "atividade": "Assessoria para visto americano",
-    "acao": "Falar com a assessoria pelo WhatsApp",
-    "mensagem": "Olá, Viaggi! Quero saber como funciona a assessoria para o visto americano. Por onde começo?"
-  },
-  {
     "slug": "vidracaria-modelo",
     "nome": "Vidraçaria Modelo",
     "categoria": "Materiais de Construção",
