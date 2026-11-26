@@ -202,7 +202,7 @@ const esquema = {
       "@type": "Service", "@id": url + "#servico", name: "Assessoria para visto americano em Piracanjuba e região",
       serviceType: "Assessoria para visto americano", provider: { "@id": org }, url,
       areaServed: cidades.map((c) => ({ "@type": "City", name: c, containedInPlace: { "@type": "State", name: "Goiás" } })),
-      availableChannel: { "@type": "ServiceChannel", serviceUrl: url, servicePhone: "+" + telefone, availableLanguage: "pt-BR" },
+      availableChannel: { "@type": "ServiceChannel", serviceUrl: url, servicePhone: { "@type": "ContactPoint", telephone: "+" + telefone }, availableLanguage: "pt-BR" },
     },
     {
       "@type": "FAQPage", "@id": url + "#perguntas", url,
