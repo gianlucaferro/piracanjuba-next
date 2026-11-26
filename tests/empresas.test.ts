@@ -64,6 +64,8 @@ const CHAVES_INTERNAS = new Set([
   "desenho",
   "icone",
   "autorizacao",
+  "autorizacaoIA",
+  "moldura",
 ]);
 
 /** Caminho de arquivo em public (por exemplo "/empresas/x/og.jpg"), que não é texto. */
@@ -316,11 +318,36 @@ test("toda imagem da ficha existe em public com as dimensões declaradas", () =>
   }
 });
 
-test("topo, vitrine e compartilhamento só com imagem real: sem IA, com procedência e sem pessoa reconhecível sem autorização", () => {
+// Imagem de IA no topo ou na vitrine só com ordem do operador registrada (com
+// data) e com aviso visível na página; sem isso, vale a regra da imagem real.
+const DATA_ISO = /\b\d{4}-\d{2}-\d{2}\b/;
+// "IA" em maiúsculas (sem a flag i, para não casar o verbo "ia") ou
+// "inteligência artificial"; "ilustrativa" sozinha não diz que é IA.
+const AVISO_IA = /\bIA\b|intelig[eê]ncia artificial/;
+
+function iaAutorizada(imagem: { geradaPorIA?: boolean; autorizacaoIA?: string }): boolean {
+  return imagem.geradaPorIA === true && DATA_ISO.test(imagem.autorizacaoIA ?? "");
+}
+
+test("aviso de IA exige a menção explícita", () => {
+  assert.match("Decant de 10 ml da loja, imagem criada com IA", AVISO_IA);
+  assert.match("Imagens criadas com inteligência artificial", AVISO_IA);
+  assert.doesNotMatch("Decant de 10 ml da loja, imagem ilustrativa", AVISO_IA);
+  assert.doesNotMatch("quem ia à loja", AVISO_IA);
+  assert.equal(iaAutorizada({ geradaPorIA: true, autorizacaoIA: "pedido do operador" }), false);
+  assert.equal(iaAutorizada({ geradaPorIA: true, autorizacaoIA: "Operador em 2026-11-26" }), true);
+});
+
+test("topo, vitrine e compartilhamento: imagem real ou IA autorizada e avisada, com procedência e sem pessoa reconhecível sem autorização", () => {
   for (const empresa of empresas) {
-    const midia = empresa.midiaTopo;
+    // Mídia efetiva do topo: a ficha antiga com "foto" também passa pela regra.
+    const midia =
+      empresa.midiaTopo ?? (empresa.foto ? { tipo: "foto" as const, imagem: empresa.foto, legenda: undefined } : undefined);
     if (midia && midia.tipo !== "ilustracao") {
-      assert.notEqual(midia.imagem.geradaPorIA, true, `${empresa.slug}: topo com imagem gerada por IA`);
+      if (midia.imagem.geradaPorIA === true) {
+        assert.ok(iaAutorizada(midia.imagem), `${empresa.slug}: topo com imagem de IA sem autorização datada`);
+        assert.match(midia.legenda ?? "", AVISO_IA, `${empresa.slug}: topo com imagem de IA sem aviso na legenda`);
+      }
       assert.ok(midia.imagem.origem?.trim(), `${empresa.slug}: topo sem procedência`);
     }
     // A imagem de compartilhamento (WhatsApp, Instagram, Facebook) declara a
@@ -331,7 +358,15 @@ test("topo, vitrine e compartilhamento só com imagem real: sem IA, com procedê
     assert.ok(og.alt.trim(), `${empresa.slug}: ${og.src} sem alt`);
     assert.deepEqual({ largura: og.largura, altura: og.altura }, { largura: 1200, altura: 630 }, `${empresa.slug}: ${og.src} fora de 1200x630`);
     for (const item of empresa.galeria?.itens ?? []) {
-      assert.notEqual(item.geradaPorIA, true, `${empresa.slug}: ${item.src} gerada por IA`);
+      if (item.geradaPorIA === true) {
+        assert.ok(iaAutorizada(item), `${empresa.slug}: ${item.src} gerada por IA sem autorização datada`);
+        assert.equal(item.pessoaIdentificavel, false, `${empresa.slug}: ${item.src} gerada por IA com pessoa`);
+        assert.match(
+          `${empresa.galeria?.texto ?? ""} ${item.texto ?? ""}`,
+          AVISO_IA,
+          `${empresa.slug}: ${item.src} gerada por IA sem aviso visível na vitrine`,
+        );
+      }
       assert.ok(item.origem?.trim(), `${empresa.slug}: ${item.src} sem procedência`);
       assert.ok(item.alt.trim().length > 0 && item.legenda.trim().length > 0, `${empresa.slug}: ${item.src} sem alt ou legenda`);
       if (item.pessoaIdentificavel) {
@@ -416,7 +451,8 @@ test("dados estruturados: imagem sem recorte de produto e vínculo só onde a p�
   });
   assert.equal(EMPRESAS.vitorinoperfumes.vinculo, undefined);
   assert.equal(EMPRESAS.vitorinoperfumes.vinculoOrganizacao, undefined);
-  // Sem foto na vitrine, a imagem é a de compartilhamento.
+  // As fotos da vitrine e do topo da Vitorino são de IA (2026-11-26): a imagem
+  // dos dados estruturados continua a de compartilhamento, só com material real.
   assert.equal(imagemPrincipal(EMPRESAS.vitorinoperfumes), EMPRESAS.vitorinoperfumes.seo.imagem.src);
 });
 

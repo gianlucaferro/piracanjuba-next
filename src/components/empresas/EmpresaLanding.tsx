@@ -248,6 +248,33 @@ function MidiaTopo({ empresa }: { empresa: Empresa }) {
     );
   }
 
+  if (midia?.tipo === "foto" && midia.moldura === "arco") {
+    // Foto em retrato dentro do arco da marca: mesma moldura do recorte, com a
+    // imagem cobrindo o arco e o filete interno por cima.
+    const { imagem } = midia;
+    return (
+      <figure className="mx-auto w-[min(100%,calc(45svh*0.8))] md:w-full md:max-w-[26rem]">
+        <div className={s.arco}>
+          <Image
+            src={imagem.src}
+            alt={imagem.alt}
+            width={imagem.largura}
+            height={imagem.altura}
+            loading="eager"
+            fetchPriority="high"
+            sizes="(min-width: 1152px) 416px, (min-width: 768px) 36vw, 80vw"
+            className="absolute inset-0 size-full object-cover"
+          />
+        </div>
+        {midia.legenda && (
+          <figcaption className="mt-4 text-center text-xs font-semibold tracking-[0.16em] text-[var(--marca-texto-suave)] uppercase">
+            {midia.legenda}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
   if (midia?.tipo === "foto") {
     const { imagem } = midia;
     return (

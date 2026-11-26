@@ -8,14 +8,16 @@ export const SITE_URL = "https://piracanjuba.ai";
  * Imagem da empresa nos dados estruturados: a primeira foto real da vitrine, a
  * foto do topo ou, sem foto, a imagem de compartilhamento (1200x630). Nunca um
  * recorte de produto: é estreito e tem fundo transparente, que some ou vira
- * mancha nos painéis e nas respostas que reaproveitam a imagem.
+ * mancha nos painéis e nas respostas que reaproveitam a imagem. Imagem gerada
+ * por IA também fica de fora: os dados descrevem a empresa, e os painéis e as
+ * respostas de IA mostram a imagem sem o aviso que a página exibe.
  */
 export function imagemPrincipal(empresa: Empresa): string {
-  const fotoVitrine = empresa.galeria?.itens.find((item) => item.tipo === "foto");
+  const fotoVitrine = empresa.galeria?.itens.find((item) => item.tipo === "foto" && item.geradaPorIA !== true);
   if (fotoVitrine) return fotoVitrine.src;
   const midia = empresa.midiaTopo;
-  if (midia?.tipo === "foto") return midia.imagem.src;
-  if (!midia && empresa.foto) return empresa.foto.src;
+  if (midia?.tipo === "foto" && midia.imagem.geradaPorIA !== true) return midia.imagem.src;
+  if (!midia && empresa.foto && empresa.foto.geradaPorIA !== true) return empresa.foto.src;
   return empresa.seo.imagem.src;
 }
 
