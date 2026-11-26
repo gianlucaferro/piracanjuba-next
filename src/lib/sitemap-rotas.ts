@@ -40,6 +40,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/claro", changeFrequency: "monthly", priority: 0.5 },
   { path: "/oticas-diego", changeFrequency: "monthly", priority: 0.5 },
   { path: "/kamillamorranna", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/naraienemarquesadv", changeFrequency: "monthly", priority: 0.5 },
   { path: "/estacionamentoaeroporto", changeFrequency: "monthly", priority: 0.5 },
   { path: "/agro-franca", changeFrequency: "monthly", priority: 0.5 },
   { path: "/quiropraxia", changeFrequency: "monthly", priority: 0.5 },

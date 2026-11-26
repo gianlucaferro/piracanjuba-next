@@ -332,6 +332,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
+        caminho: "/naraienemarquesadv",
+        titulo: "Naraiene Marques Advocacia",
+        descricao: "Perfil da advogada Naraiene Cristina Marques (OAB/GO 51.371), com informações sobre sua atuação em Goiás e contato pelo Instagram profissional.",
+      },
+      {
         caminho: "/zap-pba/wennder-trindade-advogado",
         titulo: "Wennder Trindade, advogado em Piracanjuba",
         descricao: "Wennder Trindade e Silva, advogado em Piracanjuba (OAB/GO 51.422). Áreas de atuação em direito de família, sucessões e partilha, consumidor, direito civil e cobranças, criminal e administrativo. Inclui WhatsApp para agendamento e localização.",
