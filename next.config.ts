@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
       { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
       { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
       { source: "/zap-pba/kamilla-morranna", destination: "/kamillamorranna", permanent: true },
+      { source: "/zap-pba/box-87-auto-center", destination: "/box-87-auto-center", permanent: true },
+      { source: "/box87", destination: "/box-87-auto-center", permanent: true },
       { source: "/wennder-trindade-advogado", destination: "/zap-pba/wennder-trindade-advogado", permanent: true },
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
       { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
@@ -50,6 +52,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/marcas-zap/compartilhar/kamilla-morranna.jpg",
       destination: "/empresas/kamillamorranna/compartilhar.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
+      destination: "/empresas/box-87-auto-center/compartilhar.jpg",
     }];
   },
 };

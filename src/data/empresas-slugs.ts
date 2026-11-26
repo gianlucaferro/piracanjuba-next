@@ -22,6 +22,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "naraienemarquesadv",
   "estacionamentoaeroporto",
   "b10-auto-center",
+  "box-87-auto-center",
 ];
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];

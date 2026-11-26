@@ -998,22 +998,6 @@
     "mensagem": "Oi, Marquim! Gostaria de saber quais opções o boteco tem hoje e até que horas vocês atendem."
   },
   {
-    "slug": "box-87-auto-center",
-    "nome": "Box 87 Auto Center",
-    "categoria": "Automotivo",
-    "setor": "Automotivo",
-    "telefones": [
-      "5564992387080"
-    ],
-    "endereco": "R. João Modesto - Norte, Piracanjuba - GO",
-    "mapa": "https://www.google.com/maps?cid=1025576862067934971",
-    "foto": "/marcas-zap/setores/oficina.webp",
-    "resumo": "O Box 87 Auto Center fica na Rua João Modesto, em Piracanjuba. Pelo WhatsApp, você pode explicar o que o veículo precisa e consultar o atendimento antes de ir até lá.",
-    "atividade": "Centro automotivo",
-    "acao": "Consultar atendimento no Box 87",
-    "mensagem": "Olá, Box 87! Quero saber se vocês atendem o meu veículo. Posso informar o modelo, o ano e o serviço que procuro antes de ir à Rua João Modesto?"
-  },
-  {
     "slug": "bruna-talarico-massagem",
     "nome": "Bruna Talarico Massagem",
     "categoria": "Beleza e Estética",
