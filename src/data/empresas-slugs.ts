@@ -21,6 +21,8 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "kamillamorranna",
   "naraienemarquesadv",
   "estacionamentoaeroporto",
+  "b10-auto-center",
+  "box-87-auto-center",
   "master-tech-auto-center",
 ];
 

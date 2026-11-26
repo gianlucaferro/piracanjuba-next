@@ -332,6 +332,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
+        caminho: "/box-87-auto-center",
+        titulo: "Box 87 Auto Center em Piracanjuba",
+        descricao: "Auto center e auto elétrica na Rua João Modesto, 12, Setor Norte. Elétrica e manutenção de carros e caminhonetes, parte elétrica e iluminação de tratores e implementos, horário e WhatsApp para agendar.",
+      },
+      {
         caminho: "/naraienemarquesadv",
         titulo: "Naraiene Marques Advocacia",
         descricao: "Perfil da advogada Naraiene Cristina Marques (OAB/GO 51.371), com informações sobre sua atuação em Goiás e contato pelo Instagram profissional.",
@@ -350,6 +355,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         caminho: "/estacionamentoaeroporto",
         titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
+      },
+      {
+        caminho: "/b10-auto-center",
+        titulo: "B10 Auto Center, oficina mecânica e auto peças em Piracanjuba",
+        descricao: "Oficina mecânica e balcão de auto peças na Rua Prof. Percival Rebelo, no Centro de Piracanjuba. Injeção eletrônica, suspensão, troca de óleo, troca de óleo do câmbio automático (oficina associada da rede Câmbio Automático do Brasil) e engates. Horário de segunda a sexta, das 7h às 18h, WhatsApp de agendamento e de peças e rota até a loja.",
       },
       {
         caminho: "/evadvocacia",

@@ -145,6 +145,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/claro", "/claro"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
     ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
+    ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
     ["/zap-pba/master-tech-auto-center", "/master-tech-auto-center"],
   ]) {
     assert.equal(REDIRECIONAMENTOS_PERMANENTES[origem], destino);
@@ -169,4 +170,11 @@ test("as páginas /transparencia/* que ficaram têm destino definido", () => {
   // Processos judiciais de pessoas nomeadas: alcance pendente de decisão do operador (2026-11-19).
   assert.ok(!NO_SITEMAP.has("/transparencia/processos-publicos"), "/transparencia/processos-publicos não entra no sitemap sem decisão do operador");
   assert.ok("/transparencia/processos-publicos" in ROTAS_FORA_DO_SITEMAP);
+});
+
+test("B10 Auto Center: canônica no sitemap e endereços curtos com 308", () => {
+  assert.ok(PAGINAS.has("/b10-auto-center"));
+  assert.ok(NO_SITEMAP.has("/b10-auto-center"));
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/zap-pba/b10-auto-center"], "/b10-auto-center");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/b10"], "/b10-auto-center");
 });
