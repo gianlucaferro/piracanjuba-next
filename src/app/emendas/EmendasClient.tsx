@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ArrowUpDown, ExternalLink, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import EmendasRanking from "@/components/EmendasRanking";
+import DeputadosFederaisEmendas from "@/components/emendas/DeputadosFederaisEmendas";
+import type { ResultadoPerfisCamara } from "@/lib/camara-deputados";
 import type { Database } from "@/lib/supabase/types";
 
 type Tables = Database["public"]["Tables"];
@@ -14,7 +16,7 @@ function fmtBRL(n: number | string | null | undefined) {
   return Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
+export default function EmendasClient({ emendas, camara }: { emendas: Emenda[]; camara: ResultadoPerfisCamara }) {
   const [search, setSearch] = useState("");
   const [ano, setAno] = useState("todos");
   const [esfera, setEsfera] = useState("todas");
@@ -92,6 +94,8 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
 
       <EmendasRanking emendas={filtered} />
 
+      <DeputadosFederaisEmendas emendas={filtered} camara={camara} />
+
       {ranking.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-3">Detalhamento do ranking</h2>
@@ -125,30 +129,43 @@ export default function EmendasClient({ emendas }: { emendas: Emenda[] }) {
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Emendas ({filtered.length})</h2>
         <div className="space-y-2">
-          {filtered.map((e) => (
-            <article key={e.id} className="stat-card">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">{e.parlamentar_nome}</span>
-                    {e.parlamentar_esfera && ` · ${e.parlamentar_esfera}`}
-                    {e.ano && ` · ${e.ano}`}
-                  </p>
-                  <p className="text-sm text-foreground mt-1">{e.objeto?.slice(0, 280) || "-"}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Empenhado: <span className="text-foreground">{fmtBRL(e.valor_empenhado)}</span>
-                    {" · "}
-                    Pago: <span className="text-foreground">{fmtBRL(e.valor_pago)}</span>
-                  </p>
+          {filtered.map((e) => {
+            const perfil = Object.prototype.hasOwnProperty.call(camara.perfis, e.parlamentar_nome)
+              ? camara.perfis[e.parlamentar_nome]
+              : undefined;
+            return (
+              <article key={e.id} className="stat-card">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">{e.parlamentar_nome}</span>
+                      {e.parlamentar_esfera && ` · ${e.parlamentar_esfera}`}
+                      {e.ano && ` · ${e.ano}`}
+                    </p>
+                    <p className="text-sm text-foreground mt-1">{e.objeto?.slice(0, 280) || "-"}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Empenhado: <span className="text-foreground">{fmtBRL(e.valor_empenhado)}</span>
+                      {" · "}
+                      Pago: <span className="text-foreground">{fmtBRL(e.valor_pago)}</span>
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    {e.fonte_url && (
+                      <a href={e.fonte_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                        Fonte <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                    {perfil && (
+                      <a href={perfil.urlPerfil} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                        Perfil na Câmara<span className="sr-only"> de {perfil.nome} (abre em nova aba)</span>
+                        <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-                {e.fonte_url && (
-                  <a href={e.fonte_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1 shrink-0">
-                    Fonte <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
     </div>
