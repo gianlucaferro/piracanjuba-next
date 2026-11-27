@@ -80,9 +80,12 @@ export default async function PreviaEmpresa({ params }: Props) {
 
         {/* data-nosnippet: a frase de venda não entra na descrição da empresa no Google. */}
         <aside className={css.faixaDono} aria-label="Para o proprietário" data-nosnippet="">
-          <p>É proprietário desta empresa e quer deixar esta página mais profissional e completa, com cara de site?</p>
-          <a href={falarComGianluca} aria-label={`Clique aqui para falar com o Gianluca no WhatsApp sobre a página de ${nome}`}>
-            Clique aqui<ArrowUpRight size={15} aria-hidden="true" />
+          <div>
+            <strong>Essa empresa é sua?</strong>
+            <p>Mostre suas fotos e serviços em uma página com a sua marca no Piracanjuba.ai.</p>
+          </div>
+          <a href={falarComGianluca} aria-label={`Falar pelo WhatsApp com a equipe do Piracanjuba.ai sobre a página de ${nome}`}>
+            Falar pelo WhatsApp<ArrowUpRight size={16} aria-hidden="true" />
           </a>
         </aside>
 
