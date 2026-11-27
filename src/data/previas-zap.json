@@ -109,6 +109,25 @@
     "mensagem": "Olá, ADJC! Gostaria de consultar o recebimento de grãos. Posso informar a cultura, o volume e a data prevista da entrega?"
   },
   {
+    "slug": "adriana-manicure-e-pedicure",
+    "nome": "Adriana Manicure e Pedicure",
+    "categoria": "Beleza e Estética",
+    "setor": "Beleza e Estética",
+    "telefones": [
+      "5564992244654"
+    ],
+    "oferta": [
+      "Manicure",
+      "Pedicure"
+    ],
+    "site": "https://manicureempiracanjuba.com.br/",
+    "foto": "/marcas-zap/setores/manicure.webp",
+    "resumo": "Adriana Lima cuida das unhas das mãos e dos pés no Setor Orquídeas.",
+    "atividade": "Manicure e pedicure",
+    "acao": "Pedir um horário",
+    "mensagem": "Olá, Adriana! Gostaria de consultar um horário para fazer as unhas. Posso te dizer se quero mãos, pés ou os dois?"
+  },
+  {
     "slug": "adryellen-costa",
     "nome": "Adryellen Costa",
     "categoria": "Beleza e Estética",
@@ -173,6 +192,21 @@
     "foto": "/marcas-zap/setores/campo-goiano.webp",
     "acao": "Falar com a Agro Diesel",
     "mensagem": "Olá, Agro Diesel! Gostaria de falar com Dagner ou Luciene sobre o atendimento ao setor agropecuário."
+  },
+  {
+    "slug": "agro-franca",
+    "nome": "Grupo Agro França",
+    "categoria": "Agro",
+    "setor": "Agro",
+    "telefones": [],
+    "oferta": [
+      "Milho",
+      "Soja"
+    ],
+    "instagram": "https://www.instagram.com/grupoagrofranca/",
+    "foto": "/marcas-zap/setores/campo-goiano.webp",
+    "resumo": "O Grupo Agro França produz alimentos em Piracanjuba desde 1977. Cultiva milho e soja, em áreas irrigadas e lavouras de sequeiro, e organiza o Encontro Técnico Agro França.",
+    "atividade": "Produção de grãos"
   },
   {
     "slug": "agro-petiscao",
@@ -655,6 +689,32 @@
     "foto": "/marcas-zap/setores/avicultura.webp",
     "acao": "Falar com Saulo sobre avicultura",
     "mensagem": "Olá, Saulo! Encontrei a Avicultura Canário no guia de Piracanjuba. Posso perguntar sobre os itens disponíveis antes de ir até a Rua Professor Percival Rebelo?"
+  },
+  {
+    "slug": "b10-auto-center",
+    "nome": "B10 Auto Center",
+    "categoria": "Automotivo",
+    "setor": "Automotivo",
+    "telefones": [
+      "5564999500087",
+      "5564999505740"
+    ],
+    "oferta": [
+      "Injeção eletrônica",
+      "Suspensão",
+      "Troca de óleo",
+      "Câmbio automático",
+      "Auto peças"
+    ],
+    "endereco": "R. Prof. Percival Rebelo, Qd. C, Lt. 8 - Centro, Piracanjuba - GO, 75640-092",
+    "mapa": "https://www.google.com/maps?cid=15575707516300427181",
+    "instagram": "https://www.instagram.com/b10autocenter/",
+    "foto": "/marcas-zap/setores/motor.webp",
+    "resumo": "O B10 Auto Center fica na Rua Prof. Percival Rebelo, no Centro de Piracanjuba. Faz injeção eletrônica e diagnóstico, suspensão, troca de óleo e câmbio automático, e tem balcão de peças no mesmo endereço.",
+    "detalhe": "Atende de segunda a sexta, das 7h às 18h. O primeiro número é o do agendamento da oficina; o segundo, o do balcão de peças.",
+    "atividade": "Oficina mecânica e auto peças",
+    "acao": "Agendar um serviço",
+    "mensagem": "Olá, B10 Auto Center! Encontrei a oficina no Piracanjuba.ai e quero agendar um serviço."
   },
   {
     "slug": "baiano-capinador",
@@ -1186,6 +1246,31 @@
     "atividade": "Treinamento físico individual",
     "acao": "Consultar treino com Cida",
     "mensagem": "Oi, Cida! Gostaria de saber como funciona o acompanhamento com personal trainer. Posso contar meu objetivo e consultar locais e horários de atendimento?"
+  },
+  {
+    "slug": "claro",
+    "nome": "Claro",
+    "categoria": "Tecnologia",
+    "setor": "Tecnologia",
+    "telefones": [
+      "5564992834030"
+    ],
+    "oferta": [
+      "Internet",
+      "Telefonia",
+      "TV"
+    ],
+    "endereco": "R. Dom Pedro II, 620 - S. Central, Piracanjuba - GO",
+    "mapa": "https://www.google.com/maps?cid=15981786211909156690",
+    "instagram": "https://www.instagram.com/clarobrasil/",
+    "instagramRede": true,
+    "site": "https://www.claro.com.br/",
+    "siteRede": true,
+    "siteRotulo": "Site da rede",
+    "resumo": "A loja autorizada Claro em Piracanjuba fica na Rua Dom Pedro II, 620. Consulte planos de celular, telefonia residencial, internet por fibra e TV, conforme a disponibilidade para seu endereço.",
+    "atividade": "Telefonia, internet e TV",
+    "acao": "Consultar planos em Piracanjuba",
+    "mensagem": "Olá, Claro Piracanjuba! Gostaria de saber quais planos vocês têm para o serviço que procuro. Como posso consultar opções e disponibilidade no meu bairro?"
   },
   {
     "slug": "cleones-bar",
@@ -3353,6 +3438,26 @@
     "atividade": "Estética facial e corporal",
     "acao": "Consultar avaliação com Kamilla",
     "mensagem": "Olá, Kamilla! Gostaria de consultar uma avaliação na Florescer Estética. Quais horários estão disponíveis na Clínica Rocaliz?"
+  },
+  {
+    "slug": "kamilla-morranna",
+    "nome": "Kamilla Morranna",
+    "categoria": "Advogados",
+    "setor": "Advogados",
+    "telefones": [
+      "5564992291703"
+    ],
+    "oferta": [
+      "Defesa criminal",
+      "Tribunal do Júri",
+      "Direito de Família e Sucessões"
+    ],
+    "instagram": "https://www.instagram.com/kamillamorranna.adv/",
+    "foto": "/marcas-zap/setores/direito.webp",
+    "resumo": "Kamilla Morranna é advogada em Piracanjuba, inscrita na OAB/GO sob o número 55.151. Atua em defesa criminal, prisão em flagrante e audiência de custódia, Tribunal do Júri e direito de família e sucessões.",
+    "atividade": "Advocacia",
+    "acao": "Consultar atendimento jurídico",
+    "mensagem": "Olá, Kamilla! Encontrei seu contato no guia de Piracanjuba. Como posso consultar o atendimento e os horários?"
   },
   {
     "slug": "kamylla-jullya",

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { FICHAS_REBAIXADAS } from "./src/data/empresas-slugs.ts";
 
 const nextConfig: NextConfig = {
   images: {
@@ -15,21 +16,18 @@ const nextConfig: NextConfig = {
     return [
       { source: "/suaempresa", destination: "/anuncie", permanent: false },
       { source: "/zap-pba/ellen-vieira-advocacia", destination: "/evadvocacia", permanent: true },
-      { source: "/zap-pba/claro", destination: "/claro", permanent: true },
-      { source: "/claro-piracanjuba", destination: "/claro", permanent: true },
       { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
       { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
-      { source: "/zap-pba/adriana-manicure-e-pedicure", destination: "/manicure", permanent: true },
-      { source: "/zap-pba/kamilla-morranna", destination: "/kamillamorranna", permanent: true },
       { source: "/zap-pba/box-87-auto-center", destination: "/box-87-auto-center", permanent: true },
       { source: "/box87", destination: "/box-87-auto-center", permanent: true },
       { source: "/wennder-trindade-advogado", destination: "/zap-pba/wennder-trindade-advogado", permanent: true },
       { source: "/drpark", destination: "/estacionamentoaeroporto", permanent: true },
-      { source: "/zap-pba/b10-auto-center", destination: "/b10-auto-center", permanent: true },
-      { source: "/b10", destination: "/b10-auto-center", permanent: true },
       // A Master Tech recusou a landing (2026-11-26): o atalho volta à ficha neutra do guia; a
       // URL curta serve a ficha por rewrite (abaixo). Procedimento em docs/empresa-recusou-landing.md.
       { source: "/mastertech", destination: "/zap-pba/master-tech-auto-center", permanent: true },
+      // Não pagaram a landing (2026-11-26): os atalhos voltam à ficha neutra do guia.
+      { source: "/claro-piracanjuba", destination: "/zap-pba/claro", permanent: true },
+      { source: "/b10", destination: "/zap-pba/b10-auto-center", permanent: true },
       { source: "/zap-pba/smart-especializada", destination: "/smart-especializada", permanent: true },
       { source: "/zap-pba/as-meninas-multimarcas", destination: "/as-meninas-multimarcas", permanent: true },
       { source: "/zap-pba/superfrio-ar-condicionado", destination: "/superfrio-ar-condicionado", permanent: true },
@@ -49,29 +47,19 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return [{
-      // Ficha rebaixada servida na URL curta (200, canonical em /zap-pba/<slug>), sem 308:
-      // quem guardou no navegador o 308 antigo /zap-pba/<slug> -> /<slug> não cai em laço.
-      source: "/master-tech-auto-center",
-      destination: "/zap-pba/master-tech-auto-center",
-    }, {
+    return [
+      // Fichas rebaixadas servidas na URL curta (200, canonical em /zap-pba/<slug>), sem 308:
+      // quem guardou no navegador o 308 antigo /zap-pba/<slug> -> /<curta> não cai em laço.
+      ...FICHAS_REBAIXADAS.map(({ slug, curta }) => ({ source: `/${curta}`, destination: `/zap-pba/${slug}` })),
+    {
       source: "/marcas-zap/compartilhar/ellen-vieira-advocacia.jpg",
       destination: "/empresas/evadvocacia/compartilhar.jpg",
-    }, {
-      source: "/marcas-zap/compartilhar/claro.jpg",
-      destination: "/empresas/claro-piracanjuba/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/oticas-diego.jpg",
       destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
     }, {
       source: "/empresas/oticas-diego/compartilhar.jpg",
       destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
-    }, {
-      source: "/marcas-zap/compartilhar/adriana-manicure-e-pedicure.jpg",
-      destination: "/empresas/manicure/compartilhar.jpg",
-    }, {
-      source: "/marcas-zap/compartilhar/kamilla-morranna.jpg",
-      destination: "/empresas/kamillamorranna/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
       destination: "/empresas/box-87-auto-center/compartilhar.jpg",

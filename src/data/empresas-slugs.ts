@@ -14,16 +14,11 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "pacifico-siqueira-advocacia",
   "evadvocacia",
   "impressao3d",
-  "claro",
   "oticas-diego",
-  "agro-franca",
   "quiropraxia",
-  "manicure",
   "estetica",
-  "kamillamorranna",
   "naraienemarquesadv",
   "estacionamentoaeroporto",
-  "b10-auto-center",
   "box-87-auto-center",
   "smart-especializada",
   "as-meninas-multimarcas",
@@ -33,14 +28,23 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "advogado",
 ];
 
-// Empresas que recusaram a landing de demonstração: a página de marca saiu do ar e ficou
-// só a ficha neutra do guia em /zap-pba/<slug>. A URL curta exata (/master-tech-auto-center)
-// serve a ficha por rewrite no next.config.ts, sem 308, para não criar laço com o 308 antigo
-// /zap-pba/<slug> -> /<slug> guardado no navegador. As outras grafias (/MasterTechAutoCenter)
+// Empresas que não contrataram a landing: a página de marca saiu do ar e ficou só a ficha
+// neutra do guia em /zap-pba/<slug>. `curta` é o endereço da antiga landing na raiz, que pode
+// diferir do slug da ficha (/manicure -> adriana-manicure-e-pedicure). A URL curta exata serve
+// a ficha por rewrite no next.config.ts, sem 308, para não criar laço com o 308 antigo
+// /zap-pba/<slug> -> /<curta> guardado no navegador. As outras grafias (/MasterTechAutoCenter)
 // redirecionam para a ficha. Procedimento em docs/empresa-recusou-landing.md.
-export const SLUGS_FICHAS_REBAIXADAS: readonly string[] = [
-  "master-tech-auto-center", // recusou em 2026-11-26
+export const FICHAS_REBAIXADAS: readonly { slug: string; curta: string }[] = [
+  { slug: "master-tech-auto-center", curta: "master-tech-auto-center" }, // recusou em 2026-11-26
+  // Não pagaram a landing (lista de pagantes do operador em 2026-11-26).
+  { slug: "claro", curta: "claro" },
+  { slug: "agro-franca", curta: "agro-franca" },
+  { slug: "adriana-manicure-e-pedicure", curta: "manicure" },
+  { slug: "kamilla-morranna", curta: "kamillamorranna" },
+  { slug: "b10-auto-center", curta: "b10-auto-center" },
 ];
+
+export const SLUGS_FICHAS_REBAIXADAS: readonly string[] = FICHAS_REBAIXADAS.map(({ slug }) => slug);
 
 export type SlugEmpresa = (typeof SLUGS_EMPRESAS)[number];
 
@@ -73,14 +77,16 @@ export function caminhoCanonicoEmpresa(caminho: string): string | null {
   const partes = caminho.split("/").filter(Boolean);
   if (partes.length !== 1) return null;
   const [segmento] = partes;
-  if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento) || SLUGS_FICHAS_REBAIXADAS.includes(segmento)) return null;
+  // A URL curta exata de uma ficha rebaixada é servida por rewrite, sem redirecionar.
+  if (SLUGS_PAGINAS_EMPRESARIAIS.includes(segmento) || FICHAS_REBAIXADAS.some(({ curta }) => curta === segmento)) return null;
   const normalizado = normalizarSegmento(segmento);
   if (!normalizado) return null;
-  if (normalizado === "claropiracanjuba") return "/claro";
+  if (normalizado === "claropiracanjuba") return "/zap-pba/claro";
   const slug = SLUGS_PAGINAS_EMPRESARIAIS.find((s) => s.replace(/-/g, "") === normalizado);
   if (slug) return `/${slug}`;
-  const rebaixada = SLUGS_FICHAS_REBAIXADAS.find((s) => s.replace(/-/g, "") === normalizado);
-  return rebaixada ? `/zap-pba/${rebaixada}` : null;
+  const rebaixada = FICHAS_REBAIXADAS.find(({ slug: ficha, curta }) =>
+    curta.replace(/-/g, "") === normalizado || ficha.replace(/-/g, "") === normalizado);
+  return rebaixada ? `/zap-pba/${rebaixada.slug}` : null;
 }
 
 /** true quando o caminho é exatamente a página de uma empresa, como "/apareca" ou "/apareca/". */

@@ -12,7 +12,7 @@ import {
   ROTAS_ESTATICAS,
   ROTAS_FORA_DO_SITEMAP,
 } from "../src/lib/sitemap-rotas.ts";
-import { SLUGS_FICHAS_REBAIXADAS, SLUGS_PAGINAS_EMPRESARIAIS } from "../src/data/empresas-slugs.ts";
+import { FICHAS_REBAIXADAS, SLUGS_PAGINAS_EMPRESARIAIS } from "../src/data/empresas-slugs.ts";
 
 const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 const APP = join(RAIZ, "src", "app");
@@ -164,10 +164,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
   const vinculos: Record<string, string> = JSON.parse(readFileSync(join(RAIZ, "src/data/zap-pba-paginas.json"), "utf8"));
   for (const [origem, destino] of [
     ["/zap-pba/ellen-vieira-advocacia", "/evadvocacia"],
-    ["/zap-pba/claro", "/claro"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
-    ["/zap-pba/adriana-manicure-e-pedicure", "/manicure"],
-    ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
     ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],
     ["/zap-pba/smart-especializada", "/smart-especializada"],
@@ -188,23 +185,30 @@ test("empresa que recusou a landing volta à ficha neutra do guia, sem página n
   const vinculos: Record<string, string> = JSON.parse(readFileSync(join(RAIZ, "src/data/zap-pba-paginas.json"), "utf8"));
   const rewrites = await nextConfig.rewrites?.();
   const listaRewrites = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
-  assert.ok(SLUGS_FICHAS_REBAIXADAS.includes("master-tech-auto-center"));
-  for (const slug of SLUGS_FICHAS_REBAIXADAS) {
-    const curta = `/${slug}`;
+  assert.deepEqual(FICHAS_REBAIXADAS.map(({ slug }) => slug).sort(), [
+    "adriana-manicure-e-pedicure", "agro-franca", "b10-auto-center", "claro", "kamilla-morranna", "master-tech-auto-center",
+  ]);
+  const curtasAntigas: Record<string, string> = { claro: "claro-piracanjuba" };
+  for (const { slug, curta: semBarra } of FICHAS_REBAIXADAS) {
+    const curta = `/${semBarra}`;
     const ficha = `/zap-pba/${slug}`;
     // A URL curta serve a ficha por rewrite, nunca por 308: o 308 antigo ficha -> curta pode
     // estar guardado no navegador, e o novo formaria um laço.
     assert.ok(listaRewrites.some(({ source, destination }) => source === curta && destination === ficha), `${curta} deve servir a ficha por rewrite`);
     assert.ok(!(curta in REDIRECIONAMENTOS_PERMANENTES), `${curta} não pode redirecionar`);
     assert.ok(!PAGINAS.has(curta), `${curta} ainda tem page.tsx`);
-    assert.ok(!SLUGS_PAGINAS_EMPRESARIAIS.includes(slug), `${slug} ainda está entre as páginas de empresa`);
+    assert.ok(!SLUGS_PAGINAS_EMPRESARIAIS.includes(semBarra), `${semBarra} ainda está entre as páginas de empresa`);
     assert.ok(!NO_SITEMAP.has(curta), `${curta} ainda está no sitemap`);
-    assert.ok(!existsSync(join(RAIZ, "public", "empresas", slug)), `public/empresas/${slug} ainda existe`);
+    assert.ok(!(ficha in REDIRECIONAMENTOS_PERMANENTES), `${ficha} não pode redirecionar para a antiga landing`);
+    for (const pasta of new Set([slug, semBarra, curtasAntigas[slug]].filter(Boolean))) {
+      assert.ok(!existsSync(join(RAIZ, "public", "empresas", pasta)), `public/empresas/${pasta} ainda existe`);
+    }
     const registro = fichas.find((item) => item.slug === slug);
     assert.ok(registro, `${slug} saiu do catálogo do guia`);
     assert.equal(registro.logo, undefined, `${slug} não pode levar logo`);
     assert.equal(registro.cor, undefined, `${slug} não pode levar a cor da marca`);
-    assert.ok(Object.values(vinculos).includes(ficha), `o guia não aponta para ${ficha}`);
+    // B10 e Agro França nunca tiveram cadastro no diretório do Zap PBA: não há vínculo a apontar.
+    if (!["b10-auto-center", "agro-franca"].includes(slug)) assert.ok(Object.values(vinculos).includes(ficha), `o guia não aponta para ${ficha}`);
     assert.ok(!Object.values(vinculos).includes(curta), `o guia ainda aponta para ${curta}`);
     assert.ok(existsSync(join(RAIZ, "public", "marcas-zap", "compartilhar", `${slug}.jpg`)), `falta o cartão de ${slug}`);
   }
@@ -233,9 +237,8 @@ test("as páginas /transparencia/* que ficaram têm destino definido", () => {
   assert.ok("/transparencia/processos-publicos" in ROTAS_FORA_DO_SITEMAP);
 });
 
-test("B10 Auto Center: canônica no sitemap e endereços curtos com 308", () => {
-  assert.ok(PAGINAS.has("/b10-auto-center"));
-  assert.ok(NO_SITEMAP.has("/b10-auto-center"));
-  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/zap-pba/b10-auto-center"], "/b10-auto-center");
-  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/b10"], "/b10-auto-center");
+test("atalhos das fichas rebaixadas levam à ficha do guia com 308", () => {
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/mastertech"], "/zap-pba/master-tech-auto-center");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/claro-piracanjuba"], "/zap-pba/claro");
+  assert.equal(REDIRECIONAMENTOS_PERMANENTES["/b10"], "/zap-pba/b10-auto-center");
 });

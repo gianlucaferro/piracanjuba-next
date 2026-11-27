@@ -13,7 +13,8 @@ test("cada prévia tem um endereço distinto, WhatsApp brasileiro e identidade p
     assert.match(company.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     assert.ok(!["vitorinoperfumes", "apareca", "aparecaai"].includes(company.slug.replaceAll("-", "")));
     assert.ok(company.nome && company.categoria && company.atividade && company.resumo);
-    assert.ok(company.telefones.length > 0);
+    // Sem telefone público, a ficha precisa de outro canal público (Grupo Agro França: Instagram).
+    assert.ok(company.telefones.length > 0 || company.instagram || company.site, company.nome + " sem canal de contato");
     for (const number of company.telefones) {
       assert.match(number, /^55[1-9]\d(?:9\d{8}|[2-5]\d{7})$/, company.nome);
       assert.ok(!phones.has(number), company.nome + " repete uma linha comercial");

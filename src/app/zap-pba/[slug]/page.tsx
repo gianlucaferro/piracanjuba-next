@@ -52,7 +52,9 @@ export default async function PreviaEmpresa({ params }: Props) {
 
   const { nome, atividade, resumo, detalhe, telefones, foto, fotoAlt, logo } = ficha;
   const { cor, Icone, composicao, pergunta } = estiloDaCategoria(ficha.setor);
-  const contato = linkWhatsapp(telefones[0], ficha.mensagem ?? pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.");
+  // Ficha sem telefone público (ex.: Grupo Agro França, só Instagram): sem bloco de WhatsApp.
+  const temTelefone = telefones.length > 0;
+  const contato = temTelefone ? linkWhatsapp(telefones[0], ficha.mensagem ?? pergunta ?? "Olá! Encontrei seu contato no Piracanjuba.ai e gostaria de mais informações.") : null;
   const urlPublica = "https://piracanjuba.ai/zap-pba/" + slug;
   const personalizar = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de saber como personalizar esta página: ${urlPublica}`);
   const suporte = linkWhatsapp(WHATSAPP_COMERCIAL, `Olá, equipe do Piracanjuba.ai! Sou responsável por ${nome} e gostaria de solicitar um ajuste ou a remoção desta prévia: ${urlPublica}`);
@@ -95,7 +97,7 @@ export default async function PreviaEmpresa({ params }: Props) {
             <h1 className={nome.length > 34 ? css.nomeLongo : undefined}>{nome}</h1>
             <p className={css.resumo}>{resumo}</p>
             <div className={css.acoes}>
-              {semClique ? (
+              {!contato ? null : semClique ? (
                 <p className={css.atalho}><Phone size={16} aria-hidden="true" />WhatsApp {formatarTelefoneBr(telefones[0])}</p>
               ) : (
                 <a className={css.botao} href={contato}>
@@ -148,14 +150,14 @@ export default async function PreviaEmpresa({ params }: Props) {
         <section className={css.contatos} aria-labelledby="contatos">
           <h2 id="contatos">{local ? "Contato e localização" : "Contato"}</h2>
           <dl className={css.grade}>
-            <div className={css.item}>
+            {temTelefone && <div className={css.item}>
               <dt><Phone size={18} aria-hidden="true" />{ficha.contatoRede ? "WhatsApp da rede" : "WhatsApp"}</dt>
               <dd>{telefones.map((numero) => semClique ? (
                 <p key={numero}>{formatarTelefoneBr(numero)}</p>
               ) : (
                 <a key={numero} href={linkWhatsapp(numero)}>{formatarTelefoneBr(numero)}<ArrowUpRight size={15} aria-hidden="true" /></a>
               ))}</dd>
-            </div>
+            </div>}
             {local && <div className={css.item}>
               <dt><MapPin size={18} aria-hidden="true" />{ficha.endereco ? "Endereço" : "Localização"}</dt>
               <dd>

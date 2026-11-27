@@ -25,13 +25,17 @@ const exemplo = {
   endereco: "Av. Principal, 40 - Centro, Piracanjuba - GO, 75640-000",
 };
 
+// Fichas criadas ao rebaixar uma landing de empresa que nunca teve cadastro no diretório do
+// Zap PBA (2026-11-26): não há vínculo a apontar. Procedimento em docs/empresa-recusou-landing.md.
+const SEM_CADASTRO_NO_DIRETORIO = new Set(["agro-franca", "b10-auto-center"]);
+
 test("cada ficha ativa tem vínculo no diretório, canonical e cartão próprios", () => {
   const destinos = new Set(Object.values(vinculos));
   const titulos = new Set();
   for (const ficha of catalogo) {
     const caminho = `/zap-pba/${ficha.slug}`;
     const meta = metadadosFichaZap(ficha);
-    assert.ok(destinos.has(caminho), caminho);
+    if (!SEM_CADASTRO_NO_DIRETORIO.has(ficha.slug)) assert.ok(destinos.has(caminho), caminho);
     assert.equal(meta.alternates.canonical, caminho);
     assert.equal(meta.openGraph.url, `https://piracanjuba.ai${caminho}`);
     assert.equal(meta.openGraph.images[0].url, `/marcas-zap/compartilhar/${ficha.slug}.jpg`);

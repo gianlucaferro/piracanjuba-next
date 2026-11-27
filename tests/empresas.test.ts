@@ -133,25 +133,30 @@ test("endereço digitado com maiúscula, acento ou hífen redireciona para a pá
   assert.equal(caminhoCanonicoEmpresa("/apare%C3%A7a"), "/apareca");
   assert.equal(caminhoCanonicoEmpresa("/Apareça"), "/apareca");
   assert.equal(caminhoCanonicoEmpresa("/EV-Advocacia"), "/evadvocacia");
-  assert.equal(caminhoCanonicoEmpresa("/ClaroPiracanjuba"), "/claro");
-  assert.equal(caminhoCanonicoEmpresa("/Claro"), "/claro");
   assert.equal(caminhoCanonicoEmpresa("/ÓticasDiego"), "/oticas-diego");
   assert.equal(caminhoCanonicoEmpresa("/oticas-diego"), null);
-  assert.equal(caminhoCanonicoEmpresa("/Kamilla-Morranna"), "/kamillamorranna");
-  assert.equal(caminhoCanonicoEmpresa("/kamillamorranna"), null);
   assert.equal(caminhoCanonicoEmpresa("/Box87AutoCenter"), "/box-87-auto-center");
   assert.equal(caminhoCanonicoEmpresa("/box-87-auto-center"), null);
   assert.equal(caminhoCanonicoEmpresa("/Estacionamento-Aeroporto"), "/estacionamentoaeroporto");
   assert.equal(caminhoCanonicoEmpresa("/estacionamentoaeroporto"), null);
-  assert.equal(caminhoCanonicoEmpresa("/B10AutoCenter"), "/b10-auto-center");
-  assert.equal(caminhoCanonicoEmpresa("/b10-auto-center"), null);
   // A Master Tech recusou a landing (2026-11-26): as grafias vão para a ficha do guia; a URL
   // curta exata fica com o rewrite do next.config.ts (sem 308, para não criar laço).
   assert.equal(caminhoCanonicoEmpresa("/MasterTechAutoCenter"), "/zap-pba/master-tech-auto-center");
   assert.equal(caminhoCanonicoEmpresa("/master-tech-auto-center"), null);
   assert.equal(caminhoCanonicoEmpresa("/zap-pba/master-tech-auto-center"), null);
-  assert.equal(caminhoCanonicoEmpresa("/Manicure"), "/manicure");
+  // Não pagaram a landing (2026-11-26): mesma regra. A URL curta pode diferir do slug da ficha.
+  assert.equal(caminhoCanonicoEmpresa("/ClaroPiracanjuba"), "/zap-pba/claro");
+  assert.equal(caminhoCanonicoEmpresa("/Claro"), "/zap-pba/claro");
+  assert.equal(caminhoCanonicoEmpresa("/claro"), null);
+  assert.equal(caminhoCanonicoEmpresa("/Kamilla-Morranna"), "/zap-pba/kamilla-morranna");
+  assert.equal(caminhoCanonicoEmpresa("/kamillamorranna"), null);
+  assert.equal(caminhoCanonicoEmpresa("/B10AutoCenter"), "/zap-pba/b10-auto-center");
+  assert.equal(caminhoCanonicoEmpresa("/b10-auto-center"), null);
+  assert.equal(caminhoCanonicoEmpresa("/Manicure"), "/zap-pba/adriana-manicure-e-pedicure");
   assert.equal(caminhoCanonicoEmpresa("/manicure"), null);
+  assert.equal(caminhoCanonicoEmpresa("/AgroFranca"), "/zap-pba/agro-franca");
+  assert.equal(caminhoCanonicoEmpresa("/agro-franca"), null);
+  assert.equal(caminhoCanonicoEmpresa("/agro"), null);
   assert.equal(caminhoCanonicoEmpresa("/SmartEspecializada"), "/smart-especializada");
   assert.equal(caminhoCanonicoEmpresa("/smart-especializada"), null);
   assert.equal(caminhoCanonicoEmpresa("/AsMeninasMultimarcas"), "/as-meninas-multimarcas");

@@ -302,11 +302,6 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
-        caminho: "/manicure",
-        titulo: "Manicure e pedicure em Piracanjuba | Adriana Lima",
-        descricao: "Adriana Lima atende no bairro Orquídeas, em Piracanjuba. Manicure e pedicure custam R$ 40 cada ou R$ 70 pelos dois serviços. Agendamento pelo WhatsApp (64) 99224-4654.",
-      },
-      {
         caminho: "/estetica",
         titulo: "Essência Estética em Piracanjuba",
         descricao: "Clínica de estética em Piracanjuba. Veja opções de limpeza de pele, massagem e Head Spa, localização e os contatos de cada profissional para agendamento.",
@@ -315,11 +310,6 @@ export const SECOES_LLMS: SecaoLlms[] = [
         caminho: "/quiropraxia",
         titulo: "Quiropraxia em Piracanjuba | Juan Carlos Mesquita de Souza",
         descricao: "Quiropraxia, liberação miofascial e ventosaterapia com Juan na Clínica Essência em Piracanjuba. Possíveis benefícios e limites das técnicas, dúvidas da primeira visita, contato e rotas para quem vem da região.",
-      },
-      {
-        caminho: "/agro-franca",
-        titulo: "Grupo Agro França",
-        descricao: "Produção de milho e soja em Piracanjuba, dados da safra, Encontro Técnico Agro França e contato pelo Instagram do grupo.",
       },
       {
         caminho: "/oticas-diego",
@@ -332,11 +322,6 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Portfólio de Paulo Henrique em Piracanjuba, Goiás. Colecionáveis impressos em 3D, peças multicoloridas em PLA e contato pelo Instagram @lima3dart.",
       },
       {
-        caminho: "/claro",
-        titulo: "Claro Piracanjuba",
-        descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",
-      },
-      {
         caminho: "/viaggi-vistos",
         titulo: "Visto americano em Piracanjuba e região | Viaggi Vistos",
         descricao: "Assessoria da Viaggi Vistos para visto americano em Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas e cidades vizinhas: DS-160, taxa, agendamento, CASV e entrevista no posto escolhido (o recomendado é Brasília, o mais próximo), renovação e Antecipa 45, com atendimento online e contato por WhatsApp.",
@@ -345,11 +330,6 @@ export const SECOES_LLMS: SecaoLlms[] = [
         caminho: "/advogado",
         titulo: "Advogado tributarista em Piracanjuba, Goiânia e região | LHS Advocacia",
         descricao: "Luiz Henrique Souza (OAB/GO 77.247), advogado tributarista com base em Goiânia. Atende Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas, Goiânia e Anápolis em planejamento tributário, execução fiscal, Simples Nacional, recuperação de tributos, ICMS, IPVA, ITCD e Reforma Tributária, com contato por WhatsApp.",
-      },
-      {
-        caminho: "/kamillamorranna",
-        titulo: "Kamilla Morranna, advogada criminalista em Piracanjuba",
-        descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
       },
       {
         caminho: "/box-87-auto-center",
@@ -390,11 +370,6 @@ export const SECOES_LLMS: SecaoLlms[] = [
         caminho: "/estacionamentoaeroporto",
         titulo: "DR Park, estacionamento no Aeroporto de Goiânia",
         descricao: "Estacionamento 24 horas com duas unidades na Alameda Aeroporto, em frente ao Aeroporto Internacional de Goiânia (Santa Genoveva, GYN). Traslado gratuito, vagas cobertas, seguro Porto Seguro, preços da diária e reserva por WhatsApp.",
-      },
-      {
-        caminho: "/b10-auto-center",
-        titulo: "B10 Auto Center, oficina mecânica e auto peças em Piracanjuba",
-        descricao: "Oficina mecânica e balcão de auto peças na Rua Prof. Percival Rebelo, no Centro de Piracanjuba. Injeção eletrônica, suspensão, troca de óleo, troca de óleo do câmbio automático (oficina associada da rede Câmbio Automático do Brasil) e engates. Horário de segunda a sexta, das 7h às 18h, WhatsApp de agendamento e de peças e rota até a loja.",
       },
       {
         caminho: "/evadvocacia",
