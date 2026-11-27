@@ -2,7 +2,7 @@
 .pagina * { box-sizing: border-box; }
 .pagina h1, .pagina h2, .pagina h3, .pagina p { margin: 0; }
 .pagina a { text-decoration: none; }
-.pagina a:focus-visible, .pagina summary:focus-visible { outline: 3px solid #c89943; outline-offset: 4px; }
+.pagina a:focus-visible, .pagina summary:focus-visible { outline: 3px solid #173920; outline-offset: 3px; box-shadow: 0 0 0 7px #fff; }
 .largura { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
 .hero { background: var(--verde-escuro); color: #fff; overflow: hidden; }
 .barraSuperior { display: flex; align-items: center; justify-content: space-between; padding: 25px 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid #ffffff2e; }
@@ -69,7 +69,7 @@
 .artigos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 35px; }
 .artigos a { min-height: 155px; padding: 25px; border: 1px solid #d4ded1; color: #2c3e2d; display: grid; grid-template-columns: 1fr auto; gap: 15px; }
 .artigos a:hover { background: #e8eee4; }
-.artigos a span { grid-column: 1 / -1; color: #60785c; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.artigos a span { grid-column: 1 / -1; color: #475f43; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
 .artigos a strong { font: 22px Georgia, serif; line-height: 1.3; }
 .faq { padding: 100px 0; background: #f1f2ea; }
 .listaFaq { max-width: 900px; margin-top: 40px; border-top: 1px solid #cbd6c6; }
