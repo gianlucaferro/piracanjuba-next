@@ -24,7 +24,8 @@ const idLoja = url + "#loja";
 const idPagina = url + "#pagina";
 const idNavegacao = url + "#navegacao";
 const ativos = "/empresas/as-meninas-multimarcas";
-const instagram = "https://www.instagram.com/asmeninasmultimarcasloja/";
+const perfilInstagram = "asmeninasmultimarcas";
+const instagram = `https://www.instagram.com/${perfilInstagram}/`;
 const mapa = "https://www.google.com/maps?cid=6877083417799502373";
 const coordenadas = { latitude: -17.3051383, longitude: -49.0239433 };
 const rota = `https://www.google.com/maps/dir/?api=1&destination=${coordenadas.latitude},${coordenadas.longitude}`;
@@ -208,7 +209,7 @@ export default function AsMeninasMultimarcas() {
             <h3>Como consultar minha numeração?</h3>
             <p>Envie sua numeração pelo WhatsApp da loja para saber quais modelos e cores estão disponíveis.</p>
             <a href={conversa}><span className={s.canalIcone}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /></span> {formatarTelefoneBr(telefone)}</a>
-            <a href={instagram}><span className={s.canalIcone}><InstagramIcon width={17} height={17} aria-hidden="true" /></span> @asmeninasmultimarcasloja</a>
+            <a href={instagram}><span className={s.canalIcone}><InstagramIcon width={17} height={17} aria-hidden="true" /></span> @{perfilInstagram}</a>
           </div>
         </div>
       </section>
