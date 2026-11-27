@@ -24,8 +24,8 @@
 }
 .pagina h1, .pagina h2, .pagina h3, .pagina p, .pagina ul, .pagina dl, .pagina dd, .pagina figure { margin: 0; }
 .pagina ul { padding: 0; list-style: none; }
-.pagina :is(a, summary):focus-visible { outline: 3px solid var(--laranja); outline-offset: 4px; }
-.pagina section[id] { scroll-margin-top: 5.5rem; }
+.pagina :is(a, summary, h3[tabindex]):focus-visible { outline: 3px solid var(--laranja); outline-offset: 4px; }
+.pagina :is(section, h3)[id] { scroll-margin-top: 5.5rem; }
 .largura { width: min(88%, 1120px); margin-inline: auto; }
 .pagina h2 {
   font-size: clamp(2rem, 3.8vw, 3.1rem);
@@ -95,6 +95,7 @@
   font-size: 1.08rem;
   line-height: 1.65;
 }
+.atalhosServicos { display: none; }
 .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 1.9rem; }
 .botao, .atalho, .botaoBarra { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 9px; font-weight: 700; }
 /* Texto preto sobre o laranja: o branco não passa no contraste mínimo. Cantos chanfrados, como as placas da marca. */
@@ -254,6 +255,27 @@
 @media (max-width: 900px) {
   .capaGrade, .cabecalho, .frentes, .contatoGrade { grid-template-columns: 1fr; }
   .capaGrade { gap: 2.6rem; }
+  .lide { display: none; }
+  .atalhosServicos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; margin-top: 1.25rem; max-width: 29rem; }
+  .atalhosServicos a {
+    display: grid;
+    place-items: center;
+    min-height: 48px;
+    padding: .35rem .25rem;
+    border: 1px solid #55595d;
+    border-radius: 4px;
+    color: var(--gelo);
+    background: var(--chapa);
+    font-size: .95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: underline;
+    text-decoration-color: var(--laranja);
+    text-underline-offset: .2em;
+  }
+  .atalhosServicos a:hover { border-color: var(--laranja); }
+  .acoes { margin-top: 1rem; }
   .fachada { margin-left: 14px; }
   .galeria { grid-template-columns: 1fr 1fr; }
 }
