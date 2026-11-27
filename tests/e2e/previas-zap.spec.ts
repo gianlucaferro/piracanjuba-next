@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { WHATSAPP_COMERCIAL } from "../../src/data/paginaEmpresa";
-import { previas } from "../../src/data/previas-zap";
+import { FICHAS_REBAIXADAS } from "../../src/data/empresas-slugs";
+import { previaPorSlug, previas } from "../../src/data/previas-zap";
+import { formatarTelefoneBr } from "../../src/lib/whatsapp";
 
 test("a prévia encaminha o visitante à empresa e o proprietário ao portal", async ({ page }) => {
   const ficha = previas.find((empresa) => empresa.acao && empresa.mensagem);
@@ -34,31 +36,57 @@ test("a prévia encaminha o visitante à empresa e o proprietário ao portal", a
   expect(oferta.href).not.toBe(suporte.href);
 });
 
-test("ficha rebaixada (empresa que recusou a landing) responde na URL curta sem laço e sem marca", async ({ page, request }, testInfo) => {
-  // Master Tech, 2026-11-26: a URL curta serve a ficha por rewrite (200, canonical na ficha);
-  // atalho e outras grafias fazem 308 para a ficha. Procedimento em docs/empresa-recusou-landing.md.
-  const ficha = "/zap-pba/master-tech-auto-center";
-  const curta = await request.get("/master-tech-auto-center", { maxRedirects: 0 });
-  expect(curta.status()).toBe(200);
-  for (const atalho of ["/mastertech", "/MasterTechAutoCenter"]) {
+test("fichas rebaixadas respondem na URL curta sem laço, sem marca e com o WhatsApp sem link", async ({ page, request }, testInfo) => {
+  // Procedimento em docs/empresa-recusou-landing.md: a URL curta serve a ficha por rewrite (200,
+  // canonical na ficha); atalhos e outras grafias fazem 308 para a ficha.
+  const atalhos: [string, string][] = [
+    ["/mastertech", "master-tech-auto-center"],
+    ["/MasterTechAutoCenter", "master-tech-auto-center"],
+    ["/claro-piracanjuba", "claro"],
+    ["/ClaroPiracanjuba", "claro"],
+    ["/b10", "b10-auto-center"],
+    ["/kamilla-morranna", "kamilla-morranna"],
+    ["/AgroFranca", "agro-franca"],
+  ];
+  for (const [atalho, slug] of atalhos) {
     const resposta = await request.get(atalho, { maxRedirects: 0 });
     expect(resposta.status(), atalho).toBe(308);
-    expect(new URL(resposta.headers()["location"], "http://x").pathname, atalho).toBe(ficha);
+    expect(new URL(resposta.headers()["location"], "http://x").pathname, atalho).toBe("/zap-pba/" + slug);
   }
-  const fichaDireta = await request.get(ficha, { maxRedirects: 0 });
-  expect(fichaDireta.status()).toBe(200);
 
-  await page.goto("/master-tech-auto-center");
-  await expect(page.getByRole("heading", { level: 1, name: "Master Tech Auto Center" })).toBeVisible();
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai" + ficha);
-  await expect(page.locator('img[src*="/empresas/master-tech-auto-center/"], img[src*="/marcas-zap/logos/"]')).toHaveCount(0);
-  // WhatsApp só como número: o atalho de um toque é exclusivo das páginas contratadas.
-  await expect(page.locator('a[href*="wa.me/5564993450101"], a[href^="tel:"]')).toHaveCount(0);
-  await expect(page.getByText("WhatsApp (64) 99345-0101", { exact: true })).toBeVisible();
-  await expect(page.locator("#contatos ~ dl")).toContainText("(64) 99345-0101");
-  await expect(page.locator('meta[name="format-detection"]')).toHaveAttribute("content", /telephone=no/);
-  await expect(page.getByRole("link", { name: /Quero personalizar a página/ })).toHaveAttribute("href", /wa\.me\//);
-  await page.screenshot({ path: `artifacts/master-tech-ficha-${testInfo.project.name}.png`, fullPage: true });
+  for (const { slug, curta } of FICHAS_REBAIXADAS) {
+    const ficha = "/zap-pba/" + slug;
+    const dados = previaPorSlug.get(slug);
+    if (!dados) throw new Error(slug + " saiu do catálogo do guia");
+    for (const caminho of ["/" + curta, ficha]) {
+      const resposta = await request.get(caminho, { maxRedirects: 0 });
+      expect(resposta.status(), caminho).toBe(200);
+    }
+
+    await page.goto("/" + curta);
+    await expect(page.getByRole("heading", { level: 1, name: dados.nome })).toBeVisible();
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai" + ficha);
+    await expect(page.locator(`img[src*="/empresas/${curta}/"], img[src*="/empresas/${slug}/"], img[src*="/marcas-zap/logos/"]`), slug).toHaveCount(0);
+    // WhatsApp só como número: o atalho de um toque é exclusivo das páginas contratadas.
+    await expect(page.locator('a[href^="tel:"]'), slug).toHaveCount(0);
+    for (const numero of dados.telefones) {
+      await expect(page.locator(`a[href*="wa.me/${numero}"]`), slug).toHaveCount(0);
+      await expect(page.locator("#contatos ~ dl"), slug).toContainText(formatarTelefoneBr(numero));
+    }
+    if (dados.telefones.length > 0) {
+      await expect(page.getByText("WhatsApp " + formatarTelefoneBr(dados.telefones[0]), { exact: true })).toBeVisible();
+    }
+    await expect(page.locator('meta[name="format-detection"]')).toHaveAttribute("content", /telephone=no/);
+    await expect(page.getByRole("link", { name: /Quero personalizar a página/ })).toHaveAttribute("href", /wa\.me\//);
+    if (slug === "master-tech-auto-center" || slug === "agro-franca") {
+      await page.screenshot({ path: `artifacts/${slug}-ficha-${testInfo.project.name}.png`, fullPage: true });
+    }
+  }
+
+  // Ficha sem telefone público (Grupo Agro França): sem bloco de WhatsApp, com o Instagram.
+  await page.goto("/agro-franca");
+  await expect(page.locator("#contatos ~ dl")).not.toContainText("WhatsApp");
+  await expect(page.locator('#contatos ~ dl a[href="https://www.instagram.com/grupoagrofranca/"]')).toBeVisible();
 });
 
 test("ficha comum do guia continua com o WhatsApp clicável", async ({ page }) => {
