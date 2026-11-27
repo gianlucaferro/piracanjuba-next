@@ -10,7 +10,7 @@ import { linkWhatsapp } from "@/lib/whatsapp";
 import s from "./pagina.module.css";
 
 const display = localFont({
-  src: "../agro-franca/fontes/barlow-condensed-bold.woff2",
+  src: "./fontes/barlow-condensed-bold.woff2",
   weight: "700",
   display: "swap",
   variable: "--lima-display",
@@ -44,7 +44,7 @@ const dados = {
   "@graph": [
     { "@type": "CollectionPage", "@id": url, url, name: titulo, description: descricao, inLanguage: "pt-BR",
       isPartOf: { "@id": SCHEMA_IDS.site }, publisher: { "@id": SCHEMA_IDS.org },
-      about: { "@id": url + "#criador" }, primaryImageOfPage: SITE_URL + fotoImpressora },
+      about: { "@id": url + "#criador" }, primaryImageOfPage: { "@type": "ImageObject", url: SITE_URL + fotoImpressora, width: 1600, height: 1067 } },
     { "@type": "Person", "@id": url + "#criador", name: "Paulo Henrique", alternateName: "Lima 3D Art",
       sameAs: [instagram], workLocation: { "@type": "Place", name: "Piracanjuba, Goiás" } },
   ],
@@ -59,14 +59,14 @@ export default function Lima3DArt() {
       <header className={s.cabecalho}>
         <div className={`${s.largura} ${s.barra}`}>
           <span className={s.marca}>Lima <span>3D</span> Art</span>
-          <a href="#projetos" className={s.menu}>Projetos <ArrowDown size={15} /></a>
+          <a href="#projetos" className={s.menu}>Projetos <ArrowDown size={15} aria-hidden="true" /></a>
         </div>
         <div className={`${s.largura} ${s.hero}`}>
           <div className={s.intro}>
             <p className={s.local}><MapPin size={16} aria-hidden="true" /> Piracanjuba, Goiás</p>
             <h1 id="lima-titulo">Impressão 3D <span>em Piracanjuba</span></h1>
             <p className={s.resumo}>Paulo Henrique imprime em camadas os personagens que você conhece das telas. Explore os colecionáveis e veja de perto as cores e os detalhes de cada peça.</p>
-            <a className={s.botao} href={instagram}><InstagramIcon width={20} height={20} /> Conhecer o Instagram <ArrowUpRight size={17} /></a>
+            <a className={s.botao} href={instagram}><InstagramIcon width={20} height={20} /> Conhecer o Instagram <ArrowUpRight size={17} aria-hidden="true" /></a>
           </div>
           <div className={s.quadro}>
             <Image src={fotoImpressora} alt="Cabeçote de impressora 3D e filamento laranja sobre a mesa de impressão" fill preload sizes="(max-width: 720px) 94vw, (max-width: 1200px) 42vw, 480px" />
@@ -80,18 +80,20 @@ export default function Lima3DArt() {
         </div>
         <div className={s.grade}>
           {projetos.map(({ nome, detalhe, post }) => (
-            <a href={instagram + "p/" + post + "/"} key={post} className={s.projeto} aria-label={"Ver peça no Instagram: " + nome}>
+            <article key={post} className={s.projeto}>
               <h3>{nome}</h3>
               <p>{detalhe}</p>
-              <span className={s.verProjeto}>Ver peça no Instagram <ArrowUpRight size={17} aria-hidden="true" /></span>
-            </a>
+              <a href={instagram + "p/" + post + "/"} className={s.verProjeto}>
+                Ver peça no Instagram<span className="sr-only">, {nome}</span><ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+            </article>
           ))}
         </div>
       </section>
       <section className={s.contato} aria-labelledby="lima-contato">
         <div className={`${s.largura} ${s.contatoDentro}`}>
           <div><h2 id="lima-contato">Gostou de uma peça?</h2><p>Envie a publicação por mensagem para Paulo no Instagram e consulte a disponibilidade.</p></div>
-          <a href={instagram} className={s.botaoEscuro}><InstagramIcon width={20} height={20} /> @lima3dart <ArrowUpRight size={17} /></a>
+          <a href={instagram} className={s.botaoEscuro}><InstagramIcon width={20} height={20} /> @lima3dart <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </section>
       <div className={`${s.largura} ${s.rodape}`}>
