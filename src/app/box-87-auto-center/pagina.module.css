@@ -187,7 +187,7 @@
 
 /* Na oficina */
 .oficina { padding-bottom: clamp(3.2rem, 7vw, 5.6rem); }
-.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(.9rem, 2vw, 1.4rem); margin-top: clamp(1.5rem, 3vw, 2.2rem); }
+.oficina .galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(.9rem, 2vw, 1.4rem); margin-top: clamp(1.5rem, 3vw, 2.2rem); }
 .galeria li:first-child { grid-row: span 2; }
 .galeria img { display: block; width: 100%; height: auto; border-radius: 4px; }
 .galeria figcaption { margin-top: .7rem; color: var(--texto-suave); font-size: .9rem; line-height: 1.4; }
