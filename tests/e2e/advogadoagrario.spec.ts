@@ -19,6 +19,7 @@ test("página agrária informa a atuação, contato e cidades sem criar sedes", 
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   const imagem = await page.locator('meta[property="og:image"]').getAttribute("content");
   expect(imagem).toContain("/advogadoagrario/opengraph-image");
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute("content", /\/advogadoagrario\/opengraph-image/);
   const respostaImagem = await page.request.get(new URL(imagem!).pathname);
   expect(respostaImagem.ok()).toBeTruthy();
   expect(respostaImagem.headers()["content-type"]).toContain("image/png");
