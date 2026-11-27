@@ -65,7 +65,8 @@ const gruposServicos = [
     foto: "/scanner-automotivo.webp", largura: 1280, altura: 960,
     alt: "Scanner automotivo em frente ao volante, com os dados do diagnóstico na tela",
     servicos: [
-      "Diagnóstico e revisão elétrica e eletrônica de carros e caminhões (linhas leve e pesada)",
+      "revisão e manutenção total em elétrica linha leve e pesada",
+      "Diagnóstico elétrico e eletrônico de carros e caminhões",
       "Teste de bateria e diagnóstico do alternador e do motor de partida",
       "Manutenção de vidros elétricos",
       "Instalação de kits de lâmpadas LED nos faróis",
