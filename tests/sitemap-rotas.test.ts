@@ -166,6 +166,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
     ["/zap-pba/ellen-vieira-advocacia", "/evadvocacia"],
     ["/zap-pba/claro", "/claro"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
+    ["/zap-pba/adriana-manicure-e-pedicure", "/manicure"],
     ["/zap-pba/kamilla-morranna", "/kamillamorranna"],
     ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],

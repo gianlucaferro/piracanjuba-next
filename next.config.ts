@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
       { source: "/claro-piracanjuba", destination: "/claro", permanent: true },
       { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
       { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
+      { source: "/zap-pba/adriana-manicure-e-pedicure", destination: "/manicure", permanent: true },
       { source: "/zap-pba/kamilla-morranna", destination: "/kamillamorranna", permanent: true },
       { source: "/zap-pba/box-87-auto-center", destination: "/box-87-auto-center", permanent: true },
       { source: "/box87", destination: "/box-87-auto-center", permanent: true },
@@ -63,6 +64,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/empresas/oticas-diego/compartilhar.jpg",
       destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/adriana-manicure-e-pedicure.jpg",
+      destination: "/empresas/manicure/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/kamilla-morranna.jpg",
       destination: "/empresas/kamillamorranna/compartilhar.jpg",

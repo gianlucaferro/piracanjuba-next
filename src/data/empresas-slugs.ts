@@ -17,6 +17,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "oticas-diego",
   "agro-franca",
   "quiropraxia",
+  "manicure",
   "estetica",
   "kamillamorranna",
   "naraienemarquesadv",
