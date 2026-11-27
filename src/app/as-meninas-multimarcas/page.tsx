@@ -24,7 +24,10 @@ const idLoja = url + "#loja";
 const idPagina = url + "#pagina";
 const idNavegacao = url + "#navegacao";
 const ativos = "/empresas/as-meninas-multimarcas";
-const instagram = "https://www.instagram.com/asmeninasmultimarcasloja/";
+const perfisInstagram = ["asmeninasmultimarcas", "asmeninasmultimarcasloja"].map(perfil => ({
+  nome: "@" + perfil,
+  url: `https://www.instagram.com/${perfil}/`,
+}));
 const mapa = "https://www.google.com/maps?cid=6877083417799502373";
 const coordenadas = { latitude: -17.3051383, longitude: -49.0239433 };
 const rota = `https://www.google.com/maps/dir/?api=1&destination=${coordenadas.latitude},${coordenadas.longitude}`;
@@ -86,7 +89,7 @@ const dados = {
     },
     {
       "@type": "ShoeStore", "@id": idLoja, mainEntityOfPage: { "@id": idPagina }, name: nome, alternateName: "As Meninas Outlet", url,
-      description: descricao, telephone: "+" + telefone, sameAs: [instagram], hasMap: mapa,
+      description: descricao, telephone: "+" + telefone, sameAs: perfisInstagram.map(perfil => perfil.url), hasMap: mapa,
       logo: `${site}${ativos}/logo.webp`, image: `${site}${ativos}/proprietaria.webp`,
       address: { "@type": "PostalAddress", streetAddress: rua, addressLocality: "Piracanjuba", addressRegion: "GO", postalCode: "75640-122", addressCountry: "BR" },
       geo: { "@type": "GeoCoordinates", ...coordenadas },
@@ -114,7 +117,7 @@ export default function AsMeninasMultimarcas() {
           <nav aria-label="Navegação da loja" className={s.nav}>
             <a href="#acessorios">Vitrine</a>
             <a href="#visite">Visite a loja</a>
-            <a href={instagram} className={s.rede}><InstagramIcon width={16} height={16} aria-hidden="true" /> Instagram</a>
+            <a href="#perfis-instagram" className={s.rede}><InstagramIcon width={16} height={16} aria-hidden="true" /> Instagram</a>
             <a href={conversa} className={s.navZap}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> WhatsApp</a>
           </nav>
         </div>
@@ -208,7 +211,15 @@ export default function AsMeninasMultimarcas() {
             <h3>Como consultar minha numeração?</h3>
             <p>Envie sua numeração pelo WhatsApp da loja para saber quais modelos e cores estão disponíveis.</p>
             <a href={conversa}><span className={s.canalIcone}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /></span> {formatarTelefoneBr(telefone)}</a>
-            <a href={instagram}><span className={s.canalIcone}><InstagramIcon width={17} height={17} aria-hidden="true" /></span> @asmeninasmultimarcasloja</a>
+            <section id="perfis-instagram" aria-labelledby="meninas-instagram" className={s.perfisInstagram}>
+              <h3 id="meninas-instagram">Perfis da loja no Instagram</h3>
+              {perfisInstagram.map(perfil => (
+                <a key={perfil.url} href={perfil.url}>
+                  <span className={s.canalIcone}><InstagramIcon width={17} height={17} aria-hidden="true" /></span>
+                  {perfil.nome}
+                </a>
+              ))}
+            </section>
           </div>
         </div>
       </section>

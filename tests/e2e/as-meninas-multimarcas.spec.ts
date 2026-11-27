@@ -16,6 +16,15 @@ test("a página da As Meninas mostra a loja, os contatos e cabe na tela", async 
   }
   await expect(artigo.getByRole("heading", { name: "A loja abre aos sábados?", level: 3 })).toBeVisible();
   await expect(artigo.getByRole("link", { name: "Ver loja no mapa" })).toHaveAttribute("href", "https://www.google.com/maps?cid=6877083417799502373");
+  await artigo.getByRole("link", { name: "Instagram", exact: true }).click();
+  await expect(page).toHaveURL(destino + "#perfis-instagram");
+  const perfis = artigo.getByRole("region", { name: /instagram/i });
+  await expect(perfis).toBeInViewport();
+  for (const perfil of ["asmeninasmultimarcas", "asmeninasmultimarcasloja"]) {
+    const link = perfis.getByRole("link", { name: "@" + perfil, exact: true });
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("href", `https://www.instagram.com/${perfil}/`);
+  }
   const sobra = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(sobra).toBeLessThanOrEqual(0);
 });
