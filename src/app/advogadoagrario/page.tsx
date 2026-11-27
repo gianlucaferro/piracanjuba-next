@@ -53,7 +53,7 @@ export default function AdvogadoAgrario() {
       <header className={s.hero}>
         <div className={s.largura}>
           <div className={s.barraSuperior}>
-            <nav aria-label="Navegação estrutural"><Link href="/">Início</Link> / <Link href="/zap-pba">Guia Zap PBA</Link> / <span aria-current="page">Paulo de Tarso Advocacia</span></nav>
+            <nav aria-label="Navegação estrutural"><Link href="/">Início</Link> <span aria-hidden="true">/</span> <Link href="/zap-pba">Guia Zap PBA</Link> <span aria-hidden="true">/</span> <span aria-current="page">{nome}</span></nav>
             <span>{oab}</span>
           </div>
           <div className={s.heroGrid}>

@@ -9,11 +9,10 @@ test("página agrária informa a atuação, contato e cidades sem criar sedes", 
   await artigo.getByRole("img", { name: "Paulo de Tarso Giolo Filho" }).scrollIntoViewIfNeeded();
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai/advogadoagrario");
   await expect(artigo.getByRole("link", { name: "Falar com o escritório" }).first()).toHaveAttribute("href", /^https:\/\/wa\.me\/5562992728816\?text=/);
-  for (const cidade of ["Piracanjuba", "Professor Jamil", "Goiânia", "Morrinhos", "Caldas Novas"]) {
-    await expect(artigo.locator("li").filter({ hasText: cidade })).toBeVisible();
+  const cidades = artigo.locator("#cidades li");
+  for (const texto of ["Piracanjuba Sede presencial", "Professor Jamil A distância", "Goiânia Presencial com agendamento", "Morrinhos A distância", "Caldas Novas A distância"]) {
+    await expect(cidades.filter({ hasText: texto })).toHaveText(texto);
   }
-  await expect(artigo.locator("li").filter({ hasText: "Piracanjuba" })).toHaveText("Piracanjuba Sede presencial");
-  await expect(artigo.locator("li").filter({ hasText: "Goiânia" })).toHaveText("Goiânia Presencial com agendamento");
   await expect(artigo.getByRole("link", { name: "(62) 99272-8816", exact: true })).toHaveAttribute("href", "tel:+5562992728816");
   await expect(artigo.getByText(/Rua Dom Pedro II, 942, Centro/).first()).toBeVisible();
   const dados = await page.locator('script[type="application/ld+json"]').evaluateAll((nos) => nos.flatMap((no) => JSON.parse(no.textContent ?? "{}")["@graph"] ?? []));
