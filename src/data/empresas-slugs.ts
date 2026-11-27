@@ -13,6 +13,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   ...SLUGS_EMPRESAS,
   "pacifico-siqueira-advocacia",
   "evadvocacia",
+  "impressao3d",
   "claro",
   "oticas-diego",
   "agro-franca",

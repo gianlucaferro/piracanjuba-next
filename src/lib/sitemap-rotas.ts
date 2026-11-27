@@ -37,6 +37,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/horarios-onibus", changeFrequency: "daily", priority: 0.7 },
   { path: "/pacifico-siqueira-advocacia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/evadvocacia", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/impressao3d", changeFrequency: "monthly", priority: 0.5 },
   { path: "/claro", changeFrequency: "monthly", priority: 0.5 },
   { path: "/oticas-diego", changeFrequency: "monthly", priority: 0.5 },
   { path: "/kamillamorranna", changeFrequency: "monthly", priority: 0.5 },
