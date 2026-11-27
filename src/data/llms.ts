@@ -334,7 +334,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/advogado",
         titulo: "Advogado tributarista em Piracanjuba, Goiânia e região | LHS Advocacia",
-        descricao: "Luiz Henrique Souza (OAB/GO 77.247), advogado tributarista com base em Goiânia. Atende Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas, Goiânia e Anápolis em planejamento tributário, execução fiscal, Simples Nacional, recuperação de tributos, ICMS, IPVA, ITCD e Reforma Tributária, com contato por WhatsApp.",
+        descricao: "Luiz Henrique de Souza (OAB/GO 77.247), advogado tributarista com base em Goiânia. Atende Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas, Goiânia e Anápolis em planejamento tributário, execução fiscal, Simples Nacional, recuperação de tributos, ICMS, IPVA, ITCD e Reforma Tributária, com contato por WhatsApp.",
       },
       {
         caminho: "/box-87-auto-center",

@@ -8,7 +8,7 @@ test("a página do LHS Advocacia mostra o advogado, as cidades, as perguntas e c
   await expect(artigo.getByRole("heading", { name: "Advogado tributarista em Piracanjuba, Goiânia e região", level: 1 })).toBeVisible();
   await expect(page).toHaveTitle("Advogado Tributarista em Piracanjuba e Goiânia | LHS");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://piracanjuba.ai" + destino);
-  await expect(artigo.getByRole("img", { name: /Retrato do advogado Luiz Henrique Souza/ })).toBeVisible();
+  await expect(artigo.getByRole("img", { name: /Retrato do advogado Luiz Henrique de Souza/ })).toBeVisible();
   await expect(artigo.getByRole("link", { name: "Falar com o Dr. Luiz" }).first()).toHaveAttribute("href", /^https:\/\/wa\.me\/5562993117614\?text=/);
   for (const cidade of ["Piracanjuba", "Professor Jamil", "Morrinhos", "Caldas Novas", "Goiânia", "Anápolis"]) {
     await expect(artigo.getByRole("heading", { name: `Advogado tributarista em ${cidade}`, level: 3 })).toBeVisible();
