@@ -27,6 +27,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "hotel",
   "viaggi-vistos",
   "advogado",
+  "advogadoagrario",
 ];
 
 // Empresas que não contrataram a landing: a página de marca saiu do ar e ficou só a ficha

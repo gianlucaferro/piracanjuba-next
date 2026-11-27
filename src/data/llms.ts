@@ -337,6 +337,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Luiz Henrique de Souza (OAB/GO 77.247), advogado tributarista com base em Goiânia. Atende Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas, Goiânia e Anápolis em planejamento tributário, execução fiscal, Simples Nacional, recuperação de tributos, ICMS, IPVA, ITCD e Reforma Tributária, com contato por WhatsApp.",
       },
       {
+        caminho: "/advogadoagrario",
+        titulo: "Advogado agrário em Piracanjuba e região | Paulo de Tarso Advocacia",
+        descricao: "Paulo de Tarso Giolo Filho (OAB/GO 44.630), advogado com escritório em Piracanjuba, atende demandas de Direito Agrário em Piracanjuba, Professor Jamil, Goiânia, Morrinhos, Caldas Novas e região.",
+      },
+      {
         caminho: "/box-87-auto-center",
         titulo: "Box 87 Auto Center em Piracanjuba",
         descricao: "Oficina mecânica e auto elétrica na Rua João Modesto, 12, Setor Norte. Faz revisões, motor, freios e suspensão de carros, atende a elétrica de carros e caminhões e oferece diagnóstico eletrônico e recuperação de chicotes, placas, módulos e sensores de máquinas agrícolas.",

@@ -44,6 +44,7 @@ export const ROTAS_ESTATICAS: readonly RotaSitemap[] = [
   { path: "/estacionamentoaeroporto", changeFrequency: "monthly", priority: 0.5 },
   { path: "/viaggi-vistos", changeFrequency: "monthly", priority: 0.5 },
   { path: "/advogado", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/advogadoagrario", changeFrequency: "monthly", priority: 0.6 },
   { path: "/quiropraxia", changeFrequency: "monthly", priority: 0.5 },
   { path: "/manicure", changeFrequency: "monthly", priority: 0.5 },
   { path: "/estetica", changeFrequency: "monthly", priority: 0.5 },
