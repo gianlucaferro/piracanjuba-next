@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Saira } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Car, Clock, MapPin, Navigation, Tractor, Zap } from "lucide-react";
 import BarraWhatsappEmpresa from "@/components/empresas/BarraWhatsappEmpresa";
@@ -10,13 +10,11 @@ import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { formatarTelefoneBr, linkWhatsapp } from "@/lib/whatsapp";
 import s from "./pagina.module.css";
 
-// O "87" do logo tem cantos quadrados e arredondados, de placa de corrida; a Saira segue esse
-// desenho. O eixo de largura (wdth) dá os títulos estreitos sem carregar outra família.
-const tipografia = Saira({
-  subsets: ["latin"],
-  axes: ["wdth"],
-  // Só a face normal: o itálico dobrava o preload (cerca de 215 KB). O h1 usa o oblíquo sintetizado.
-  style: ["normal"],
+// Saira latina local, com todos os pesos e o intervalo de larguras usado pela oficina.
+const sairaBox87 = localFont({
+  src: "./fontes/saira-latin.woff2",
+  weight: "100 900",
+  declarations: [{ prop: "font-stretch", value: "75% 100%" }],
   display: "swap",
   variable: "--box-fonte",
 });
@@ -193,7 +191,7 @@ function Faixa() {
 
 export default function Box87AutoCenter() {
   return (
-    <article className={tipografia.variable + " " + s.pagina}>
+    <article className={sairaBox87.variable + " " + s.pagina}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(esquema).replace(/</g, "\\u003c") }} />
 
       <header className={s.capa}>
