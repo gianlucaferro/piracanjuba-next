@@ -302,6 +302,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Diretório de empresas e prestadores de serviços de Piracanjuba por categoria, com WhatsApp e páginas sobre a atividade de cada negócio. Endereços e perfis sociais aparecem quando disponíveis.",
       },
       {
+        caminho: "/manicure",
+        titulo: "Manicure e pedicure em Piracanjuba | Adriana Lima",
+        descricao: "Adriana Lima atende no bairro Orquídeas, em Piracanjuba. Manicure e pedicure custam R$ 40 cada ou R$ 70 pelos dois serviços. Agendamento pelo WhatsApp (64) 99224-4654.",
+      },
+      {
         caminho: "/estetica",
         titulo: "Essência Estética em Piracanjuba",
         descricao: "Clínica de estética em Piracanjuba. Veja opções de limpeza de pele, massagem e Head Spa, localização e os contatos de cada profissional para agendamento.",

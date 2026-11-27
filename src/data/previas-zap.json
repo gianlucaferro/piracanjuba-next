@@ -109,27 +109,6 @@
     "mensagem": "Olá, ADJC! Gostaria de consultar o recebimento de grãos. Posso informar a cultura, o volume e a data prevista da entrega?"
   },
   {
-    "slug": "adriana-manicure-e-pedicure",
-    "nome": "Adriana Manicure e Pedicure",
-    "categoria": "Beleza e Estética",
-    "setor": "Beleza e Estética",
-    "telefones": [
-      "5564992244654"
-    ],
-    "oferta": [
-      "Manicure",
-      "Pedicure"
-    ],
-    "site": "https://manicureempiracanjuba.com.br/",
-    "logo": "/marcas-zap/logos/33c1ca45ea4d4b61.webp",
-    "cor": "#4f1934",
-    "foto": "/marcas-zap/setores/manicure.webp",
-    "resumo": "Adriana Lima cuida das unhas das mãos e dos pés no Setor Orquídeas.",
-    "atividade": "Manicure e pedicure",
-    "acao": "Pedir um horário",
-    "mensagem": "Olá, Adriana! Gostaria de consultar um horário para fazer as unhas. Posso te dizer se quero mãos, pés ou os dois?"
-  },
-  {
     "slug": "adryellen-costa",
     "nome": "Adryellen Costa",
     "categoria": "Beleza e Estética",
