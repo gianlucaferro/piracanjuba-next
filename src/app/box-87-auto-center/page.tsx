@@ -27,6 +27,7 @@ const portal = "https://piracanjuba.ai";
 const caminho = "/box-87-auto-center";
 const url = portal + caminho;
 const imagens = "/empresas/box-87-auto-center";
+const tamanhosFachada = "(max-width: 700px) 89.5vw, (max-width: 900px) 88vw, 470px";
 const nome = "Box 87 Auto Center";
 const telefone = "5564992387080";
 const instagram = "https://www.instagram.com/box87.autocenter/";
@@ -44,7 +45,7 @@ const horarios = [
 
 const gruposServicos = [
   {
-    titulo: "Mecânica de carros",
+    id: "mecanica", titulo: "Mecânica de carros",
     icone: Car,
     foto: "/farois-led.webp", largura: 720, altura: 540,
     alt: "Carro de capô aberto com os faróis de LED acesos na oficina",
@@ -60,7 +61,7 @@ const gruposServicos = [
     contato: whatsapp, chamada: "Agendar revisão do carro",
   },
   {
-    titulo: "Auto elétrica",
+    id: "auto-eletrica", titulo: "Auto elétrica",
     icone: Zap,
     foto: "/scanner-automotivo.webp", largura: 1280, altura: 960,
     alt: "Scanner automotivo em frente ao volante, com os dados do diagnóstico na tela",
@@ -76,7 +77,7 @@ const gruposServicos = [
     contato: whatsapp, chamada: "Consultar a auto elétrica",
   },
   {
-    titulo: "Máquinas agrícolas",
+    id: "maquinas-agricolas", titulo: "Máquinas agrícolas",
     icone: Tractor,
     foto: "/colheitadeira-no-campo.webp", largura: 1440, altura: 960,
     alt: "Colheitadeira verde ao lado do veículo do Box 87 na lavoura",
@@ -205,9 +206,12 @@ export default function Box87AutoCenter() {
             <div className={s.apresentacao}>
               {/* SVG vetorizado a partir do logo melhorado: nítido em qualquer tela, sem fundo. */}
               <Image src={imagens + "/box87-logo.svg"} width={1459} height={510} alt="BOX 87 Auto Center e Manutenção em Máquinas Agrícolas"
-                className={s.logo} loading="eager" unoptimized />
+                className={s.logo} loading="eager" fetchPriority="high" unoptimized />
               <h1>Oficina mecânica e auto elétrica em Piracanjuba</h1>
               <p className={s.lide}>O Box 87 faz revisões e reparos mecânicos em carros, atende a parte elétrica de carros e caminhões e cuida da eletrônica de máquinas agrícolas.</p>
+              <nav className={s.atalhosServicos} aria-label="Especialidades da oficina">
+                {gruposServicos.map(({ id, titulo }) => <a key={id} href={`#${id}`}>{titulo}</a>)}
+              </nav>
               <div className={s.acoes}>
                 <a id={ID_BOTAO_TOPO} href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Agendar pelo WhatsApp</a>
                 <a href={mapa} className={s.atalho}><Navigation size={16} aria-hidden="true" /> Como chegar</a>
@@ -215,9 +219,13 @@ export default function Box87AutoCenter() {
               <p className={s.expediente}><Clock size={16} aria-hidden="true" /> Segunda a sexta, das 7h às 18h. Sábado, das 7h às 12h.</p>
             </div>
             <figure className={s.fachada}>
-              <Image src={imagens + "/fachada-box87.webp"} width={560} height={600}
-                alt="Fachada com o letreiro laranja e prata do Box 87 e uma caminhonete na entrada da oficina"
-                loading="eager" fetchPriority="high" sizes="(max-width: 900px) 89vw, 470px" />
+              <picture>
+                <source type="image/avif" sizes={tamanhosFachada}
+                  srcSet={`${imagens}/fachada-box87-400.avif 400w, ${imagens}/fachada-box87.avif 560w`} />
+                <Image src={imagens + "/fachada-box87.webp"} width={560} height={600}
+                  alt="Fachada com o letreiro laranja e prata do Box 87 e uma caminhonete na entrada da oficina"
+                  loading="eager" fetchPriority="high" sizes={tamanhosFachada} />
+              </picture>
               <figcaption><MapPin size={14} aria-hidden="true" /> {endereco}</figcaption>
             </figure>
           </div>
@@ -233,13 +241,13 @@ export default function Box87AutoCenter() {
             <p>A equipe explica o diagnóstico e o orçamento. Você pode acompanhar a avaliação e conferir as peças substituídas na retirada do veículo.</p>
           </div>
           <div className={s.frentes}>
-            {gruposServicos.map(({ titulo, icone: Icone, foto, largura, altura, alt, servicos, contato, chamada }) => (
-              <section key={titulo} aria-label={titulo} className={s.frente}>
+            {gruposServicos.map(({ id, titulo, icone: Icone, foto, largura, altura, alt, servicos, contato, chamada }) => (
+              <section key={id} aria-labelledby={id} className={s.frente}>
                 <div className={s.frenteFoto}>
                   <Image src={imagens + foto} width={largura} height={altura} alt={alt}
                     sizes="(max-width: 900px) 89vw, (max-width: 1260px) 29vw, 340px" />
                 </div>
-                <h3><Icone size={26} strokeWidth={1.8} aria-hidden="true" /> {titulo}</h3>
+                <h3 id={id} tabIndex={-1}><Icone size={26} strokeWidth={1.8} aria-hidden="true" /> {titulo}</h3>
                 <ul className={s.lista}>
                   {servicos.map((servico) => <li key={servico}>{servico}</li>)}
                 </ul>
