@@ -146,7 +146,7 @@ const titulo = "Advogado Tributarista em Piracanjuba e Goiânia | LHS";
 const descricao = `${advogado} (${oab}), advogado tributarista para Piracanjuba, Goiânia, Morrinhos, Professor Jamil, Caldas Novas e Anápolis. Fale pelo WhatsApp.`;
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
-  alt: "Luiz Henrique Souza, advogado tributarista, OAB/GO 77.247, atendimento em Piracanjuba, Goiânia e região",
+  alt: "Luiz Henrique de Souza, advogado tributarista, OAB/GO 77.247, atendimento em Piracanjuba, Goiânia e região",
 };
 const base = pageMetadata({ title: titulo, description: descricao, path: caminho, image: compartilhamento.url, imageAlt: compartilhamento.alt });
 export const metadata: Metadata = {
@@ -183,7 +183,7 @@ const esquema = {
       },
     },
     {
-      "@type": "Person", "@id": url + "#luiz-henrique-souza", name: advogado,
+      "@type": "Person", "@id": url + "#luiz-henrique-souza", name: advogado, alternateName: "Luiz Henrique Souza",
       jobTitle: "Advogado tributarista", image: portal + imagens + "/retrato.webp",
       worksFor: { "@id": url + "#escritorio" }, sameAs: [site + "/"],
       alumniOf: { "@type": "CollegeOrUniversity", name: "Universidade Federal de Goiás", alternateName: "UFG" },
@@ -229,7 +229,7 @@ export default function AdvogadoTributarista() {
               </ul>
             </div>
             <figure className={s.retrato}>
-              <Image src={imagens + "/retrato.webp"} width={900} height={1200} alt="Retrato do advogado Luiz Henrique Souza, de terno azul-marinho, em um escritório"
+              <Image src={imagens + "/retrato.webp"} width={900} height={1200} alt="Retrato do advogado Luiz Henrique de Souza, de terno azul-marinho, em um escritório"
                 loading="eager" fetchPriority="high" sizes="(max-width: 700px) 78vw, (max-width: 1150px) 36vw, 400px" />
               <figcaption><strong>{advogado}</strong><span>Advogado · {oab}</span></figcaption>
             </figure>
