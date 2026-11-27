@@ -46,7 +46,7 @@ const areas = [
   },
   {
     titulo: "Tributos estaduais de Goiás", Icone: Landmark,
-    texto: "ICMS, IPVA, ITCD e taxas: autos de infração, defesa no processo administrativo da Secretaria da Economia e cobranças da Procuradoria-Geral do Estado.",
+    texto: "ICMS, IPVA, ITCD e taxas: autos de infração, defesa no processo administrativo da Secretaria da Economia e execuções fiscais do Estado.",
   },
   {
     titulo: "Reforma Tributária e prevenção", Icone: ShieldCheck,
@@ -78,7 +78,7 @@ const cidades = [
   },
   {
     cidade: "Goiânia",
-    texto: "Base do escritório. Na capital ficam a Secretaria da Economia, a Procuradoria-Geral do Estado, a Receita Federal e a Justiça Federal em Goiás, onde corre boa parte dos processos tributários do estado. Reuniões presenciais são combinadas pelo WhatsApp.",
+    texto: "Base do escritório. Na capital ficam a Secretaria da Economia, a Receita Federal, o Tribunal de Justiça e a Justiça Federal em Goiás, onde corre boa parte dos processos tributários do estado. Reuniões presenciais são combinadas pelo WhatsApp.",
     link: { href: site + "/", rotulo: "Site do LHS Advocacia" },
   },
   {
@@ -125,8 +125,8 @@ const perguntas = [
     resposta: "Sim. O pedido de restituição ou de compensação alcança os pagamentos feitos nos últimos 5 anos (artigo 168 do Código Tributário Nacional). A análise começa pelas guias e pelas declarações da empresa.",
   },
   {
-    pergunta: "Quem cobra dívida de IPVA, ICMS e ITCD em Goiás?",
-    resposta: "Esses tributos são estaduais e administrados pela Secretaria de Estado da Economia de Goiás. Quando não são pagos, a dívida é inscrita em dívida ativa e a cobrança judicial fica com a Procuradoria-Geral do Estado (PGE-GO).",
+    pergunta: "O que acontece quando IPVA, ICMS ou ITCD não são pagos em Goiás?",
+    resposta: "Esses tributos são estaduais e administrados pela Secretaria de Estado da Economia de Goiás. Sem pagamento, a dívida é inscrita em dívida ativa do Estado e pode ser cobrada em execução fiscal, o que também impede a emissão da certidão negativa.",
   },
   {
     pergunta: "A Reforma Tributária já está valendo?",
@@ -225,7 +225,7 @@ export default function AdvogadoTributarista() {
               <ul className={s.credenciais} aria-label="Credenciais">
                 <li><BadgeCheck size={16} aria-hidden="true" /> {oab}</li>
                 <li><GraduationCap size={16} aria-hidden="true" /> Formado pela UFG</li>
-                <li><Landmark size={16} aria-hidden="true" /> Experiência na Procuradoria Tributária (PGE-GO)</li>
+                <li><Scale size={16} aria-hidden="true" /> Atuação em Direito Tributário</li>
               </ul>
             </div>
             <figure className={s.retrato}>
@@ -318,8 +318,8 @@ export default function AdvogadoTributarista() {
             <div>
               <p className={s.sobretitulo}>Quem atende</p>
               <h2 id="titulo-sobre">{advogado}</h2>
-              <p className={s.sobreTexto}>{advogado} é advogado inscrito na OAB de Goiás sob o número {registro} e formado em Direito pela Universidade Federal de Goiás (UFG). Sua experiência inclui a Procuradoria Tributária da Procuradoria-Geral do Estado de Goiás (PGE-GO), no Núcleo de Tributos Residuais (NUTRE), com o contencioso de IPVA, ITCD e taxas e o contato frequente com o ICMS.</p>
-              <p className={s.sobreTexto}>Conhecer como o Fisco estadual cobra e se defende ajuda a antecipar os argumentos do outro lado e a montar a defesa do contribuinte. Ele acompanha a Reforma Tributária e publica artigos sobre Direito Tributário no blog do escritório.</p>
+              <p className={s.sobreTexto}>{advogado} é advogado inscrito na OAB de Goiás sob o número {registro} e formado em Direito pela Universidade Federal de Goiás (UFG), com atuação dedicada ao Direito Tributário de empresas, produtores rurais e pessoas físicas.</p>
+              <p className={s.sobreTexto}>Atua nas esferas administrativa e judicial, acompanha a Reforma Tributária e seus reflexos para empresas e pessoas físicas e publica artigos sobre Direito Tributário no blog do escritório.</p>
               <dl className={s.fatos}>
                 <div><dt><BadgeCheck size={16} aria-hidden="true" /> Inscrição</dt><dd>{oab} <a href={cna}>Conferir no Cadastro Nacional dos Advogados <ArrowUpRight size={14} aria-hidden="true" /></a></dd></div>
                 <div><dt><GraduationCap size={16} aria-hidden="true" /> Formação</dt><dd>Direito, Universidade Federal de Goiás (UFG)</dd></div>
