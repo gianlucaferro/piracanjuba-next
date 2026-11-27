@@ -44,6 +44,7 @@ export const DATA_FILE_ROUTES = Object.freeze({
   "src/data/empresas-slugs.ts": ["[empresa]"],
   "src/data/zap-pba-paginas.json": ["zap-pba"],
   "src/data/hotel-via-sul.ts": ["hotel", "zap-pba"],
+  "src/data/lhs-advocacia.ts": ["advogado", "zap-pba"],
   "src/data/telefones.ts": ["contatos", "seguranca", "beneficios-sociais"],
   "src/app/vereadores/tratamento.ts": ["vereadores/[slug]"],
   "src/app/vereadores/remuneracao.ts": ["vereadores", "vereadores/[slug]"],

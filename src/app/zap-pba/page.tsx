@@ -3,6 +3,7 @@ import { fetchZapEstabelecimentos } from "@/lib/data/listings";
 import { SLUGS_PAGINAS_EMPRESARIAIS } from "@/data/empresas-slugs";
 import { CLINICA_ESSENCIA } from "@/data/clinica-essencia";
 import { HOTEL_VIA_SUL } from "@/data/hotel-via-sul";
+import { LHS_ADVOCACIA } from "@/data/lhs-advocacia";
 import { NARAIENE_MARQUES } from "@/data/naraiene-marques";
 import { PACIFICO_SIQUEIRA } from "@/data/pacifico-siqueira";
 import { previas } from "@/data/previas-zap";
@@ -29,6 +30,7 @@ const paginaPorCadastro = new Map(Object.entries(vinculos).filter(([, pagina]) =
 const fichasEditoriais = [
   { nome: HOTEL_VIA_SUL.nome, telefone: HOTEL_VIA_SUL.whatsapp, path: HOTEL_VIA_SUL.path, categoria: "Hospedagem e Turismo" },
   { nome: NARAIENE_MARQUES.nome, telefone: NARAIENE_MARQUES.telefone, path: NARAIENE_MARQUES.path, categoria: "Advogados" },
+  { nome: LHS_ADVOCACIA.nome, telefone: LHS_ADVOCACIA.telefone, path: LHS_ADVOCACIA.path, categoria: "Advogados" },
   { nome: PACIFICO_SIQUEIRA.nome, telefone: PACIFICO_SIQUEIRA.telefone, path: PACIFICO_SIQUEIRA.path, categoria: "Advogados" },
   { nome: "Essência Estética e Spa | Laurieni Costa", telefone: CLINICA_ESSENCIA.telefoneEsteticaSpa, path: CLINICA_ESSENCIA.path, categoria: "Beleza e Estética" },
 ];
