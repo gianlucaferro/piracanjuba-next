@@ -124,8 +124,6 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
   border-radius: 4px;
   box-shadow: -14px 14px 0 var(--laranja);
 }
@@ -142,7 +140,7 @@
 .servicos { padding-block: clamp(3.2rem, 7vw, 5.6rem); }
 .cabecalho { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 1.2rem clamp(2rem, 6vw, 5rem); }
 .cabecalho p { max-width: 46ch; color: var(--texto-suave); }
-.frentes { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.4rem, 3vw, 2.2rem); margin-top: clamp(2rem, 4vw, 3rem); }
+.frentes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.5rem); margin-top: clamp(2rem, 4vw, 3rem); }
 .frente {
   display: flex;
   flex-direction: column;
@@ -150,7 +148,7 @@
   border-top: 4px solid var(--laranja);
   background: var(--chapa);
 }
-.frenteFoto img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.frenteFoto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: center top; }
 .frente h3 {
   display: flex;
   align-items: center;
@@ -190,7 +188,8 @@
 /* Na oficina */
 .oficina { padding-bottom: clamp(3.2rem, 7vw, 5.6rem); }
 .galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(.9rem, 2vw, 1.4rem); margin-top: clamp(1.5rem, 3vw, 2.2rem); }
-.galeria img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+.galeria li:first-child { grid-row: span 2; }
+.galeria img { display: block; width: 100%; height: auto; border-radius: 4px; }
 .galeria figcaption { margin-top: .7rem; color: var(--texto-suave); font-size: .9rem; line-height: 1.4; }
 .credito { margin-top: 1.4rem !important; color: #8e8983; font-size: .82rem; }
 
@@ -256,7 +255,6 @@
   .capaGrade { gap: 2.6rem; }
   .fachada { margin-left: 14px; }
   .galeria { grid-template-columns: 1fr 1fr; }
-  .galeria li:last-child { grid-column: 1 / -1; }
 }
 
 @media (max-width: 700px) {
@@ -266,5 +264,6 @@
   .acoes { flex-direction: column; align-items: stretch; }
   .atalho { justify-content: flex-start; }
   .galeria { grid-template-columns: 1fr; }
+  .galeria li:first-child { grid-row: auto; }
   .contato { padding-bottom: 76px; }
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Saira } from "next/font/google";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Car, Clock, MapPin, Navigation, Tractor } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Car, Clock, MapPin, Navigation, Tractor, Zap } from "lucide-react";
 import BarraWhatsappEmpresa from "@/components/empresas/BarraWhatsappEmpresa";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
@@ -21,9 +21,8 @@ const tipografia = Saira({
   variable: "--box-fonte",
 });
 
-// Fontes dos dados, conferidas em 2026-11-25: bio e posts do Instagram @box87.autocenter
-// (endereço, serviços, fotos) e ficha do Google Maps (horário, coordenadas). O logo é a
-// versão melhorada enviada pelo operador na mesma data, vetorizada em SVG.
+// Serviços, endereço, horário e novas fotos fornecidos pela oficina em 2026-11-26.
+// Serviços documentados também no Instagram @box87.autocenter e localização no Google Maps.
 const portal = "https://piracanjuba.ai";
 const caminho = "/box-87-auto-center";
 const url = portal + caminho;
@@ -43,34 +42,69 @@ const horarios = [
   { dias: "Domingo", horas: "Fechado" },
 ];
 
-const servicosCarros = [
-  "Elétrica automotiva: bateria, alternador e motor de partida",
-  "Manutenção preventiva e corretiva",
-  "Suspensão e troca da correia dentada",
-  "Troca da junta de válvula e descarbonização da EGR",
-  "Válvula termostática do sistema de arrefecimento",
-  "Lavagem do motor",
-  "Kits de lâmpadas LED para faróis",
-  "Módulo para rebater os retrovisores e subir os vidros pelo alarme",
-  "Revisão elétrica em caminhão com plataforma de guincho",
-];
-
-const servicosAgro = [
-  "Parte elétrica de tratores e implementos",
-  "Kits de iluminação para trator e graneleiro",
-  "Manutenção de máquinas agrícolas",
+const gruposServicos = [
+  {
+    titulo: "Mecânica de carros",
+    icone: Car,
+    foto: "/farois-led.webp", largura: 720, altura: 540,
+    alt: "Carro de capô aberto com os faróis de LED acesos na oficina",
+    servicos: [
+      "Mecânica geral, revisões preventivas e manutenção corretiva",
+      "Diagnóstico e reparo de falhas de funcionamento do motor",
+      "Freios, suspensão e troca da correia dentada",
+      "Troca de óleo e filtros",
+      "Troca da junta de válvula e descarbonização da EGR",
+      "Válvula termostática do sistema de arrefecimento",
+      "Lavagem do motor",
+    ],
+    contato: whatsapp, chamada: "Agendar revisão do carro",
+  },
+  {
+    titulo: "Auto elétrica",
+    icone: Zap,
+    foto: "/scanner-automotivo.webp", largura: 1280, altura: 960,
+    alt: "Scanner automotivo em frente ao volante, com os dados do diagnóstico na tela",
+    servicos: [
+      "Diagnóstico e revisão elétrica e eletrônica de carros e caminhões (linhas leve e pesada)",
+      "Teste de bateria e diagnóstico do alternador e do motor de partida",
+      "Manutenção de vidros elétricos",
+      "Instalação de kits de lâmpadas LED nos faróis",
+      "Instalação de módulo para rebater retrovisores e fechar vidros pelo alarme",
+      "Revisão elétrica de caminhão com plataforma de guincho",
+    ],
+    contato: whatsapp, chamada: "Consultar a auto elétrica",
+  },
+  {
+    titulo: "Máquinas agrícolas",
+    icone: Tractor,
+    foto: "/colheitadeira-no-campo.webp", largura: 1440, altura: 960,
+    alt: "Colheitadeira verde ao lado do veículo do Box 87 na lavoura",
+    servicos: [
+      "Diagnóstico eletrônico de máquinas agrícolas",
+      "Manutenção de máquinas agrícolas e revisão da parte elétrica de tratores e implementos",
+      "Revisão e recuperação de chicotes, placas eletrônicas, módulos e sensores",
+      "Instalação de kits de iluminação em tratores e graneleiros",
+    ],
+    contato: whatsappAgro, chamada: "Consultar sobre uma máquina",
+  },
 ];
 
 const fotos = [
-  { src: "/teste-bateria.webp", largura: 720, altura: 540, legenda: "Teste de densidade da bateria", alt: "Densímetro medindo a carga de uma bateria automotiva na oficina" },
-  { src: "/eletrica-trator.webp", largura: 504, altura: 378, legenda: "Revisão na parte elétrica de um trator", alt: "Chicote elétrico e motor de partida de um trator em manutenção" },
-  { src: "/oficina-entrada.webp", largura: 634, altura: 462, legenda: "A entrada da oficina, na Rua João Modesto", alt: "Fachada de metal do Box 87 com o letreiro laranja e cinza e o galpão da oficina aberto" },
+  { src: "/bancada-eletronica.webp", largura: 960, altura: 1280, legenda: "Inspeção de placa eletrônica na bancada", alt: "Microscópio digital sobre uma placa eletrônica, com os circuitos ampliados na tela" },
+  { src: "/caminhao-no-campo.webp", largura: 960, altura: 720, legenda: "Caminhão no campo", alt: "Caminhão com o capô aberto e carro do Box 87 em uma estrada de terra" },
+  { src: "/pulverizador-no-campo.webp", largura: 1080, altura: 810, legenda: "Pulverizador agrícola", alt: "Pulverizador com as barras recolhidas ao lado do veículo da oficina" },
+  { src: "/teste-bateria.webp", largura: 720, altura: 540, legenda: "Teste de densidade da bateria", alt: "Densímetro medindo a densidade do eletrólito de uma bateria automotiva" },
+  { src: "/eletrica-trator.webp", largura: 504, altura: 378, legenda: "Revisão elétrica de trator", alt: "Chicote elétrico e motor de partida de um trator em manutenção" },
 ];
 
 const perguntas = [
   {
     pergunta: "O Box 87 atende máquinas agrícolas?",
-    resposta: "Sim. Além de carros, a oficina cuida da parte elétrica e da manutenção de máquinas agrícolas, como tratores e implementos, e instala kits de iluminação. Para outra máquina, mande o modelo pelo WhatsApp e confirme o atendimento.",
+    resposta: "Sim. A oficina faz diagnóstico eletrônico e manutenção elétrica em máquinas agrícolas. Entre os serviços estão a recuperação de chicotes, placas, módulos e sensores e a instalação de iluminação em tratores e graneleiros.",
+  },
+  {
+    pergunta: "O Box 87 faz alinhamento, balanceamento ou troca de pneus?",
+    resposta: "A oficina não oferece alinhamento, balanceamento nem troca de pneus. Para problemas na suspensão ou nos freios, você pode agendar uma avaliação.",
   },
   {
     pergunta: "Qual é o horário de funcionamento?",
@@ -90,8 +124,8 @@ const perguntas = [
   },
 ];
 
-const titulo = "Box 87 Auto Center em Piracanjuba | Elétrica e máquinas agrícolas";
-const descricao = "Auto center na Rua João Modesto, 12, em Piracanjuba (GO). Elétrica e manutenção de carros e máquinas agrícolas. Horário e WhatsApp para agendar.";
+const titulo = "Box 87 Auto Center | Oficina mecânica e auto elétrica em Piracanjuba";
+const descricao = "Oficina mecânica em Piracanjuba com revisão de carros, auto elétrica de carros e caminhões e diagnóstico eletrônico de máquinas agrícolas. Agende pelo WhatsApp.";
 const compartilhamento = {
   url: portal + imagens + "/compartilhar.jpg", width: 1200, height: 630,
   alt: "Logo do Box 87 Auto Center e a fachada da oficina em Piracanjuba ao entardecer",
@@ -115,8 +149,8 @@ const esquema = {
     {
       "@type": "AutoRepair", "@id": url + "#oficina", name: nome, alternateName: ["BOX 87", "Box 87 Auto Elétrica", "BOX 87 Auto Elétrica e Acessórios"], url,
       mainEntityOfPage: { "@id": url + "#pagina" },
-      description: "Auto center e auto elétrica com manutenção e parte elétrica de máquinas agrícolas em Piracanjuba (GO).",
-      image: portal + imagens + "/fachada-entardecer.webp", logo: portal + imagens + "/box87-logo.svg",
+      description: descricao,
+      image: portal + imagens + "/fachada-box87.webp", logo: portal + imagens + "/box87-logo.svg",
       telephone: "+" + telefone, sameAs: [instagram], hasMap: mapa,
       address: {
         "@type": "PostalAddress", streetAddress: "Rua João Modesto, 12, Setor Norte",
@@ -130,8 +164,11 @@ const esquema = {
       ],
       hasOfferCatalog: {
         "@type": "OfferCatalog", name: "Serviços",
-        itemListElement: [...servicosCarros, ...servicosAgro].map((servico) => ({
-          "@type": "Offer", itemOffered: { "@type": "Service", name: servico },
+        itemListElement: gruposServicos.map(({ titulo, servicos }) => ({
+          "@type": "OfferCatalog", name: titulo,
+          itemListElement: servicos.map((servico) => ({
+            "@type": "Offer", itemOffered: { "@type": "Service", name: servico },
+          })),
         })),
       },
     },
@@ -168,8 +205,8 @@ export default function Box87AutoCenter() {
               {/* SVG vetorizado a partir do logo melhorado: nítido em qualquer tela, sem fundo. */}
               <Image src={imagens + "/box87-logo.svg"} width={1459} height={510} alt="BOX 87 Auto Center e Manutenção em Máquinas Agrícolas"
                 className={s.logo} loading="eager" unoptimized />
-              <h1>Auto center e elétrica de máquinas agrícolas em Piracanjuba</h1>
-              <p className={s.lide}>O Box 87 cuida da parte elétrica e da manutenção de carros, tratores e implementos, na {endereco}. Conte pelo WhatsApp o modelo e o que está acontecendo e combine o melhor horário para levar.</p>
+              <h1>Oficina mecânica e auto elétrica em Piracanjuba</h1>
+              <p className={s.lide}>O Box 87 faz revisões e reparos mecânicos em carros, atende a parte elétrica de carros e caminhões e cuida da eletrônica de máquinas agrícolas.</p>
               <div className={s.acoes}>
                 <a id={ID_BOTAO_TOPO} href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Agendar pelo WhatsApp</a>
                 <a href={mapa} className={s.atalho}><Navigation size={16} aria-hidden="true" /> Como chegar</a>
@@ -177,8 +214,8 @@ export default function Box87AutoCenter() {
               <p className={s.expediente}><Clock size={16} aria-hidden="true" /> Segunda a sexta, das 7h às 18h. Sábado, das 7h às 12h.</p>
             </div>
             <figure className={s.fachada}>
-              <Image src={imagens + "/fachada-entardecer.webp"} width={1080} height={1080}
-                alt="Galpão de metal do Box 87 com o letreiro BOX 87 e um carro estacionado na frente, ao entardecer"
+              <Image src={imagens + "/fachada-box87.webp"} width={560} height={600}
+                alt="Fachada com o letreiro laranja e prata do Box 87 e uma caminhonete na entrada da oficina"
                 loading="eager" fetchPriority="high" sizes="(max-width: 900px) 89vw, 470px" />
               <figcaption><MapPin size={14} aria-hidden="true" /> {endereco}</figcaption>
             </figure>
@@ -191,55 +228,42 @@ export default function Box87AutoCenter() {
       <section id="servicos" aria-labelledby="titulo-servicos" className={s.servicos}>
         <div className={s.largura}>
           <div className={s.cabecalho}>
-            <h2 id="titulo-servicos">Do carro da cidade ao trator da lavoura</h2>
-            <p>Uma oficina só para a elétrica e a mecânica do dia a dia e para as máquinas que não podem parar na safra.</p>
+            <h2 id="titulo-servicos">Serviços da oficina</h2>
+            <p>A equipe explica o diagnóstico e o orçamento. Você pode acompanhar a avaliação e conferir as peças substituídas na retirada do veículo.</p>
           </div>
           <div className={s.frentes}>
-            <section aria-labelledby="titulo-carros" className={s.frente}>
-              <div className={s.frenteFoto}>
-                <Image src={imagens + "/farois-led.webp"} width={720} height={540}
-                  alt="Carro de capô aberto com faróis de LED acesos e a placa decorativa do Box 87"
-                  sizes="(max-width: 900px) 89vw, 540px" />
-              </div>
-              <h3 id="titulo-carros"><Car size={26} strokeWidth={1.8} aria-hidden="true" /> Carros e outros veículos</h3>
-              <ul className={s.lista}>
-                {servicosCarros.map((servico) => <li key={servico}>{servico}</li>)}
-              </ul>
-              <a href={whatsapp} className={s.linkFrente}>Pedir orçamento para o meu carro <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </section>
-            <section aria-labelledby="titulo-agro" className={s.frente}>
-              <div className={s.frenteFoto}>
-                <Image src={imagens + "/trator-graneleiro.webp"} width={922} height={600}
-                  alt="Trator verde e graneleiro estacionados em frente ao galpão do Box 87"
-                  sizes="(max-width: 900px) 89vw, 540px" />
-              </div>
-              <h3 id="titulo-agro"><Tractor size={26} strokeWidth={1.8} aria-hidden="true" /> Máquinas agrícolas</h3>
-              <ul className={s.lista}>
-                {servicosAgro.map((servico) => <li key={servico}>{servico}</li>)}
-              </ul>
-              <a href={whatsappAgro} className={s.linkFrente}>Falar sobre uma máquina agrícola <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </section>
+            {gruposServicos.map(({ titulo, icone: Icone, foto, largura, altura, alt, servicos, contato, chamada }) => (
+              <section key={titulo} aria-label={titulo} className={s.frente}>
+                <div className={s.frenteFoto}>
+                  <Image src={imagens + foto} width={largura} height={altura} alt={alt}
+                    sizes="(max-width: 900px) 89vw, (max-width: 1260px) 29vw, 340px" />
+                </div>
+                <h3><Icone size={26} strokeWidth={1.8} aria-hidden="true" /> {titulo}</h3>
+                <ul className={s.lista}>
+                  {servicos.map((servico) => <li key={servico}>{servico}</li>)}
+                </ul>
+                <a href={contato} className={s.linkFrente}>{chamada} <ArrowUpRight size={16} aria-hidden="true" /></a>
+              </section>
+            ))}
           </div>
         </div>
       </section>
 
       <section aria-labelledby="titulo-oficina" className={s.oficina}>
         <div className={s.largura}>
-          <h2 id="titulo-oficina">Na oficina</h2>
+          <h2 id="titulo-oficina">Na oficina e no campo</h2>
           <ul className={s.galeria}>
-            {fotos.map((foto, i) => (
+            {fotos.map((foto) => (
               <li key={foto.src}>
                 <figure>
                   <Image src={imagens + foto.src} width={foto.largura} height={foto.altura} alt={foto.alt}
-                    sizes={i === fotos.length - 1
-                      ? "(max-width: 900px) 89vw, (max-width: 1150px) 30vw, 360px"
-                      : "(max-width: 700px) 89vw, (max-width: 900px) 44vw, (max-width: 1150px) 30vw, 360px"} />
+                    sizes="(max-width: 700px) 89vw, (max-width: 900px) 44vw, (max-width: 1260px) 29vw, 360px" />
                   <figcaption>{foto.legenda}</figcaption>
                 </figure>
               </li>
             ))}
           </ul>
-          <p className={s.credito}>Fotos publicadas pelo Box 87 no Instagram.</p>
+          <p className={s.credito}>Fotos do Box 87 Auto Center.</p>
         </div>
       </section>
 
