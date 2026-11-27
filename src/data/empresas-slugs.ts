@@ -30,6 +30,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "superfrio-ar-condicionado",
   "hotel",
   "viaggi-vistos",
+  "advogado",
 ];
 
 // Empresas que recusaram a landing de demonstração: a página de marca saiu do ar e ficou

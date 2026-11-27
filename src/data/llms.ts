@@ -342,6 +342,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Assessoria da Viaggi Vistos para visto americano em Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas e cidades vizinhas: DS-160, taxa, agendamento, CASV e entrevista no posto escolhido (o recomendado é Brasília, o mais próximo), renovação e Antecipa 45, com atendimento online e contato por WhatsApp.",
       },
       {
+        caminho: "/advogado",
+        titulo: "Advogado tributarista em Piracanjuba, Goiânia e região | LHS Advocacia",
+        descricao: "Luiz Henrique Souza (OAB/GO 77.247), advogado tributarista com base em Goiânia. Atende Piracanjuba, Professor Jamil, Morrinhos, Caldas Novas, Goiânia e Anápolis em planejamento tributário, execução fiscal, Simples Nacional, recuperação de tributos, ICMS, IPVA, ITCD e Reforma Tributária, com contato por WhatsApp.",
+      },
+      {
         caminho: "/kamillamorranna",
         titulo: "Kamilla Morranna, advogada criminalista em Piracanjuba",
         descricao: "Kamilla Morranna Alves Cunha (OAB/GO 55.151), advogada criminalista em Piracanjuba. Defesa criminal, prisão em flagrante, audiência de custódia e Tribunal do Júri, com atendimento presencial e online e contato por WhatsApp.",
