@@ -1,0 +1,71 @@
+.pagina {
+  --tinta: #191918;
+  --papel: #f6f3eb;
+  --laranja: #ff8441;
+  color: var(--tinta);
+  background: var(--papel);
+}
+.largura { width: min(1136px, calc(100% - 72px)); margin-inline: auto; }
+.cabecalho { background: #191918; color: #f8f6ed; }
+.barra { display: flex; align-items: center; justify-content: space-between; padding-block: 18px; border-bottom: 1px solid #44433e; }
+.menu, .local, .botao, .botaoEscuro, .rodape a { display: inline-flex; align-items: center; }
+.marca { color: #f9f6ed; font: 700 30px/1 var(--lima-display), sans-serif; letter-spacing: -.01em; text-transform: uppercase; }
+.marca span { color: var(--laranja); }
+.menu { min-height: 44px; gap: 8px; font-weight: 650; font-size: 14px; }
+.hero { display: grid; grid-template-columns: 1.12fr .88fr; gap: clamp(32px, 6vw, 90px); align-items: center; padding-block: clamp(32px, 4.4vw, 62px); }
+.intro { min-width: 0; }
+.local { margin: 0 0 21px; gap: 7px; font-size: 13px; font-weight: 700; color: #e0ddd0; }
+.local svg { color: var(--laranja); }
+.pagina h1, .pagina h2, .pagina h3 { font-family: var(--lima-display), "Arial Narrow", sans-serif; font-weight: 700; }
+.pagina h1 { margin: 0; text-transform: uppercase; font-size: clamp(65px, 7.5vw, 109px); line-height: .87; letter-spacing: -.035em; }
+.pagina h1 span { display: block; color: var(--laranja); font-size: .79em; line-height: 1.1; letter-spacing: -.025em; }
+.resumo, .cabecaSecao p, .contato p, .projeto p { line-height: 1.62; }
+.resumo { max-width: 43ch; color: #e1dfd7; margin: 23px 0 30px; font-size: clamp(16px, 1.45vw, 19px); }
+.botao, .botaoEscuro { justify-content: center; gap: 11px; min-height: 49px; width: fit-content; padding: 12px 21px; border-radius: 5px; font-weight: 750; font-size: 15px; }
+.botao { background: var(--laranja); color: #181512; }
+.botao:hover { background: #ffa169; }
+.quadro { position: relative; overflow: hidden; aspect-ratio: 1.12; border-radius: 7px; background: #454039; }
+.quadro img { object-fit: cover; object-position: 58% center; }
+.portfolio { padding-block: clamp(44px, 6vw, 84px); scroll-margin-top: 68px; }
+.cabecaSecao { display: grid; grid-template-columns: 1fr minmax(260px, 40%); gap: 24px; align-items: end; margin-bottom: 28px; }
+.pagina h2 { margin: 0; font-size: clamp(38px, 5vw, 68px); line-height: .97; letter-spacing: -.02em; }
+.cabecaSecao p, .projeto p { margin: 0; color: #514f47; font-size: 15px; }
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.projeto { display: grid; gap: 8px; padding: clamp(20px, 2.6vw, 34px); border: 1px solid #d7d3c8; border-left: 4px solid var(--tom); border-radius: 5px; background: #fcfaf4; min-width: 0; }
+.projeto:nth-child(1) { --tom: #72802b; }
+.projeto:nth-child(2) { --tom: #367647; }
+.projeto:nth-child(3) { --tom: #a86706; }
+.projeto:nth-child(4) { --tom: #3b6291; }
+.projeto p { max-width: 50ch; }
+.verProjeto { display: inline-flex; gap: 5px; align-items: center; align-self: end; margin-top: 9px; color: #684222; font-weight: 700; font-size: 13px; }
+.pagina h3 { font-size: clamp(28px, 2.7vw, 36px); line-height: 1.07; }
+.contato { background: var(--laranja); color: var(--tinta); }
+.contatoDentro { display: flex; gap: 26px; align-items: center; justify-content: space-between; padding-block: clamp(32px, 4.7vw, 65px); }
+.contato p { margin: 11px 0 0; max-width: 54ch; }
+.botaoEscuro { background: var(--tinta); color: #fff; flex-shrink: 0; }
+.botaoEscuro:hover { background: #34342f; }
+.rodape { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 5px 24px; padding-block: 14px; font-size: 13px; color: #514f47; }
+.rodape a { min-height: 44px; gap: 7px; }
+.rodape a:hover, .menu:hover, .projeto:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+.pagina a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.cabecalho .botao:focus-visible, .contato a:focus-visible { outline-color: #fff; box-shadow: 0 0 0 7px #171716; }
+@media (max-width: 900px) {
+  .largura { width: calc(100% - 48px); }
+  .hero { gap: 28px; }
+  .pagina h1 { font-size: clamp(57px, 8.5vw, 76px); }
+}
+@media (max-width: 720px) {
+  .largura { width: min(calc(100% - 36px), 550px); }
+  .barra { padding-block: 10px; }
+  .marca { font-size: 26px; }
+  .hero { grid-template-columns: 1fr; gap: 25px; padding-block: 30px 27px; }
+  .local { margin-bottom: 15px; }
+  .pagina h1 { font-size: clamp(53px, 12.8vw, 85px); }
+  .resumo { margin: 15px 0 20px; }
+  .quadro { aspect-ratio: 1.7; }
+  .cabecaSecao { grid-template-columns: 1fr; gap: 14px; }
+  .contatoDentro { align-items: flex-start; flex-direction: column; gap: 20px; }
+}
+@media (max-width: 620px) {
+  .grade { grid-template-columns: 1fr; gap: 12px; }
+}

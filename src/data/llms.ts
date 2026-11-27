@@ -322,6 +322,11 @@ export const SECOES_LLMS: SecaoLlms[] = [
         descricao: "Ótica e perfumaria na Rua Dom Pedro II, 491, no Centro de Piracanjuba. Armações, lentes de grau, óculos de sol, perfumes árabes, importados e nacionais, relógios Seculus e Mondaine e semijoias com garantia. Consulte o horário, o WhatsApp e a rota até a loja.",
       },
       {
+        caminho: "/impressao3d",
+        titulo: "Impressão 3D em Piracanjuba | Lima 3D Art",
+        descricao: "Portfólio de Paulo Henrique em Piracanjuba, Goiás. Colecionáveis impressos em 3D, peças multicoloridas em PLA e contato pelo Instagram @lima3dart.",
+      },
+      {
         caminho: "/claro",
         titulo: "Claro Piracanjuba",
         descricao: "Loja Claro na Rua Dom Pedro II, 620, no Centro. WhatsApp local, telefone e mapa para consultar telefonia móvel, internet e TV.",
