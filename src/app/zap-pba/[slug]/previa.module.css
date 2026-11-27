@@ -132,26 +132,36 @@
 .atalho { color: var(--tinta); }
 .atalho:hover, .topo a:hover, .rodape a:hover, .item a:hover { text-decoration: underline; text-underline-offset: .2em; }
 
-/* Faixa do proprietário, logo abaixo da barra do topo: discreta, sem cara de anúncio. */
 .faixaDono {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 2px 16px;
+  gap: 12px 24px;
   margin-top: 14px;
-  padding: 6px 14px;
-  border: 1px solid color-mix(in srgb, var(--tinta) 22%, transparent);
-  border-left-width: 3px;
+  padding: 14px 18px;
+  border: 1px solid #e7c878;
+  border-inline-start: 4px solid #c28313;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--tinta) 6%, transparent);
-  color: var(--texto);
-  font-size: .86rem;
-  line-height: 1.45;
+  background: #fff4d6;
+  color: #392c17;
+  font-size: .9rem;
+  line-height: 1.5;
 }
-.faixaDono p { margin: 0; padding-block: 4px; }
-.faixaDono a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--tinta); font-weight: 750; white-space: nowrap; }
-.faixaDono a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.faixaDono strong { font-size: 1.1rem; font-weight: 800; }
+.faixaDono p { margin: 2px 0 0; }
+.faixaDono a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #392c17;
+  color: white;
+  font-weight: 750;
+}
+.faixaDono a:hover { background: #554022; }
 
 .moldura, .painelMarca {
   position: relative;
@@ -305,6 +315,7 @@
 
 @media (max-width: 720px) {
   .miolo { width: min(100% - 40px, 550px); }
+  .faixaDono { grid-template-columns: minmax(0, 1fr); padding: 14px; }
   .topo { min-height: 48px; font-size: .77rem; }
   .capa { grid-template-columns: 1fr; padding: 27px 0 33px; gap: 24px; }
   .texto { padding: 0; }

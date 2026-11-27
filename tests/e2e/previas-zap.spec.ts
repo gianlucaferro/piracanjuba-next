@@ -99,9 +99,11 @@ test("ficha tem no topo a faixa do proprietário com o WhatsApp do Gianluca", as
   for (const [slug, nome] of [["maxwel-cabeleireiro", "Maxwel Cabeleireiro"], ["master-tech-auto-center", "Master Tech Auto Center"]]) {
     await page.goto(`/zap-pba/${slug}`);
     const faixa = page.getByRole("complementary", { name: "Para o proprietário" });
-    await expect(faixa).toContainText("É proprietário desta empresa e quer deixar esta página mais profissional e completa, com cara de site?");
+    await expect(faixa.getByText("Essa empresa é sua?", { exact: true })).toBeVisible();
+    await expect(faixa.getByText("Mostre suas fotos e serviços em uma página com a sua marca no Piracanjuba.ai.", { exact: true })).toBeVisible();
     await expect(faixa).toHaveAttribute("data-nosnippet", "");
-    const link = faixa.getByRole("link", { name: /Clique aqui/ });
+    const link = faixa.getByRole("link", { name: `Falar pelo WhatsApp com a equipe do Piracanjuba.ai sobre a página de ${nome}` });
+    await expect(link).toHaveText("Falar pelo WhatsApp");
     const href = await link.getAttribute("href");
     expect(href).toContain("https://wa.me/5564992375458?text=");
     expect(decodeURIComponent(href!.split("text=")[1])).toBe(`Olá, Gianluca. Vim pelo Piracanjuba.ai, minha empresa é ${nome}.`);
