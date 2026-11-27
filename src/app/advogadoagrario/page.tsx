@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, ArrowUpRight, FileCheck2, FileText, LandPlot, MapPin, Scale, Sprout } from "lucide-react";
+import { ArrowDown, ArrowUpRight, FileCheck2, FileText, LandPlot, MapPin, Scale, Sprout } from "lucide-react";
 import BarraWhatsappEmpresa from "@/components/empresas/BarraWhatsappEmpresa";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
 import { PAULO_DE_TARSO } from "@/data/paulo-de-tarso";
@@ -15,6 +15,7 @@ const { nome, advogado, registro, path, telefone, site } = PAULO_DE_TARSO;
 const oab = `OAB/GO ${registro}`;
 const whatsapp = linkWhatsapp(telefone, "Olá, Dr. Paulo. Encontrei sua página no Piracanjuba.ai e gostaria de conversar sobre uma questão de Direito Agrário.");
 const cidades = ["Piracanjuba", "Professor Jamil", "Goiânia", "Morrinhos", "Caldas Novas"];
+const modalidades = ["Sede presencial", "A distância", "Presencial com agendamento", "A distância", "A distância"];
 const servicos = [
   { titulo: "Contratos rurais", texto: "Elaboração e revisão de contratos de arrendamento e parceria agrícola ou pecuária, com atenção à área, ao prazo, às condições e às obrigações de cada parte.", Icone: FileText },
   { titulo: "Regularização de imóveis", texto: "Análise da documentação de imóveis rurais, matrículas, contratos e situações de posse para identificar os caminhos de regularização cabíveis.", Icone: FileCheck2 },
@@ -52,7 +53,7 @@ export default function AdvogadoAgrario() {
       <header className={s.hero}>
         <div className={s.largura}>
           <div className={s.barraSuperior}>
-            <Link href="/zap-pba"><ArrowLeft size={16} aria-hidden="true" /> Guia Zap PBA</Link>
+            <nav aria-label="Navegação estrutural"><Link href="/">Início</Link> / <Link href="/zap-pba">Guia Zap PBA</Link> / <span aria-current="page">Paulo de Tarso Advocacia</span></nav>
             <span>{oab}</span>
           </div>
           <div className={s.heroGrid}>
@@ -100,7 +101,7 @@ export default function AdvogadoAgrario() {
         <div className={s.largura}>
           <div className={s.regiaoTopo}><div><p className={s.sobretitulo}><MapPin size={15} aria-hidden="true" /> Atendimento em Goiás</p><h2 id="cidades-titulo">Advocacia agrária para Piracanjuba e cidades da região</h2></div><p>O escritório fica em Piracanjuba. O acompanhamento pode ser feito a distância; em Goiânia, encontros presenciais são combinados previamente. Para atos que exijam presença em outras cidades, o deslocamento é combinado.</p></div>
           <ul className={s.cidades}>
-            {cidades.map((cidade) => <li key={cidade}><MapPin size={17} aria-hidden="true" /><span>Advogado agrário em <strong>{cidade}</strong></span></li>)}
+            {cidades.map((cidade, i) => <li key={cidade}><MapPin size={17} aria-hidden="true" /><span><strong>{cidade}</strong>{modalidades[i]}</span></li>)}
           </ul>
           <p className={s.regiaoNota}>O atendimento também alcança outras cidades de Goiás. Informe sua cidade e a localização do imóvel no primeiro contato.</p>
         </div>
@@ -119,9 +120,8 @@ export default function AdvogadoAgrario() {
 
       <section id="perguntas" className={s.faq} aria-labelledby="faq-titulo"><div className={s.largura}><p className={s.sobretitulo}>Dúvidas frequentes</p><h2 id="faq-titulo">Perguntas sobre Direito Agrário</h2><div className={s.listaFaq}>{perguntas.map(({ pergunta, resposta }) => <details key={pergunta}><summary>{pergunta}</summary><p>{resposta}</p></details>)}</div><p className={s.aviso}>Conteúdo informativo. Cada caso depende da análise das suas circunstâncias e documentos.</p></div></section>
 
-      <section className={s.contato} aria-labelledby="contato-titulo"><div className={s.largura}><div><p className={s.sobretitulo}>Contato</p><h2 id="contato-titulo">Converse sobre sua questão rural</h2><p>Conte sua situação e informe a cidade e a localização da propriedade. O primeiro contato ajuda a entender o caso e combinar o atendimento.</p><a href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Falar com o escritório</a></div><address><strong>{nome}</strong><span>{advogado} · {oab}</span><span>Rua Dom Pedro II, 942, Centro<br />Piracanjuba, GO · CEP 75640-116</span><a href={whatsapp}>{formatarTelefoneBr(telefone)}</a><a href="mailto:contato@pauloadvogado.com.br">contato@pauloadvogado.com.br</a><a href={site}>paulodetarso.adv.br <ArrowUpRight size={15} aria-hidden="true" /></a></address></div></section>
+      <section className={s.contato} aria-labelledby="contato-titulo"><div className={s.largura}><div><p className={s.sobretitulo}>Contato</p><h2 id="contato-titulo">Converse sobre sua questão rural</h2><p>Conte sua situação e informe a cidade e a localização da propriedade. O primeiro contato ajuda a entender o caso e combinar o atendimento.</p><a href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Falar com o escritório</a></div><address><strong>{nome}</strong><span>{advogado} · {oab}</span><span>Rua Dom Pedro II, 942, Centro<br />Piracanjuba, GO · CEP 75640-116</span><a href={`tel:+${telefone}`}>{formatarTelefoneBr(telefone)}</a><a href="mailto:contato@pauloadvogado.com.br">contato@pauloadvogado.com.br</a><a href={site}>paulodetarso.adv.br <ArrowUpRight size={15} aria-hidden="true" /></a></address></div></section>
       <BarraWhatsappEmpresa alvoId="whatsapp-topo"><a href={whatsapp} className={s.botaoBarra}><WhatsAppIcon fill="currentColor" /> Falar com o escritório</a></BarraWhatsappEmpresa>
-      <noscript><style>{"[data-barra-empresa]{translate:none;transform:none}"}</style></noscript>
     </article>
   );
 }
