@@ -339,7 +339,7 @@ export const SECOES_LLMS: SecaoLlms[] = [
       {
         caminho: "/box-87-auto-center",
         titulo: "Box 87 Auto Center em Piracanjuba",
-        descricao: "Auto center e auto elétrica na Rua João Modesto, 12, Setor Norte. Elétrica e manutenção de carros, parte elétrica e iluminação de tratores e implementos, horário e WhatsApp para agendar.",
+        descricao: "Oficina mecânica e auto elétrica na Rua João Modesto, 12, Setor Norte. Faz revisões, motor, freios e suspensão de carros, atende a elétrica de carros e caminhões e oferece diagnóstico eletrônico e recuperação de chicotes, placas, módulos e sensores de máquinas agrícolas.",
       },
       {
         caminho: "/naraienemarquesadv",
