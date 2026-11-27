@@ -45,7 +45,6 @@ test("fichas rebaixadas respondem na URL curta sem laço, sem marca e com o What
     ["/claro-piracanjuba", "claro"],
     ["/ClaroPiracanjuba", "claro"],
     ["/b10", "b10-auto-center"],
-    ["/Manicure", "adriana-manicure-e-pedicure"],
     ["/kamilla-morranna", "kamilla-morranna"],
     ["/AgroFranca", "agro-franca"],
   ];

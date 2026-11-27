@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       { source: "/zap-pba/ellen-vieira-advocacia", destination: "/evadvocacia", permanent: true },
       { source: "/zap-pba/oticas-diego", destination: "/oticas-diego", permanent: true },
       { source: "/oticasdiego", destination: "/oticas-diego", permanent: true },
+      { source: "/zap-pba/adriana-manicure-e-pedicure", destination: "/manicure", permanent: true },
       { source: "/zap-pba/box-87-auto-center", destination: "/box-87-auto-center", permanent: true },
       { source: "/box87", destination: "/box-87-auto-center", permanent: true },
       { source: "/wennder-trindade-advogado", destination: "/zap-pba/wennder-trindade-advogado", permanent: true },
@@ -60,6 +61,9 @@ const nextConfig: NextConfig = {
     }, {
       source: "/empresas/oticas-diego/compartilhar.jpg",
       destination: "/empresas/oticas-diego/compartilhar-logo.jpg",
+    }, {
+      source: "/marcas-zap/compartilhar/adriana-manicure-e-pedicure.jpg",
+      destination: "/empresas/manicure/compartilhar.jpg",
     }, {
       source: "/marcas-zap/compartilhar/box-87-auto-center.jpg",
       destination: "/empresas/box-87-auto-center/compartilhar.jpg",

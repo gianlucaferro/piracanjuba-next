@@ -16,6 +16,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
   "impressao3d",
   "oticas-diego",
   "quiropraxia",
+  "manicure",
   "estetica",
   "naraienemarquesadv",
   "estacionamentoaeroporto",
@@ -30,7 +31,7 @@ export const SLUGS_PAGINAS_EMPRESARIAIS: readonly string[] = [
 
 // Empresas que não contrataram a landing: a página de marca saiu do ar e ficou só a ficha
 // neutra do guia em /zap-pba/<slug>. `curta` é o endereço da antiga landing na raiz, que pode
-// diferir do slug da ficha (/manicure -> adriana-manicure-e-pedicure). A URL curta exata serve
+// diferir do slug da ficha (/kamillamorranna -> kamilla-morranna). A URL curta exata serve
 // a ficha por rewrite no next.config.ts, sem 308, para não criar laço com o 308 antigo
 // /zap-pba/<slug> -> /<curta> guardado no navegador. As outras grafias (/MasterTechAutoCenter)
 // redirecionam para a ficha. Procedimento em docs/empresa-recusou-landing.md.
@@ -39,7 +40,6 @@ export const FICHAS_REBAIXADAS: readonly { slug: string; curta: string }[] = [
   // Não pagaram a landing (lista de pagantes do operador em 2026-11-26).
   { slug: "claro", curta: "claro" },
   { slug: "agro-franca", curta: "agro-franca" },
-  { slug: "adriana-manicure-e-pedicure", curta: "manicure" },
   { slug: "kamilla-morranna", curta: "kamillamorranna" },
   { slug: "b10-auto-center", curta: "b10-auto-center" },
 ];

@@ -165,6 +165,7 @@ test("prévias com página própria saem do catálogo e apontam à canônica do 
   for (const [origem, destino] of [
     ["/zap-pba/ellen-vieira-advocacia", "/evadvocacia"],
     ["/zap-pba/oticas-diego", "/oticas-diego"],
+    ["/zap-pba/adriana-manicure-e-pedicure", "/manicure"],
     ["/zap-pba/box-87-auto-center", "/box-87-auto-center"],
     ["/zap-pba/viaggi-vistos", "/viaggi-vistos"],
     ["/zap-pba/smart-especializada", "/smart-especializada"],
@@ -186,7 +187,7 @@ test("empresa que recusou a landing volta à ficha neutra do guia, sem página n
   const rewrites = await nextConfig.rewrites?.();
   const listaRewrites = Array.isArray(rewrites) ? rewrites : [...(rewrites?.beforeFiles ?? []), ...(rewrites?.afterFiles ?? []), ...(rewrites?.fallback ?? [])];
   assert.deepEqual(FICHAS_REBAIXADAS.map(({ slug }) => slug).sort(), [
-    "adriana-manicure-e-pedicure", "agro-franca", "b10-auto-center", "claro", "kamilla-morranna", "master-tech-auto-center",
+    "agro-franca", "b10-auto-center", "claro", "kamilla-morranna", "master-tech-auto-center",
   ]);
   const curtasAntigas: Record<string, string> = { claro: "claro-piracanjuba" };
   for (const { slug, curta: semBarra } of FICHAS_REBAIXADAS) {
