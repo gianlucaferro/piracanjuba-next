@@ -110,11 +110,12 @@ export default function AsMeninasMultimarcas() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(dados).replace(/</g, "\\u003c") }} />
       <header className={s.cabecalho}>
         <div className={`${s.largura} ${s.cabecalhoInterno}`}>
-          <Image src={`${ativos}/logo.webp`} alt="As Meninas, calçados e acessórios" width={100} height={100} className={s.logo} />
+          <Image src={`${ativos}/logo-marca.webp`} alt="As Meninas, calçados e acessórios" width={520} height={454} sizes="160px" className={s.logo} />
           <nav aria-label="Navegação da loja" className={s.nav}>
             <a href="#acessorios">Vitrine</a>
             <a href="#visite">Visite a loja</a>
             <a href={instagram} className={s.rede}><InstagramIcon width={16} height={16} aria-hidden="true" /> Instagram</a>
+            <a href={conversa} className={s.navZap}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> WhatsApp</a>
           </nav>
         </div>
       </header>
@@ -127,50 +128,75 @@ export default function AsMeninasMultimarcas() {
             <p className={s.abertura}>Na <strong>As Meninas Multimarcas</strong>, você encontra tênis, bolsas e carteiras. Fale com a loja para consultar modelos, cores e numerações.</p>
             <div className={s.acoes}>
               <a className={s.botao} href={conversa}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> Consultar pelo WhatsApp</a>
-              <a className={s.textoLink} href={rota}>Como chegar <ArrowRight size={16} aria-hidden="true" /></a>
+              <a className={s.botaoContorno} href={rota}>Como chegar <ArrowRight size={16} aria-hidden="true" /></a>
             </div>
+            <ul className={s.fatos} aria-label="Horário e endereço da loja">
+              <li>
+                <Clock3 size={18} aria-hidden="true" />
+                <span><strong>Seg. a sex., 9h às 18h</strong>Sábado, 9h às 13h</span>
+              </li>
+              <li>
+                <MapPin size={18} aria-hidden="true" />
+                <span><strong>{rua}</strong>Centro, Piracanjuba</span>
+              </li>
+            </ul>
           </div>
           <figure className={s.retrato}>
-            <Image
-              src={`${ativos}/proprietaria.webp`}
-              alt="Sabrina Carvalho sorrindo, de blazer amarelo"
-              width={1088}
-              height={1446}
-              sizes="(max-width: 355px) 90vw, (max-width: 760px) 320px, (max-width: 845px) 42vw, 360px"
-              preload
-            />
-            <figcaption><strong>Sabrina Carvalho</strong> - Proprietária da As Meninas Multimarcas</figcaption>
+            <div className={s.moldura}>
+              <Image
+                src={`${ativos}/proprietaria.webp`}
+                alt="Sabrina Carvalho sorrindo, de blazer amarelo"
+                width={1088}
+                height={1446}
+                sizes="(max-width: 400px) 82vw, (max-width: 760px) 330px, (max-width: 860px) 360px, (max-width: 1100px) 34vw, 400px"
+                preload
+              />
+            </div>
+            <figcaption>
+              <strong>Sabrina Carvalho</strong>
+              <span>Proprietária da As Meninas Multimarcas</span>
+            </figcaption>
           </figure>
         </div>
       </section>
 
-      <section id="acessorios" aria-labelledby="meninas-acessorios" className={`${s.largura} ${s.colecao}`}>
-        <div className={s.colecaoTopo}>
-          <h2 id="meninas-acessorios">Calçados e <em>acessórios.</em></h2>
-          <p>Escolha uma categoria para conversar com a loja pelo WhatsApp.</p>
-        </div>
-        <div className={s.grade}>
-          {categorias.map((categoria) => (
-            <article key={categoria.foto} className={s.item}>
-              <div className={s.itemFoto}>
-                <Image src={`${ativos}/${categoria.foto}`} alt={categoria.alt} width={724} height={724} sizes="(max-width: 650px) 90vw, (max-width: 1280px) 29vw, 365px" />
-              </div>
-              <h3>{categoria.nome}</h3>
-              <p>{categoria.detalhe}</p>
-              <a className={s.itemLink} href={linkWhatsapp(telefone, categoria.mensagem)} aria-label={`${categoria.acao} pelo WhatsApp`}>
-                {categoria.acao} <ArrowUpRight size={15} aria-hidden="true" />
-              </a>
-            </article>
-          ))}
+      <section id="acessorios" aria-labelledby="meninas-acessorios" className={s.colecao}>
+        <div className={s.largura}>
+          <div className={s.colecaoTopo}>
+            <div>
+              <p className={s.sobretitulo}>Vitrine</p>
+              <h2 id="meninas-acessorios">Calçados e <em>acessórios.</em></h2>
+            </div>
+            <p>Escolha uma categoria para conversar com a loja pelo WhatsApp.</p>
+          </div>
+          <div className={s.grade}>
+            {categorias.map((categoria, indice) => (
+              <article key={categoria.foto} className={s.item}>
+                <div className={s.itemFoto}>
+                  <Image src={`${ativos}/${categoria.foto}`} alt={categoria.alt} width={724} height={724} sizes="(max-width: 650px) 72vw, (max-width: 1280px) 29vw, 365px" />
+                  <span className={s.indice} aria-hidden="true">{String(indice + 1).padStart(2, "0")}</span>
+                </div>
+                <h3>{categoria.nome}</h3>
+                <p>{categoria.detalhe}</p>
+                <a className={s.itemLink} href={linkWhatsapp(telefone, categoria.mensagem)} aria-label={`${categoria.acao} pelo WhatsApp`}>
+                  {categoria.acao} <ArrowUpRight size={15} aria-hidden="true" />
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
       <section id="visite" aria-labelledby="meninas-visita" className={s.visita}>
-        <div className={`${s.largura} ${s.visitaGrid}`}>
+        <div className={`${s.largura} ${s.painel}`}>
           <div className={s.visitaTitulo}>
+            <p className={s.sobretitulo}>Visite a loja</p>
             <h2 id="meninas-visita">Visite a <em>As Meninas.</em></h2>
             <p>Experimente os calçados e veja os acessórios na loja do Centro de Piracanjuba.</p>
-            <a className={s.botaoClaro} href={mapa}><MapPin size={18} aria-hidden="true" /> Ver loja no mapa</a>
+            <div className={s.visitaAcoes}>
+              <a className={s.botaoClaro} href={mapa}><MapPin size={18} aria-hidden="true" /> Ver loja no mapa</a>
+              <a className={s.textoLinkClaro} href={rota}>Traçar rota <ArrowRight size={16} aria-hidden="true" /></a>
+            </div>
           </div>
           <div className={s.dados}>
             <h3><MapPin size={17} aria-hidden="true" /> Onde fica a As Meninas Multimarcas?</h3>
@@ -181,8 +207,8 @@ export default function AsMeninasMultimarcas() {
           <div className={s.canais}>
             <h3>Como consultar minha numeração?</h3>
             <p>Envie sua numeração pelo WhatsApp da loja para saber quais modelos e cores estão disponíveis.</p>
-            <a href={conversa}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /> {formatarTelefoneBr(telefone)}</a>
-            <a href={instagram}><InstagramIcon width={17} height={17} aria-hidden="true" /> @asmeninasmultimarcasloja</a>
+            <a href={conversa}><span className={s.canalIcone}><WhatsAppIcon className={s.iconeZap} fill="currentColor" /></span> {formatarTelefoneBr(telefone)}</a>
+            <a href={instagram}><span className={s.canalIcone}><InstagramIcon width={17} height={17} aria-hidden="true" /></span> @asmeninasmultimarcasloja</a>
           </div>
         </div>
       </section>
