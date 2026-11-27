@@ -12,6 +12,8 @@ test("página agrária informa a atuação, contato e cidades sem criar sedes", 
   for (const cidade of ["Piracanjuba", "Professor Jamil", "Goiânia", "Morrinhos", "Caldas Novas"]) {
     await expect(artigo.locator("li").filter({ hasText: cidade })).toBeVisible();
   }
+  await expect(artigo.locator("li").filter({ hasText: "Piracanjuba" })).toHaveText("Piracanjuba Sede presencial");
+  await expect(artigo.locator("li").filter({ hasText: "Goiânia" })).toHaveText("Goiânia Presencial com agendamento");
   await expect(artigo.getByRole("link", { name: "(62) 99272-8816", exact: true })).toHaveAttribute("href", "tel:+5562992728816");
   await expect(artigo.getByText(/Rua Dom Pedro II, 942, Centro/).first()).toBeVisible();
   const dados = await page.locator('script[type="application/ld+json"]').evaluateAll((nos) => nos.flatMap((no) => JSON.parse(no.textContent ?? "{}")["@graph"] ?? []));
@@ -29,5 +31,18 @@ test("página agrária informa a atuação, contato e cidades sem criar sedes", 
   for (const width of [320, 768]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  }
+});
+
+test("o contato permanece disponível no celular sem JavaScript", async ({ browser }) => {
+  const contexto = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  try {
+    const pagina = await contexto.newPage();
+    await pagina.goto("/advogadoagrario");
+    const barra = pagina.locator("[data-barra-empresa]");
+    await expect(barra).toBeInViewport();
+    await expect(barra.getByRole("link", { name: "Falar com o escritório" })).toHaveAttribute("href", /^https:\/\/wa\.me\/5562992728816\?text=/);
+  } finally {
+    await contexto.close();
   }
 });

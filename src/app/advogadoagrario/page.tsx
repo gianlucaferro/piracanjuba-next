@@ -101,7 +101,7 @@ export default function AdvogadoAgrario() {
         <div className={s.largura}>
           <div className={s.regiaoTopo}><div><p className={s.sobretitulo}><MapPin size={15} aria-hidden="true" /> Atendimento em Goiás</p><h2 id="cidades-titulo">Advocacia agrária para Piracanjuba e cidades da região</h2></div><p>O escritório fica em Piracanjuba. O acompanhamento pode ser feito a distância; em Goiânia, encontros presenciais são combinados previamente. Para atos que exijam presença em outras cidades, o deslocamento é combinado.</p></div>
           <ul className={s.cidades}>
-            {cidades.map((cidade, i) => <li key={cidade}><MapPin size={17} aria-hidden="true" /><span><strong>{cidade}</strong>{modalidades[i]}</span></li>)}
+            {cidades.map((cidade, i) => <li key={cidade}><MapPin size={17} aria-hidden="true" /><span><strong>{cidade}</strong>{" "}{modalidades[i]}</span></li>)}
           </ul>
           <p className={s.regiaoNota}>O atendimento também alcança outras cidades de Goiás. Informe sua cidade e a localização do imóvel no primeiro contato.</p>
         </div>
@@ -122,6 +122,7 @@ export default function AdvogadoAgrario() {
 
       <section className={s.contato} aria-labelledby="contato-titulo"><div className={s.largura}><div><p className={s.sobretitulo}>Contato</p><h2 id="contato-titulo">Converse sobre sua questão rural</h2><p>Conte sua situação e informe a cidade e a localização da propriedade. O primeiro contato ajuda a entender o caso e combinar o atendimento.</p><a href={whatsapp} className={s.botao}><WhatsAppIcon fill="currentColor" /> Falar com o escritório</a></div><address><strong>{nome}</strong><span>{advogado} · {oab}</span><span>Rua Dom Pedro II, 942, Centro<br />Piracanjuba, GO · CEP 75640-116</span><a href={`tel:+${telefone}`}>{formatarTelefoneBr(telefone)}</a><a href="mailto:contato@pauloadvogado.com.br">contato@pauloadvogado.com.br</a><a href={site}>paulodetarso.adv.br <ArrowUpRight size={15} aria-hidden="true" /></a></address></div></section>
       <BarraWhatsappEmpresa alvoId="whatsapp-topo"><a href={whatsapp} className={s.botaoBarra}><WhatsAppIcon fill="currentColor" /> Falar com o escritório</a></BarraWhatsappEmpresa>
+      <noscript><style>{"[data-barra-empresa]{translate:none;transform:none}"}</style></noscript>
     </article>
   );
 }
